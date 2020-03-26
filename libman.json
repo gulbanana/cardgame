@@ -1,0 +1,8 @@
+{
+    "version": "1.0",
+    "defaultProvider": "cdnjs",
+    "defaultDestination": "lib",
+    "libraries": [
+      { "library": "modern-normalize@0.5.0" }
+    ]
+  }

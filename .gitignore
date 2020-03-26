@@ -1,0 +1,7 @@
+.config/
+.vscode/
+.vs/
+Properties/
+*.user
+bin/
+obj/

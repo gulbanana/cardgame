@@ -1,0 +1,17 @@
+[
+  {
+    "outputFileName": "wwwroot/lib.min.css",
+    "inputFiles": [ "lib/modern-normalize.css" ],
+    "minify": { "enabled": true }
+  },
+  {
+    "outputFileName": "wwwroot/app.min.css",
+    "inputFiles": [
+      "**/*.css",
+      "!bin/**/*.css",
+      "!lib/*.css",
+      "!wwwroot/*.css"
+    ],
+    "minify": { "enabled": true }
+  }
+]
