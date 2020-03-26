@@ -24,9 +24,9 @@
         });
     }
 
-    private void DoExecute(string username, ClientCommand command)
+    private void DoExecute(ClientCommand command)
     {
-        var error = Endpoint.Execute(username, command);
+        var error = Endpoint.Execute(Session.Username, command);
 
         if (error != null)
         {
@@ -35,4 +35,6 @@
     }
 }
 
-<GameView Model="currentModel" Dispatch="DoExecute" />
+<CascadingValue Value="@(new Executor(DoExecute))">
+    <GameView Model="currentModel" />
+</CascadingValue>

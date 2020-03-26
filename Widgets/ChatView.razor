@@ -1,0 +1,30 @@
+@inject IUserSession Session
+@code {
+    [Parameter] public IReadOnlyList<LogEntry> Model { get; set; }
+    [CascadingParameter] public Executor Dispatch { get; set; }
+    string newMessage;
+
+    private void SendMessage()
+    {
+        if (!string.IsNullOrEmpty(newMessage))
+        {
+            Dispatch(new ChatCommand { Message = newMessage });
+            newMessage = null;
+        }
+    }
+}
+
+<div class="chat-view">
+    <div class="chat-view__log">
+        @foreach (var entry in Model)
+        {
+            <span class="chat-view__username">&lt;@(entry.Username)&gt;</span>
+            <span class="chat-view__message">@entry.Message</span>
+            <br>
+        }
+    </div>
+    <form class="chat-view__entry" @onsubmit="SendMessage">
+        <input type="text" @bind="newMessage">
+        <input type="submit" value="Send message">
+    </form>
+</div>

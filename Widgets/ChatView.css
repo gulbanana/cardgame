@@ -1,0 +1,20 @@
+.chat-view {
+    border: 1px solid black;
+    font-family: monospace;
+}
+
+.chat-view__log {    
+    line-height: 1.15;
+    height: calc(10em * 1.15);
+    overflow-y: auto;    
+}
+
+.chat-view__username {
+    font-weight: bold;
+}
+
+.chat-view__entry {
+    border-top: 1px solid black;
+    display: grid;
+    grid-template-columns: 1fr auto;
+}

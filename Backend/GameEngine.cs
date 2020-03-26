@@ -16,25 +16,18 @@ namespace Cardgame
             switch (command)
             {
                 case JoinGameCommand _:
-                    if (Model.Players.Contains(username))
-                    {
-                        throw new CommandException($"You are already in the game.");
-                    }
-                    else
-                    {
-                        Model.Players = Model.Players.Append(username).ToArray();
-                    }
+                    if (Model.Players.Contains(username)) throw new CommandException($"You are already in the game.");
+                    Model.Players = Model.Players.Append(username).ToArray();
                     break;
 
                 case LeaveGameCommand _:
-                    if (Model.Players.Contains(username))
-                    {
-                        Model.Players = Model.Players.Except(new[]{username}).ToArray();
-                    }
-                    else
-                    {
-                        throw new CommandException($"You are not in the game.");                        
-                    }
+                    if (!Model.Players.Contains(username)) throw new CommandException($"You are not in the game.");
+                    Model.Players = Model.Players.Except(new[]{username}).ToArray();
+                    break;
+
+                case ChatCommand chat:
+                    if (chat.Message.Length > LogEntry.MAX) throw new CommandException($"Chat message too long.");
+                    Model.ChatLog.Add(new LogEntry { Username = username, Message = chat.Message });
                     break;
 
                 case var unknown:

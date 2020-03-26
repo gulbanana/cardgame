@@ -1,20 +1,18 @@
 @inject IUserSession Session
 @code {
     [Parameter] public GameModel Model { get; set; }
-    [Parameter] public Action<string, ClientCommand> Dispatch { get; set; }
-
-    private Action Command(ClientCommand command) => () => Dispatch(Session.Username, command);
+    [CascadingParameter] public Executor Dispatch { get; set; }
 }
 
 <p>
     Welcome, @Session.Username.
     @if (!Model.Players.Contains(Session.Username))
     {
-        <button @onclick="@Command(new JoinGameCommand())">Join game</button>
+        <button @onclick="@(() => Dispatch(new JoinGameCommand()))">Join game</button>
     }
     else
     {
-        <button @onclick="@Command(new LeaveGameCommand())">Leave game</button>
+        <button @onclick="@(() => Dispatch(new LeaveGameCommand()))">Leave game</button>
     }
 </p>
 
@@ -26,3 +24,5 @@ else
 {
     <p>No players.</p>
 }
+
+<ChatView Model="@Model.ChatLog" />
