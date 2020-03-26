@@ -1,0 +1,16 @@
+﻿@page "/game"
+@inject UserSession Session
+@inject NavigationManager Navigation
+@code {
+    protected override void OnInitialized()
+    {
+        if (Session.Username == null)
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+}
+
+<p>
+    Welcome, @Session.Username
+</p>

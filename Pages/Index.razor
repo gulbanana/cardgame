@@ -1,3 +1,22 @@
 ﻿@page "/"
+@inject UserSession Session
+@inject NavigationManager Navigation
+@code {
+    string username;
 
-<Text Value="Hello, world!"/>
+    void OnClick()
+    {
+        if (!string.IsNullOrWhiteSpace(username))
+        {
+            Session.Username = username;
+            Navigation.NavigateTo("/game");
+        }
+    }
+}
+
+
+<p>
+    Please enter a username.<br>
+    <input type="text" @bind="username">
+    <button @onclick="OnClick">Join game!</button>
+</p>

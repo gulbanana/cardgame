@@ -19,6 +19,7 @@ namespace Cardgame
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddScoped<UserSession>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
