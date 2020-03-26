@@ -21,7 +21,17 @@ steps:
     arguments: '--no-build --output $(Build.ArtifactStagingDirectory)'
 
 - task: AzureWebApp@1
+  condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
   inputs:
     azureSubscription: $(azureSub)
     appName: $(azureApp)
     package: '$(Build.ArtifactStagingDirectory)/*.zip'
+    slotName: test
+
+- task: AzureWebApp@1
+  condition: eq(variables['build.sourceBranch'], 'refs/heads/release')
+  inputs:
+    azureSubscription: $(azureSub)
+    appName: $(azureApp)
+    package: '$(Build.ArtifactStagingDirectory)/*.zip'
+    slotName: production
