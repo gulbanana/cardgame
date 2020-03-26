@@ -1,0 +1,27 @@
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: 'Release'
+  azureSub: 'castiglione@gmail.com'
+  azureApp: 'card-game'
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: build
+    configuration: $(buildConfiguration)
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    configuration: $(buildConfiguration)
+    publishWebProjects: true
+    zipAfterPublish: true
+    arguments: '--no-build --output $(Build.ArtifactStagingDirectory)'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: $(azureSub)
+    appName: $(azureApp)
+    package: '$(Build.ArtifactStagingDirectory)/*.zip'
