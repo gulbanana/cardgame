@@ -1,7 +1,36 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Cardgame
 {
-    class UserSession
+    class UserSession : IDisposable
     {
-        public string Username { get; set; }
+        private readonly UserManager manager;
+        public string Username { get; private set; }
+        public bool IsLoggedIn => Username != null;
+
+        public UserSession(UserManager manager)
+        {
+            this.manager = manager;
+        }
+
+        public bool Login(string username)
+        {
+            Username = username;
+            return manager.Add(this);
+        }
+
+        public void Logout()
+        {
+            manager.Remove(this);
+        }
+
+        public IEnumerable<string> GetOpponents()
+        {
+            return manager.Sessions.Except(new[]{this}).Select(s => s.Username);
+        }
+
+        public void Dispose() => Logout();
     }
 }

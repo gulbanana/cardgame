@@ -4,7 +4,7 @@
 @code {
     protected override void OnInitialized()
     {
-        if (Session.Username == null)
+        if (!Session.IsLoggedIn)
         {
             Navigation.NavigateTo("/");
         }
@@ -13,4 +13,12 @@
 
 <p>
     Welcome, @Session.Username
+</p>
+
+<p>
+    Your opponents:
+    @foreach (var opponent in Session.GetOpponents())
+    {
+        <br>@opponent
+    }
 </p>

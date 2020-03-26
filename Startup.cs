@@ -19,6 +19,8 @@ namespace Cardgame
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+
+            services.AddSingleton<UserManager>();
             services.AddScoped<UserSession>();
         }
 

@@ -3,20 +3,40 @@
 @inject NavigationManager Navigation
 @code {
     string username;
+    string error;
 
-    void OnClick()
+    protected override void OnInitialized()
+    {
+        if (Session.IsLoggedIn)
+        {
+            Session.Logout();
+        }
+    }
+
+    void OnSubmit()
     {
         if (!string.IsNullOrWhiteSpace(username))
         {
-            Session.Username = username;
-            Navigation.NavigateTo("/game");
+            if (Session.Login(username))
+            {
+                Navigation.NavigateTo("/game");
+            }
+            else
+            {
+                error = "Another player with this username is already logged in.";
+            }
         }
     }
 }
 
-
 <p>
     Please enter a username.<br>
-    <input type="text" @bind="username">
-    <button @onclick="OnClick">Join game!</button>
+    <form @onsubmit="OnSubmit">
+        <input type="text" @bind="username">
+        <input type="submit" value="Join game!">
+    </form>
+    @if (error != null)
+    {
+        <br><span class="index__error">@error</span>
+    }
 </p>
