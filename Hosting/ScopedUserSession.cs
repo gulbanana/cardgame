@@ -1,16 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Cardgame
 {
-    class UserSession : IDisposable
+    // adapter implementing user protocol using DI
+    class ScopedUserSession : IUserSession, IDisposable
     {
         private readonly UserManager manager;
         public string Username { get; private set; }
         public bool IsLoggedIn => Username != null;
 
-        public UserSession(UserManager manager)
+        public ScopedUserSession(UserManager manager)
         {
             this.manager = manager;
         }

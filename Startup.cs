@@ -21,7 +21,11 @@ namespace Cardgame
             services.AddServerSideBlazor();
 
             services.AddSingleton<UserManager>();
-            services.AddScoped<UserSession>();
+            services.AddScoped<ScopedUserSession>();
+            services.AddTransient<IUserSession>(s => s.GetRequiredService<ScopedUserSession>());
+
+            services.AddSingleton<SharedGameEndpoint>();
+            services.AddTransient<IGameEndpoint>(s => s.GetRequiredService<SharedGameEndpoint>());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -1,16 +1,38 @@
 ﻿@page "/play"
-@inject UserSession Session
 @inject NavigationManager Navigation
+@inject IGameEndpoint Endpoint
+@inject IUserSession Session
 @code {
+    private GameModel currentModel;
+
     protected override void OnInitialized()
     {
         if (!Session.IsLoggedIn)
         {
             Navigation.NavigateTo("/");
         }
+
+        currentModel = Endpoint.Subscribe(OnUpdate);
+    }
+
+    private void OnUpdate(GameModel newModel)
+    {
+        InvokeAsync(() => 
+        {
+            currentModel = newModel;
+            StateHasChanged();
+        });
+    }
+
+    private void DoExecute(string username, ClientCommand command)
+    {
+        var error = Endpoint.Execute(username, command);
+
+        if (error != null)
+        {
+            Console.WriteLine(error);
+        }
     }
 }
 
-<p>
-    Welcome, @Session.Username
-</p>
+<GameView Model="currentModel" Dispatch="DoExecute" />

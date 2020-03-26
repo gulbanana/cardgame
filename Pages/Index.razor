@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject UserSession Session
+@inject IUserSession Session
 @inject NavigationManager Navigation
 @code {
     string username;
@@ -29,14 +29,12 @@
     }
 }
 
-<p>
+<form @onsubmit="OnSubmit">
     Please enter a username.<br>
-    <form @onsubmit="OnSubmit">
-        <input type="text" @bind="username">
-        <input type="submit" value="Join game!">
-    </form>
+    <input type="text" @bind="username">
+    <input type="submit" value="Login">
     @if (error != null)
     {
         <br><span class="index__error">@error</span>
     }
-</p>
+</form>
