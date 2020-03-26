@@ -26,11 +26,6 @@ namespace Cardgame
             manager.Remove(this);
         }
 
-        public IEnumerable<string> GetOpponents()
-        {
-            return manager.Sessions.Except(new[]{this}).Select(s => s.Username);
-        }
-
         public void Dispose() => Logout();
     }
 }

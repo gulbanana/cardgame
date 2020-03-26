@@ -14,11 +14,3 @@
 <p>
     Welcome, @Session.Username
 </p>
-
-<p>
-    Your opponents:
-    @foreach (var opponent in Session.GetOpponents())
-    {
-        <br>@opponent
-    }
-</p>

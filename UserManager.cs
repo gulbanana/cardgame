@@ -8,6 +8,7 @@ namespace Cardgame
     {
         private readonly List<UserSession> sessions;
         public IReadOnlyList<UserSession> Sessions => sessions;
+        public event Action SessionsUpdated;
 
         public UserManager()
         {
@@ -25,6 +26,7 @@ namespace Cardgame
                 else
                 {
                     sessions.Add(session);
+                    SessionsUpdated?.Invoke();
                     return true;
                 }
             }
@@ -32,7 +34,15 @@ namespace Cardgame
 
         public bool Remove(UserSession session)
         {
-            return sessions.Remove(session);
+            if (sessions.Remove(session))
+            {
+                SessionsUpdated?.Invoke();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
