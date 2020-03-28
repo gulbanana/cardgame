@@ -10,15 +10,14 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: build
-    configuration: $(buildConfiguration)
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: publish
-    configuration: $(buildConfiguration)
+    nobuild: true
     publishWebProjects: true
-    zipAfterPublish: true
-    arguments: '--no-build --output $(Build.ArtifactStagingDirectory)'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
 - task: AzureWebApp@1
   condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
