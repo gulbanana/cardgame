@@ -4,25 +4,61 @@
     [CascadingParameter] public Executor Dispatch { get; set; }
 }
 
-<p>
-    Welcome, @Session.Username.
-    @if (!Model.Players.Contains(Session.Username))
-    {
-        <button @onclick="@(() => Dispatch(new JoinGameCommand()))">Join game</button>
-    }
-    else
-    {
-        <button @onclick="@(() => Dispatch(new LeaveGameCommand()))">Leave game</button>
-    }
-</p>
+<div class="game-view">
+    <div style="grid-area: status">
+        @if (Model.Players.Any())
+        {
+            <span>Current players: @string.Join(", ", Model.Players).</span>
+        }
+        else
+        {
+            <span>No players.</span>
+        }
 
-@if (Model.Players.Any())
-{
-    <p>Current players: @string.Join(", ", Model.Players).</p>
-}
-else
-{
-    <p>No players.</p>
-}
+        @if (!Model.Players.Contains(Session.Username))
+        {
+            <button @onclick="@(() => Dispatch(new JoinGameCommand()))">Join game</button>
+        }
+        else
+        {
+            <button @onclick="@(() => Dispatch(new LeaveGameCommand()))">Leave game</button>
+        }
+    </div>
 
-<ChatView Model="@Model.ChatLog" />
+    <ChatView Model="@Model.ChatLog" />
+    
+    <div style="grid-area: board" class="game-view__board">
+        <div class="game-view__kingdom">
+            <Card Name="Estate" Type="Victory" />
+            <Card Name="Duchy" Type="Victory" />
+            <Card Name="Province" Type="Victory" />
+            <Card Name="Cellar" Type="Action" />
+            <Card Name="Market" Type="Action" />
+            <Card Name="Mine" Type="Action" />
+            <Card Name="Remodel" Type="Action" />
+            <Card Name="Moat" Type="Action - Reaction" />
+
+            <Card Name="Copper" Type="Treasure" />
+            <Card Name="Silver" Type="Treasure" />
+            <Card Name="Gold" Type="Treasure" />
+            <Card Name="Smithy" Type="Action" />
+            <Card Name="Village" Type="Action" />
+            <Card Name="Woodcutter" Type="Action" />
+            <Card Name="Workshop" Type="Action" />
+            <Card Name="Militia" Type="Action - Attack" />
+        </div>
+        <div class="game-view__hand">
+            <Card Name="Copper" Type="Treasure" />
+            <Card Name="Copper" Type="Treasure" />
+            <Card Name="Copper" Type="Treasure" />
+            <Card Name="Estate" Type="Victory" />
+            <Card Name="Estate" Type="Victory" />
+        </div>
+    </div>
+
+    <div style="grid-area: event-log" class="game-view__events">
+        Someone did something.<br />
+        <br />
+        Someone did something else.
+    </div>
+</div>

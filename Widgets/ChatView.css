@@ -1,12 +1,15 @@
 .chat-view {
     border: 1px solid black;
     font-family: monospace;
+    display: flex;
+    flex-direction: column;
 }
 
-.chat-view__log {    
+.chat-view__log {
+    flex-grow: 1;
     line-height: 1.15;
-    height: calc(10em * 1.15);
-    overflow-y: auto;    
+    min-height: calc(10em * 1.15);
+    overflow-y: auto;
 }
 
 .chat-view__username {

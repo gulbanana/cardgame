@@ -9,7 +9,11 @@
     {
         if (!Session.IsLoggedIn)
         {
+#if DEBUG
+            Session.Login("guest");
+#else
             Navigation.NavigateTo("/");
+#endif            
         }
 
         currentModel = Endpoint.Subscribe(OnUpdate);
@@ -17,7 +21,7 @@
 
     private void OnUpdate(GameModel newModel)
     {
-        InvokeAsync(() => 
+        InvokeAsync(() =>
         {
             currentModel = newModel;
             StateHasChanged();

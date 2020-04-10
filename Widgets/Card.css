@@ -1,0 +1,19 @@
+.card {
+    width: 150px;
+    height: 243px;
+    border: 2px solid black;
+    display: grid;
+    grid-template-rows: 20px auto auto 20px;
+}
+
+.card__header, .card__footer {
+    text-align: center;
+}
+
+.card__image {
+    border-top: 2px solid black;
+}
+
+.card__text {
+    border-bottom: 2px solid black;
+}

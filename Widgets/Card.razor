@@ -1,0 +1,11 @@
+@code {
+    [Parameter] public string Name { get; set; }
+    [Parameter] public string Type { get; set; }
+}
+
+<div class="card">
+    <div class="card__header">@Name</div>
+    <div class="card__image" />
+    <div class="card__text" />
+    <div class="card__footer">@Type</div>
+</div>
