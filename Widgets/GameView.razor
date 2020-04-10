@@ -5,6 +5,52 @@
 }
 
 <div class="game-view">
+    <div style="grid-area: event-log" class="game-view__events">
+        <VerticalLog>
+            <p class="game-view__event">Someone did something.</p>
+            <p class="game-view__event">Someone did something else.</p>
+            <p class="game-view__event">An action was performed.</p>
+        </VerticalLog>
+    </div>
+
+    <GridSeparator Area="left-bar"/>
+
+    <div style="grid-area: board" class="game-view__board">
+        <div class="game-view__kingdom">
+            <Card Name="Estate" Type="Victory" />
+            <Card Name="Duchy" Type="Victory" />
+            <Card Name="Province" Type="Victory" />
+            <Card Name="Cellar" Type="Action" />
+            <Card Name="Market" Type="Action" />
+            <Card Name="Mine" Type="Action" />
+            <Card Name="Remodel" Type="Action" />
+            <Card Name="Moat" Type="Action - Reaction" />
+
+            <Card Name="Copper" Type="Treasure" />
+            <Card Name="Silver" Type="Treasure" />
+            <Card Name="Gold" Type="Treasure" />
+            <Card Name="Smithy" Type="Action" />
+            <Card Name="Village" Type="Action" />
+            <Card Name="Woodcutter" Type="Action" />
+            <Card Name="Workshop" Type="Action" />
+            <Card Name="Militia" Type="Action - Attack" />
+        </div>
+
+        <div class="game-view__actions">
+            &lt;&lt; actions &gt;&gt;
+        </div>
+
+        <div class="game-view__hand">
+            <Card Name="Copper" Type="Treasure" />
+            <Card Name="Copper" Type="Treasure" />
+            <Card Name="Copper" Type="Treasure" />
+            <Card Name="Estate" Type="Victory" />
+            <Card Name="Estate" Type="Victory" />
+        </div>
+    </div>
+
+    <GridSeparator Area="right-bar"/>
+
     <div style="grid-area: status" class="game-view__status">
         @if (Model.Players.Any())
         {
@@ -26,40 +72,4 @@
     </div>
 
     <ChatView Model="@Model.ChatLog" />
-    
-    <div style="grid-area: board" class="game-view__board">
-        <div class="game-view__kingdom">
-            <Card Name="Estate" Type="Victory" />
-            <Card Name="Duchy" Type="Victory" />
-            <Card Name="Province" Type="Victory" />
-            <Card Name="Cellar" Type="Action" />
-            <Card Name="Market" Type="Action" />
-            <Card Name="Mine" Type="Action" />
-            <Card Name="Remodel" Type="Action" />
-            <Card Name="Moat" Type="Action - Reaction" />
-
-            <Card Name="Copper" Type="Treasure" />
-            <Card Name="Silver" Type="Treasure" />
-            <Card Name="Gold" Type="Treasure" />
-            <Card Name="Smithy" Type="Action" />
-            <Card Name="Village" Type="Action" />
-            <Card Name="Woodcutter" Type="Action" />
-            <Card Name="Workshop" Type="Action" />
-            <Card Name="Militia" Type="Action - Attack" />
-        </div>
-        <div class="game-view__hand">
-            <Card Name="Copper" Type="Treasure" />
-            <Card Name="Copper" Type="Treasure" />
-            <Card Name="Copper" Type="Treasure" />
-            <Card Name="Estate" Type="Victory" />
-            <Card Name="Estate" Type="Victory" />
-        </div>
-    </div>
-
-    <div style="grid-area: event-log" class="game-view__events">
-        <VerticalLog>
-            <span>Someone did something.</span>
-            <span>Someone did something else.</span>
-        </VerticalLog>
-    </div>
 </div>
