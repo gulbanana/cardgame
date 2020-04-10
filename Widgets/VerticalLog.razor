@@ -1,0 +1,8 @@
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Type { get; set; }
+}
+
+<div class="vertical-log">
+    @ChildContent
+</div>

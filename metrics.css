@@ -1,0 +1,5 @@
+﻿:root {
+    --card-width: 100px;
+    --card-height: calc(1.618 * var(--card-width));
+    --std-gap: 10px;
+}

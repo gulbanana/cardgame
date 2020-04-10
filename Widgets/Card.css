@@ -1,9 +1,10 @@
 .card {
-    width: 150px;
-    height: 243px;
+    width: var(--card-width);
+    height: var(--card-height);
     border: 2px solid black;
     display: grid;
-    grid-template-rows: 20px auto auto 20px;
+    grid-template-rows: 15px auto auto 15px;
+    font-size: 12px;
 }
 
 .card__header, .card__footer {

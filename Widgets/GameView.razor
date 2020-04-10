@@ -5,7 +5,7 @@
 }
 
 <div class="game-view">
-    <div style="grid-area: status">
+    <div style="grid-area: status" class="game-view__status">
         @if (Model.Players.Any())
         {
             <span>Current players: @string.Join(", ", Model.Players).</span>
@@ -57,8 +57,9 @@
     </div>
 
     <div style="grid-area: event-log" class="game-view__events">
-        Someone did something.<br />
-        <br />
-        Someone did something else.
+        <VerticalLog>
+            <span>Someone did something.</span>
+            <span>Someone did something else.</span>
+        </VerticalLog>
     </div>
 </div>
