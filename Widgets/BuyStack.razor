@@ -1,0 +1,17 @@
+@inject IUserSession Session
+@code {
+    [Parameter] public GameModel Game { get; set; }
+    [Parameter] public string Id { get; set; }
+    [CascadingParameter] public Executor Dispatch { get; set; }
+}
+
+@{
+    var isEnabled = Session.Username.Equals(Game.ActivePlayer) &&
+        Cards.All.ByName.ContainsKey(Id) &&
+        Cards.All.ByName[Id].Cost <= Game.MoneyRemaining;
+}
+<ActiveCard Id="@Id" 
+            Enabled="isEnabled" 
+            Half="true" 
+            Stack="true"
+            Action="@(() => Dispatch(new BuyCardCommand { Id = Id }))" />

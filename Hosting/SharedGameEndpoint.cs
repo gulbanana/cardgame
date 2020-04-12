@@ -43,9 +43,7 @@ namespace Cardgame
             games["demo"].Execute("demo", new StartGameCommand { Seq = 7 });
             games["demo"].Execute("agatha", new ChatCommand { Seq = 8, Message = "Welcome, demo! Nice of you to finally join us!" });
             games["demo"].Execute("demo", new PlayCardCommand { Seq = 9, Id = "Copper" });
-            games["demo"].Execute("demo", new PlayCardCommand { Seq = 10, Id = "Copper" });
-            games["demo"].Execute("demo", new BuyCardCommand { Seq = 11, Id = "Cellar" });
-            
+            games["demo"].Execute("demo", new PlayCardCommand { Seq = 10, Id = "Copper" });            
         }
 
         public IGame FindGame(string name)

@@ -16,41 +16,44 @@
 
     <div style="grid-area: board" class="game-view__board">
         <div style="grid-area: kingdom" class="game-view__kingdom">
-            <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="Estate" />
-            <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="Duchy" />
-            <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="Province" />
-
             @if (Model.IsStarted)
             {
-                <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="@Model.KingdomCards[0]" />
-                <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="@Model.KingdomCards[1]" />
-                <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="@Model.KingdomCards[2]" />
-                <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="@Model.KingdomCards[3]" />
-                <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="@Model.KingdomCards[4]" />
+                <BuyStack Game="@Model" Id="Estate" />
+                <BuyStack Game="@Model" Id="Duchy" />
+                <BuyStack Game="@Model" Id="Province" />
+
+                <BuyStack Game="@Model" Id="@Model.KingdomCards[0]" />
+                <BuyStack Game="@Model" Id="@Model.KingdomCards[1]" />
+                <BuyStack Game="@Model" Id="@Model.KingdomCards[2]" />
+                <BuyStack Game="@Model" Id="@Model.KingdomCards[3]" />
+                <BuyStack Game="@Model" Id="@Model.KingdomCards[4]" />
+
+                <BuyStack Game="@Model" Id="Copper" />
+                <BuyStack Game="@Model" Id="Silver" />
+                <BuyStack Game="@Model" Id="Gold" />
+
+                <BuyStack Game="@Model" Id="@Model.KingdomCards[5]" />  
+                <BuyStack Game="@Model" Id="@Model.KingdomCards[6]" />
+                <BuyStack Game="@Model" Id="@Model.KingdomCards[7]" />
+                <BuyStack Game="@Model" Id="@Model.KingdomCards[8]" />
+                <BuyStack Game="@Model" Id="@Model.KingdomCards[9]" />            
             }
             else
             {
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-            }
+                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Estate" />
+                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Duchy" />
+                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Province" />
 
-            <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="Copper" />
-            <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="Silver" />
-            <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="Gold" />
+                <SpecialCard Name="card-back" Half="true" Stack="true" />
+                <SpecialCard Name="card-back" Half="true" Stack="true" />
+                <SpecialCard Name="card-back" Half="true" Stack="true" />
+                <SpecialCard Name="card-back" Half="true" Stack="true" />
+                <SpecialCard Name="card-back" Half="true" Stack="true" />
 
-            @if (Model.IsStarted)
-            {
-                <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="@Model.KingdomCards[5]" />
-                <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="@Model.KingdomCards[6]" />
-                <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="@Model.KingdomCards[7]" />
-                <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="@Model.KingdomCards[8]" />
-                <ActiveCard Enabled="@IsActivePlayer" Half="true" Stack="true" Id="@Model.KingdomCards[9]" />
-            }
-            else
-            {
+                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Copper" />
+                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Silver" />
+                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Gold" />
+
                 <SpecialCard Name="card-back" Half="true" Stack="true" />
                 <SpecialCard Name="card-back" Half="true" Stack="true" />
                 <SpecialCard Name="card-back" Half="true" Stack="true" />
@@ -141,7 +144,22 @@
         </div>
 
         <div style="grid-area: discard">
-            <SpecialCard Name="trash" />
+            @if (Model.IsStarted)
+            {
+                var discard = Model.Discards[Session.Username];
+                if (discard.Any())
+                {
+                    <ActiveCard Id="@discard.Last()" Stack="@(discard.Count > 1)" />
+                }
+                else
+                {
+                    <SpecialCard Name="trash" />
+                }
+            }
+            else
+            {
+                <SpecialCard Name="trash" />
+            }
         </div>
 
         <div style="grid-area: deck">
