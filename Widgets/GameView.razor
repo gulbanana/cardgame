@@ -60,41 +60,49 @@
         </div>
 
         <div style="grid-area: actions" class="game-view__actions">
-            @if (Model.IsStarted)
-            {
-                <ActiveCard Large="true" Id="Village" />
-                <ActiveCard Large="true" Id="Market" />
-            }
-            else
-            {                
-                @if (!Model.Players.Contains(Session.Username))
+            <GappedRow>
+                @if (Model.IsStarted)
                 {
-                    <ActiveButton Label="Join game" Action="@(() => Dispatch(new JoinGameCommand()))" />
+                    <ActiveCard Large="true" Id="Village" />
+                    <ActiveCard Large="true" Id="Market" />
+                }
+                else
+                {                
+                    @if (!Model.Players.Contains(Session.Username) && Model.Players.Length < 4)
+                    {
+                        <ActiveButton Label="Join game" Action="@(() => Dispatch(new JoinGameCommand()))" />
+                    }
+                    else
+                    {
+                        @if (Model.Players.Length > 1)
+                        {
+                            <ActiveButton Label="Start game" Action="@(() => Dispatch(new StartGameCommand()))" />
+                        }
+                        <ActiveButton Label="Leave game" Action="@(() => Dispatch(new LeaveGameCommand()))" />
+                    }
+                }
+            </GappedRow>
+        </div>
+
+        <div style="grid-area: hand">
+            <GappedRow>
+                @if (Model.IsStarted)
+                {
+                    <ActiveCard Enabled="@IsActivePlayer" Id="Copper" />
+                    <ActiveCard Enabled="@IsActivePlayer" Id="Copper" />
+                    <ActiveCard Enabled="@IsActivePlayer" Id="Copper" />
+                    <ActiveCard Enabled="@IsActivePlayer" Id="Estate" />
+                    <ActiveCard Enabled="@IsActivePlayer" Id="Estate" />
                 }
                 else
                 {
-                    <ActiveButton Label="Leave game" Action="@(() => Dispatch(new LeaveGameCommand()))" />
+                    <SpecialCard Name="card-back" />
+                    <SpecialCard Name="card-back" />
+                    <SpecialCard Name="card-back" />
+                    <SpecialCard Name="card-back" />
+                    <SpecialCard Name="card-back" />
                 }
-            }
-        </div>
-
-        <div style="grid-area: hand" class="game-view__hand">
-            @if (Model.IsStarted)
-            {
-                <ActiveCard Enabled="@IsActivePlayer" Id="Copper" />
-                <ActiveCard Enabled="@IsActivePlayer" Id="Copper" />
-                <ActiveCard Enabled="@IsActivePlayer" Id="Copper" />
-                <ActiveCard Enabled="@IsActivePlayer" Id="Estate" />
-                <ActiveCard Enabled="@IsActivePlayer" Id="Estate" />
-            }
-            else
-            {
-                <SpecialCard Name="card-back" />
-                <SpecialCard Name="card-back" />
-                <SpecialCard Name="card-back" />
-                <SpecialCard Name="card-back" />
-                <SpecialCard Name="card-back" />
-            }
+            </GappedRow>
         </div>
 
         <div style="grid-area: discard">
@@ -111,11 +119,11 @@
     <div style="grid-area: status" class="game-view__status">
         @if (Model.Players.Any())
         {
-            <span>Current players: @string.Join(", ", Model.Players).</span>
+            <span>@(Model.IsStarted ? "Game in progress." : "Waiting to start.") Current players: @string.Join(", ", Model.Players).</span>
         }
         else
         {
-            <span>No players.</span>
+            <span>@(Model.IsStarted ? "Game in progress." : "Waiting to start.") No players.</span>
         }
     </div>
 

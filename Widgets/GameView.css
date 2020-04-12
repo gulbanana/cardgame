@@ -38,7 +38,7 @@
     display: grid;
     grid-template-areas: 'kingdom kingdom kingdom'
                          'actions actions actions'
-                         'discard hand    deck';
+                         'deck    hand    discard';
     grid-template-rows: auto 1fr auto;
     grid-template-columns: auto 1fr auto;
 }
@@ -55,15 +55,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.game-view__hand {
-    display: flex;
-    justify-content: center;
-}
-
-.game-view__hand > * {
-    margin-right: var(--std-gap);
 }
 
 .game-view__events {

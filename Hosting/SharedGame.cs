@@ -15,12 +15,6 @@ namespace Cardgame
             engine = new GameEngine();
         }
 
-        public SharedGame(GameModel model)
-        {
-            subscriptions = new List<Action<GameModel>>();
-            engine = new GameEngine(model);
-        }
-
         public GameModel Subscribe(Action<GameModel> update)
         {
             subscriptions.Add(update);

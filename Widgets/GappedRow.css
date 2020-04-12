@@ -1,0 +1,12 @@
+.gapped-row {
+    display: flex;
+    justify-content: center;
+}
+
+.gapped-row > * {
+    margin-right: var(--std-gap);
+}
+
+.gapped-row > *:last-child {
+    margin-right: 0;
+}

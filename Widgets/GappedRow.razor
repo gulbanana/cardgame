@@ -1,0 +1,7 @@
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
+
+<div class="gapped-row">
+    @ChildContent
+</div>

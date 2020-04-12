@@ -13,25 +13,14 @@ namespace Cardgame
 
             var demoGame = new GameModel
             {
-                Players = new[]
-                {
-                    "agatha", "beto", "cordelia", "demo", "edgar"
-                },
                 EventLog =
                 {
-                    TextModel.Parse("<spans><player>agatha</player><run> joined the game.</run></spans>"),
-                    TextModel.Parse("<spans><player>beto</player><run> joined the game.</run></spans>"),
-                    TextModel.Parse("<spans><player>cordelia</player><run> joined the game.</run></spans>"),
-                    TextModel.Parse("<spans><player>demo</player><run> joined the game.</run></spans>"),
-                    TextModel.Parse("<spans><player>edgar</player><run> joined the game.</run></spans>"),
                     TextModel.Parse("<run>The game began.</run>"),
                     TextModel.Parse("<spans><player>demo</player><run> played </run><card>Village</card><run>.</run></spans>"),
                     TextModel.Parse("<spans><player>demo</player><run> played </run><card>Market</card><run>.</run></spans>")
                 },
                 ChatLog = 
                 {
-                    new LogEntry { Username = "agatha", Message = "Hello, kingdom!" },
-                    new LogEntry { Username = "edgar", Message = "th̨o̞̞̞͈̦s̵̺̥͉e ̺͉̹̻o̸̰f́ ̸̪͔̖ͅp̧̺͎a̫͚̗͔̯̖͘r̫t͍i͙͉̩̥͕͔͕c̛̩ṳ̮̻͍l̮̗̝̯a҉̩͈͙̗̟̼̼r͚̺̬̗̖̼͍ ͞co͎͙̮n̬̘͇̺͟c̥̞͉e̷͖r̥͟n̴" },
                     new LogEntry { Username = "agatha", Message = "Welcome, demo! Nice of you to finally join us!" },
                 },
                 IsStarted = true,
@@ -43,7 +32,18 @@ namespace Cardgame
                 ActivePlayer = "demo"
             };
 
-            games["demo"] = new SharedGame(demoGame);
+            games["demo"] = new SharedGame();
+            games["demo"].Execute("agatha", new JoinGameCommand { Seq = 0 });
+            games["demo"].Execute("agatha", new ChatCommand { Seq = 1, Message = "Hello, kingdom!" });
+            games["demo"].Execute("beto", new JoinGameCommand { Seq = 2 });
+            games["demo"].Execute("cordelia", new JoinGameCommand { Seq = 3 });
+            games["demo"].Execute("demo", new JoinGameCommand { Seq = 4 });
+            games["demo"].Execute("edgar", new JoinGameCommand { Seq = 5 });
+            games["demo"].Execute("edgar", new ChatCommand { Seq = 6, Message = "th̨o̞̞̞͈̦s̵̺̥͉e ̺͉̹̻o̸̰f́ ̸̪͔̖ͅp̧̺͎a̫͚̗͔̯̖͘r̫t͍i͙͉̩̥͕͔͕c̛̩ṳ̮̻͍l̮̗̝̯a҉̩͈͙̗̟̼̼r͚̺̬̗̖̼͍ ͞co͎͙̮n̬̘͇̺͟c̥̞͉e̷͖r̥͟n̴" });
+            games["demo"].Execute("demo", new StartGameCommand { Seq = 7 });
+            games["demo"].Execute("demo", new PlayCardCommand { Seq = 8, Id = "Village" });
+            games["demo"].Execute("demo", new PlayCardCommand { Seq = 9, Id = "Market" });
+            games["demo"].Execute("agatha", new ChatCommand { Seq = 10, Message = "Welcome, demo! Nice of you to finally join us!" });
         }
 
         public IGame FindGame(string name)

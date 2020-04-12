@@ -7,9 +7,15 @@ namespace Cardgame
 
     public class JoinGameCommand : ClientCommand { }
     public class LeaveGameCommand : ClientCommand { }
+    public class StartGameCommand : ClientCommand { }
 
     public class ChatCommand : ClientCommand 
     { 
         public string Message { get; set; }
+    }
+
+    public class PlayCardCommand : ClientCommand
+    {
+        public string Id { get; set; }
     }
 }
