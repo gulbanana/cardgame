@@ -1,7 +1,13 @@
 ﻿:root {
     --card-width: 100px;
     --card-height: 140px;
+    --card-header: 16px;
     --std-gap: 10px;
+    --card-type-victory: rgb(117, 197, 85);
+    --card-type-treasure: rgb(243, 212, 114);
+    --card-type-action: rgb(240, 237, 222);
+    --card-type-reaction: rgb(119, 173, 222);
+    --card-text: rgb(166, 170, 169);
 }
 
 input[type=text] {

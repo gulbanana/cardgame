@@ -14,30 +14,42 @@
 .card-view__title {
     text-align: center;
     font-size: 12px;
+    background: var(--highlight);
+}
+
+.card-view__picture {
+    overflow: hidden;
+    border: 1px solid var(--highlight);
+    border-width: 0 1px;
 }
 
 .card__header {
-    height: 17px;
-    border-bottom: 1px solid black;
+    height: var(--card-header);
 }
 
 .card__image {
-    height: calc((var(--card-height) - 17px) / 2 - 1px);
-    overflow: hidden;
+    height: calc((var(--card-height) - var(--card-header)) / 2 - 1px);
 }
 
 .card__image-2x {
-    height: calc(var(--card-height) - 17px);
+    height: calc(var(--card-height) - var(--card-header));
     overflow: hidden;
+    border: 1px solid var(--highlight);
+    border-width: 0 1px;
+}
+
+.card__text-separator {
+    height: 2px;
+    border-top: 1px solid var(--card-text);
+    border-bottom: 1px solid black;
 }
 
 .card__text {
-    height: calc((var(--card-height) - 17px) / 2 + 1px);
-    border-top: 2px solid black;
+    height: calc((var(--card-height) - var(--card-header)) / 2 - 1px);
     font-size: 7px;
+    background: var(--card-text);
 }
 
 .card__footer {
-    height: 17px;
-    border-top: 1px solid black;
+    height: var(--card-header);
 }

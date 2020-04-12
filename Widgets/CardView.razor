@@ -5,22 +5,46 @@
     [Parameter] public string Art { get; set; } = "missing";
     [Parameter] public TextModel Text { get; set; }
     [Parameter] public bool Half { get; set; }
+    private string colorType;
+
+    protected override void OnParametersSet()
+    {
+        switch (Type)
+        {
+            case Cards.CardType.Treasure:
+                colorType = "treasure";
+                break;
+
+            case Cards.CardType.Victory:
+                colorType = "victory";
+                break;
+
+            case Cards.CardType.Action when SubType == "Reaction":
+                colorType = "reaction";
+                break;
+
+            default:
+                colorType = "action";
+                break;
+        }
+    }
 }
 
-<div class="card-view">
+<div class="card-view" style="--highlight: var(--card-type-@(colorType))">
     <div class="card__header card-view__title">@Name</div>
     @if (Half) {
-        <div class="card__image">
+        <div class="card__image card-view__picture">
             <img src="/cards/@(Art).jpg" />
         </div>
     } else if (Text == null) {
-        <div class="card__image-2x">
+        <div class="card__image-2x card-view__picture">
             <img src="/cards/@(Art).jpg" />
         </div>
     } else {
-        <div class="card__image">
+        <div class="card__image card-view__picture">
             <img src="/cards/@(Art).jpg" />
         </div>
+        <div class="card__text-separator" />
         <div class="card__text">
             <RichText Model="@Text" />
         </div>
