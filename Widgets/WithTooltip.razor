@@ -2,20 +2,19 @@
 @code {
     [Parameter] public RenderFragment Content { get; set; }
     [Parameter] public RenderFragment Tooltip { get; set; }
+    ElementReference content;
     ElementReference tooltip;
 
-    private async Task MouseMove(MouseEventArgs args)
+    protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        await JS.InvokeAsync<object>("WithTooltip.reposition", tooltip, args.ClientX, args.ClientY);
-    }
-
-    private async Task MouseOut(MouseEventArgs args)
-    {
-        await JS.InvokeAsync<object>("WithTooltip.deposition", tooltip);
+        if (firstRender)
+        {
+            await JS.InvokeAsync<object>("WithTooltip.register", content, tooltip);
+        }
     }
 }
 
-<div class="with-tooltip" @onmouseover="MouseMove" @onmousemove="MouseMove" @onmouseout="MouseOut">
+<div class="with-tooltip" @ref="content">
     @Content
 </div>
 <div class="with-tooltip__tooltip" @ref="tooltip">
