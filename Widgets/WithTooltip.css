@@ -1,3 +1,7 @@
+.with-tooltip {
+    display: contents;
+}
+
 .with-tooltip__tooltip {
     display: none;
     position: fixed;

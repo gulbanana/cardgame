@@ -7,9 +7,7 @@
 <div class="game-view">
     <div style="grid-area: event-log" class="game-view__events">
         <VerticalLog>
-            <p class="game-view__event">Someone did something.</p>
-            <p class="game-view__event">Someone did something else.</p>
-            <p class="game-view__event">An action was performed.</p>
+            <RichText Model="@(new TextModel.Paras { Children = Model.EventLog.ToArray() })"/>
         </VerticalLog>
     </div>
 

@@ -40,20 +40,12 @@
     justify-content: center;
 }
 
-.game-view__hand > * {
+.game-view__hand .card-view {
     margin-right: var(--std-gap);
-}
-
-.game-view__hand > *:last-child {
-    margin-right: 0;
 }
 
 .game-view__events {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-}
-
-.game-view__event {
-    margin: 1em 0 0 0;
 }

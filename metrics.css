@@ -7,7 +7,7 @@
     --card-type-treasure: rgb(243, 212, 114);
     --card-type-action: rgb(240, 237, 222);
     --card-type-reaction: rgb(119, 173, 222);
-    --card-text: rgb(166, 170, 169);
+    --card-text-background: rgb(166, 170, 169);
 }
 
 input[type=text] {

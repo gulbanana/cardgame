@@ -19,6 +19,11 @@ namespace Cardgame
         {
             public TextModel[] Children { get; set; }
         }
+        
+        public class Block : TextModel
+        {
+            public TextModel Child { get; set; }
+        }
 
         public class Run : TextModel
         {
@@ -30,9 +35,9 @@ namespace Cardgame
             public string Name { get; set; }
         }
 
-        public class Block : TextModel
+        public class Card : TextModel
         {
-            public TextModel Child { get; set; }
+            public string Name { get; set; }
         }
 
         public static TextModel Parse(string xml)
@@ -62,6 +67,9 @@ namespace Cardgame
 
                 case "sym":
                     return new Symbol { Name = element.Value };
+
+                case "card":
+                    return new Card { Name = element.Value };
 
                 default:
                     return new Run { Text = element.ToString() };

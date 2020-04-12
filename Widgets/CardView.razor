@@ -9,24 +9,7 @@
 
     protected override void OnParametersSet()
     {
-        switch (Type)
-        {
-            case Cards.CardType.Treasure:
-                colorType = "treasure";
-                break;
-
-            case Cards.CardType.Victory:
-                colorType = "victory";
-                break;
-
-            case Cards.CardType.Action when SubType == "Reaction":
-                colorType = "reaction";
-                break;
-
-            default:
-                colorType = "action";
-                break;
-        }
+        colorType = Cards.All.GetColor(Type, SubType);
     }
 }
 

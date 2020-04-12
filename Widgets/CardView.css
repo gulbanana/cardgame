@@ -40,14 +40,18 @@
 
 .card__text-separator {
     height: 2px;
-    border-top: 1px solid var(--card-text);
+    border-top: 1px solid var(--card-text-background);
     border-bottom: 1px solid black;
+    border-left: 1px solid var(--highlight);
+    border-right: 1px solid var(--highlight);
 }
 
 .card__text {
     height: calc((var(--card-height) - var(--card-header)) / 2 - 1px);
     font-size: 7px;
-    background: var(--card-text);
+    background: var(--card-text-background);
+    border: 1px solid var(--highlight);
+    border-width: 0 1px;
 }
 
 .card__footer {

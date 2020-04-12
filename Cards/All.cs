@@ -23,5 +23,23 @@ namespace Cardgame.Cards
                 ByName[t.Name] = (CardModel)o;
             }
         }
+
+        public static string GetColor(CardType type, string subType)
+        {
+            switch (type)
+            {
+                case Cards.CardType.Treasure:
+                    return "treasure";
+
+                case Cards.CardType.Victory:
+                    return "victory";
+
+                case Cards.CardType.Action when subType == "Reaction":
+                    return "reaction";
+
+                default:
+                    return "action";
+            }
+        }
     }
 }
