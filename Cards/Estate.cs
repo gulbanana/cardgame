@@ -4,5 +4,6 @@ namespace Cardgame.Cards
     {
         public override CardType Type => CardType.Victory;
         public override string Art => "estate-2x";
+        public override int Cost => 2;
     }
 }

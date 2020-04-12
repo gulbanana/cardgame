@@ -12,7 +12,7 @@
 
 .card-view__title {
     text-align: center;
-    font-size: 12px;
+    height: var(--card-header);
     background: var(--highlight);
 }
 
@@ -23,7 +23,7 @@
 }
 
 .card__header {
-    height: var(--card-header);
+    font-size: 12px;
 }
 
 .card__image {
@@ -54,5 +54,12 @@
 }
 
 .card__footer {
-    height: var(--card-header);
+    font-size: 11px;
+    position: relative;
+}
+
+.card__footer-cost {
+    position: absolute;
+    left: 0;
+    bottom: 0;
 }

@@ -2,9 +2,9 @@ namespace Cardgame.Cards
 {
     public class Moat : KingdomCardModel
     {
-        public override string Art => "dom-moat";
-
         public override string SubType => "Reaction";
+        public override string Art => "dom-moat";
+        public override int Cost => 2;        
 
         public override TextModel Text => TextModel.Parse(@"
 <paras>

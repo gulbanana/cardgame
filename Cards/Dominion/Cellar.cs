@@ -3,6 +3,7 @@ namespace Cardgame.Cards
     public class Cellar : KingdomCardModel
     {
         public override string Art => "dom-cellar";
+        public override int Cost => 2;
         
         public override TextModel Text => TextModel.Parse(@"
 <paras>

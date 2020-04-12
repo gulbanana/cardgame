@@ -3,7 +3,8 @@ namespace Cardgame.Cards
     public class Remodel : KingdomCardModel
     {
         public override string Art => "dom-remodel";
-
+        public override int Cost => 4;
+        
         public override TextModel Text => TextModel.Parse(@"
 <lines>
     <run>Trash a card from your hand.</run>

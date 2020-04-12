@@ -3,7 +3,8 @@ namespace Cardgame.Cards
     public class Market : KingdomCardModel
     {
         public override string Art => "dom-market";
-        
+        public override int Cost => 5;
+
         public override TextModel Text => TextModel.Parse(@"
 <block>
     <lines>

@@ -3,6 +3,7 @@
     [Parameter] public Cards.CardType Type { get; set; }
     [Parameter] public string SubType { get; set; }
     [Parameter] public string Art { get; set; } = "missing";
+    [Parameter] public int Cost { get; set; }
     [Parameter] public TextModel Text { get; set; }
     [Parameter] public bool Half { get; set; }
     [Parameter] public bool Stack { get; set; }
@@ -35,13 +36,15 @@
             </div>
         }
         <div class="card__footer card-view__title">
+            <img class="card__footer-cost" src="/symbols/coin@(Cost).png" width="16" height="16" />
+
             @if (SubType == null)
             {
-                <text>@Type</text>
+                <span>@Type</span>
             }
             else
             {
-                <text>@Type - @SubType</text>
+                <span>@Type - @SubType</span>
             }
         </div>
     </div>

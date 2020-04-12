@@ -3,6 +3,7 @@ namespace Cardgame.Cards
     public class Woodcutter : KingdomCardModel
     {
         public override string Art => "dom-woodcutter";
+        public override int Cost => 3;
 
         public override TextModel Text => TextModel.Parse(@"
 <block>

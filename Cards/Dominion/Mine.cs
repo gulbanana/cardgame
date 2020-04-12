@@ -3,7 +3,8 @@ namespace Cardgame.Cards
     public class Mine : KingdomCardModel
     {
         public override string Art => "dom-mine";
-        
+        public override int Cost => 5;
+
         public override TextModel Text => TextModel.Parse(@"
 <lines>
     <run>Trash a Treasure card from your hand.</run>
