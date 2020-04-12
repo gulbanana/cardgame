@@ -1,11 +1,31 @@
 @code {
     [Parameter] public string Name { get; set; }
     [Parameter] public string Type { get; set; }
+    [Parameter] public bool Half { get; set; }
+    [Parameter] public string Art { get; set; } = "dom-cellar";
+    [Parameter] public string Text { get; set; } = "";
 }
 
 <div class="card">
-    <div class="card__header">@Name</div>
-    <div class="card__image" />
-    <div class="card__text" />
-    <div class="card__footer">@Type</div>
+    <div class="card__header card__title">@Name</div>
+    @if (Half) {
+        <div class="card__image">
+            <img src="/cards/@(Art).jpg" />
+        </div>
+    } else if (Text == null) {
+        <div class="card__image-2x">
+            <img src="/cards/@(Art).jpg" />
+        </div>
+    } else {
+        <div class="card__image">
+            <img src="/cards/@(Art).jpg" />
+        </div>
+        <div class="card__text">
+            @foreach (var line in Text.Split("\r\n"))
+            {
+                @line<br/>
+            }
+        </div>
+    }
+    <div class="card__footer card__title">@Type</div>
 </div>
