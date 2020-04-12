@@ -44,11 +44,11 @@
     justify-content: center;
 }
 
-.game-view__hand > .card {
+.game-view__hand > .card-view {
     margin-right: var(--std-gap);
 }
 
-.game-view__hand > .card:last-child {
+.game-view__hand > .card-view:last-child {
     margin-right: 0;
 }
 

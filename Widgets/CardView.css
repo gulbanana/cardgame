@@ -1,4 +1,4 @@
-.card {
+.card-view {
     width: var(--card-width);
     border: 2px solid black;
     display: flex;
@@ -7,7 +7,7 @@
     border-radius: 4px;
 }
 
-.card img {
+.card-view img {
     max-width: calc(var(--card-width) - 4px);
 }
 

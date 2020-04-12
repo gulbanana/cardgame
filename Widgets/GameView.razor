@@ -17,35 +17,35 @@
 
     <div style="grid-area: board" class="game-view__board">
         <div class="game-view__kingdom">
-            <Card Name="Estate" Type="Victory" Half="true" Art="estate-2x" />
-            <Card Name="Duchy" Type="Victory" Half="true" Art="duchy-2x" />
-            <Card Name="Province" Type="Victory" Half="true" Art="province-2x" />
-            <Card Name="Cellar" Type="Action" Half="true" Art="dom-cellar" />
-            <Card Name="Market" Type="Action" Half="true" Art="dom-market" />
-            <Card Name="Mine" Type="Action" Half="true" Art="dom-mine" />
-            <Card Name="Remodel" Type="Action" Half="true" Art="dom-remodel" />
-            <Card Name="Moat" Type="Action - Reaction" Half="true" Art="dom-moat" />
+            <Card Half="true" Id="Estate" />
+            <Card Half="true" Id="Duchy" />
+            <Card Half="true" Id="Province" />
+            <Card Half="true" Id="Cellar" />
+            <Card Half="true" Id="Market" />
+            <Card Half="true" Id="Mine" />
+            <Card Half="true" Id="Remodel" />
+            <Card Half="true" Id="Moat" />
 
-            <Card Name="Copper" Type="Treasure" Half="true" Art="copper-2x" />
-            <Card Name="Silver" Type="Treasure" Half="true" Art="silver-2x" />
-            <Card Name="Gold" Type="Treasure" Half="true" Art="gold-2x" />
-            <Card Name="Smithy" Type="Action" Half="true" Art="dom-smithy" />
-            <Card Name="Village" Type="Action" Half="true" Art="dom-village" />
-            <Card Name="Woodcutter" Type="Action" Half="true" Art="dom-woodcutter" />
-            <Card Name="Workshop" Type="Action" Half="true" Art="dom-workshop" />
-            <Card Name="Militia" Type="Action - Attack" Half="true" Art="dom-militia" />
+            <Card Half="true" Id="Copper" />
+            <Card Half="true" Id="Silver" />
+            <Card Half="true" Id="Gold" />
+            <Card Half="true" Id="Smithy" />
+            <Card Half="true" Id="Village" />
+            <Card Half="true" Id="Woodcutter" />
+            <Card Half="true" Id="Workshop" />
+            <Card Half="true" Id="Militia" />
         </div>
 
         <div class="game-view__actions">
-            <Card Name="Village" Type="Action" Art="dom-village" Text=@("+1 Card\r\n+2 Actions") />
+            <Card Id="Village" />
         </div>
 
         <div class="game-view__hand">
-            <Card Name="Copper" Type="Treasure" Art="copper-2x" Text="@null" />
-            <Card Name="Copper" Type="Treasure" Art="copper-2x" Text="@null" />
-            <Card Name="Copper" Type="Treasure" Art="copper-2x" Text="@null" />
-            <Card Name="Estate" Type="Victory" Art="estate-2x" Text="@null" />
-            <Card Name="Estate" Type="Victory" Art="estate-2x" Text="@null" />
+            <Card Id="Copper" />
+            <Card Id="Copper" />
+            <Card Id="Copper" />
+            <Card Id="Estate" />
+            <Card Id="Estate" />
         </div>
     </div>
 
