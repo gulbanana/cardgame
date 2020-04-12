@@ -1,0 +1,17 @@
+.rich-text__paras > p:first-child {
+    margin-top: 0;
+}
+
+.rich-text__paras > p:last-child {
+    margin-bottom: 0;
+}
+
+.rich-text__block {
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.rich-text__symbol {
+    vertical-align: bottom;
+}

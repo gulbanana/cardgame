@@ -3,7 +3,6 @@
     border: 2px solid black;
     display: flex;
     flex-direction: column;
-    font-size: 11px;
     border-radius: 4px;
     background: white;
 }
@@ -14,11 +13,12 @@
 
 .card-view__title {
     text-align: center;
+    font-size: 12px;
 }
 
 .card__header {
     height: 17px;
-    border-bottom: 2px solid black;
+    border-bottom: 1px solid black;
 }
 
 .card__image {
@@ -34,11 +34,10 @@
 .card__text {
     height: calc((var(--card-height) - 17px) / 2 + 1px);
     border-top: 2px solid black;
-    font-weight: bold;
-    text-align: center;
+    font-size: 7px;
 }
 
 .card__footer {
     height: 17px;
-    border-top: 2px solid black;
+    border-top: 1px solid black;
 }

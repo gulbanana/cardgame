@@ -4,6 +4,6 @@ namespace Cardgame.Cards
     {
         public abstract CardType Type { get; }
         public abstract string Art { get; }
-        public abstract string Text { get; }
+        public abstract TextModel Text { get; }
     }
 }

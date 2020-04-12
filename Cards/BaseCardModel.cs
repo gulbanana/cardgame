@@ -2,6 +2,6 @@ namespace Cardgame.Cards
 {
     public abstract class BaseCardModel : CardModel
     {
-        public override string Text => null;
+        public override TextModel Text => null;
     }
 }

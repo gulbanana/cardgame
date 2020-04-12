@@ -1,8 +1,9 @@
 @code {
     [Parameter] public string Name { get; set; }
     [Parameter] public Cards.CardType Type { get; set; }
+    [Parameter] public string SubType { get; set; }
     [Parameter] public string Art { get; set; } = "missing";
-    [Parameter] public string Text { get; set; } = "";
+    [Parameter] public TextModel Text { get; set; }
     [Parameter] public bool Half { get; set; }
 }
 
@@ -21,11 +22,17 @@
             <img src="/cards/@(Art).jpg" />
         </div>
         <div class="card__text">
-            @foreach (var line in Text.Split("\r\n"))
-            {
-                @line<br/>
-            }
+            <RichText Model="@Text" />
         </div>
     }
-    <div class="card__footer card-view__title">@Type</div>
+    <div class="card__footer card-view__title">
+        @if (SubType == null)
+        {
+            <text>@Type</text>
+        }
+        else
+        {
+            <text>@Type - @SubType</text>
+        }
+    </div>
 </div>

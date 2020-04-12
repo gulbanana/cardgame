@@ -1,0 +1,49 @@
+@code {
+    [Parameter] public TextModel Model { get; set; }
+}
+
+@switch (Model)
+{
+    case TextModel.Spans spans:
+        @foreach (var span in spans.Children)
+        {
+            <RichText Model="@span" />
+        }
+        break;
+
+    case TextModel.Lines lines:
+        @foreach (var line in lines.Children)
+        {
+            <RichText Model="@line" /><br />
+        }
+        break;
+
+    case TextModel.Paras paras:
+        <div class="rich-text__paras">
+            @foreach (var para in paras.Children)
+            {
+                <p>
+                    <RichText Model="@para" />
+                </p>                
+            }
+        </div>
+        break;
+
+    case TextModel.Run run:
+        <text>@run.Text</text>
+        break;
+
+    case TextModel.Symbol symbol:
+        <img class="rich-text__symbol" src="symbols/@(symbol.Name).png" width="8" height="8">
+        break;
+    
+    case TextModel.Block block:
+        <div class="rich-text__block">
+            <RichText Model="@block.Child" />
+        </div>
+        break;
+
+    default:
+        <text>@Model</text>
+        break;
+}
