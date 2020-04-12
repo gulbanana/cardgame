@@ -11,6 +11,11 @@ namespace Cardgame
             Model = new GameModel();
         }
 
+        public GameEngine(GameModel model)
+        {
+            Model = model;
+        }
+
         public void Execute(string username, ClientCommand command)
         {
             switch (command)

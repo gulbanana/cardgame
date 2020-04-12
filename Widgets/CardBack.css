@@ -1,0 +1,20 @@
+.card-back {
+    width: var(--card-width);
+    border: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+}
+
+.card-back img {
+    max-width: calc(var(--card-width) - 4px);
+    object-fit: cover;
+}
+
+.card-back__1x {
+    height: calc(var(--card-body)/2 + var(--card-header)*2);
+}
+
+.card-back__2x {
+    height: calc(var(--card-body) + var(--card-header)*2);
+}

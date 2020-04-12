@@ -4,7 +4,6 @@
     display: flex;
     flex-direction: column;
     border-radius: 4px;
-    background: white;
 }
 
 .card-view img {
@@ -28,11 +27,11 @@
 }
 
 .card__image {
-    height: calc((var(--card-height) - var(--card-header)) / 2 - 1px);
+    height: calc(var(--card-body) / 2 - 1px);
 }
 
 .card__image-2x {
-    height: calc(var(--card-height) - var(--card-header));
+    height: var(--card-body);
     overflow: hidden;
     border: 1px solid var(--highlight);
     border-width: 0 1px;
@@ -47,7 +46,7 @@
 }
 
 .card__text {
-    height: calc((var(--card-height) - var(--card-header)) / 2 - 1px);
+    height: calc(var(--card-body) / 2 - 1px);
     font-size: 7px;
     background: var(--card-text-background);
     border: 1px solid var(--highlight);

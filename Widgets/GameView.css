@@ -59,7 +59,7 @@
     justify-content: center;
 }
 
-.game-view__hand .card-view {
+.game-view__hand > * {
     margin-right: var(--std-gap);
 }
 

@@ -18,20 +18,44 @@
             <Card Half="true" Id="Estate" />
             <Card Half="true" Id="Duchy" />
             <Card Half="true" Id="Province" />
-            <Card Half="true" Id="Cellar" />
-            <Card Half="true" Id="Market" />
-            <Card Half="true" Id="Mine" />
-            <Card Half="true" Id="Remodel" />
-            <Card Half="true" Id="Moat" />
+
+            @if (Model.IsStarted)
+            {
+                <Card Half="true" Id="@Model.KingdomCards[0]" />
+                <Card Half="true" Id="@Model.KingdomCards[1]" />
+                <Card Half="true" Id="@Model.KingdomCards[2]" />
+                <Card Half="true" Id="@Model.KingdomCards[3]" />
+                <Card Half="true" Id="@Model.KingdomCards[4]" />
+            }
+            else
+            {
+                <CardBack Half="true" />
+                <CardBack Half="true" />
+                <CardBack Half="true" />
+                <CardBack Half="true" />
+                <CardBack Half="true" />
+            }
 
             <Card Half="true" Id="Copper" />
             <Card Half="true" Id="Silver" />
             <Card Half="true" Id="Gold" />
-            <Card Half="true" Id="Smithy" />
-            <Card Half="true" Id="Village" />
-            <Card Half="true" Id="Woodcutter" />
-            <Card Half="true" Id="Workshop" />
-            <Card Half="true" Id="Militia" />
+
+            @if (Model.IsStarted)
+            {
+                <Card Half="true" Id="@Model.KingdomCards[5]" />
+                <Card Half="true" Id="@Model.KingdomCards[6]" />
+                <Card Half="true" Id="@Model.KingdomCards[7]" />
+                <Card Half="true" Id="@Model.KingdomCards[8]" />
+                <Card Half="true" Id="@Model.KingdomCards[9]" />
+            }
+            else
+            {
+                <CardBack Half="true" />
+                <CardBack Half="true" />
+                <CardBack Half="true" />
+                <CardBack Half="true" />
+                <CardBack Half="true" />
+            }
         </div>
 
         <div class="game-view__actions">
@@ -40,11 +64,22 @@
         </div>
 
         <div class="game-view__hand">
-            <Card Id="Copper" />
-            <Card Id="Copper" />
-            <Card Id="Copper" />
-            <Card Id="Estate" />
-            <Card Id="Estate" />
+            @if (Model.IsStarted)
+            {
+                <Card Id="Copper" />
+                <Card Id="Copper" />
+                <Card Id="Copper" />
+                <Card Id="Estate" />
+                <Card Id="Estate" />
+            }
+            else
+            {
+                <CardBack />
+                <CardBack />
+                <CardBack />
+                <CardBack />
+                <CardBack />
+            }
         </div>
     </div>
 

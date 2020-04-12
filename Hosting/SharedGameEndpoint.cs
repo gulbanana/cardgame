@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Cardgame
@@ -6,46 +5,49 @@ namespace Cardgame
     // adapter implementing game protocol using shared memory
     class SharedGameEndpoint : IGameEndpoint
     {
-        private readonly List<Action<GameModel>> subscriptions;
-        private readonly GameEngine engine;
+        private readonly Dictionary<string, SharedGame> games;
 
         public SharedGameEndpoint()
         {
-            subscriptions = new List<Action<GameModel>>();
-            engine = new GameEngine();
-        }
+            games = new Dictionary<string, SharedGame>();
 
-        public GameModel Subscribe(Action<GameModel> update)
-        {
-            subscriptions.Add(update);
-            return engine.Model;
-        }
-
-        public void Unsubscribe(Action<GameModel> update)
-        {
-            subscriptions.Remove(update);
-        }
-
-        public string Execute(string username, ClientCommand command)
-        {
-            try
+            var demoGame = new GameModel
             {
-                lock (engine)
+                Players = new[]
                 {
-                    engine.Execute(username, command);
-                }
-
-                foreach (var subscriber in subscriptions)
+                    "agatha", "beto", "cordelia", "demo", "edgar"
+                },
+                IsStarted = true,
+                KingdomCards = new[]
                 {
-                    subscriber(engine.Model);
+                    "Cellar", "Market", "Mine", "Remodel", "Moat",
+                    "Smithy", "Village", "Woodcutter", "Workshop", "Militia"
+                },
+                ChatLog = 
+                {
+                    new LogEntry { Username = "agatha", Message = "Hello, kingdom!" },
+                    new LogEntry { Username = "edgar", Message = "th̨o̞̞̞͈̦s̵̺̥͉e ̺͉̹̻o̸̰f́ ̸̪͔̖ͅp̧̺͎a̫͚̗͔̯̖͘r̫t͍i͙͉̩̥͕͔͕c̛̩ṳ̮̻͍l̮̗̝̯a҉̩͈͙̗̟̼̼r͚̺̬̗̖̼͍ ͞co͎͙̮n̬̘͇̺͟c̥̞͉e̷͖r̥͟n̴" },
+                    new LogEntry { Username = "agatha", Message = "Welcome, demo! Nice of you to finally join us!" },
+                },
+                EventLog =
+                {
+                    TextModel.Parse("<run>The game began.</run>"),
+                    TextModel.Parse("<spans><run>You played </run><card>Village</card><run>.</run></spans>"),
+                    TextModel.Parse("<spans><run>You played </run><card>Market</card><run>.</run></spans>")
                 }
+            };
 
-                return null;
-            }
-            catch (CommandException e)
+            games["demo"] = new SharedGame(demoGame);
+        }
+
+        public IGame FindGame(string name)
+        {
+            if (!games.ContainsKey(name))
             {
-                return $"{username}: error executing command {command.GetType().Name}: {e.Message}";
+                games[name] = new SharedGame();
             }
+
+            return games[name];
         }
     }
 }

@@ -1,5 +1,5 @@
 .with-tooltip {
-    display: contents;
+    display: inline;
 }
 
 .with-tooltip__tooltip {

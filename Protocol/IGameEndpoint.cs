@@ -5,6 +5,11 @@ namespace Cardgame
     // theoretical client-server separation point
     public interface IGameEndpoint
     {
+        IGame FindGame(string name);
+    }
+
+    public interface IGame
+    {
         GameModel Subscribe(Action<GameModel> update);
         void Unsubscribe(Action<GameModel> update);
         

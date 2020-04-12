@@ -1,20 +1,15 @@
-﻿@page "/play/{GameName}"
+﻿@page "/demo"
 @inject NavigationManager Navigation
 @inject IGameEndpoint Endpoint
 @inject IUserSession Session
 @code {
-    [Parameter] public string GameName { get; set; }
     private IGame game;
     private GameModel currentModel;
 
     protected override void OnInitialized()
     {
-        if (!Session.IsLoggedIn)
-        {
-            Navigation.NavigateTo("/");
-        }
-
-        game = Endpoint.FindGame(GameName);
+        Session.Login("demo");
+        game = Endpoint.FindGame("demo");
         currentModel = game.Subscribe(OnUpdate);
     }
 
