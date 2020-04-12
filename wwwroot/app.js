@@ -4,7 +4,7 @@ var WithTooltip;
     function register(content, tooltip) {
         content.onmouseenter = (ev) => reposition(tooltip, ev.clientX, ev.clientY);
         content.onmousemove = (ev) => reposition(tooltip, ev.clientX, ev.clientY);
-        content.onmouseleave = (ev) => reposition(tooltip, ev.clientX, ev.clientY);
+        content.onmouseleave = (ev) => deposition(tooltip);
     }
     WithTooltip.register = register;
     function reposition(element, x, y) {
@@ -27,9 +27,7 @@ var WithTooltip;
             element.style.bottom = null;
         }
     }
-    WithTooltip.reposition = reposition;
     function deposition(element) {
         element.classList.remove("with-tooltip__tooltip--visible");
     }
-    WithTooltip.deposition = deposition;
 })(WithTooltip || (WithTooltip = {}));

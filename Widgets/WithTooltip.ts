@@ -2,10 +2,10 @@ namespace WithTooltip {
     export function register(content: HTMLElement, tooltip: HTMLElement) {
         content.onmouseenter = (ev) => reposition(tooltip, ev.clientX, ev.clientY);
         content.onmousemove = (ev) => reposition(tooltip, ev.clientX, ev.clientY);
-        content.onmouseleave = (ev) => reposition(tooltip, ev.clientX, ev.clientY);
+        content.onmouseleave = (ev) => deposition(tooltip);
     }
 
-    export function reposition(element: HTMLElement, x: number, y: number) {
+    function reposition(element: HTMLElement, x: number, y: number) {
         element.classList.add("with-tooltip__tooltip--visible");
 
         element.style.left = x+2 + "px";
@@ -15,7 +15,7 @@ namespace WithTooltip {
             if (zoomedChild != null) {
                 zoomedChild.classList.add("magnify--bottom-left");
             }
-            
+
             element.style.top = null;
             element.style.bottom = (window.innerHeight - y) + 2 + "px";
         } else {
@@ -29,7 +29,7 @@ namespace WithTooltip {
         }
     }
 
-    export function deposition(element: HTMLElement) {
+    function deposition(element: HTMLElement) {
         element.classList.remove("with-tooltip__tooltip--visible");
     }
 }
