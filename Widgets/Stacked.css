@@ -7,7 +7,7 @@
     height: var(--card-height);
     position: absolute;
     top: calc(var(--offset) * -1);
-    left: var(--offset);
+    left: calc(var(--offset) * -1);
     border: 2px solid var(--card-border-color);
     border-radius: 4px;
     z-index: -1;
