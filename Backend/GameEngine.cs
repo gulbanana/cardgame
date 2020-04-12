@@ -50,9 +50,14 @@ namespace Cardgame
                     if (Model.IsStarted) throw new CommandException($"The game is already in progress.");
 
                     Model.IsStarted = true;
-                    Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<string> { "Copper", "Copper", "Copper", "Estate", "Estate" });
-                    Model.Decks = Model.Players.ToDictionary(k => k, _ => new List<string>());
+                    Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<string>());
                     Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<string>());
+                    Model.Decks = Model.Players.ToDictionary(k => k, _ => 
+                    {
+                        var deck = new List<string>{ "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Estate", "Estate", "Estate" };
+                        deck.Shuffle();
+                        return deck;
+                    });
                     Model.KingdomCards = new[] // XX pick at random instead!
                     {
                         "Cellar", "Market", "Mine", "Remodel", "Moat",
@@ -80,7 +85,14 @@ namespace Cardgame
                         case CardType.Action when playedCard is Cards.KingdomCardModel action:
                             if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
                             if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
-                            throw new System.NotImplementedException();
+
+                            // actually using card not implemented                       
+                            Model.ActionsRemaining--;
+                            if (Model.ActionsRemaining == 0)
+                            {
+                                Model.BuyPhase = true;
+                            }
+                            break;
                         
                         case CardType.Treasure when playedCard is Cards.TreasureCardModel treasure:
                             if (!Model.BuyPhase)
@@ -109,8 +121,16 @@ namespace Cardgame
                     // XXX reduce count of stack 
                     Model.Discards[username].Add(buyCard.Id);
                     Model.MoneyRemaining -= boughtCard.Cost;
+                    Model.BuysRemaining -= 1;
 
                     LogEvent($"<spans><player>{username}</player><run> bought </run><card>{buyCard.Id}</card><run>.</run></spans>");
+
+                    if (Model.BuysRemaining == 0)
+                    {
+                        EndTurn();
+                        BeginTurn();
+                    }
+
                     break;
 
                 case var unknown:
@@ -131,7 +151,12 @@ namespace Cardgame
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
             Model.MoneyRemaining = 0;
-            Model.PlayedCards.Clear();
+
+            DrawCard();
+            DrawCard();
+            DrawCard();
+            DrawCard();
+            DrawCard();
         }
 
         private void EndTurn()
@@ -141,7 +166,36 @@ namespace Cardgame
             {
                 var first = Model.PlayedCards[0];
                 Model.PlayedCards.RemoveAt(0);
-                discard.Append(first);
+                discard.Add(first);
+            }
+
+            var hand = Model.Hands[Model.ActivePlayer];
+            while (hand.Any())
+            {
+                var first = hand[0];
+                hand.RemoveAt(0);
+                discard.Add(first);
+            }
+        }
+
+        private void DrawCard()
+        {
+            var deck = Model.Decks[Model.ActivePlayer];
+            var hand = Model.Hands[Model.ActivePlayer];
+
+            var first = deck[0];
+            deck.RemoveAt(0);
+            hand.Add(first);
+            LogEvent($"<spans><player>{Model.ActivePlayer}</player><run> drew a card.</run></spans>");
+            
+            if (!deck.Any())
+            {
+                var discard = Model.Discards[Model.ActivePlayer];
+                deck.AddRange(discard);
+                deck.Shuffle();
+                discard.Clear();
+
+                LogEvent($"<spans><player>{Model.ActivePlayer}</player><run> reshuffled.</run></spans>");
             }
         }
     }

@@ -44,21 +44,21 @@
                 <ActiveCard Enabled="false" Half="true" Stack="true" Id="Duchy" />
                 <ActiveCard Enabled="false" Half="true" Stack="true" Id="Province" />
 
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
+                <SpecialCard Name="card-back" Half="true" Stack="3" />
+                <SpecialCard Name="card-back" Half="true" Stack="3" />
+                <SpecialCard Name="card-back" Half="true" Stack="3" />
+                <SpecialCard Name="card-back" Half="true" Stack="3" />
+                <SpecialCard Name="card-back" Half="true" Stack="3" />
 
                 <ActiveCard Enabled="false" Half="true" Stack="true" Id="Copper" />
                 <ActiveCard Enabled="false" Half="true" Stack="true" Id="Silver" />
                 <ActiveCard Enabled="false" Half="true" Stack="true" Id="Gold" />
 
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
-                <SpecialCard Name="card-back" Half="true" Stack="true" />
+                <SpecialCard Name="card-back" Half="true" Stack="3" />
+                <SpecialCard Name="card-back" Half="true" Stack="3" />
+                <SpecialCard Name="card-back" Half="true" Stack="3" />
+                <SpecialCard Name="card-back" Half="true" Stack="3" />
+                <SpecialCard Name="card-back" Half="true" Stack="3" />
             }
         </div>
 
@@ -84,9 +84,9 @@
         else
         {
             <div style="grid-area: turn" class="game-view__turn-status">
-                <p>Actions: @Model.ActionsRemaining</p>
+                <p style="@(Model.BuyPhase ? "font-weight: normal" : "")">Actions: @Model.ActionsRemaining</p>
                 <p>Buys: @Model.BuysRemaining</p>
-                <p>$@Model.MoneyRemaining</p>
+                <p style="@(Model.MoneyRemaining == 0 ? "font-weight: normal" : "")">$@Model.MoneyRemaining</p>
             </div>
 
             <div style="grid-area: actions">
@@ -149,7 +149,7 @@
                 var discard = Model.Discards[Session.Username];
                 if (discard.Any())
                 {
-                    <ActiveCard Id="@discard.Last()" Stack="@(discard.Count > 1)" />
+                    <ActiveCard Id="@discard.Last()" Stack="@(discard.Count > 1)" Color="special" />
                 }
                 else
                 {
@@ -163,7 +163,7 @@
         </div>
 
         <div style="grid-area: deck">
-            <SpecialCard Name="card-back" Stack="true" />
+            <SpecialCard Name="card-back" Stack="@(!Model.IsStarted ? 1 : Model.Decks[Session.Username].Count)" />
         </div>
     </div>
 

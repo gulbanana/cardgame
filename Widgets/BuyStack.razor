@@ -7,6 +7,7 @@
 
 @{
     var isEnabled = Session.Username.Equals(Game.ActivePlayer) &&
+        Game.BuysRemaining > 0 &&
         Cards.All.ByName.ContainsKey(Id) &&
         Cards.All.ByName[Id].Cost <= Game.MoneyRemaining;
 }

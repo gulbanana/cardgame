@@ -7,15 +7,18 @@
     [Parameter] public TextModel Text { get; set; }
     [Parameter] public bool Half { get; set; }
     [Parameter] public bool Stack { get; set; }
-    private string colorType;
+    [Parameter] public string Color { get; set; }
 
     protected override void OnParametersSet()
     {
-        colorType = Cards.All.GetColor(Type, SubType);
+        if (Color == null)
+        {
+            Color = Cards.All.GetColor(Type, SubType);
+        }
     }
 }
 
-<Stacked Size="@(Stack ? 2 : 0)" Type="@colorType" Half="@Half">
+<Stacked Size="@(Stack ? 3 : 0)" Type="@Color" Half="@Half">
     <div class="card-view">
         <div class="card__header card-view__title">@Name</div>
         @if (Half) {

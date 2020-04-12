@@ -7,9 +7,9 @@
 
 <div class="stacked" style="--highlight: var(--card-type-@(Type))">
     @ChildContent
-    @if (Size > 0)
+    @if (Size > 1)
     {
-        if (Size > 1)
+        if (Size > 2)
         {
             <div class="stacked__frame @(Half ? "stacked__frame--half": "")" style="--offset: 8px"/>
         }

@@ -6,6 +6,7 @@
     [Parameter] public bool Half { get; set; }
     [Parameter] public bool Large { get; set; }
     [Parameter] public bool Stack { get; set; }
+    [Parameter] public string Color { get; set; }
     private string subType;
 
     protected override void OnParametersSet()
@@ -38,7 +39,7 @@
     <div class="active-card__large-wrapper">
         <Magnify>
             <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@Action">
-                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
+                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
             </div>
         </Magnify>
     </div>
@@ -48,12 +49,12 @@ else
     <WithTooltip>
         <Content>
             <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@Action">
-                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
+                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
             </div>
         </Content>
         <Tooltip>
             <Magnify>
-                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="false" />
+                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="false" />
             </Magnify>
         </Tooltip>
     </WithTooltip>    
