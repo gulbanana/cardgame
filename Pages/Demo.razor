@@ -9,7 +9,7 @@
     protected override void OnInitialized()
     {
         Session.Login("demo");
-        game = Endpoint.FindGame("demo");
+        game = Endpoint.FindGame("demo-" + Guid.NewGuid().ToString());
         currentModel = game.Subscribe(OnUpdate);
     }
 
