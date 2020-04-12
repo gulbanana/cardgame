@@ -29,6 +29,7 @@
 
     private void DoExecute(ClientCommand command)
     {
+        command.Seq = currentModel.Seq;
         var error = game.Execute(Session.Username, command);
 
         if (error != null)

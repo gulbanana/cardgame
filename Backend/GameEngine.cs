@@ -18,6 +18,11 @@ namespace Cardgame
 
         public void Execute(string username, ClientCommand command)
         {
+            if (Model.Seq != command.Seq)
+            {
+                throw new CommandException($"Incorrect sequence number.");
+            }
+
             switch (command)
             {
                 case JoinGameCommand _:
@@ -38,6 +43,8 @@ namespace Cardgame
                 case var unknown:
                     throw new CommandException($"Unrecognised command {unknown}");
             }
+
+            Model.Seq++;
         }
     }
 }
