@@ -3,6 +3,12 @@
     transform-origin: top left;
 }
 
+@media (max-height: 740px) {
+    .magnify > * {
+        transform: scale(1.5);
+    }
+}
+
 .magnify--center > * {
     transform-origin: center;
 }

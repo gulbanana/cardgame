@@ -7,7 +7,6 @@
 .chat-view__log {
     flex-grow: 1;
     line-height: 1.15;
-    min-height: calc(10em * 1.15);
     overflow-y: auto;
 }
 

@@ -4,7 +4,7 @@
     display: grid;
     grid-template-areas: 'event-log left-bar board right-bar status' 
                          'event-log left-bar board right-bar chat-log';
-    grid-template-columns: 1fr auto calc(var(--card-width) * 8 + (var(--std-gap) * 7)) auto 1fr;
+    grid-template-columns: minmax(400px, 1fr) 2px calc(var(--card-width) * 8 + (var(--std-gap) * 7)) 2px minmax(400px, 1fr);
     grid-template-rows: auto 1fr;
     grid-column-gap: var(--std-gap);
 }
@@ -13,6 +13,25 @@
     display: flex;
     justify-content: flex-end;
     align-items: baseline;
+}
+
+@media (max-width: 1730px) {
+    .game-view {
+        grid-template-areas: 'status    right-bar board' 
+                             'event-log right-bar board' 
+                             'left-bar  right-bar board'
+                             'chat-log  right-bar board';
+        grid-template-columns: minmax(300px, 1fr) 2px calc(var(--card-width) * 8 + (var(--std-gap) * 7));
+        grid-template-rows: auto 1fr calc(2px + var(--std-gap)*2) auto;
+    }
+
+    .game-view__status {
+        justify-content: flex-start;
+    }
+
+    .chat-view {
+        max-height: 50vh;
+    }
 }
 
 .game-view__board {
