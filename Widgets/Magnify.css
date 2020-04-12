@@ -1,12 +1,6 @@
 .magnify > * {
-    transform: scale(2.0);
+    transform: scale(var(--zoom-factor));
     transform-origin: top left;
-}
-
-@media (max-height: 740px) {
-    .magnify > * {
-        transform: scale(1.5);
-    }
 }
 
 .magnify--center > * {

@@ -27,11 +27,13 @@
 
 @if (Large)
 {
-    <Magnify Center>
-        <div class="active-card @(Enabled ? "active-card--enabled" : "")">
-            <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Text="@Model.Text" Half="@Half" Stack="@Stack" />
-        </div>
-    </Magnify>
+    <div class="active-card__large-wrapper">
+        <Magnify>
+            <div class="active-card @(Enabled ? "active-card--enabled" : "")">
+                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Text="@Model.Text" Half="@Half" Stack="@Stack" />
+            </div>
+        </Magnify>
+    </div>
 }
 else
 {

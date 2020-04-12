@@ -18,6 +18,21 @@
     --inactive-color: black;
     --active-color: rgb(0, 128, 255);
     --active-focus-color: blue;
+
+    --zoom-factor: 2.0;
+}
+
+
+@media (max-height: 740px) {
+    :root {
+        --zoom-factor: 1.5;
+    }
+}
+
+@media (max-height: 640px) {
+    :root {
+        --zoom-factor: 1.0;
+    }
 }
 
 input[type=text] {
