@@ -28,13 +28,13 @@ namespace Cardgame.Cards
         {
             switch (type)
             {
-                case Cards.CardType.Treasure:
+                case CardType.Treasure:
                     return "treasure";
 
-                case Cards.CardType.Victory:
+                case CardType.Victory:
                     return "victory";
 
-                case Cards.CardType.Action when subType == "Reaction":
+                case CardType.Action when subType == "Reaction":
                     return "reaction";
 
                 default:

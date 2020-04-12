@@ -18,4 +18,9 @@ namespace Cardgame
     {
         public string Id { get; set; }
     }
+
+    public class BuyCardCommand : ClientCommand
+    {
+        public string Id { get; set; }
+    }
 }

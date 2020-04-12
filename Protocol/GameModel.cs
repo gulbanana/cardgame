@@ -18,5 +18,15 @@ namespace Cardgame
 
         // game state
         public string ActivePlayer { get; set; }
+        public Dictionary<string, List<string>> Hands { get; set; }
+        public Dictionary<string, List<string>> Decks { get; set; }
+        public Dictionary<string, List<string>> Discards { get; set; }
+
+        // turn state
+        public bool BuyPhase { get; set; }
+        public int ActionsRemaining { get; set; }
+        public int BuysRemaining { get; set; }
+        public int MoneyRemaining { get; set; }
+        public List<string> PlayedCards { get; set; }
     }
 }

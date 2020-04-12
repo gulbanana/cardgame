@@ -1,4 +1,4 @@
-namespace Cardgame.Cards
+namespace Cardgame
 {
     public enum CardType
     {

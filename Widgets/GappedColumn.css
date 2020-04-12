@@ -1,0 +1,15 @@
+.gapped-column {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.gapped-column > * {
+    margin-bottom: var(--std-gap);
+}
+
+.gapped-column > *:last-child {
+    margin-bottom: 0;
+}

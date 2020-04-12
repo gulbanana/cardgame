@@ -1,8 +1,7 @@
 namespace Cardgame.Cards
 {
-    public class Estate : BaseCardModel
+    public class Estate : VictoryCardModel
     {
-        public override CardType Type => CardType.Victory;
         public override string Art => "estate-2x";
         public override int Cost => 2;
     }

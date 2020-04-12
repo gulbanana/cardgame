@@ -1,17 +1,25 @@
 @code {
     [Parameter] public string Id { get; set; }
+    [Parameter] public bool Enabled { get; set; }
+    [Parameter] public Action Action { get; set; }
     [Parameter] public Cards.CardModel Model { get; set; }
     [Parameter] public bool Half { get; set; }
     [Parameter] public bool Large { get; set; }
     [Parameter] public bool Stack { get; set; }
-    [Parameter] public bool Enabled { get; set; }
     private string subType;
 
     protected override void OnParametersSet()
     {
         if (Model == null)
         {
-            Model = Cards.All.ByName[Id];
+            if (Cards.All.ByName.ContainsKey(Id))
+            {
+                Model = Cards.All.ByName[Id];
+            }
+            else
+            {
+                Model = new Cards.DummyCard(Id);
+            }
         }
         else 
         {
@@ -29,7 +37,7 @@
 {
     <div class="active-card__large-wrapper">
         <Magnify>
-            <div class="active-card @(Enabled ? "active-card--enabled" : "")">
+            <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@Action">
                 <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
             </div>
         </Magnify>
@@ -39,7 +47,7 @@ else
 {
     <WithTooltip>
         <Content>
-            <div class="active-card @(Enabled ? "active-card--enabled" : "")">
+            <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@Action">
                 <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
             </div>
         </Content>
