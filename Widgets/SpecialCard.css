@@ -1,4 +1,4 @@
-.card-back {
+.special-card {
     width: var(--card-width);
     border: 2px solid black;
     display: flex;
@@ -6,15 +6,15 @@
     border-radius: 4px;
 }
 
-.card-back img {
+.special-card img {
     max-width: calc(var(--card-width) - 4px);
     object-fit: cover;
 }
 
-.card-back__1x {
+.special-card__1x {
     height: calc(var(--card-body)/2 + var(--card-header)*2);
 }
 
-.card-back__2x {
+.special-card__2x {
     height: calc(var(--card-body) + var(--card-header)*2);
 }

@@ -14,7 +14,7 @@
     <GridSeparator Area="left-bar"/>
 
     <div style="grid-area: board" class="game-view__board">
-        <div class="game-view__kingdom">
+        <div style="grid-area: kingdom" class="game-view__kingdom">
             <Card Half="true" Id="Estate" />
             <Card Half="true" Id="Duchy" />
             <Card Half="true" Id="Province" />
@@ -29,11 +29,11 @@
             }
             else
             {
-                <CardBack Half="true" />
-                <CardBack Half="true" />
-                <CardBack Half="true" />
-                <CardBack Half="true" />
-                <CardBack Half="true" />
+                <SpecialCard Name="card-back" Half="true" />
+                <SpecialCard Name="card-back" Half="true" />
+                <SpecialCard Name="card-back" Half="true" />
+                <SpecialCard Name="card-back" Half="true" />
+                <SpecialCard Name="card-back" Half="true" />
             }
 
             <Card Half="true" Id="Copper" />
@@ -50,20 +50,20 @@
             }
             else
             {
-                <CardBack Half="true" />
-                <CardBack Half="true" />
-                <CardBack Half="true" />
-                <CardBack Half="true" />
-                <CardBack Half="true" />
+                <SpecialCard Name="card-back" Half="true" />
+                <SpecialCard Name="card-back" Half="true" />
+                <SpecialCard Name="card-back" Half="true" />
+                <SpecialCard Name="card-back" Half="true" />
+                <SpecialCard Name="card-back" Half="true" />
             }
         </div>
 
-        <div class="game-view__actions">
+        <div style="grid-area: actions" class="game-view__actions">
             <Card Large="true" Id="Village" />
             <Card Large="true" Id="Market" />
         </div>
 
-        <div class="game-view__hand">
+        <div style="grid-area: hand" class="game-view__hand">
             @if (Model.IsStarted)
             {
                 <Card Id="Copper" />
@@ -74,12 +74,20 @@
             }
             else
             {
-                <CardBack />
-                <CardBack />
-                <CardBack />
-                <CardBack />
-                <CardBack />
+                <SpecialCard Name="card-back" />
+                <SpecialCard Name="card-back" />
+                <SpecialCard Name="card-back" />
+                <SpecialCard Name="card-back" />
+                <SpecialCard Name="card-back" />
             }
+        </div>
+
+        <div style="grid-area: discard">
+            <SpecialCard Name="trash" />
+        </div>
+
+        <div style="grid-area: deck">
+            <SpecialCard Name="card-back" />
         </div>
     </div>
 
