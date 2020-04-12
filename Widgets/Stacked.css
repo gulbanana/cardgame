@@ -1,0 +1,19 @@
+.stacked {
+    position: relative;
+}
+
+.stacked__frame {
+    width: var(--card-width);
+    height: var(--card-height);
+    position: absolute;
+    top: calc(var(--offset) * -1);
+    left: var(--offset);
+    border: 2px solid var(--card-border-color);
+    border-radius: 4px;
+    z-index: -1;
+    background: var(--highlight);
+}
+
+.stacked__frame--half {
+    height: var(--card-half-height);
+}

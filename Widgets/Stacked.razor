@@ -1,0 +1,18 @@
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public int Size { get; set; }
+    [Parameter] public string Type { get; set; }
+    [Parameter] public bool Half { get; set; }
+}
+
+<div class="stacked" style="--highlight: var(--card-type-@(Type))">
+    @ChildContent
+    @if (Size > 0)
+    {
+        if (Size > 1)
+        {
+            <div class="stacked__frame @(Half ? "stacked__frame--half": "")" style="--offset: 8px"/>
+        }
+        <div class="stacked__frame @(Half ? "stacked__frame--half": "")" style="--offset: 4px"/>
+    }
+</div>

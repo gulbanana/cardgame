@@ -5,6 +5,7 @@
     [Parameter] public string Art { get; set; } = "missing";
     [Parameter] public TextModel Text { get; set; }
     [Parameter] public bool Half { get; set; }
+    [Parameter] public bool Stack { get; set; }
     private string colorType;
 
     protected override void OnParametersSet()
@@ -13,33 +14,35 @@
     }
 }
 
-<div class="card-view" style="--highlight: var(--card-type-@(colorType))">
-    <div class="card__header card-view__title">@Name</div>
-    @if (Half) {
-        <div class="card__image card-view__picture">
-            <img src="/cards/@(Art).jpg" />
-        </div>
-    } else if (Text == null) {
-        <div class="card__image-2x card-view__picture">
-            <img src="/cards/@(Art).jpg" />
-        </div>
-    } else {
-        <div class="card__image card-view__picture">
-            <img src="/cards/@(Art).jpg" />
-        </div>
-        <div class="card__text-separator" />
-        <div class="card__text">
-            <RichText Model="@Text" />
-        </div>
-    }
-    <div class="card__footer card-view__title">
-        @if (SubType == null)
-        {
-            <text>@Type</text>
+<Stacked Size="@(Stack ? 2 : 0)" Type="@colorType" Half="@Half">
+    <div class="card-view">
+        <div class="card__header card-view__title">@Name</div>
+        @if (Half) {
+            <div class="card__image card-view__picture">
+                <img src="/cards/@(Art).jpg" />
+            </div>
+        } else if (Text == null) {
+            <div class="card__image-2x card-view__picture">
+                <img src="/cards/@(Art).jpg" />
+            </div>
+        } else {
+            <div class="card__image card-view__picture">
+                <img src="/cards/@(Art).jpg" />
+            </div>
+            <div class="card__text-separator" />
+            <div class="card__text">
+                <RichText Model="@Text" />
+            </div>
         }
-        else
-        {
-            <text>@Type - @SubType</text>
-        }
+        <div class="card__footer card-view__title">
+            @if (SubType == null)
+            {
+                <text>@Type</text>
+            }
+            else
+            {
+                <text>@Type - @SubType</text>
+            }
+        </div>
     </div>
-</div>
+</Stacked>

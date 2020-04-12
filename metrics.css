@@ -5,11 +5,13 @@
     --card-height: 161px;
     --card-header: 16px;
     --card-body: calc(var(--card-height) - var(--card-header)*2 - 4px);
+    --card-half-height: calc(var(--card-height) - var(--card-body)/2);
     
     --card-type-victory: rgb(117, 197, 85);
     --card-type-treasure: rgb(243, 212, 114);
     --card-type-action: rgb(240, 237, 222);
     --card-type-reaction: rgb(119, 173, 222);
+    --card-type-special: rgb(140, 129, 85);
     --card-text-background: rgb(166, 170, 169);
 
     --card-border-color: black;

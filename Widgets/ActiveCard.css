@@ -1,5 +1,6 @@
 .active-card {
     --card-border-color: var(--inactive-color);
+    position: relative;
 }
 
 .active-card--enabled {
