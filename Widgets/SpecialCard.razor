@@ -3,13 +3,24 @@
     [Parameter] public bool Half { get; set; }
 }
 
-<div class="special-card">
-    @if (Half)
-    {
-        <img class="card-back__1x" src="/@(Name)-half.jpg" />
-    }
-    else
-    {
-        <img class="card-back__2x" src="/@(Name)-full.jpg" />
-    }
-</div>
+<WithTooltip>
+    <Content>
+        <div class="special-card">
+            @if (Half)
+            {
+                <img class="card-back__1x" src="/@(Name)-half.jpg" />
+            }
+            else
+            {
+                <img class="card-back__2x" src="/@(Name)-full.jpg" />
+            }
+        </div>
+    </Content>
+    <Tooltip>
+        <Magnify>
+            <div class="special-card">
+                <img class="card-back__2x" src="/@(Name)-full.jpg" />
+            </div>
+        </Magnify>
+    </Tooltip>
+</WithTooltip>
