@@ -2,6 +2,7 @@
     [Parameter] public string Id { get; set; }
     [Parameter] public Cards.CardModel Model { get; set; }
     [Parameter] public bool Half { get; set; }
+    [Parameter] public bool Large { get; set; }
 
     protected override void OnParametersSet()
     {
@@ -16,8 +17,22 @@
     }
 }
 
-<CardView Name="@Id" 
-          Type="@Model.Type"
-          Art="@Model.Art"
-          Text="@Model.Text"
-          Half="@Half" />
+@if (Large)
+{
+    <Magnify Center>
+        <CardView Name="@Id" Type="@Model.Type" Art="@Model.Art" Text="@Model.Text" Half="@Half" />
+    </Magnify>
+}
+else
+{
+    <WithTooltip>
+        <Content>
+            <CardView Name="@Id" Type="@Model.Type" Art="@Model.Art" Text="@Model.Text" Half="@Half" />
+        </Content>
+        <Tooltip>
+            <Magnify>
+                <CardView Name="@Id" Type="@Model.Type" Art="@Model.Art" Text="@Model.Text" Half="false" />
+            </Magnify>
+        </Tooltip>
+    </WithTooltip>    
+}

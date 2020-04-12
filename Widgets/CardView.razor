@@ -1,13 +1,13 @@
 @code {
     [Parameter] public string Name { get; set; }
     [Parameter] public Cards.CardType Type { get; set; }
-    [Parameter] public bool Half { get; set; }
     [Parameter] public string Art { get; set; } = "missing";
     [Parameter] public string Text { get; set; } = "";
+    [Parameter] public bool Half { get; set; }
 }
 
 <div class="card-view">
-    <div class="card__header card__title">@Name</div>
+    <div class="card__header card-view__title">@Name</div>
     @if (Half) {
         <div class="card__image">
             <img src="/cards/@(Art).jpg" />
@@ -27,5 +27,5 @@
             }
         </div>
     }
-    <div class="card__footer card__title">@Type</div>
+    <div class="card__footer card-view__title">@Type</div>
 </div>

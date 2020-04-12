@@ -1,0 +1,12 @@
+.magnify > * {
+    transform: scale(1.5);
+    transform-origin: top left;
+}
+
+.magnify--center > * {
+    transform-origin: center;
+}
+
+.magnify--bottom-left > * {
+    transform-origin: bottom left;
+}

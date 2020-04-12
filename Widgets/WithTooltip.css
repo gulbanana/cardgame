@@ -1,0 +1,12 @@
+.with-tooltip__tooltip {
+    display: none;
+    position: fixed;
+    z-index: 1;
+}
+
+.with-tooltip:hover + .with-tooltip__tooltip {
+}
+
+.with-tooltip:hover + .with-tooltip__tooltip--visible {
+    display: inherit;
+}

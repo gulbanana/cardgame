@@ -13,5 +13,12 @@
       "!wwwroot/*.css"
     ],
     "minify": { "enabled": true }
+  },
+  {
+    "outputFileName": "wwwroot/app.min.js",
+    "inputFiles": [
+      "wwwroot/app.js"
+    ],
+    "minify": { "enabled": true }
   }
 ]

@@ -35,20 +35,16 @@
     align-items: center;
 }
 
-.game-view__actions > * {
-    transform: scale(1.5);
-}
-
 .game-view__hand {
     display: flex;
     justify-content: center;
 }
 
-.game-view__hand > .card-view {
+.game-view__hand > * {
     margin-right: var(--std-gap);
 }
 
-.game-view__hand > .card-view:last-child {
+.game-view__hand > *:last-child {
     margin-right: 0;
 }
 

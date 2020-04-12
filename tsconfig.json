@@ -1,0 +1,16 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "none",
+        "lib": [ "es6", "dom" ],
+        "target": "es6",
+        "outFile": "wwwroot/app.js",
+        "strict": true,
+        "strictNullChecks": false
+    },
+    "exclude": [
+        "./wwwroot",
+        "./bin",
+        "./obj"
+    ]    
+}
