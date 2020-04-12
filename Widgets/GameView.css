@@ -33,6 +33,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.game-view__actions > * {
     transform: scale(1.5);
 }
 
