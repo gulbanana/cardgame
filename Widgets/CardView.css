@@ -1,6 +1,6 @@
 .card-view {
     width: var(--card-width);
-    border: 2px solid black;
+    border: 2px solid var(--card-border-color);
     display: flex;
     flex-direction: column;
     border-radius: 4px;

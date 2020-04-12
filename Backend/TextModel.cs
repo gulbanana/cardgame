@@ -40,6 +40,11 @@ namespace Cardgame
             public string Name { get; set; }
         }
 
+        public class Player : TextModel
+        {
+            public string Name { get; set; }
+        }
+
         public static TextModel Parse(string xml)
         {
             var node = XDocument.Parse(xml);
@@ -70,6 +75,9 @@ namespace Cardgame
 
                 case "card":
                     return new Card { Name = element.Value };
+
+                case "player":
+                    return new Player { Name = element.Value };
 
                 default:
                     return new Run { Text = element.ToString() };

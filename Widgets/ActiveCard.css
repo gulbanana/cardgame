@@ -1,0 +1,13 @@
+.active-card {
+    --card-border-color: var(--inactive-color);
+}
+
+.active-card--enabled {
+    --card-border-color: var(--active-color);
+    cursor: pointer;
+}
+
+.active-card--enabled:hover {
+    --card-border-color: var(--active-focus-color);
+    cursor: pointer;
+}

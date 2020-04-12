@@ -1,0 +1,7 @@
+@code {
+    [Parameter] public string Label { get; set; }
+    [Parameter] public bool Enabled { get; set; } = true;
+    [Parameter] public Action Action { get; set; }
+}
+
+<input class="active-button @(Enabled ? "active-button--enabled" : "")" type="submit" value="@Label" @onclick="@Action">

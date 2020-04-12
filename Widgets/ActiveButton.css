@@ -1,0 +1,14 @@
+.active-button {
+    border: 2px solid var(--inactive-color);
+    border-radius: 4px;
+    line-height: normal;
+}
+
+.active-button--enabled {
+    border-color: var(--active-color);
+    cursor: pointer;
+}
+
+.active-button--enabled:hover {
+    border-color: var(--active-focus-color);
+}

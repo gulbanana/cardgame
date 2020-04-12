@@ -3,6 +3,7 @@
     [Parameter] public Cards.CardModel Model { get; set; }
     [Parameter] public bool Half { get; set; }
     [Parameter] public bool Large { get; set; }
+    [Parameter] public bool Enabled { get; set; }
     private string subType;
 
     protected override void OnParametersSet()
@@ -26,14 +27,18 @@
 @if (Large)
 {
     <Magnify Center>
-        <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Text="@Model.Text" Half="@Half" />
+        <div class="active-card @(Enabled ? "active-card--enabled" : "")">
+            <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Text="@Model.Text" Half="@Half" />
+        </div>
     </Magnify>
 }
 else
 {
     <WithTooltip>
         <Content>
-            <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Text="@Model.Text" Half="@Half" />
+            <div class="active-card @(Enabled ? "active-card--enabled" : "")">
+                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Art="@Model.Art" Text="@Model.Text" Half="@Half" />
+            </div>
         </Content>
         <Tooltip>
             <Magnify>

@@ -2,6 +2,7 @@
 @code {
     [Parameter] public GameModel Model { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; }
+    bool IsActivePlayer => Session.Username.Equals(Model.ActivePlayer);
 }
 
 <div class="game-view">
@@ -15,17 +16,17 @@
 
     <div style="grid-area: board" class="game-view__board">
         <div style="grid-area: kingdom" class="game-view__kingdom">
-            <Card Half="true" Id="Estate" />
-            <Card Half="true" Id="Duchy" />
-            <Card Half="true" Id="Province" />
+            <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="Estate" />
+            <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="Duchy" />
+            <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="Province" />
 
             @if (Model.IsStarted)
             {
-                <Card Half="true" Id="@Model.KingdomCards[0]" />
-                <Card Half="true" Id="@Model.KingdomCards[1]" />
-                <Card Half="true" Id="@Model.KingdomCards[2]" />
-                <Card Half="true" Id="@Model.KingdomCards[3]" />
-                <Card Half="true" Id="@Model.KingdomCards[4]" />
+                <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="@Model.KingdomCards[0]" />
+                <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="@Model.KingdomCards[1]" />
+                <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="@Model.KingdomCards[2]" />
+                <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="@Model.KingdomCards[3]" />
+                <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="@Model.KingdomCards[4]" />
             }
             else
             {
@@ -36,17 +37,17 @@
                 <SpecialCard Name="card-back" Half="true" />
             }
 
-            <Card Half="true" Id="Copper" />
-            <Card Half="true" Id="Silver" />
-            <Card Half="true" Id="Gold" />
+            <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="Copper" />
+            <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="Silver" />
+            <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="Gold" />
 
             @if (Model.IsStarted)
             {
-                <Card Half="true" Id="@Model.KingdomCards[5]" />
-                <Card Half="true" Id="@Model.KingdomCards[6]" />
-                <Card Half="true" Id="@Model.KingdomCards[7]" />
-                <Card Half="true" Id="@Model.KingdomCards[8]" />
-                <Card Half="true" Id="@Model.KingdomCards[9]" />
+                <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="@Model.KingdomCards[5]" />
+                <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="@Model.KingdomCards[6]" />
+                <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="@Model.KingdomCards[7]" />
+                <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="@Model.KingdomCards[8]" />
+                <ActiveCard Enabled="@IsActivePlayer" Half="true" Id="@Model.KingdomCards[9]" />
             }
             else
             {
@@ -59,18 +60,32 @@
         </div>
 
         <div style="grid-area: actions" class="game-view__actions">
-            <Card Large="true" Id="Village" />
-            <Card Large="true" Id="Market" />
+            @if (Model.IsStarted)
+            {
+                <ActiveCard Large="true" Id="Village" />
+                <ActiveCard Large="true" Id="Market" />
+            }
+            else
+            {                
+                @if (!Model.Players.Contains(Session.Username))
+                {
+                    <ActiveButton Label="Join game" Action="@(() => Dispatch(new JoinGameCommand()))" />
+                }
+                else
+                {
+                    <ActiveButton Label="Leave game" Action="@(() => Dispatch(new LeaveGameCommand()))" />
+                }
+            }
         </div>
 
         <div style="grid-area: hand" class="game-view__hand">
             @if (Model.IsStarted)
             {
-                <Card Id="Copper" />
-                <Card Id="Copper" />
-                <Card Id="Copper" />
-                <Card Id="Estate" />
-                <Card Id="Estate" />
+                <ActiveCard Enabled="@IsActivePlayer" Id="Copper" />
+                <ActiveCard Enabled="@IsActivePlayer" Id="Copper" />
+                <ActiveCard Enabled="@IsActivePlayer" Id="Copper" />
+                <ActiveCard Enabled="@IsActivePlayer" Id="Estate" />
+                <ActiveCard Enabled="@IsActivePlayer" Id="Estate" />
             }
             else
             {
@@ -101,15 +116,6 @@
         else
         {
             <span>No players.</span>
-        }
-
-        @if (!Model.Players.Contains(Session.Username))
-        {
-            <button @onclick="@(() => Dispatch(new JoinGameCommand()))">Join game</button>
-        }
-        else
-        {
-            <button @onclick="@(() => Dispatch(new LeaveGameCommand()))">Leave game</button>
         }
     </div>
 

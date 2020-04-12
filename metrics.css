@@ -11,6 +11,10 @@
     --card-type-action: rgb(240, 237, 222);
     --card-type-reaction: rgb(119, 173, 222);
     --card-text-background: rgb(166, 170, 169);
+
+    --inactive-color: black;
+    --active-color: rgb(0, 128, 255);
+    --active-focus-color: blue;
 }
 
 input[type=text] {

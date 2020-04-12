@@ -1,3 +1,4 @@
+@inject IUserSession Session
 @code {
     [Parameter] public TextModel Model { get; set; }
 }
@@ -51,6 +52,17 @@
                 </Magnify>
             </Tooltip>
         </WithTooltip>   
+        break;
+
+    case TextModel.Player player:
+        if (Session.Username.Equals(player.Name))
+        {
+            <text>You</text>
+        }
+        else
+        {
+            <text>@player.Name</text>
+        }
         break;
     
     case TextModel.Block block:

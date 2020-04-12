@@ -32,7 +32,7 @@
 <form @onsubmit="OnSubmit">
     Please enter a username.<br>
     <input type="text" @bind="username">
-    <input type="submit" value="Login">
+    <ActiveButton Label="Login" />
     @if (error != null)
     {
         <br><span class="index__error">@error</span>

@@ -28,11 +28,13 @@ namespace Cardgame
                 case JoinGameCommand _:
                     if (Model.Players.Contains(username)) throw new CommandException($"You are already in the game.");
                     Model.Players = Model.Players.Append(username).ToArray();
+                    LogEvent($"<spans><player>{username}</player><run> joined the game.</run></spans>");
                     break;
 
                 case LeaveGameCommand _:
                     if (!Model.Players.Contains(username)) throw new CommandException($"You are not in the game.");
                     Model.Players = Model.Players.Except(new[]{username}).ToArray();
+                    LogEvent($"<spans><player>{username}</player><run> left the game.</run></spans>");
                     break;
 
                 case ChatCommand chat:
@@ -45,6 +47,11 @@ namespace Cardgame
             }
 
             Model.Seq++;
+        }
+
+        private void LogEvent(string eventText)
+        {
+            Model.EventLog.Add(TextModel.Parse(eventText));
         }
     }
 }
