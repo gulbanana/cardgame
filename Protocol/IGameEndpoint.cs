@@ -1,9 +1,8 @@
 namespace Cardgame
 {
     // theoretical client-server separation point
-    public interface IGameEndpoint
+    public interface IGameEndpoint : IEndpoint<GameSummary[]>
     {
         IGame FindGame(string name);
-        GameSummary[] ListGames();
     }
 }

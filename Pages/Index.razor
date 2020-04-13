@@ -1,19 +1,34 @@
 @page "/"
 @attribute [Authorize]
+@implements IDisposable
 @inject NavigationManager Navigation
 @inject IGameEndpoint Endpoint
 @code {
-    private GameSummary[] games;
+    private GameSummary[] currentGames;
     private string newGameName;
 
     protected override void OnInitialized()
     {
-        games = Endpoint.ListGames();
+        currentGames = Endpoint.Subscribe(OnUpdate);
+    }
+
+    private void OnUpdate(GameSummary[] newGames)
+    {
+        InvokeAsync(() =>
+        {
+            currentGames = newGames;
+            StateHasChanged();
+        });
     }
 
     void OnSubmit()
     {
         Navigation.NavigateTo($"/game/{newGameName}");
+    }
+
+    public void Dispose()
+    {
+        Endpoint.Unsubscribe(OnUpdate);
     }
 }
 
@@ -24,7 +39,7 @@
 </form>
 
 <h3>Current games</h3>
-@foreach (var game in games)
+@foreach (var game in currentGames)
 {    
     <p>
         <a href="/game/@game.Name">@game.Name</a> - @(game.Status).<br>

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Cardgame
+namespace Cardgame.Hosting
 {
     // adapter implementing game protocol using shared memory
-    class SharedGameEndpoint : IGameEndpoint
+    class SharedGameEndpoint : EndpointBase<GameSummary[]>, IGameEndpoint
     {
         private readonly Dictionary<string, SharedGame> games;
 
@@ -13,11 +13,17 @@ namespace Cardgame
             games = new Dictionary<string, SharedGame>();
         }
 
+        protected override GameSummary[] GetModel()
+        {
+            return games.Values.Select(game => game.Summary).ToArray();
+        }
+
         public IGame FindGame(string name)
         {
             if (!games.ContainsKey(name))
             {
-                games[name] = new SharedGame();
+                games[name] = new SharedGame(name);
+                games[name].SummaryUpdated += Notify;
 
                 if (name.StartsWith("demo"))
                 {
@@ -30,23 +36,11 @@ namespace Cardgame
                     games[name].Execute("demo", new JoinGameCommand { Seq = 6 });
                     games[name].Execute("demo", new StartGameCommand { Seq = 7 });
                 }
+
+                Notify();
             }
 
             return games[name];
-        }
-
-        public GameSummary[] ListGames()
-        {
-            return games.Keys.Select(name => 
-            {
-                var game = games[name].GetModel();
-                return new GameSummary
-                {
-                    Name = name,
-                    Players = game.Players,
-                    Status = game.IsStarted ? "in progress" : "waiting to start"
-                };
-            }).ToArray();
         }
     }
 }

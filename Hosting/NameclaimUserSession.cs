@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Cardgame
+namespace Cardgame.Hosting
 {
     // adapter implementing user protocol using DI
     class NameclaimUserSession : AuthenticationStateProvider, IUserSession, IDisposable

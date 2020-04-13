@@ -1,29 +1,30 @@
 using System;
 using System.Collections.Generic;
 
-namespace Cardgame
+namespace Cardgame.Hosting
 {
     // adapter implementing game protocol using shared memory
-    class SharedGame : IGame
+    class SharedGame : EndpointBase<GameModel>, IGame
     {
         private readonly List<Action<GameModel>> subscriptions;
         private readonly GameEngine engine;
+        private readonly string name;
+        public GameSummary Summary { get; private set; }
+        public event Action SummaryUpdated;
 
-        public SharedGame()
+        public SharedGame(string name)
         {
             subscriptions = new List<Action<GameModel>>();
             engine = new GameEngine();
+            this.name = name;
+
+            UpdateSummary();
         }
 
-        public GameModel Subscribe(Action<GameModel> update)
+        // should probably clone
+        protected override GameModel GetModel()
         {
-            subscriptions.Add(update);
             return engine.Model;
-        }
-
-        public void Unsubscribe(Action<GameModel> update)
-        {
-            subscriptions.Remove(update);
         }
 
         public string Execute(string username, ClientCommand command)
@@ -35,9 +36,11 @@ namespace Cardgame
                     engine.Execute(username, command);
                 }
 
-                foreach (var subscriber in subscriptions)
+                Notify();
+
+                if (command is JoinGameCommand || command is LeaveGameCommand || command is StartGameCommand)
                 {
-                    subscriber(engine.Model);
+                    UpdateSummary();
                 }
 
                 return null;
@@ -48,10 +51,16 @@ namespace Cardgame
             }
         }
 
-        // should probably clone
-        internal GameModel GetModel()
+        private void UpdateSummary()
         {
-            return engine.Model;
+            Summary = new GameSummary
+            {
+                Name = name,
+                Players = engine.Model.Players,
+                Status = engine.Model.IsStarted ? "in progress" : "waiting to start"
+            };            
+            
+            SummaryUpdated?.Invoke();
         }
     }
 }

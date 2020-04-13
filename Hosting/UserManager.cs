@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Cardgame
+namespace Cardgame.Hosting
 {
     class UserManager
     {
