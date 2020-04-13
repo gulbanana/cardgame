@@ -36,7 +36,11 @@ namespace Cardgame
 
                     Model.Players = Model.Players.Append(username).ToArray();
 
-                    LogEvent($"<spans><player>{username}</player><run> joined the game.</run></spans>");
+                    LogEvent($@"<spans>
+                        <player>{username}</player>
+                        <if you='join' them='joins'>{username}</if>
+                        <run>the game.</run>
+                    </spans>");
                     break;
 
                 case LeaveGameCommand _:
@@ -45,7 +49,11 @@ namespace Cardgame
 
                     Model.Players = Model.Players.Except(new[]{username}).ToArray();
 
-                    LogEvent($"<spans><player>{username}</player><run> left the game.</run></spans>");
+                    LogEvent($@"<spans>
+                        <player>{username}</player>
+                        <if you='leave' them='leaves'>{username}</if>
+                        <run>the game.</run>
+                    </spans>");
                     break;
 
                 case StartGameCommand _:
@@ -55,8 +63,6 @@ namespace Cardgame
 
                     BeginGame();
                     BeginTurn();
-
-                    LogEvent($"<run>The game began.</run>");
                     break;
 
                 case PlayCardCommand playCard:
@@ -96,7 +102,12 @@ namespace Cardgame
                             throw new CommandException($"You can't play {playedCard.Type} cards.");
                     }
 
-                    LogEvent($"<spans><player>{username}</player><run> played </run><card>{playCard.Id}</card><run>.</run></spans>");
+                    LogEvent($@"<spans>
+                        <player>{username}</player>
+                        <if you='play' them='plays'>{username}</if>
+                        <card>{playCard.Id}</card>
+                        <run>.</run>
+                    </spans>");
                     break;
 
                 case BuyCardCommand buyCard:
@@ -111,7 +122,12 @@ namespace Cardgame
                     Model.MoneyRemaining -= boughtCard.Cost;
                     Model.BuysRemaining -= 1;
 
-                    LogEvent($"<spans><player>{username}</player><run> bought </run><card>{buyCard.Id}</card><run>.</run></spans>");
+                    LogEvent($@"<spans>
+                        <player>{username}</player>
+                        <if you='buy' them='buys'>{username}</if>
+                        <card>{buyCard.Id}</card>
+                        <run>.</run>
+                    </spans>");
 
                     if (Model.BuysRemaining == 0)
                     {
@@ -188,6 +204,14 @@ namespace Cardgame
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
             Model.MoneyRemaining = 0;
+
+            LogEvent($@"<block>
+                <spans>
+                    <run>---</run>
+                    <if you='Your' them=""{Model.ActivePlayer}'s"">{Model.ActivePlayer}</if>
+                    <run>turn ---</run>
+                </spans>
+            </block>");
         }
 
         private void EndTurn()
@@ -230,7 +254,12 @@ namespace Cardgame
                 deck.Shuffle();
                 discard.Clear();
 
-                LogEvent($"<spans><player>{player}</player><run> reshuffled.</run></spans>");
+                LogEvent($@"<spans>
+                    <run>(</run>
+                    <player>{player}</player>
+                    <if you='reshuffle.' them='reshuffles.'>{player}</if>
+                    <run>)</run>
+                </spans>");
             }
         }
     }

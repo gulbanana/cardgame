@@ -25,8 +25,14 @@
             {
                 <p>
                     <RichText Model="@para" />
-                </p>                
+                </p>
             }
+        </div>
+        break;
+            
+    case TextModel.Block block:
+        <div class="rich-text__block">
+            <RichText Model="@block.Child" />
         </div>
         break;
 
@@ -64,11 +70,17 @@
             <text>@player.Name</text>
         }
         break;
-    
-    case TextModel.Block block:
-        <div class="rich-text__block">
-            <RichText Model="@block.Child" />
-        </div>
+
+
+    case TextModel.Pronominal pro:
+        if (Session.Username.Equals(pro.Name))
+        {
+            <text>@pro.IfYou</text>
+        }
+        else
+        {
+            <text>@pro.IfThem</text>
+        }
         break;
 
     default:

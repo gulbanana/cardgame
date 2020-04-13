@@ -45,6 +45,13 @@ namespace Cardgame
             public string Name { get; set; }
         }
 
+        public class Pronominal : TextModel
+        {
+            public string Name { get; set; }
+            public string IfYou { get; set; }
+            public string IfThem { get; set; }
+        }
+
         public static TextModel Parse(string xml)
         {
             var node = XDocument.Parse(xml);
@@ -78,6 +85,14 @@ namespace Cardgame
 
                 case "player":
                     return new Player { Name = element.Value };
+
+                case "if":
+                    return new Pronominal 
+                    { 
+                        Name = element.Value, 
+                        IfYou = element.Attribute("you").Value, 
+                        IfThem = element.Attribute("them").Value 
+                    };
 
                 default:
                     return new Run { Text = element.ToString() };
