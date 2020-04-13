@@ -5,7 +5,6 @@
 @code {
     private GameSummary[] games;
     private string newGameName;
-    private string newGameError;
 
     protected override void OnInitialized()
     {
@@ -22,10 +21,6 @@
 <form @onsubmit="OnSubmit">    
     <input type="text" @bind="newGameName">
     <ActiveButton Label="Create" />
-    @if (newGameError != null)
-    {
-        <br><span style="color: red">@newGameError</span>
-    }
 </form>
 
 <h3>Current games</h3>
