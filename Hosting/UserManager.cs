@@ -8,6 +8,7 @@ namespace Cardgame
     {
         private readonly List<NameclaimUserSession> sessions;
         public IReadOnlyList<NameclaimUserSession> Sessions => sessions;
+        public event Action SessionsUpdated;
 
         public UserManager()
         {
@@ -16,28 +17,38 @@ namespace Cardgame
 
         public bool Add(NameclaimUserSession session)
         {
+            var result = false;
             lock (sessions)
             {
                 if (sessions.Select(s => s.Username).Contains(session.Username))
                 {
-                    return false;
+                    result = false;
                 }
                 else
                 {
                     sessions.Add(session);
-                    return true;
+                    result = true;
                 }
             }
+
+            if (result)
+            {
+                SessionsUpdated?.Invoke();
+            }
+
+            return result;
         }
 
         public bool Remove(NameclaimUserSession session)
         {
-            return sessions.Remove(session);
-        }
+            var result = sessions.Remove(session);
 
-        public NameclaimUserSession Find(string username)
-        {
-            return sessions.Where(s => s.Username.Equals(username)).SingleOrDefault();
+            if (result)
+            {
+                SessionsUpdated?.Invoke();
+            }
+
+            return result;
         }
     }
 }

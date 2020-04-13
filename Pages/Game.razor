@@ -1,5 +1,6 @@
 ﻿@page "/game/{GameName}"
 @attribute [Authorize]
+@implements IDisposable
 @inject NavigationManager Navigation
 @inject IGameEndpoint Endpoint
 @inject IUserSession Session
@@ -13,7 +14,6 @@
         game = Endpoint.FindGame(GameName);
         currentModel = game.Subscribe(OnUpdate);
     }
-
 
     private void OnUpdate(GameModel newModel)
     {
@@ -36,6 +36,11 @@
             game.Unsubscribe(OnUpdate);
             currentModel = game.Subscribe(OnUpdate);
         }
+    }
+
+    public void Dispose()
+    {
+        game.Unsubscribe(OnUpdate);
     }
 }
 

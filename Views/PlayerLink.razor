@@ -1,0 +1,40 @@
+@implements IDisposable
+@inject IUserSession Session
+@inject IUserEndpoint Endpoint
+@code {
+    [Parameter] public string Name { get; set; }
+    [Parameter] public string Text { get; set; }
+    private string[] currentUsers;
+
+    protected override void OnInitialized()
+    {        
+        currentUsers = Endpoint.Subscribe(OnUpdate);
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Text == null) 
+        {
+            Text = Name;
+        }
+    }
+
+    private void OnUpdate(string[] newUsers)
+    {
+        InvokeAsync(() =>
+        {
+            currentUsers = newUsers;
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        Endpoint.Unsubscribe(OnUpdate);
+    }
+}
+
+<span class="player-link 
+@(Name.Equals(Session.Username) ? "player-link--you" : "")
+@(!currentUsers.Contains(Name) ? "player-link--disconnected" : "")
+">@Text</span>

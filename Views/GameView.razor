@@ -234,8 +234,7 @@
             <span>
                 @(Model.IsStarted ? "Game in progress." : "Waiting to start.") Current players:
                 @for (var i = 0; i < Model.Players.Length; i++)
-                {
-                    
+                {                    
                     if (i < Model.Players.Length - 1)
                     {
                         <text><PlayerLink Name="@Model.Players[i]" />, </text>
