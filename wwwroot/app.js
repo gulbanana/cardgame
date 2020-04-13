@@ -1,4 +1,11 @@
 "use strict";
+var VerticalLog;
+(function (VerticalLog) {
+    function scrollToBottom(content) {
+        content.scrollIntoView(false);
+    }
+    VerticalLog.scrollToBottom = scrollToBottom;
+})(VerticalLog || (VerticalLog = {}));
 var WithTooltip;
 (function (WithTooltip) {
     function register(content, tooltip) {

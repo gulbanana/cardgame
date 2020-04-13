@@ -20,7 +20,12 @@
 
     <div style="grid-area: event-log" class="game-view__events">
         <VerticalLog>
-            <RichText Model="@(new TextModel.Paras { Children = Model.EventLog.ToArray() })"/>
+            @foreach (var e in Model.EventLog)
+            {
+                <p>
+                    <RichText Model="@e"/>
+                </p>
+            }
         </VerticalLog>
     </div>
 

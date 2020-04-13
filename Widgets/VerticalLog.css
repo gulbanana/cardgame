@@ -1,5 +1,10 @@
 .vertical-log {
     height: 100%;
+    overflow-y: auto;
+}
+
+.vertical-log__content {
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;

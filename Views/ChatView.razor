@@ -19,9 +19,8 @@
         <VerticalLog>
             @foreach (var entry in Model)
             {
-                <div class="chat-view__line">
-                    <span class="chat-view__username">&lt;@(entry.Username)&gt;</span>
-                    <span class="chat-view__message">@entry.Message</span>
+                <div>
+                    <span class="chat-view__username">&lt;@(entry.Username)&gt;</span> @entry.Message
                 </div>
             }
         </VerticalLog>

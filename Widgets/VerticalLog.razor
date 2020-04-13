@@ -1,8 +1,17 @@
+@inject IJSRuntime JS
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public string Type { get; set; }
+    private ElementReference contentElement;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeVoidAsync("VerticalLog.scrollToBottom", contentElement);
+    }
 }
 
 <div class="vertical-log">
-    @ChildContent
+    <div class="vertical-log__content" @ref="contentElement">
+        @ChildContent
+    </div>
 </div>
