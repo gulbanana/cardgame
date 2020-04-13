@@ -9,5 +9,10 @@ namespace Cardgame.Cards
 <block>
     <run>+3 Cards</run>
 </block>");
+
+        protected override void Play(IActionHost host)
+        {
+            host.DrawCards(3);
+        }
     }
 }

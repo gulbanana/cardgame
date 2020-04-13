@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Cardgame
 {
-    public class GameEngine
+    public class GameEngine : IActionHost
     {
         public readonly GameModel Model;
         public event Action ActionCompleted;
@@ -309,7 +309,7 @@ namespace Cardgame
                     if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
 
                     Model.ActionsRemaining--;
-                    action.PlayAsync().ContinueWith(CompleteAction);
+                    action.PlayAsync(this).ContinueWith(CompleteAction);
                     break;
                 
                 case CardType.Treasure when playedCard is Cards.TreasureCardModel treasure:
@@ -354,6 +354,53 @@ namespace Cardgame
             }
 
             ActionCompleted?.Invoke();
+        }
+
+        void IActionHost.DrawCards(int n)
+        {
+            for (var i = 0; i < n; i++)
+            {
+                DrawCard(Model.ActivePlayer);
+            }
+
+            LogEvent($@"<spans>
+                <run>...</run>
+                <if you='you draw' them='drawing'>{Model.ActivePlayer}</if>
+                <run>{n} cards.</run>
+            </spans>");
+        }
+
+        void IActionHost.AddActions(int n)
+        {
+            Model.ActionsRemaining += n;
+
+            LogEvent($@"<spans>
+                <run>...</run>
+                <if you='you get' them='getting'>{Model.ActivePlayer}</if>
+                <run>+{n} actions.</run>
+            </spans>");
+        }
+
+        void IActionHost.AddBuys(int n)
+        {
+            Model.BuysRemaining += n;
+
+            LogEvent($@"<spans>
+                <run>...</run>
+                <if you='you get' them='getting'>{Model.ActivePlayer}</if>
+                <run>+{n} buys.</run>
+            </spans>");
+        }
+
+        void IActionHost.AddMoney(int n)
+        {
+            Model.MoneyRemaining += n;
+
+            LogEvent($@"<spans>
+                <run>...</run>
+                <if you='you get' them='getting'>{Model.ActivePlayer}</if>
+                <run>+${n}.</run>
+            </spans>");
         }
     }
 }
