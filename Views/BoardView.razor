@@ -1,20 +1,36 @@
 @inject IUserSession Session
 @code {
     [Parameter] public GameModel Game { get; set; }
-    [CascadingParameter] public Executor Dispatch { get; set; }
+    [CascadingParameter] public Executor Dispatch { get; set; } 
+    bool IsActivePlayer => Session.Username.Equals(Game.ActivePlayer);   
 }
 
 <div class="board-view">
-    <div>
+    <p style="grid-area: stats">
         <Bold If="@(!Game.BuyPhase && Game.ActionsRemaining > 0)">Actions: @Game.ActionsRemaining</Bold><br />
         <Bold If="@(Game.BuysRemaining > 0)">Buys: @Game.BuysRemaining</Bold><br />
         <Bold If="@(Game.MoneyRemaining > 0)">$@Game.MoneyRemaining</Bold>
-    </div>
+    </p>
 
-    <GappedRow>
-        @foreach (var id in Game.PlayedCards)
-        {
-            <ActiveCard Large="true" Id="@id" />
-        }
-    </GappedRow>
+    <p style="grid-area: global-commands">
+        <ActiveButton Label="End turn" Enabled="@IsActivePlayer" Action="@(() => Dispatch(new EndTurnCommand()))" />
+    </p>
+
+    @{
+        var hasCommands = Game.PlayedCards.Any() && Cards.All.ByName[Game.PlayedCards.Last()].Type == CardType.Action;
+    }
+    <div style="grid-area: cards; grid-column-end: @(hasCommands ? "3" : "5")">
+        <GappedRow>
+            @for (var i = 0; i < Game.PlayedCards.Count; i++)
+            {
+                <ActiveCard Large="@(i == Game.PlayedCards.Count-1)" Id="@Game.PlayedCards[i]" />
+            }
+        </GappedRow>
+    </div>
+    @if (hasCommands)
+    {
+        <div style="grid-area: card-commands">
+            <GappedColumn />
+        </div>
+    }
 </div>

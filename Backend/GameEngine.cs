@@ -144,6 +144,13 @@ namespace Cardgame
 
                     break;
 
+                case EndTurnCommand _:
+                    if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
+
+                    EndTurn();
+                    BeginTurn();
+                    break;
+
                 case var unknown:
                     throw new CommandException($"Unrecognised command {unknown}");
             }
