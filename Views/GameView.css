@@ -48,9 +48,3 @@
     grid-template-columns: auto auto auto auto auto auto auto auto;
     grid-gap: var(--std-gap);
 }
-
-.game-view__events {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-}
