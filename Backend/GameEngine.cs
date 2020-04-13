@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Cardgame
 {
     public class GameEngine
     {
         public readonly GameModel Model;
+        public event Action ActionCompleted;
 
         public GameEngine()
         {
@@ -14,6 +16,21 @@ namespace Cardgame
         }
 
         public void Execute(string username, ClientCommand command)
+        {
+            lock (this)
+            {
+                try
+                {
+                    ExecuteImpl(username, command);
+                }
+                catch (CommandException e)
+                {
+                    LogEvent($"<error>Error: {e.Message}</error>");
+                }
+            }
+        }
+
+        private void ExecuteImpl(string username, ClientCommand command)
         {
             if (Model.Seq != command.Seq)
             {
@@ -63,6 +80,7 @@ namespace Cardgame
 
                     BeginGame();
                     BeginTurn();
+
                     break;
 
                 case PlayCardCommand playCard:
@@ -70,46 +88,8 @@ namespace Cardgame
                     if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");
                     if (!Cards.All.ByName.ContainsKey(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
 
-                    Model.Hands[username].Remove(playCard.Id);
-                    Model.PlayedCards.Add(playCard.Id);
+                    PlayCard(username, playCard.Id);
 
-                    var playedCard = Cards.All.ByName[playCard.Id];                    
-                    switch (playedCard.Type)
-                    {                    
-                        case CardType.Action when playedCard is Cards.ActionCardModel action:
-                            if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
-                            if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
-
-                            // actually using card not implemented                       
-                            Model.ActionsRemaining--;
-                            if (Model.ActionsRemaining == 0)
-                            {
-                                Model.BuyPhase = true;
-                                SkipBuyIfNoCash();
-                            }
-                            break;
-                        
-                        case CardType.Treasure when playedCard is Cards.TreasureCardModel treasure:
-                            if (!Model.BuyPhase)
-                            {
-                                Model.BuyPhase = true;
-                                SkipBuyIfNoCash();
-                            }
-                            Model.MoneyRemaining += treasure.Value;
-                            break;
-
-                        case CardType.Victory:
-                        case CardType.Curse:
-                        default:
-                            throw new CommandException($"You can't play {playedCard.Type} cards.");
-                    }
-
-                    LogEvent($@"<spans>
-                        <player>{username}</player>
-                        <if you='play' them='plays'>{username}</if>
-                        <card>{playCard.Id}</card>
-                        <run>.</run>
-                    </spans>");
                     break;
 
                 case BuyCardCommand buyCard:
@@ -117,30 +97,7 @@ namespace Cardgame
                     if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");
                     if (Model.CardStacks[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
 
-                    var boughtCard = Cards.All.ByName[buyCard.Id];
-                    if (boughtCard.Cost > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {buyCard.Id}.");
-
-                    Model.CardStacks[buyCard.Id]--;
-                    Model.Discards[username].Add(buyCard.Id);
-                    Model.MoneyRemaining -= boughtCard.Cost;
-                    Model.BuysRemaining -= 1;
-
-                    LogEvent($@"<spans>
-                        <player>{username}</player>
-                        <if you='buy' them='buys'>{username}</if>
-                        <card>{buyCard.Id}</card>
-                        <run>.</run>
-                    </spans>");
-
-                    if (Model.BuysRemaining == 0)
-                    {
-                        EndTurn();
-                        BeginTurn();
-                    }
-                    else
-                    {
-                        SkipBuyIfNoCash();
-                    }
+                    BuyCard(username, buyCard.Id);
 
                     break;
 
@@ -266,6 +223,26 @@ namespace Cardgame
             }
         }
 
+        private void SkipBuyIfNoCash()
+        {
+            var totalRemaining = Model.MoneyRemaining + Model.Hands[Model.ActivePlayer]
+                .Select(id => Cards.All.ByName[id])
+                .OfType<Cards.TreasureCardModel>()
+                .Select(card => card.Value)
+                .Sum();
+
+            var minimumCost = Model.CardStacks
+                .Where(kvp => kvp.Value > 0)
+                .Select(kvp => Cards.All.ByName[kvp.Key].Cost)
+                .Min();
+
+            if (totalRemaining < minimumCost)
+            {
+                EndTurn();
+                BeginTurn();
+            }
+        }
+
         private void DrawCard(string player)
         {
             var deck = Model.Decks[player];
@@ -291,24 +268,92 @@ namespace Cardgame
             }
         }
 
-        private void SkipBuyIfNoCash()
+        private void BuyCard(string player, string id)
         {
-            var totalRemaining = Model.MoneyRemaining + Model.Hands[Model.ActivePlayer]
-                .Select(id => Cards.All.ByName[id])
-                .OfType<Cards.TreasureCardModel>()
-                .Select(card => card.Value)
-                .Sum();
+            var boughtCard = Cards.All.ByName[id];
+            if (boughtCard.Cost > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
 
-            var minimumCost = Model.CardStacks
-                .Where(kvp => kvp.Value > 0)
-                .Select(kvp => Cards.All.ByName[kvp.Key].Cost)
-                .Min();
+            Model.CardStacks[id]--;
+            Model.Discards[player].Add(id);
+            Model.MoneyRemaining -= boughtCard.Cost;
+            Model.BuysRemaining -= 1;
 
-            if (totalRemaining < minimumCost)
+            LogEvent($@"<spans>
+                <player>{player}</player>
+                <if you='buy' them='buys'>{player}</if>
+                <card>{id}</card>
+                <run>.</run>
+            </spans>");
+
+            if (Model.BuysRemaining == 0)
             {
                 EndTurn();
                 BeginTurn();
             }
+            else
+            {
+                SkipBuyIfNoCash();
+            }
+        }
+
+        private void PlayCard(string player, string id)
+        {
+            Model.Hands[player].Remove(id);
+            Model.PlayedCards.Add(id);
+
+            var playedCard = Cards.All.ByName[id];                    
+            switch (playedCard.Type)
+            {                    
+                case CardType.Action when playedCard is Cards.ActionCardModel action:
+                    if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
+                    if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
+
+                    Model.ActionsRemaining--;
+                    action.PlayAsync().ContinueWith(CompleteAction);
+                    break;
+                
+                case CardType.Treasure when playedCard is Cards.TreasureCardModel treasure:
+                    if (!Model.BuyPhase)
+                    {
+                        Model.BuyPhase = true;
+                        SkipBuyIfNoCash();
+                    }
+                    Model.MoneyRemaining += treasure.Value;
+                    break;
+
+                case CardType.Victory:
+                case CardType.Curse:
+                default:
+                    throw new CommandException($"You can't play {playedCard.Type} cards.");
+            }
+
+            LogEvent($@"<spans>
+                <player>{player}</player>
+                <if you='play' them='plays'>{player}</if>
+                <card>{id}</card>
+                <run>.</run>
+            </spans>");
+        }
+
+        private void CompleteAction(Task t)
+        {
+            lock (this)
+            {
+                if (t.Status == TaskStatus.Faulted)
+                {
+                    var e = t.Exception.InnerException ?? t.Exception;
+                    LogEvent($"<error>Error: {e.Message}</error>");
+                    // rollback somehow?
+                }
+
+                if (Model.ActionsRemaining == 0)
+                {
+                    Model.BuyPhase = true;
+                    SkipBuyIfNoCash();
+                }
+            }
+
+            ActionCompleted?.Invoke();
         }
     }
 }

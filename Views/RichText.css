@@ -15,3 +15,7 @@
 .rich-text__symbol {
     vertical-align: bottom;
 }
+
+.rich-text__error {
+    color: red;
+}

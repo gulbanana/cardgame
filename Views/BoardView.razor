@@ -16,10 +16,7 @@
         <ActiveButton Label="End turn" Enabled="@IsActivePlayer" Action="@(() => Dispatch(new EndTurnCommand()))" />
     </p>
 
-    @{
-        var hasCommands = Game.PlayedCards.Any() && Cards.All.ByName[Game.PlayedCards.Last()].Type == CardType.Action;
-    }
-    <div style="grid-area: cards; grid-column-end: @(hasCommands ? "3" : "5")">
+    <div style="grid-area: cards; grid-column-end: @(Game.HasChoices ? "3" : "5")">
         <GappedRow>
             @for (var i = 0; i < Game.PlayedCards.Count; i++)
             {
@@ -27,7 +24,8 @@
             }
         </GappedRow>
     </div>
-    @if (hasCommands)
+    
+    @if (Game.HasChoices)
     {
         <div style="grid-area: card-commands">
             <GappedColumn />

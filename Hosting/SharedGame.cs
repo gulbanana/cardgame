@@ -18,6 +18,8 @@ namespace Cardgame.Hosting
             engine = new GameEngine();
             this.name = name;
 
+            engine.ActionCompleted += OnActionCompleted;
+
             UpdateSummary();
         }
 
@@ -31,11 +33,8 @@ namespace Cardgame.Hosting
         {
             try
             {
-                lock (engine)
-                {
-                    engine.Execute(username, command);
-                }
-
+                engine.Execute(username, command);
+                
                 Notify();
 
                 if (command is JoinGameCommand || command is LeaveGameCommand || command is StartGameCommand)
@@ -49,6 +48,11 @@ namespace Cardgame.Hosting
             {
                 return $"{username}: error executing command {command.GetType().Name}: {e.Message}";
             }
+        }
+
+        private void OnActionCompleted()
+        {
+            Notify();
         }
 
         private void UpdateSummary()

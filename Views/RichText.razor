@@ -40,6 +40,10 @@
         <text>@run.Text</text>
         break;
 
+    case TextModel.Error error:
+        <span class="rich-text__error">@error.Text</span>
+        break;
+
     case TextModel.Symbol symbol:
         <img class="rich-text__symbol" src="symbols/@(symbol.Name).png" width="8" height="8">
         break;

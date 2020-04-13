@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace Cardgame.Cards
 {
@@ -7,6 +8,8 @@ namespace Cardgame.Cards
         public override CardType Type => CardType.Action;
         public virtual string SubType => null;
         
-        public void Play() => throw new NotImplementedException("Card not yet implemented.");
+        public virtual Task PlayAsync() => Task.Run(Play);
+
+        protected virtual Task Play() => throw new NotImplementedException($"{Name}: card not yet implemented.");
     }
 }

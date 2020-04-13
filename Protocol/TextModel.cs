@@ -30,6 +30,11 @@ namespace Cardgame
             public string Text { get; set; }
         }
 
+        public class Error : TextModel
+        {
+            public string Text { get; set; }
+        }
+
         public class Symbol : TextModel
         {
             public string Name { get; set; }
@@ -76,6 +81,9 @@ namespace Cardgame
 
                 case "run":
                     return new Run { Text = element.Value };
+
+                case "error":
+                    return new Error { Text = element.Value };
 
                 case "sym":
                     return new Symbol { Name = element.Value };

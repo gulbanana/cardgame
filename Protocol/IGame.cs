@@ -1,5 +1,3 @@
-using System;
-
 namespace Cardgame
 {
     // theoretical client-server separation point

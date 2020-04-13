@@ -29,5 +29,6 @@ namespace Cardgame
         public int BuysRemaining { get; set; }
         public int MoneyRemaining { get; set; }
         public List<string> PlayedCards { get; set; }
+        public bool HasChoices { get; set; }
     }
 }
