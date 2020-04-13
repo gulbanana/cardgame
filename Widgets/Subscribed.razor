@@ -1,0 +1,28 @@
+@typeparam T
+@implements IDisposable
+@code {
+    [Parameter] public IEndpoint<T> Endpoint { get; set; }
+    [Parameter] public RenderFragment<T> ChildContent { get; set; }
+    private T currentModel;
+
+    protected override void OnInitialized()
+    {        
+        currentModel = Endpoint.Subscribe(OnUpdate);
+    }
+
+    private void OnUpdate(T newModel)
+    {
+        InvokeAsync(() =>
+        {
+            currentModel = newModel;
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        Endpoint.Unsubscribe(OnUpdate);
+    }
+}
+
+@ChildContent(currentModel)

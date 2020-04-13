@@ -1,34 +1,13 @@
 @page "/"
 @attribute [Authorize]
-@implements IDisposable
 @inject NavigationManager Navigation
-@inject IGameEndpoint Endpoint
+@inject IGameEndpoint GameEndpoint
 @code {
-    private GameSummary[] currentGames;
     private string newGameName;
-
-    protected override void OnInitialized()
-    {
-        currentGames = Endpoint.Subscribe(OnUpdate);
-    }
-
-    private void OnUpdate(GameSummary[] newGames)
-    {
-        InvokeAsync(() =>
-        {
-            currentGames = newGames;
-            StateHasChanged();
-        });
-    }
 
     void OnSubmit()
     {
         Navigation.NavigateTo($"/game/{newGameName}");
-    }
-
-    public void Dispose()
-    {
-        Endpoint.Unsubscribe(OnUpdate);
     }
 }
 
@@ -39,21 +18,23 @@
 </form>
 
 <h3>Current games</h3>
-@foreach (var game in currentGames)
-{    
-    <p>
-        <a href="/game/@game.Name">@game.Name</a> - @(game.Status).<br>
-        @for (var i = 0; i < game.Players.Length; i++)
-        {
-            
-            if (i < game.Players.Length - 1)
-            {
-                <text><PlayerLink Name="@game.Players[i]" />, </text>
+<Subscribed Endpoint="@GameEndpoint">
+    @foreach (var game in context)
+    {    
+        <p @key="game.Name">
+            <a href="/game/@game.Name">@game.Name</a> - @(game.Status).<br>
+            @for (var i = 0; i < game.Players.Length; i++)
+            {                
+                var player = game.Players[i];
+                if (i < game.Players.Length - 1)
+                {
+                    <text><PlayerLink @key="@player" Name="@player" />, </text>
+                }
+                else
+                {
+                    <text><PlayerLink @key="@player" Name="@player" /></text>
+                }
             }
-            else
-            {
-                <text><PlayerLink Name="@game.Players[i]" /></text>
-            }
-        }
-    </p>
-}
+        </p>
+    }
+</Subscribed>

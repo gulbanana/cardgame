@@ -1,49 +1,32 @@
 ﻿@page "/game/{GameName}"
 @attribute [Authorize]
-@implements IDisposable
 @inject NavigationManager Navigation
 @inject IGameEndpoint Endpoint
 @inject IUserSession Session
 @code {
     [Parameter] public string GameName { get; set; }
     private IGame game;
-    private GameModel currentModel;
 
     protected override void OnInitialized()
     {
         game = Endpoint.FindGame(GameName);
-        currentModel = game.Subscribe(OnUpdate);
     }
 
-    private void OnUpdate(GameModel newModel)
+    private void OnExecute(GameModel model, ClientCommand command)
     {
-        InvokeAsync(() =>
-        {
-            currentModel = newModel;
-            StateHasChanged();
-        });
-    }
-
-    private void DoExecute(ClientCommand command)
-    {
-        command.Seq = currentModel.Seq;
+        command.Seq = model.Seq;
         var error = game.Execute(Session.Username, command);
 
         if (error != null)
         {
             Console.WriteLine(error);
-
-            game.Unsubscribe(OnUpdate);
-            currentModel = game.Subscribe(OnUpdate);
+            StateHasChanged();
         }
-    }
-
-    public void Dispose()
-    {
-        game.Unsubscribe(OnUpdate);
     }
 }
 
-<CascadingValue Value="@(new Executor(DoExecute))">
-    <GameView Model="currentModel" />
-</CascadingValue>
+<Subscribed Endpoint="@game">
+    <CascadingValue Value="@(new Executor(c => OnExecute(context, c)))">
+        <GameView Model="@context" />
+    </CascadingValue>
+</Subscribed>
