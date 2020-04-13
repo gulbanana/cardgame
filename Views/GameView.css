@@ -37,7 +37,7 @@
 .game-view__board {
     display: grid;
     grid-template-areas: 'kingdom kingdom kingdom'
-                         'turn    actions .'
+                         'actions actions actions'
                          'deck    hand    discard';
     grid-template-rows: auto 1fr auto;
     grid-template-columns: auto 1fr auto;
@@ -47,10 +47,6 @@
     display: grid;
     grid-template-columns: auto auto auto auto auto auto auto auto;
     grid-gap: var(--std-gap);
-}
-
-.game-view__turn-status {
-    font-weight: bold;
 }
 
 .game-view__events {

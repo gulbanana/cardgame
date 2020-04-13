@@ -79,9 +79,9 @@
             }
         </div>
 
-        @if (!Model.IsStarted)
-        {
-            <div style="grid-area: actions">
+        <div style="grid-area: actions">
+            @if (!Model.IsStarted)
+            {            
                 <GappedColumn>
                     @if (!Model.Players.Contains(Session.Username) && Model.Players.Length < 4)
                     {
@@ -96,43 +96,12 @@
                         <ActiveButton Label="Leave game" Action="@(() => Dispatch(new LeaveGameCommand()))" />
                     }
                 </GappedColumn>
-            </div>
-        }
-        else
-        {
-            <div style="grid-area: turn" class="game-view__turn-status">
-                <p style="@(Model.BuyPhase ? "font-weight: normal" : "")">Actions: @Model.ActionsRemaining</p>
-                <p>Buys: @Model.BuysRemaining</p>
-                <p style="@(Model.MoneyRemaining == 0 ? "font-weight: normal" : "")">$@Model.MoneyRemaining</p>
-            </div>
-
-            <div style="grid-area: actions">
-                <GappedRow>
-                    @if (Model.IsStarted)
-                    {
-                        @foreach (var id in Model.PlayedCards)
-                        {
-                            <ActiveCard Large="true" Id="@id" />
-                        }
-                    }
-                    else
-                    {                
-                        @if (!Model.Players.Contains(Session.Username) && Model.Players.Length < 4)
-                        {
-                            <ActiveButton Label="Join game" Action="@(() => Dispatch(new JoinGameCommand()))" />
-                        }
-                        else
-                        {
-                            @if (Model.Players.Length > 1)
-                            {
-                                <ActiveButton Label="Start game" Action="@(() => Dispatch(new StartGameCommand()))" />
-                            }
-                            <ActiveButton Label="Leave game" Action="@(() => Dispatch(new LeaveGameCommand()))" />
-                        }
-                    }
-                </GappedRow>
-            </div>
-        }
+            }
+            else
+            {
+                <BoardView Game="@Model" />
+            }
+        </div>
 
         @if (Model.Players.Contains(Session.Username))
         {            

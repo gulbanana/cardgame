@@ -1,0 +1,20 @@
+@inject IUserSession Session
+@code {
+    [Parameter] public GameModel Game { get; set; }
+    [CascadingParameter] public Executor Dispatch { get; set; }
+}
+
+<div class="board-view">
+    <div>
+        <Bold If="@(!Game.BuyPhase && Game.ActionsRemaining > 0)">Actions: @Game.ActionsRemaining</Bold><br />
+        <Bold If="@(Game.BuysRemaining > 0)">Buys: @Game.BuysRemaining</Bold><br />
+        <Bold If="@(Game.MoneyRemaining > 0)">$@Game.MoneyRemaining</Bold>
+    </div>
+
+    <GappedRow>
+        @foreach (var id in Game.PlayedCards)
+        {
+            <ActiveCard Large="true" Id="@id" />
+        }
+    </GappedRow>
+</div>
