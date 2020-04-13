@@ -1,18 +1,37 @@
 @page "/"
 @attribute [Authorize]
+@inject NavigationManager Navigation
 @inject IGameEndpoint Endpoint
 @code {
     private string[] games;
+    private string newGameName;
+    private string newGameError;
 
     protected override void OnInitialized()
     {
         games = Endpoint.ListGames();
     }
+
+    void OnSubmit()
+    {
+        Navigation.NavigateTo($"/game/{newGameName}");
+    }
 }
 
+<h3>New game</h3>
+<form @onsubmit="OnSubmit">    
+    <input type="text" @bind="newGameName">
+    <ActiveButton Label="Create" />
+    @if (newGameError != null)
+    {
+        <br><span style="color: red">@newGameError</span>
+    }
+</form>
+
+<h3>Current games</h3>
 @foreach (var game in games)
-{
+{    
     <p>
-        <a href="/play/@game">@game</a>
+        <a href="/game/@game">@game</a>
     </p>
 }

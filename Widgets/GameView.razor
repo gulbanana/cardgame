@@ -6,6 +6,18 @@
 }
 
 <div class="game-view">
+    <div style="grid-area: nav">
+        <a href="/">&lt; games</a> 
+        @if (Model.Players.Contains(Session.Username))
+        {
+            <text>Playing as <PlayerLink Name="@Session.Username" />.</text>
+        }
+        else
+        {
+            <text>Spectating as <PlayerLink Name="@Session.Username" />.</text>
+        }
+    </div>
+
     <div style="grid-area: event-log" class="game-view__events">
         <VerticalLog>
             <RichText Model="@(new TextModel.Paras { Children = Model.EventLog.ToArray() })"/>
@@ -117,54 +129,100 @@
             </div>
         }
 
-        <div style="grid-area: hand">
-            <GappedRow>
+        @if (Model.Players.Contains(Session.Username))
+        {            
+            <div style="grid-area: deck">
+                <SpecialCard Name="card-back" Stack="@(!Model.IsStarted ? 3 : Model.Decks[Session.Username].Count)" />
+            </div>
+
+            <div style="grid-area: hand">
+                <GappedRow>
+                    @if (Model.IsStarted)
+                    {
+                        foreach (var id in Model.Hands[Session.Username])
+                        {
+                            var card = Cards.All.ByName[@id];
+                            var isEnabled = IsActivePlayer &&
+                                card.Type != CardType.Victory &&
+                                (!Model.BuyPhase || card.Type != CardType.Action);
+                            <ActiveCard Model="@card" 
+                                        Enabled="@isEnabled" 
+                                        Action="@(() => Dispatch(new PlayCardCommand { Id = @id }))"/>
+                        }
+                    }
+                    else
+                    {
+                        <SpecialCard Name="card-back" />
+                        <SpecialCard Name="card-back" />
+                        <SpecialCard Name="card-back" />
+                        <SpecialCard Name="card-back" />
+                        <SpecialCard Name="card-back" />
+                    }
+                </GappedRow>
+            </div>
+
+            <div style="grid-area: discard">
                 @if (Model.IsStarted)
                 {
-                    foreach (var id in Model.Hands[Session.Username])
+                    var discard = Model.Discards[Session.Username];
+                    if (discard.Any())
                     {
-                        var card = Cards.All.ByName[@id];
-                        var isEnabled = IsActivePlayer &&
-                            card.Type != CardType.Victory &&
-                            (!Model.BuyPhase || card.Type != CardType.Action);
-                        <ActiveCard Model="@card" 
-                                    Enabled="@isEnabled" 
-                                    Action="@(() => Dispatch(new PlayCardCommand { Id = @id }))"/>
+                        <ActiveCard Id="@discard.Last()" Stack="@(discard.Count > 1)" Color="special" />
                     }
-                }
-                else
-                {
-                    <SpecialCard Name="card-back" />
-                    <SpecialCard Name="card-back" />
-                    <SpecialCard Name="card-back" />
-                    <SpecialCard Name="card-back" />
-                    <SpecialCard Name="card-back" />
-                }
-            </GappedRow>
-        </div>
-
-        <div style="grid-area: discard">
-            @if (Model.IsStarted)
-            {
-                var discard = Model.Discards[Session.Username];
-                if (discard.Any())
-                {
-                    <ActiveCard Id="@discard.Last()" Stack="@(discard.Count > 1)" Color="special" />
+                    else
+                    {
+                        <SpecialCard Name="trash" />
+                    }
                 }
                 else
                 {
                     <SpecialCard Name="trash" />
                 }
-            }
-            else
-            {
-                <SpecialCard Name="trash" />
-            }
-        </div>
+            </div>
+        }
+        else
+        {
+            <div style="grid-area: deck">
+                <SpecialCard Name="card-back" Stack="@(!Model.IsStarted ? 3 : Model.Decks[Model.ActivePlayer].Count)" />
+            </div>
 
-        <div style="grid-area: deck">
-            <SpecialCard Name="card-back" Stack="@(!Model.IsStarted ? 1 : Model.Decks[Session.Username].Count)" />
-        </div>
+            <div style="grid-area: hand">
+                <GappedRow>
+                    @if (Model.IsStarted)
+                    {
+                        foreach (var id in Model.Hands[Model.ActivePlayer])
+                        {
+                            var card = Cards.All.ByName[@id];
+                            var isEnabled = IsActivePlayer &&
+                                card.Type != CardType.Victory &&
+                                (!Model.BuyPhase || card.Type != CardType.Action);
+                            <ActiveCard Model="@card" 
+                                        Enabled="@isEnabled" 
+                                        Action="@(() => Dispatch(new PlayCardCommand { Id = @id }))"/>
+                        }
+                    }
+                </GappedRow>
+            </div>
+
+            <div style="grid-area: discard">
+                @if (Model.IsStarted)
+                {
+                    var discard = Model.Discards[Model.ActivePlayer];
+                    if (discard.Any())
+                    {
+                        <ActiveCard Id="@discard.Last()" Stack="@(discard.Count > 1)" Color="special" />
+                    }
+                    else
+                    {
+                        <SpecialCard Name="trash" />
+                    }
+                }
+                else
+                {
+                    <SpecialCard Name="trash" />
+                }
+            </div>
+        }
     </div>
 
     <GridSeparator Area="right-bar"/>
@@ -172,7 +230,21 @@
     <div style="grid-area: status" class="game-view__status">
         @if (Model.Players.Any())
         {
-            <span>@(Model.IsStarted ? "Game in progress." : "Waiting to start.") Current players: @string.Join(", ", Model.Players).</span>
+            <span>
+                @(Model.IsStarted ? "Game in progress." : "Waiting to start.") Current players:
+                @for (var i = 0; i < Model.Players.Length; i++)
+                {
+                    
+                    if (i < Model.Players.Length - 1)
+                    {
+                        <text><PlayerLink Name="@Model.Players[i]" />, </text>
+                    }
+                    else
+                    {
+                        <text><PlayerLink Name="@Model.Players[i]" />.</text>
+                    }
+                }
+            </span>
         }
         else
         {
