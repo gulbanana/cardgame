@@ -2,13 +2,19 @@
 @inject NavigationManager Navigation
 @inject IUserSession Session
 @code {
-    protected override void OnAfterRender(bool firstRender)
+    Guid id;
+
+    protected override void OnInitialized()
     {
-        var id = Guid.NewGuid();
+        id = Guid.NewGuid();
         if (!Session.IsLoggedIn)
         {
             Session.Login($"demo");
         }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
         Navigation.NavigateTo($"/game/demo-{id}");
     }
 }
