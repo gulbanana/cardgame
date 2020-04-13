@@ -1,4 +1,5 @@
 ﻿@page "/play/{GameName}"
+@attribute [Authorize]
 @inject NavigationManager Navigation
 @inject IGameEndpoint Endpoint
 @inject IUserSession Session
@@ -9,20 +10,10 @@
 
     protected override void OnInitialized()
     {
-        if (Session.IsLoggedIn)
-        {
-            game = Endpoint.FindGame(GameName);
-            currentModel = game.Subscribe(OnUpdate);
-        }
+        game = Endpoint.FindGame(GameName);
+        currentModel = game.Subscribe(OnUpdate);
     }
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (!Session.IsLoggedIn)
-        {
-            Navigation.NavigateTo("/");
-        }
-    }
 
     private void OnUpdate(GameModel newModel)
     {
@@ -41,17 +32,13 @@
         if (error != null)
         {
             Console.WriteLine(error);
+
+            game.Unsubscribe(OnUpdate);
+            currentModel = game.Subscribe(OnUpdate);
         }
     }
 }
 
-@if (Session.IsLoggedIn)
-{
-    <CascadingValue Value="@(new Executor(DoExecute))">
-        <GameView Model="currentModel" />
-    </CascadingValue>
-}
-else
-{
-    <p>Logging in...</p>
-}
+<CascadingValue Value="@(new Executor(DoExecute))">
+    <GameView Model="currentModel" />
+</CascadingValue>

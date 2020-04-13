@@ -1,0 +1,32 @@
+﻿@inject IUserSession Session
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider Provider
+@code {
+    string username;
+    string error;
+
+    void OnSubmit()
+    {
+        if (!string.IsNullOrWhiteSpace(username))
+        {
+            if (Session.Login(username))
+            {
+                //Navigation.NavigateTo(Navigation.Uri);
+            }
+            else
+            {
+                error = "Another player with this username is already logged in.";
+            }
+        }
+    }
+}
+
+<form @onsubmit="OnSubmit">
+    Please enter a username.<br>
+    <input type="text" @bind="username">
+    <ActiveButton Label="Login" />
+    @if (error != null)
+    {
+        <br><span style="color: red">@error</span>
+    }
+</form>

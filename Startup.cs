@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,8 @@ namespace Cardgame
 
             services.AddSingleton<UserManager>();
             services.AddScoped<ScopedUserSession>();
-            services.AddTransient<IUserSession>(s => s.GetRequiredService<ScopedUserSession>());
+            services.AddScoped<IUserSession>(s => s.GetRequiredService<ScopedUserSession>());
+            services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<ScopedUserSession>());
 
             services.AddSingleton<SharedGameEndpoint>();
             services.AddTransient<IGameEndpoint>(s => s.GetRequiredService<SharedGameEndpoint>());

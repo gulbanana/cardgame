@@ -1,40 +1,18 @@
-﻿@page "/"
-@inject IUserSession Session
-@inject NavigationManager Navigation
+@page "/"
+@attribute [Authorize]
+@inject IGameEndpoint Endpoint
 @code {
-    string username;
-    string error;
+    private string[] games;
 
     protected override void OnInitialized()
     {
-        if (Session.IsLoggedIn)
-        {
-            Session.Logout();
-        }
-    }
-
-    void OnSubmit()
-    {
-        if (!string.IsNullOrWhiteSpace(username))
-        {
-            if (Session.Login(username))
-            {
-                Navigation.NavigateTo("/play/main");
-            }
-            else
-            {
-                error = "Another player with this username is already logged in.";
-            }
-        }
+        games = Endpoint.ListGames();
     }
 }
 
-<form @onsubmit="OnSubmit">
-    Please enter a username.<br>
-    <input type="text" @bind="username">
-    <ActiveButton Label="Login" />
-    @if (error != null)
-    {
-        <br><span class="index__error">@error</span>
-    }
-</form>
+@foreach (var game in games)
+{
+    <p>
+        <a href="/play/@game">@game</a>
+    </p>
+}
