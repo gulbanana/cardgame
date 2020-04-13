@@ -85,6 +85,7 @@ namespace Cardgame
                             if (Model.ActionsRemaining == 0)
                             {
                                 Model.BuyPhase = true;
+                                SkipBuyIfNoCash();
                             }
                             break;
                         
@@ -92,6 +93,7 @@ namespace Cardgame
                             if (!Model.BuyPhase)
                             {
                                 Model.BuyPhase = true;
+                                SkipBuyIfNoCash();
                             }
                             Model.MoneyRemaining += treasure.Value;
                             break;
@@ -113,11 +115,12 @@ namespace Cardgame
                 case BuyCardCommand buyCard:
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");
+                    if (Model.CardStacks[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
 
                     var boughtCard = Cards.All.ByName[buyCard.Id];
                     if (boughtCard.Cost > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {buyCard.Id}.");
 
-                    // XXX reduce count of stack 
+                    Model.CardStacks[buyCard.Id]--;
                     Model.Discards[username].Add(buyCard.Id);
                     Model.MoneyRemaining -= boughtCard.Cost;
                     Model.BuysRemaining -= 1;
@@ -133,6 +136,10 @@ namespace Cardgame
                     {
                         EndTurn();
                         BeginTurn();
+                    }
+                    else
+                    {
+                        SkipBuyIfNoCash();
                     }
 
                     break;
@@ -195,15 +202,19 @@ namespace Cardgame
                 }
             }
             
-            Model.ActivePlayer = Model.Players[rng.Next(Model.Players.Length)];
+            Model.ActivePlayer = Model.Players.Contains("demo") ? "demo" : Model.Players[rng.Next(Model.Players.Length)];
         }
 
         private void BeginTurn()
         {
-            Model.BuyPhase = false;
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
             Model.MoneyRemaining = 0;
+
+            Model.BuyPhase = !Model.Hands[Model.ActivePlayer]
+                .Select(id => Cards.All.ByName[id])
+                .OfType<Cards.ActionCardModel>()
+                .Any();
 
             LogEvent($@"<block>
                 <spans>
@@ -237,12 +248,15 @@ namespace Cardgame
                 DrawCard(Model.ActivePlayer);
             }
 
-            var nextPlayer = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
-            if (nextPlayer >= Model.Players.Length)
+            if (Model.ActivePlayer != "demo")
             {
-                nextPlayer = 0;
+                var nextPlayer = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
+                if (nextPlayer >= Model.Players.Length)
+                {
+                    nextPlayer = 0;
+                }
+                Model.ActivePlayer = Model.Players[nextPlayer];
             }
-            Model.ActivePlayer = Model.Players[nextPlayer];
         }
 
         private void DrawCard(string player)
@@ -267,6 +281,26 @@ namespace Cardgame
                     <if you='reshuffle.' them='reshuffles.'>{player}</if>
                     <run>)</run>
                 </spans>");
+            }
+        }
+
+        private void SkipBuyIfNoCash()
+        {
+            var totalRemaining = Model.MoneyRemaining + Model.Hands[Model.ActivePlayer]
+                .Select(id => Cards.All.ByName[id])
+                .OfType<Cards.TreasureCardModel>()
+                .Select(card => card.Value)
+                .Sum();
+
+            var minimumCost = Model.CardStacks
+                .Where(kvp => kvp.Value > 0)
+                .Select(kvp => Cards.All.ByName[kvp.Key].Cost)
+                .Min();
+
+            if (totalRemaining < minimumCost)
+            {
+                EndTurn();
+                BeginTurn();
             }
         }
     }

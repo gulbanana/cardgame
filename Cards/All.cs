@@ -34,6 +34,9 @@ namespace Cardgame.Cards
                 case CardType.Victory:
                     return "victory";
 
+                case CardType.Curse:
+                    return "curse";
+
                 case CardType.Action when subType == "Reaction":
                     return "reaction";
 

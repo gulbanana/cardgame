@@ -52,9 +52,9 @@
             }
             else
             {
-                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Estate" />
-                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Duchy" />
-                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Province" />
+                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Estate" />
+                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Duchy" />
+                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Province" />
 
                 <SpecialCard Name="card-back" Half="true" Stack="3" />
                 <SpecialCard Name="card-back" Half="true" Stack="3" />
@@ -62,9 +62,9 @@
                 <SpecialCard Name="card-back" Half="true" Stack="3" />
                 <SpecialCard Name="card-back" Half="true" Stack="3" />
 
-                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Copper" />
-                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Silver" />
-                <ActiveCard Enabled="false" Half="true" Stack="true" Id="Gold" />
+                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Copper" />
+                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Silver" />
+                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Gold" />
 
                 <SpecialCard Name="card-back" Half="true" Stack="3" />
                 <SpecialCard Name="card-back" Half="true" Stack="3" />
@@ -144,6 +144,7 @@
                             var card = Cards.All.ByName[@id];
                             var isEnabled = IsActivePlayer &&
                                 card.Type != CardType.Victory &&
+                                card.Type != CardType.Curse &&
                                 (!Model.BuyPhase || card.Type != CardType.Action);
                             <ActiveCard Model="@card" 
                                         Enabled="@isEnabled" 
@@ -167,7 +168,7 @@
                     var discard = Model.Discards[Session.Username];
                     if (discard.Any())
                     {
-                        <ActiveCard Id="@discard.Last()" Stack="@(discard.Count > 1)" Color="special" />
+                        <ActiveCard Id="@discard.Last()" Stack="@discard.Count" Color="special" />
                     }
                     else
                     {
@@ -210,7 +211,7 @@
                     var discard = Model.Discards[Model.ActivePlayer];
                     if (discard.Any())
                     {
-                        <ActiveCard Id="@discard.Last()" Stack="@(discard.Count > 1)" Color="special" />
+                        <ActiveCard Id="@discard.Last()" Stack="@discard.Count" Color="special" />
                     }
                     else
                     {

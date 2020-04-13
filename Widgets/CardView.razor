@@ -6,7 +6,7 @@
     [Parameter] public int Cost { get; set; }
     [Parameter] public TextModel Text { get; set; }
     [Parameter] public bool Half { get; set; }
-    [Parameter] public bool Stack { get; set; }
+    [Parameter] public int Stack { get; set; }
     [Parameter] public string Color { get; set; }
 
     protected override void OnParametersSet()
@@ -18,7 +18,7 @@
     }
 }
 
-<Stacked Size="@(Stack ? 3 : 0)" Type="@Color" Half="@Half">
+<Stacked Size="@Stack" Type="@Color" Half="@Half">
     <div class="card-view">
         <div class="card__header card-view__title">@Name</div>
         @if (Half) {
@@ -47,7 +47,7 @@
             }
             else
             {
-                <span>@Type - @SubType</span>
+                <span>@SubType</span>
             }
         </div>
     </div>
