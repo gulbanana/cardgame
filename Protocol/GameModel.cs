@@ -15,6 +15,7 @@ namespace Cardgame
 
         // game fixed setup
         public string[] KingdomCards { get; set; } 
+        public Dictionary<string, int> CardStacks { get; set; }
 
         // game state
         public string ActivePlayer { get; set; }

@@ -1,6 +1,6 @@
 namespace Cardgame.Cards
 {
-    public class Militia : KingdomCardModel
+    public class Militia : ActionCardModel
     {
         public override string SubType => "Attack";
         public override string Art => "dom-militia";

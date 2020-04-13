@@ -1,6 +1,6 @@
 namespace Cardgame.Cards
 {
-    public class Smithy : KingdomCardModel
+    public class Smithy : ActionCardModel
     {
         public override string Art => "dom-smithy";
         public override int Cost => 4;

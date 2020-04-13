@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -52,23 +53,7 @@ namespace Cardgame
                     if (!Model.Players.Contains(username)) throw new CommandException("You are not in the game.");
                     if (Model.Players.Length < 2) throw new CommandException("Not enough players.");
 
-                    Model.IsStarted = true;
-                    Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<string>());
-                    Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<string>());
-                    Model.Decks = Model.Players.ToDictionary(k => k, _ => 
-                    {
-                        var deck = new List<string>{ "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Estate", "Estate", "Estate" };
-                        deck.Shuffle();
-                        return deck;
-                    });
-                    Model.KingdomCards = new[] // XX pick at random instead!
-                    {
-                        "Cellar", "Market", "Mine", "Remodel", "Moat",
-                        "Smithy", "Village", "Woodcutter", "Workshop", "Militia"
-                    };
-
-                    Model.PlayedCards = new List<string>();
-                    Model.ActivePlayer = username; // XXX pick at random instead!
+                    BeginGame();
                     BeginTurn();
 
                     LogEvent($"<run>The game began.</run>");
@@ -85,7 +70,7 @@ namespace Cardgame
                     var playedCard = Cards.All.ByName[playCard.Id];                    
                     switch (playedCard.Type)
                     {                    
-                        case CardType.Action when playedCard is Cards.KingdomCardModel action:
+                        case CardType.Action when playedCard is Cards.ActionCardModel action:
                             if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
                             if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
 
@@ -148,18 +133,61 @@ namespace Cardgame
             Model.EventLog.Add(TextModel.Parse(eventText));
         }
 
+        private void BeginGame()
+        {
+            var rng = new Random();
+
+            Model.IsStarted = true;
+
+            Model.PlayedCards = new List<string>();
+            Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<string>());
+            Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<string>());
+            Model.Decks = Model.Players.ToDictionary(k => k, _ => 
+            {
+                var deck = new List<string>{ "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Estate", "Estate", "Estate" };
+                deck.Shuffle();
+                return deck;
+            });
+
+            Model.KingdomCards = new[] // XX pick at random instead!
+            {
+                "Cellar", "Market", "Mine", "Remodel", "Moat",
+                "Smithy", "Village", "Woodcutter", "Workshop", "Militia"
+            };
+
+            var victoryCount = Model.Players.Length == 2 ? 8 : 12;
+            Model.CardStacks = new Dictionary<string, int>
+            {
+                { "Estate", victoryCount },
+                { "Duchy", victoryCount },
+                { "Province", victoryCount },
+                { "Copper", 60 - (Model.Players.Length * 7) },
+                { "Silver", 40 },
+                { "Gold", 30 },
+                { "Curse", (Model.Players.Length - 1) * 10 },
+            };
+            foreach (var card in Model.KingdomCards.Select(id => Cards.All.ByName[id]))
+            {
+                Model.CardStacks[card.Name] = card.Type == CardType.Victory ? victoryCount : 10;
+            }
+
+            foreach (var player in Model.Players)
+            {
+                for (var i = 0; i < 5; i++)
+                {
+                    DrawCard(player);
+                }
+            }
+            
+            Model.ActivePlayer = Model.Players[rng.Next(Model.Players.Length)];
+        }
+
         private void BeginTurn()
         {
             Model.BuyPhase = false;
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
             Model.MoneyRemaining = 0;
-
-            DrawCard();
-            DrawCard();
-            DrawCard();
-            DrawCard();
-            DrawCard();
         }
 
         private void EndTurn()
@@ -179,26 +207,30 @@ namespace Cardgame
                 hand.RemoveAt(0);
                 discard.Add(first);
             }
+
+            for (var i = 0; i < 5; i++)
+            {
+                DrawCard(Model.ActivePlayer);
+            }
         }
 
-        private void DrawCard()
+        private void DrawCard(string player)
         {
-            var deck = Model.Decks[Model.ActivePlayer];
-            var hand = Model.Hands[Model.ActivePlayer];
+            var deck = Model.Decks[player];
+            var hand = Model.Hands[player];
 
             var first = deck[0];
             deck.RemoveAt(0);
             hand.Add(first);
-            LogEvent($"<spans><player>{Model.ActivePlayer}</player><run> drew a card.</run></spans>");
             
             if (!deck.Any())
             {
-                var discard = Model.Discards[Model.ActivePlayer];
+                var discard = Model.Discards[player];
                 deck.AddRange(discard);
                 deck.Shuffle();
                 discard.Clear();
 
-                LogEvent($"<spans><player>{Model.ActivePlayer}</player><run> reshuffled.</run></spans>");
+                LogEvent($"<spans><player>{player}</player><run> reshuffled.</run></spans>");
             }
         }
     }

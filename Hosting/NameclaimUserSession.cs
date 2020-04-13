@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Components.Authorization;
 namespace Cardgame
 {
     // adapter implementing user protocol using DI
-    class ScopedUserSession : AuthenticationStateProvider, IUserSession, IDisposable
+    class NameclaimUserSession : AuthenticationStateProvider, IUserSession, IDisposable
     {
         private readonly UserManager manager;
         public string Username { get; private set; }
         public bool IsLoggedIn => Username != null;
 
-        public ScopedUserSession(UserManager manager)
+        public NameclaimUserSession(UserManager manager)
         {
             this.manager = manager;
         }

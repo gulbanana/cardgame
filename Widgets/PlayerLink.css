@@ -5,3 +5,7 @@
 .player-link--you {
     font-style: italic;
 }
+
+.player-link--disconnected {
+    text-decoration: line-through;
+}

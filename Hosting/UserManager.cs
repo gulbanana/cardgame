@@ -6,15 +6,15 @@ namespace Cardgame
 {
     class UserManager
     {
-        private readonly List<ScopedUserSession> sessions;
-        public IReadOnlyList<ScopedUserSession> Sessions => sessions;
+        private readonly List<NameclaimUserSession> sessions;
+        public IReadOnlyList<NameclaimUserSession> Sessions => sessions;
 
         public UserManager()
         {
-            sessions = new List<ScopedUserSession>();
+            sessions = new List<NameclaimUserSession>();
         }
 
-        public bool Add(ScopedUserSession session)
+        public bool Add(NameclaimUserSession session)
         {
             lock (sessions)
             {
@@ -30,9 +30,14 @@ namespace Cardgame
             }
         }
 
-        public bool Remove(ScopedUserSession session)
+        public bool Remove(NameclaimUserSession session)
         {
             return sessions.Remove(session);
+        }
+
+        public NameclaimUserSession Find(string username)
+        {
+            return sessions.Where(s => s.Username.Equals(username)).SingleOrDefault();
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace Cardgame.Cards
 {
-    public class Moat : KingdomCardModel
+    public class Moat : ActionCardModel
     {
         public override string SubType => "Reaction";
         public override string Art => "dom-moat";

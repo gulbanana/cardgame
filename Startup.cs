@@ -22,9 +22,10 @@ namespace Cardgame
             services.AddServerSideBlazor();
 
             services.AddSingleton<UserManager>();
-            services.AddScoped<ScopedUserSession>();
-            services.AddScoped<IUserSession>(s => s.GetRequiredService<ScopedUserSession>());
-            services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<ScopedUserSession>());
+            services.AddSingleton<IUserEndpoint, NameclaimUserEndpoint>();
+
+            services.AddScoped<IUserSession, NameclaimUserSession>();
+            services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<IUserSession>() as AuthenticationStateProvider);
 
             services.AddSingleton<SharedGameEndpoint>();
             services.AddTransient<IGameEndpoint>(s => s.GetRequiredService<SharedGameEndpoint>());
