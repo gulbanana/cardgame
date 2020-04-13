@@ -16,21 +16,22 @@ namespace Cardgame
         {
             if (Model.Seq != command.Seq)
             {
-                throw new CommandException($"Incorrect sequence number.");
+                throw new CommandException("Incorrect sequence number.");
             }
 
             switch (command)
             {
                 case ChatCommand chat:
-                    if (chat.Message.Length > LogEntry.MAX) throw new CommandException($"Chat message too long.");
+                    if (chat.Message.Length > LogEntry.MAX) throw new CommandException("Chat message too long.");
 
                     Model.ChatLog.Add(new LogEntry { Username = username, Message = chat.Message });
 
                     break;
 
                 case JoinGameCommand _:
-                    if (Model.IsStarted) throw new CommandException($"The game is already in progress.");
-                    if (Model.Players.Contains(username)) throw new CommandException($"You are already in the game.");
+                    if (Model.IsStarted) throw new CommandException("The game is already in progress.");
+                    if (Model.Players.Contains(username)) throw new CommandException("You are already in the game.");
+                    if (Model.Players.Length >= 4) throw new CommandException("The game is full.");
 
                     Model.Players = Model.Players.Append(username).ToArray();
 
@@ -38,8 +39,8 @@ namespace Cardgame
                     break;
 
                 case LeaveGameCommand _:
-                    if (Model.IsStarted) throw new CommandException($"The game is already in progress.");
-                    if (!Model.Players.Contains(username)) throw new CommandException($"You are not in the game.");
+                    if (Model.IsStarted) throw new CommandException("The game is already in progress.");
+                    if (!Model.Players.Contains(username)) throw new CommandException("You are not in the game.");
 
                     Model.Players = Model.Players.Except(new[]{username}).ToArray();
 
@@ -47,7 +48,9 @@ namespace Cardgame
                     break;
 
                 case StartGameCommand _:
-                    if (Model.IsStarted) throw new CommandException($"The game is already in progress.");
+                    if (Model.IsStarted) throw new CommandException("The game is already in progress.");
+                    if (!Model.Players.Contains(username)) throw new CommandException("You are not in the game.");
+                    if (Model.Players.Length < 2) throw new CommandException("Not enough players.");
 
                     Model.IsStarted = true;
                     Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<string>());
