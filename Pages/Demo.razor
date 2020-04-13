@@ -1,39 +1,16 @@
 ﻿@page "/demo"
 @inject NavigationManager Navigation
-@inject IGameEndpoint Endpoint
 @inject IUserSession Session
 @code {
-    private IGame game;
-    private GameModel currentModel;
-
-    protected override void OnInitialized()
+    protected override void OnAfterRender(bool firstRender)
     {
-        Session.Login("demo");
-        game = Endpoint.FindGame("demo-" + Guid.NewGuid().ToString());
-        currentModel = game.Subscribe(OnUpdate);
-    }
-
-    private void OnUpdate(GameModel newModel)
-    {
-        InvokeAsync(() =>
+        var id = Guid.NewGuid();
+        if (!Session.IsLoggedIn)
         {
-            currentModel = newModel;
-            StateHasChanged();
-        });
-    }
-
-    private void DoExecute(ClientCommand command)
-    {
-        command.Seq = currentModel.Seq;
-        var error = game.Execute(Session.Username, command);
-
-        if (error != null)
-        {
-            Console.WriteLine(error);
+            Session.Login($"demo");
         }
+        Navigation.NavigateTo($"/play/demo-{id}");
     }
 }
 
-<CascadingValue Value="@(new Executor(DoExecute))">
-    <GameView Model="currentModel" />
-</CascadingValue>
+<p>Loading demo...</p>

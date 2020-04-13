@@ -9,13 +9,19 @@
 
     protected override void OnInitialized()
     {
+        if (Session.IsLoggedIn)
+        {
+            game = Endpoint.FindGame(GameName);
+            currentModel = game.Subscribe(OnUpdate);
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
         if (!Session.IsLoggedIn)
         {
             Navigation.NavigateTo("/");
         }
-
-        game = Endpoint.FindGame(GameName);
-        currentModel = game.Subscribe(OnUpdate);
     }
 
     private void OnUpdate(GameModel newModel)
@@ -39,6 +45,13 @@
     }
 }
 
-<CascadingValue Value="@(new Executor(DoExecute))">
-    <GameView Model="currentModel" />
-</CascadingValue>
+@if (Session.IsLoggedIn)
+{
+    <CascadingValue Value="@(new Executor(DoExecute))">
+        <GameView Model="currentModel" />
+    </CascadingValue>
+}
+else
+{
+    <p>Logging in...</p>
+}
