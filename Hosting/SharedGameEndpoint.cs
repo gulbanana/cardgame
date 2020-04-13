@@ -31,8 +31,8 @@ namespace Cardgame.Hosting
                     games[name].Execute("agatha", new ChatCommand { Seq = 1, Message = "Hello, kingdom!" });
                     games[name].Execute("beto", new JoinGameCommand { Seq = 2 });
                     games[name].Execute("beto", new ChatCommand { Seq = 3, Message = "Don't cramp my style." });
-                    games[name].Execute("cordelia", new JoinGameCommand { Seq = 4 });
-                    games[name].Execute("cordelia", new ChatCommand { Seq = 5, Message = "Hello, kingdom!" });
+                    games[name].Execute("cawdelia", new JoinGameCommand { Seq = 4 });
+                    games[name].Execute("cawdelia", new ChatCommand { Seq = 5, Message = "Nevermore." });
                     games[name].Execute("demo", new JoinGameCommand { Seq = 6 });
                     games[name].Execute("demo", new StartGameCommand { Seq = 7 });
                 }

@@ -15,16 +15,15 @@
 }
 
 <div class="chat-view">
-    <div class="chat-view__log">
-        <VerticalLog>
+    <VerticalLog>
+        <div class="chat-view__log">
             @foreach (var entry in Model)
             {
-                <div>
-                    <span class="chat-view__username">&lt;@(entry.Username)&gt;</span> @entry.Message
-                </div>
+                <span class="chat-view__username">&lt;@entry.Username&gt;</span>
+                <span>@entry.Message</span>
             }
-        </VerticalLog>
-    </div>
+        </div>
+    </VerticalLog>
 
     <form class="chat-view__entry" @onsubmit="SendMessage">
         <input type="text" @bind="newMessage">
