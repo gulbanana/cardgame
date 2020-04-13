@@ -236,6 +236,13 @@ namespace Cardgame
             {
                 DrawCard(Model.ActivePlayer);
             }
+
+            var nextPlayer = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
+            if (nextPlayer >= Model.Players.Length)
+            {
+                nextPlayer = 0;
+            }
+            Model.ActivePlayer = Model.Players[nextPlayer];
         }
 
         private void DrawCard(string player)
