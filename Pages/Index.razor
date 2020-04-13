@@ -3,7 +3,7 @@
 @inject NavigationManager Navigation
 @inject IGameEndpoint Endpoint
 @code {
-    private string[] games;
+    private GameSummary[] games;
     private string newGameName;
     private string newGameError;
 
@@ -32,6 +32,18 @@
 @foreach (var game in games)
 {    
     <p>
-        <a href="/game/@game">@game</a>
+        <a href="/game/@game.Name">@game.Name</a> - @(game.Status).<br>
+        @for (var i = 0; i < game.Players.Length; i++)
+        {
+            
+            if (i < game.Players.Length - 1)
+            {
+                <text><PlayerLink Name="@game.Players[i]" />, </text>
+            }
+            else
+            {
+                <text><PlayerLink Name="@game.Players[i]" /></text>
+            }
+        }
     </p>
 }

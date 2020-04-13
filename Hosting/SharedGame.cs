@@ -47,5 +47,11 @@ namespace Cardgame
                 return $"{username}: error executing command {command.GetType().Name}: {e.Message}";
             }
         }
+
+        // should probably clone
+        internal GameModel GetModel()
+        {
+            return engine.Model;
+        }
     }
 }

@@ -35,9 +35,18 @@ namespace Cardgame
             return games[name];
         }
 
-        public string[] ListGames()
+        public GameSummary[] ListGames()
         {
-            return games.Keys.ToArray();
+            return games.Keys.Select(name => 
+            {
+                var game = games[name].GetModel();
+                return new GameSummary
+                {
+                    Name = name,
+                    Players = game.Players,
+                    Status = game.IsStarted ? "in progress" : "waiting to start"
+                };
+            }).ToArray();
         }
     }
 }

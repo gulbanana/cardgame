@@ -4,6 +4,6 @@ namespace Cardgame
     public interface IGameEndpoint
     {
         IGame FindGame(string name);
-        string[] ListGames();
+        GameSummary[] ListGames();
     }
 }
