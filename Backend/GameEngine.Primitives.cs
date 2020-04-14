@@ -241,6 +241,7 @@ namespace Cardgame
             Model.ChoiceInput = JsonSerializer.Serialize(input);
 
             inputTCS = new TaskCompletionSource<string>();
+            ActionUpdated?.Invoke();
             var output = await inputTCS.Task;
 
             Model.ChoosingPlayers.Pop();
