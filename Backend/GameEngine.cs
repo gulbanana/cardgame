@@ -120,6 +120,19 @@ namespace Cardgame
             Model.EventLog.Add(TextModel.Parse(eventText));
         }
 
+        private void LogPartialEvent(string eventText)
+        {
+            var partial = Model.EventLog[Model.EventLog.Count - 1];
+            var final = partial is TextModel.Lines l ? l : new TextModel.Lines
+            {
+                Children = new[] { partial }
+            };
+
+            final.Children = final.Children.Append(TextModel.Parse(eventText)).ToArray();
+            
+            Model.EventLog[Model.EventLog.Count - 1] = final;
+        }
+
         private void BeginGame()
         {
             var rng = new Random();
@@ -207,9 +220,19 @@ namespace Cardgame
                 discard.Add(first);
             }
 
+            var reshuffled = false;
             for (var i = 0; i < 5; i++)
             {
-                DrawCard(Model.ActivePlayer);
+                reshuffled = reshuffled || DrawCard(Model.ActivePlayer);
+            }
+            if (reshuffled)
+            {
+                LogEvent($@"<spans>
+                    <run>(</run>
+                    <player>{Model.ActivePlayer}</player>
+                    <if you='reshuffle.' them='reshuffles.'>{Model.ActivePlayer}</if>
+                    <run>)</run>
+                </spans>");
             }
 
             if (Model.ActivePlayer != "demo")
@@ -243,7 +266,7 @@ namespace Cardgame
             }
         }
 
-        private void DrawCard(string player)
+        private bool DrawCard(string player)
         {
             var deck = Model.Decks[player];
             var hand = Model.Hands[player];
@@ -259,12 +282,11 @@ namespace Cardgame
                 deck.Shuffle();
                 discard.Clear();
 
-                LogEvent($@"<spans>
-                    <run>(</run>
-                    <player>{player}</player>
-                    <if you='reshuffle.' them='reshuffles.'>{player}</if>
-                    <run>)</run>
-                </spans>");
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -361,12 +383,22 @@ namespace Cardgame
 
         void IActionHost.DrawCards(int n)
         {
+            var reshuffled = false;
             for (var i = 0; i < n; i++)
             {
-                DrawCard(Model.ActivePlayer);
+                reshuffled = reshuffled || DrawCard(Model.ActivePlayer);
+            }
+            if (reshuffled)
+            {
+                LogPartialEvent($@"<spans>
+                    <run>...</run>
+                    <run>(</run>
+                    <if you='you reshuffle.' them='reshuffling.'>{Model.ActivePlayer}</if>
+                    <run>)</run>
+                </spans>");
             }
 
-            LogEvent($@"<spans>
+            LogPartialEvent($@"<spans>
                 <run>...</run>
                 <if you='you draw' them='drawing'>{Model.ActivePlayer}</if>
                 <run>{n} cards.</run>
@@ -377,7 +409,7 @@ namespace Cardgame
         {
             Model.ActionsRemaining += n;
 
-            LogEvent($@"<spans>
+            LogPartialEvent($@"<spans>
                 <run>...</run>
                 <if you='you get' them='getting'>{Model.ActivePlayer}</if>
                 <run>+{n} actions.</run>
@@ -388,7 +420,7 @@ namespace Cardgame
         {
             Model.BuysRemaining += n;
 
-            LogEvent($@"<spans>
+            LogPartialEvent($@"<spans>
                 <run>...</run>
                 <if you='you get' them='getting'>{Model.ActivePlayer}</if>
                 <run>+{n} buys.</run>
@@ -399,7 +431,7 @@ namespace Cardgame
         {
             Model.MoneyRemaining += n;
 
-            LogEvent($@"<spans>
+            LogPartialEvent($@"<spans>
                 <run>...</run>
                 <if you='you get' them='getting'>{Model.ActivePlayer}</if>
                 <run>+${n}.</run>
