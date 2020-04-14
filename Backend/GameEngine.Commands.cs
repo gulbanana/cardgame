@@ -89,6 +89,7 @@ namespace Cardgame
                     break;
 
                 case PlayCardCommand playCard:
+                    if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");
                     if (!Cards.All.ByName.ContainsKey(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
@@ -98,6 +99,7 @@ namespace Cardgame
                     break;
 
                 case PlayAllTreasuresCommand _:
+                    if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
 
                     foreach (var card in Model.Hands[username].Select(id => Cards.All.ByName[id]).OfType<Cards.TreasureCardModel>().ToList())
@@ -108,6 +110,7 @@ namespace Cardgame
                     break;
 
                 case BuyCardCommand buyCard:
+                    if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");
                     if (Model.CardStacks[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
@@ -117,6 +120,7 @@ namespace Cardgame
                     break;
 
                 case EnterChoiceCommand choice:
+                    if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ChoosingPlayers.Peek() != username) throw new CommandException("You are not the choosing player.");
 
                     inputTCS.SetResult(choice.Output);
@@ -124,6 +128,7 @@ namespace Cardgame
                     break;
 
                 case EndTurnCommand _:
+                    if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
 
                     EndTurn();

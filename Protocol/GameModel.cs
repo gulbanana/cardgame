@@ -15,6 +15,7 @@ namespace Cardgame
         public List<LogEntry> ChatLog { get; set; } 
         public string[] Players { get; set; } 
         public bool IsStarted { get; set; }
+        public bool IsFinished { get; set; }
 
         // game fixed setup
         public string[] KingdomCards { get; set; } 

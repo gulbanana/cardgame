@@ -8,6 +8,7 @@
 @if (Game.CardStacks[Id] > 0)
 {
     var isEnabled = Session.Username.Equals(Game.ActivePlayer) &&
+        !Game.IsFinished &&
         !Game.IsExecutingAction &&
         Game.BuysRemaining > 0 &&
         Cards.All.ByName.ContainsKey(Id) &&

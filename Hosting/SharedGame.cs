@@ -39,7 +39,7 @@ namespace Cardgame.Hosting
                 
                 Notify();
 
-                if (command is JoinGameCommand || command is LeaveGameCommand || command is StartGameCommand)
+                if (engine.Model.IsFinished || command is JoinGameCommand || command is LeaveGameCommand || command is StartGameCommand)
                 {
                     UpdateSummary();
                 }
@@ -63,7 +63,9 @@ namespace Cardgame.Hosting
             {
                 Name = name,
                 Players = engine.Model.Players,
-                Status = engine.Model.IsStarted ? "in progress" : "waiting to start"
+                Status = engine.Model.IsFinished ? "finished"
+                    : engine.Model.IsStarted ? "in progress" 
+                    : "waiting to start"
             };            
             
             SummaryUpdated?.Invoke();

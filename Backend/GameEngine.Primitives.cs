@@ -105,9 +105,11 @@ namespace Cardgame
 
         private void BeginTurn()
         {
+            if (Model.IsFinished) return;
+
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
-            Model.MoneyRemaining = 0;
+            Model.MoneyRemaining = Model.IsDemo ? 10 : 0;
 
             Model.BuyPhase = !Model.Hands[Model.ActivePlayer]
                 .Select(id => Cards.All.ByName[id])
@@ -152,18 +154,57 @@ namespace Cardgame
                 </spans>");
             }
 
-            if (!Model.IsDemo)
+            if (Model.CardStacks["Province"] == 0 || Model.CardStacks.Values.Where(v => v == 0).Count() >= 3)
             {
-                var nextPlayer = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
-                if (nextPlayer >= Model.Players.Length)
-                {
-                    nextPlayer = 0;
-                }
-                Model.ActivePlayer = Model.Players[nextPlayer];
+                EndGame();
             }
             else
             {
-                Model.ActivePlayer = Model.DemoNextActive;
+                if (!Model.IsDemo)
+                {
+                    var nextPlayer = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
+                    if (nextPlayer >= Model.Players.Length)
+                    {
+                        nextPlayer = 0;
+                    }
+                    Model.ActivePlayer = Model.Players[nextPlayer];
+                }
+                else
+                {
+                    Model.ActivePlayer = Model.DemoNextActive;
+                }
+            }
+        }
+
+        private void EndGame()
+        {
+            Model.IsFinished = true;
+
+            LogEvent($@"<block>
+                <spans>
+                    <run>--- Game over ---</run>
+                </spans>
+            </block>");
+            
+            foreach (var text in Model.Players.Select(player => 
+            {
+                var builder = new System.Text.StringBuilder();
+                builder.AppendLine("<lines>");
+                    builder.AppendLine($"<spans><player>{player}</player><run>scored:</run></spans>");                    
+                    var dominion = Model.Decks[player].Concat(Model.Hands[player]).Concat(Model.Discards[player]);
+                    var victoryCards = dominion.Select(id => Cards.All.ByName[id]).OfType<Cards.VictoryCardModel>().GroupBy(card => card.Name);
+                    foreach (var group in victoryCards)
+                    {
+                        builder.AppendLine("<spans>");
+                        builder.AppendLine($"<card>{group.Key}</card>");
+                        builder.AppendLine($"<run>x{group.Count()}</run>");                    
+                        builder.AppendLine("</spans>");
+                    }                    
+                builder.AppendLine("</lines>");
+                return builder.ToString();
+            })) 
+            {
+                LogEvent(text);
             }
         }
 

@@ -6,6 +6,7 @@
 }
 @{ 
     var isEnabled = IsActivePlayer &&
+        !Game.IsFinished &&
         !Game.IsExecutingAction;
     var potentialMoney = Game.Hands[Game.ActivePlayer]
         .Select(id => Cards.All.ByName[id])
@@ -46,10 +47,10 @@
                     @if (Game.ChoosingPlayers.Peek().Equals(Session.Username) || !Game.Players.Contains(Session.Username))
                     {
                         <ActiveChoice Enabled="@Game.ChoosingPlayers.Peek().Equals(Session.Username)"
-                                    Action="@(output => Dispatch(new EnterChoiceCommand { Output = output }))"
-                                    Prompt="@Game.ChoicePrompt"
-                                    Type="@Game.ChoiceType"
-                                    Input="@Game.ChoiceInput" />
+                                      Action="@(output => Dispatch(new EnterChoiceCommand { Output = output }))"
+                                      Prompt="@Game.ChoicePrompt"
+                                      Type="@Game.ChoiceType"
+                                      Input="@Game.ChoiceInput" />
                     }
                     else
                     {
