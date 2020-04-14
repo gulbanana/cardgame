@@ -109,7 +109,14 @@
         </div>
 
         <div style="grid-area: deck">
-            <SpecialCard Name="card-back" Stack="@(!Model.IsStarted ? 3 : Model.Decks[PlayerOrSpectatee].Count)" />
+            @if (Model.IsStarted && Model.Decks[PlayerOrSpectatee].Count == 0)
+            {
+                <SpecialCard Name="blank" Stack="1" />
+            }
+            else
+            {                
+                <SpecialCard Name="card-back" Stack="@(!Model.IsStarted ? 3 : Model.Decks[PlayerOrSpectatee].Count)" />
+            }            
         </div>
 
         <div style="grid-area: hand; overflow-x: auto;">

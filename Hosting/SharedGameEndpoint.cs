@@ -40,10 +40,10 @@ namespace Cardgame.Hosting
             games[name].Execute("demo", new SetDemoCommand { Seq = seq++ });
             games[name].Execute("agatha", new JoinGameCommand { Seq = seq++ });
             games[name].Execute("agatha", new ChatCommand { Seq = seq++, Message = "Hello, kingdom!" });
-            // games[name].Execute("beto", new JoinGameCommand { Seq = seq++ });
-            // games[name].Execute("beto", new ChatCommand { Seq = seq++, Message = "Don't cramp my style." });
-            // games[name].Execute("cawdelia", new JoinGameCommand { Seq = seq++ });
-            // games[name].Execute("cawdelia", new ChatCommand { Seq = seq++, Message = "Nevermore." });
+            games[name].Execute("beto", new JoinGameCommand { Seq = seq++ });
+            games[name].Execute("beto", new ChatCommand { Seq = seq++, Message = "Don't cramp my style." });
+            games[name].Execute("cawdelia", new JoinGameCommand { Seq = seq++ });
+            games[name].Execute("cawdelia", new ChatCommand { Seq = seq++, Message = "Nevermore." });
             games[name].Execute("demo", new JoinGameCommand { Seq = seq++ });
             games[name].Execute("demo", new SetNextPlayerCommand { Seq = seq++, Player = "demo" });
             games[name].Execute("demo", new StartGameCommand { Seq = seq++ });
@@ -62,11 +62,11 @@ namespace Cardgame.Hosting
             games[name].Execute("agatha", new PlayCardCommand { Seq = seq++, Id = "Copper" });
             games[name].Execute("agatha", new BuyCardCommand { Seq = seq++, Id = "Militia" });
             
-            games[name].Execute("demo", new SetNextPlayerCommand { Seq = seq++, Player = "agatha" });
-            games[name].Execute("demo", new EndTurnCommand { Seq = seq++ });
+            // games[name].Execute("demo", new SetNextPlayerCommand { Seq = seq++, Player = "agatha" });
+            // games[name].Execute("demo", new EndTurnCommand { Seq = seq++ });
             
-            games[name].Execute("agatha", new EndTurnCommand { Seq = seq++ });
-            games[name].Execute("agatha", new PlayCardCommand { Seq = seq++, Id = "Militia" });
+            // games[name].Execute("agatha", new EndTurnCommand { Seq = seq++ });
+            // games[name].Execute("agatha", new PlayCardCommand { Seq = seq++, Id = "Militia" });
         }
     }
 }

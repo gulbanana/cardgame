@@ -192,6 +192,16 @@ namespace Cardgame
             var deck = Model.Decks[player];        
             var hand = Model.Hands[player];
 
+            var reshuffled = false;
+            if (!deck.Any())
+            {
+                var discard = Model.Discards[player];
+                deck.AddRange(discard);
+                deck.Shuffle();
+                discard.Clear();
+                reshuffled = true;
+            }
+
             if (id != null)
             {
                 deck.Remove(id);
@@ -203,20 +213,8 @@ namespace Cardgame
                 deck.RemoveAt(0);
                 hand.Add(first);
             }
-            
-            if (!deck.Any())
-            {
-                var discard = Model.Discards[player];
-                deck.AddRange(discard);
-                deck.Shuffle();
-                discard.Clear();
 
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return reshuffled;
         }
 
         internal void DiscardCard(string player, string id)
