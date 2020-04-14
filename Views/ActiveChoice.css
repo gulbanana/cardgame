@@ -4,6 +4,6 @@
     flex-wrap: wrap;
 }
 
-.active-choice__select-cards__deselected {
+.active-choice__select-cards__deselected .with-tooltip {
     opacity: 50%;
 }
