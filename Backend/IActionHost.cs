@@ -17,6 +17,7 @@ namespace Cardgame
         void DiscardCards(string[] cards);
         void TrashCards(string[] cards);
         void GainCard(string card);
+        void GainCardToHand(string card);
 
         Task<T> SelectCard<T>(string prompt, CardSource source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel;
         Task<string[]> SelectCardsFromHand(string prompt, int? number = null);

@@ -138,6 +138,22 @@ namespace Cardgame
             </spans>");
         }
 
+        void IActionHost.GainCardToHand(string id)
+        {
+            engine.GainCardToHand(Player, id);
+
+            engine.LogPartialEvent($@"<spans>
+                <run>...</run>
+                {Verb("gain", "gains", "gaining")}
+                <card>{id}</card>
+                <run>and</run>
+                <if you='put' them='putting'>{Player}</if>
+                <run>it into</run>
+                <if you='your' them='their'>{Player}</if>
+                <run>hand.</run>
+            </spans>");
+        }
+
         async Task<T> IActionHost.SelectCard<T>(string prompt, CardSource source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter)
         {
             var sourceCards = source switch 

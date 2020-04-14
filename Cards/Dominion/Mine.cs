@@ -31,7 +31,7 @@ namespace Cardgame.Cards
                 CardSource.Kingdom, 
                 cards => cards.OfType<TreasureCardModel>().Where(card => card.Cost <= trashedCard.Cost + 3)
             );
-            host.GainCard(gainedCard.Name);
+            host.GainCardToHand(gainedCard.Name);
         }
     }
 }

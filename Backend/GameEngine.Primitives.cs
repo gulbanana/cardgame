@@ -281,6 +281,12 @@ namespace Cardgame
             Model.Discards[player].Add(id);
         }
 
+        internal void GainCardToHand(string player, string id)
+        {
+            Model.CardStacks[id]--;
+            Model.Hands[player].Add(id);
+        }
+
         internal async Task<TOutput> Choose<TInput, TOutput>(string player, ChoiceType type, string prompt, TInput input)
         {
             Model.ChoosingPlayers.Push(player);
