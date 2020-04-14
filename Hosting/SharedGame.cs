@@ -24,10 +24,11 @@ namespace Cardgame.Hosting
             UpdateSummary();
         }
 
-        // should probably clone
         protected override GameModel GetModel()
         {
-            return engine.Model;
+            // return engine.Model;
+            var serialised = JsonSerializer.Serialize(engine.Model);
+            return JsonSerializer.Deserialize<GameModel>(serialised);
         }
 
         public string Execute(string username, ClientCommand command)
