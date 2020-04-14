@@ -22,7 +22,7 @@ namespace Cardgame
             Model.EventLog.Add(TextModel.Parse(eventText));
         }
 
-        private void LogPartialEvent(string eventText)
+        private void LogPartialEvent(TextModel eventText)
         {
             var partial = Model.EventLog[Model.EventLog.Count - 1];
             var final = partial is TextModel.Lines l ? l : new TextModel.Lines
@@ -30,9 +30,14 @@ namespace Cardgame
                 Children = new[] { partial }
             };
 
-            final.Children = final.Children.Append(TextModel.Parse(eventText)).ToArray();
+            final.Children = final.Children.Append(eventText).ToArray();
             
             Model.EventLog[Model.EventLog.Count - 1] = final;
+        }
+
+        private void LogPartialEvent(string eventText)
+        {
+            LogPartialEvent(TextModel.Parse(eventText));
         }
 
         private void BeginGame()

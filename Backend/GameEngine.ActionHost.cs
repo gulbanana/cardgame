@@ -58,7 +58,7 @@ namespace Cardgame
             LogPartialEvent($@"<spans>
                 <run>...</run>
                 <if you='you draw' them='drawing'>{Model.ActivePlayer}</if>
-                {(n == 1 ? "a card." : "<run>{n} cards.</run>")}
+                {(n == 1 ? "a card." : $"<run>{n} cards.</run>")}
             </spans>");
         }
 
@@ -69,11 +69,20 @@ namespace Cardgame
                 DiscardCard(Model.ActivePlayer, card);
             }
 
-            LogPartialEvent($@"<spans>
-                <run>...</run>
-                <if you='you trash' them='trashing'>{Model.ActivePlayer}</if>
-                {(cards.Length == 1 ? "a card." : "<run>{cards.Length} cards.</run>")}
-            </spans>");
+            LogPartialEvent(new TextModel.Spans
+            {
+                Children = new TextModel[]
+                {
+                    new TextModel.Run { Text = "..." },
+                    new TextModel.Pronominal { Name = Model.ActivePlayer, IfYou = "you discard", IfThem = "discarding" } 
+                }.Concat(cards.Select((card, ix) => new TextModel.Card
+                {
+                    Name = card,
+                    Suffix = ix == cards.Length -1 ? "."
+                        : ix < cards.Length - 2 ? ","
+                        : " and"
+                })).ToArray()
+            });
         }
 
         void IActionHost.TrashCards(string[] cards)
@@ -83,22 +92,35 @@ namespace Cardgame
                 TrashCard(Model.ActivePlayer, card);
             }
 
-            LogPartialEvent($@"<spans>
-                <run>...</run>
-                <if you='you trash' them='trashing'>{Model.ActivePlayer}</if>
-                <run>{(cards.Length == 1 ? "a card." : "{cards.Length} cards.")}</run>
-            </spans>");
+            LogPartialEvent(new TextModel.Spans
+            {
+                Children = new TextModel[]
+                {
+                    new TextModel.Run { Text = "..." },
+                    new TextModel.Pronominal { Name = Model.ActivePlayer, IfYou = "you trash", IfThem = "trashing" } 
+                }.Concat(cards.Select((card, ix) => new TextModel.Card
+                {
+                    Name = card,
+                    Suffix = ix == cards.Length -1 ? "."
+                        : ix < cards.Length - 2 ? ","
+                        : " and"
+                })).ToArray()
+            });
         }
 
         void IActionHost.GainCard(string id)
         {
             GainCard(Model.ActivePlayer, id);
 
-            LogPartialEvent($@"<spans>
-                <run>...</run>
-                <if you='you gain' them='gaining'>{Model.ActivePlayer}</if>
-                <card suffix='.'>{id}</card>
-            </spans>");
+            LogPartialEvent(new TextModel.Spans
+            {
+                Children = new TextModel[]
+                {
+                    new TextModel.Run { Text = "..." },
+                    new TextModel.Pronominal { Name = Model.ActivePlayer, IfYou = "you gain", IfThem = "gaining" },
+                    new TextModel.Card { Name = id, Suffix = "."}
+                }
+            });
         }
 
         async Task<T> IActionHost.SelectCard<T>(string prompt, CardSource source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter)
