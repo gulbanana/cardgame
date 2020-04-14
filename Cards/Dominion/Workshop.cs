@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Cardgame.Cards
 {
     public class Workshop : ActionCardModel
@@ -11,5 +14,15 @@ namespace Cardgame.Cards
             <sym>coin4</sym>
             <run>.</run>
         </spans>");
+
+        protected override async Task ActAsync(IActionHost host)
+        {
+            var gainedCard = await host.SelectCard(
+                "Choose a card to gain.", 
+                CardSource.Kingdom, 
+                cards => cards.Where(card => card.Cost <= 4)
+            );
+            host.GainCard(gainedCard.Name);
+        }
     }
 }
