@@ -58,9 +58,9 @@
     }
 }
 
-<h3>
+<span class="active-choice__prompt">
     <RichText @key="Prompt.GetHashCode()" Model="@Prompt" />
-</h3>
+</span>
 
 @switch (Type)
 {
@@ -84,9 +84,9 @@
             }
         </p>
 
-        <p>
+        <span>
             <ActiveButton Label="Select" Enabled="@(Enabled && SelectCardsValid())" Action="SelectCardsSubmit" />
-        </p>
+        </span>
         break;
 
     case ChoiceType.YesNo:
