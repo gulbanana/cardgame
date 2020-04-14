@@ -24,11 +24,12 @@ namespace Cardgame
         public Dictionary<string, List<string>> Discards { get; set; }
 
         // turn state
+        public bool IsRequestingInput { get; set; }
+        public bool IsExecutingAction { get; set; }
         public bool BuyPhase { get; set; }
+        public List<string> PlayedCards { get; set; }        
         public int ActionsRemaining { get; set; }
         public int BuysRemaining { get; set; }
         public int MoneyRemaining { get; set; }
-        public List<string> PlayedCards { get; set; }
-        public bool HasChoices { get; set; }
     }
 }

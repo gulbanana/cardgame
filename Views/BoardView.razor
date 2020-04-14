@@ -13,10 +13,14 @@
     </p>
 
     <p style="grid-area: global-commands">
-        <ActiveButton Label="End turn" Enabled="@IsActivePlayer" Action="@(() => Dispatch(new EndTurnCommand()))" />
+        @{ 
+            var isEnabled = IsActivePlayer &&
+                !Game.IsExecutingAction;
+        }
+        <ActiveButton Label="End turn" Enabled="@isEnabled" Action="@(() => Dispatch(new EndTurnCommand()))" />
     </p>
 
-    <div style="grid-area: cards; grid-column-end: @(Game.HasChoices ? "3" : "5")">
+    <div style="grid-area: cards; grid-column-end: @(Game.IsRequestingInput ? "3" : "5")">
         <GappedRow>
             @for (var i = 0; i < Game.PlayedCards.Count; i++)
             {
@@ -24,8 +28,8 @@
             }
         </GappedRow>
     </div>
-    
-    @if (Game.HasChoices)
+
+    @if (Game.IsRequestingInput)
     {
         <div style="grid-area: card-commands">
             <GappedColumn />

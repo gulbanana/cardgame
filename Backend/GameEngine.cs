@@ -309,7 +309,8 @@ namespace Cardgame
                     if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
 
                     Model.ActionsRemaining--;
-                    action.PlayAsync(this).ContinueWith(CompleteAction);
+                    Model.IsExecutingAction = true;
+                    action.ExecuteAsync(this).ContinueWith(CompleteAction);
                     break;
                 
                 case CardType.Treasure when playedCard is Cards.TreasureCardModel treasure:
@@ -345,6 +346,8 @@ namespace Cardgame
                     LogEvent($"<error>Error: {e.Message}</error>");
                     // rollback somehow?
                 }
+
+                Model.IsExecutingAction = false;
 
                 if (Model.ActionsRemaining == 0)
                 {
