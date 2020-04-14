@@ -12,11 +12,20 @@
     {
         switch (Type)
         {
+            case ChoiceType.SelectCard:
+                selectCardsIds = JsonSerializer.Deserialize<string[]>(Input);
+                break;
+
             case ChoiceType.SelectCards:
                 selectCardsIds = JsonSerializer.Deserialize<string[]>(Input);
                 selectCardsChoices = new bool[selectCardsIds.Length];
                 break;
         }
+    }
+
+    private void SelectCardSubmit(string id)
+    {
+        Action(JsonSerializer.Serialize(id));
     }
 
     private void SelectCardsToggle(int ix)
@@ -41,16 +50,30 @@
     <RichText Model="@Prompt" />
 </h3>
 
-<p class="active-choice__select-cards">
-    @for (var i = 0; i < selectCardsIds.Length; i++)
-    {
-        var ix = i;
-        <div @key="ix" class="@(selectCardsChoices[ix] ? "" : "active-choice__select-cards__deselected")">
-            <ActiveCard Id="@selectCardsIds[ix]" Enabled="@Enabled" Half="true" Action="@(() => SelectCardsToggle(ix))" />
-        </div>
-    }
-</p>
+@switch (Type)
+{
+    case ChoiceType.SelectCard:
+        <p @key="Input" class="active-choice__select-cards">
+            @foreach (var id in selectCardsIds)
+            {
+                <ActiveCard Id="@id" Enabled="@Enabled" Half="true" Action="@(() => SelectCardSubmit(id))" />
+            }
+        </p>
+        break;
 
-<p>
-    <ActiveButton Label="Select" Enabled="@Enabled" Action="SelectCardsSubmit" />
-</p>
+    case ChoiceType.SelectCards:
+        <p @key="Input" class="active-choice__select-cards">
+            @for (var i = 0; i < selectCardsIds.Length; i++)
+            {
+                var ix = i;
+                <div @key="ix" class="@(selectCardsChoices[ix] ? "" : "active-choice__select-cards__deselected")">
+                    <ActiveCard Id="@selectCardsIds[ix]" Enabled="@Enabled" Half="true" Action="@(() => SelectCardsToggle(ix))" />
+                </div>
+            }
+        </p>
+
+        <p>
+            <ActiveButton Label="Select" Enabled="@Enabled" Action="SelectCardsSubmit" />
+        </p>
+        break;
+}

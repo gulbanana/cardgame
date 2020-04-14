@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Cardgame.Cards
 {
     public class Mine : ActionCardModel
@@ -14,5 +17,21 @@ namespace Cardgame.Cards
         <run> more; put it into your hand.</run>
     </spans>
 </lines>");
+
+        protected override async Task ActAsync(IActionHost host)
+        {
+            var trashedCard = await host.SelectCard(
+                "Choose a Treasure to trash.", 
+                cards => cards.OfType<TreasureCardModel>()
+            );
+            host.TrashCard(trashedCard.Name);
+
+            var gainedCard = await host.SelectCard(
+                "Choose a Treasure to gain.", 
+                CardSource.Kingdom, 
+                cards => cards.OfType<TreasureCardModel>().Where(card => card.Cost <= trashedCard.Cost + 3)
+            );
+            host.GainCard(gainedCard.Name);
+        }
     }
 }

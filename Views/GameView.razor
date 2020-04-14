@@ -34,6 +34,10 @@
 
     <div style="grid-area: board" class="game-view__board">
         <div style="grid-area: kingdom" class="game-view__kingdom">
+            <div class="game-view__trash">
+                <SpecialCard Name="trash" Stack="@(Model.Trash.Count + 1)" />
+            </div>
+
             @if (Model.IsStarted)
             {
                 <BuyStack Game="@Model" Id="Estate" />
@@ -146,12 +150,12 @@
                 }
                 else
                 {
-                    <SpecialCard Name="trash" />
+                    <SpecialCard Name="blank" />
                 }
             }
             else
             {
-                <SpecialCard Name="trash" />
+                <SpecialCard Name="blank" />
             }
         </div>
     </div>

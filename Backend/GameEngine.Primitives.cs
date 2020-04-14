@@ -42,6 +42,7 @@ namespace Cardgame
             Model.IsStarted = true;
 
             Model.PlayedCards = new List<string>();
+            Model.Trash = new List<string>();
             Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<string>());
             Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<string>());
             Model.Decks = Model.Players.ToDictionary(k => k, _ => 
@@ -80,8 +81,8 @@ namespace Cardgame
                     DrawCard(player, "Copper");
                     DrawCard(player, "Copper");
                     DrawCard(player, "Copper");
-                    DrawCard(player, "Estate");
-                    DrawCard(player, "Estate");
+                    DrawCard(player, "Copper");
+                    DrawCard(player, "Copper");
                 }
                 else
                 {
@@ -178,15 +179,15 @@ namespace Cardgame
             }
         }
 
-        private bool DrawCard(string player, string card = null)
+        private bool DrawCard(string player, string id = null)
         {
             var deck = Model.Decks[player];
             var hand = Model.Hands[player];
 
-            if (card != null)
+            if (id != null)
             {
-                deck.Remove(card);
-                hand.Add(card);
+                deck.Remove(id);
+                hand.Add(id);
             }
             else
             {
@@ -210,10 +211,22 @@ namespace Cardgame
             }
         }
 
-        private void DiscardCard(string player, string card)
+        private void DiscardCard(string player, string id)
         {
-            Model.Hands[player].Remove(card);
-            Model.Discards[player].Add(card);
+            Model.Hands[player].Remove(id);
+            Model.Discards[player].Add(id);
+        }
+
+        private void TrashCard(string player, string id)
+        {
+            Model.Hands[player].Remove(id);
+            Model.Trash.Add(id);
+        }
+
+        private void GainCard(string player, string id)
+        {
+            Model.CardStacks[id]--;
+            Model.Discards[player].Add(id);
         }
 
         private async Task<TOutput> Choose<TInput, TOutput>(ChoiceType type, string prompt, TInput input)

@@ -23,6 +23,7 @@ namespace Cardgame
         public Dictionary<string, List<string>> Hands { get; set; }
         public Dictionary<string, List<string>> Decks { get; set; }
         public Dictionary<string, List<string>> Discards { get; set; }
+        public List<string> Trash { get; set; }
 
         // turn state
         public bool IsExecutingAction { get; set; }
