@@ -3,6 +3,7 @@ namespace Cardgame
     public enum ChoiceType
     {
         SelectCard,
-        SelectCards
+        SelectCards,
+        YesNo
     }
 }

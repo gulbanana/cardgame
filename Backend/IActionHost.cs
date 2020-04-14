@@ -6,7 +6,8 @@ namespace Cardgame
 {
     public interface IActionHost
     {
-        int GetHandCards();
+        string Player { get; }
+        string[] GetHand();
 
         void DrawCards(int n);
         void AddActions(int n);
@@ -19,6 +20,7 @@ namespace Cardgame
 
         Task<T> SelectCard<T>(string prompt, CardSource source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel;
         Task<string[]> SelectCardsFromHand(string prompt, int? number = null);
+        Task<bool> YesNo(string prompt);
 
         Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act);
     }

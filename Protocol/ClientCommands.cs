@@ -6,6 +6,10 @@ namespace Cardgame
     }
 
     public class SetDemoCommand : ClientCommand { }
+    public class SetNextPlayerCommand : ClientCommand 
+    { 
+        public string Player { get; set; }
+    }
 
     public class JoinGameCommand : ClientCommand { }
     public class LeaveGameCommand : ClientCommand { }

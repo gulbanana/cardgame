@@ -19,5 +19,16 @@ namespace Cardgame
             }
             source.AddRange(temp);
         }
+
+        public static IEnumerable<T> Without<T>(this IEnumerable<T> source, IEnumerable<T> removals)
+        {
+            var all = source.ToList();
+            foreach (var element in removals)
+            {
+                var index = all.FindIndex(e => element.Equals(e));
+                all.RemoveAt(index);
+            }
+            return all;
+        }
     }
 }

@@ -51,10 +51,15 @@
 
         Action(JsonSerializer.Serialize(selected));
     }
+
+    private void YesNoSubmit(bool yesOrNo)
+    {
+        Action(JsonSerializer.Serialize(yesOrNo));
+    }
 }
 
 <h3>
-    <RichText Model="@Prompt" />
+    <RichText @key="Prompt.GetHashCode()" Model="@Prompt" />
 </h3>
 
 @switch (Type)
@@ -82,5 +87,16 @@
         <p>
             <ActiveButton Label="Select" Enabled="@(Enabled && SelectCardsValid())" Action="SelectCardsSubmit" />
         </p>
+        break;
+
+    case ChoiceType.YesNo:
+        <p>
+            <ActiveButton Label="Yes" Enabled="@Enabled" Action="@(() => YesNoSubmit(true))" />
+            <ActiveButton Label="No" Enabled="@Enabled" Action="@(() => YesNoSubmit(false))" />
+        </p>
+        break;
+
+    default:
+        <p>Unknown choice type @Type</p>
         break;
 }

@@ -8,23 +8,23 @@ namespace Cardgame
     public class ActionHost : IActionHost
     {
         private readonly GameEngine engine;
-        private readonly string player;
+        public string Player { get; }
 
         public ActionHost(GameEngine engine, string player)
         {
             this.engine = engine;
-            this.player = player;
+            this.Player = player;
         }
 
         private string Verb(string secondPerson, string thirdPerson, string continuous)
         {
-            if (player == engine.Model.ActivePlayer)
+            if (Player == engine.Model.ActivePlayer)
             {
-                return $"<if you='you {secondPerson}' them='{continuous}'>{player}</if>";
+                return $"<if you='you {secondPerson}' them='{continuous}'>{Player}</if>";
             }
             else
             {
-                return $"<player>{player}</player><if you='{secondPerson}' them='{thirdPerson}'>{player}</if>";
+                return $"<player>{Player}</player><if you='{secondPerson}' them='{thirdPerson}'>{Player}</if>";
             }
         }
 
@@ -39,9 +39,9 @@ namespace Cardgame
             }));
         }
 
-        int IActionHost.GetHandCards()
+        string[] IActionHost.GetHand()
         {
-            return engine.Model.Hands[player].Count;
+            return engine.Model.Hands[Player].ToArray();
         }
 
         void IActionHost.AddActions(int n)
@@ -82,13 +82,13 @@ namespace Cardgame
             var reshuffled = false;
             for (var i = 0; i < n; i++)
             {
-                reshuffled = reshuffled | engine.DrawCard(player);
+                reshuffled = reshuffled | engine.DrawCard(Player);
             }
             if (reshuffled)
             {
                 engine.LogPartialEvent($@"<spans>
                     <run>...</run>
-                    <if you='(you reshuffle.)' them='(reshuffling.)'>{player}</if>
+                    <if you='(you reshuffle.)' them='(reshuffling.)'>{Player}</if>
                 </spans>");
             }
 
@@ -103,7 +103,7 @@ namespace Cardgame
         {
             foreach (var card in cards)
             {
-                engine.DiscardCard(player, card);
+                engine.DiscardCard(Player, card);
             }
 
             engine.LogPartialEvent($@"<spans>
@@ -117,7 +117,7 @@ namespace Cardgame
         {
             foreach (var card in cards)
             {
-                engine.TrashCard(player, card);
+                engine.TrashCard(Player, card);
             }
 
             engine.LogPartialEvent($@"<spans>
@@ -129,7 +129,7 @@ namespace Cardgame
 
         void IActionHost.GainCard(string id)
         {
-            engine.GainCard(player, id);
+            engine.GainCard(Player, id);
 
             engine.LogPartialEvent($@"<spans>
                 <run>...</run>
@@ -142,7 +142,7 @@ namespace Cardgame
         {
             var sourceCards = source switch 
             {
-                CardSource.Hand => engine.Model.Hands[player],
+                CardSource.Hand => engine.Model.Hands[Player],
                 CardSource.Kingdom => engine.Model.KingdomCards.Concat(new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold"}).Where(id => engine.Model.CardStacks[id] > 0),
                 CardSource other => throw new CommandException($"Unknown CardSource {other}")
             };
@@ -150,7 +150,7 @@ namespace Cardgame
             var filteredCards = filter(sourceCards.Select(id => Cards.All.ByName[id]));
 
             var id = await engine.Choose<string[], string>(
-                player,
+                Player,
                 ChoiceType.SelectCard, 
                 $"<run>{prompt}</run>", 
                 filteredCards.Select(card => card.Name).ToArray()
@@ -162,28 +162,68 @@ namespace Cardgame
         Task<string[]> IActionHost.SelectCardsFromHand(string prompt, int? number)
         {
             return engine.Choose<SelectCardsInput, string[]>(
-                player,
+                Player,
                 ChoiceType.SelectCards, 
                 $"<run>{prompt}</run>",
                 new SelectCardsInput
                 {
-                    Choices = engine.Model.Hands[player].ToArray(),
+                    Choices = engine.Model.Hands[Player].ToArray(),
                     NumberRequired = number
                 }
+            );
+        }
+
+        Task<bool> IActionHost.YesNo(string prompt)
+        {
+            return engine.Choose<bool, bool>(
+                Player,
+                ChoiceType.YesNo,
+                $"<run>{prompt}</run>",
+                false
             );
         }
 
         async Task IActionHost.Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act)
         {
             var targetPlayers = engine.Model.Players
-                .Except(new[]{ player })
+                .Except(new[]{ Player })
                 .Select(player => new ActionHost(engine, player))
                 .Where(filter)
                 .ToList();
             
-            foreach (var player in targetPlayers)
+            foreach (var target in targetPlayers)
             {
-                await act(player);
+                var hand = target.GetHand().ToList();
+                var reactions = hand
+                    .Select(id => Cards.All.ByName[id])
+                    .OfType<Cards.ActionCardModel>()
+                    .Where(card => card.ReactionTrigger == TriggerType.Attack);
+
+                var replaced = false;
+                while (reactions.Any())
+                {
+                    var potentialReaction = reactions.First();
+                    hand.RemoveAt(hand.FindIndex(e => e.Equals(potentialReaction.Name)));
+
+                    var targetHost = new ActionHost(engine, target.Player);
+                    var reaction = await potentialReaction.ExecuteReactionAsync(targetHost);          
+                    if (reaction.Type == ReactionType.Replace)
+                    {
+                        engine.LogPartialEvent($@"<spans>
+                            <player>{target.Player}</player>
+                            <if you='reveal' them='reveals'>{target.Player}</if>
+                            <card suffix='!'>{potentialReaction.Name}</card>
+                        </spans>");
+
+                        replaced = true;
+                        reaction.Enact(targetHost, this);
+                    }
+                }
+
+                if (!replaced)
+                {
+                    await act(target);
+                }
             }
         }
     }

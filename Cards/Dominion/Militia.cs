@@ -20,9 +20,9 @@ namespace Cardgame.Cards
         {
             host.AddMoney(2);
 
-            await host.Attack(player => player.GetHandCards() > 3, async player =>
+            await host.Attack(player => player.GetHand().Length > 3, async player =>
             {
-                var n = player.GetHandCards() - 3;
+                var n = player.GetHand().Length - 3;
                 var discardedCards = await player.SelectCardsFromHand(n == 1 ? "Choose a card to discard" : $"Choose {n} cards to discard.", n);
                 player.DiscardCards(discardedCards);
             });

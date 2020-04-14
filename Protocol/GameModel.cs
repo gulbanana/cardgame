@@ -4,6 +4,9 @@ namespace Cardgame
 {
     public class GameModel
     {
+        public bool IsDemo { get; set; }
+        public string DemoNextActive { get; set; }
+
         // protection against weird command orderings
         public int Seq { get; set; }
 
@@ -14,7 +17,6 @@ namespace Cardgame
         public bool IsStarted { get; set; }
 
         // game fixed setup
-        public bool IsDemo { get; set; }
         public string[] KingdomCards { get; set; } 
         public Dictionary<string, int> CardStacks { get; set; }
 

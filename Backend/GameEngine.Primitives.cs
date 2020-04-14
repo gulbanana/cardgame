@@ -100,7 +100,7 @@ namespace Cardgame
                 }
             }
             
-            Model.ActivePlayer = Model.IsDemo ? Model.Players.Last() : Model.Players[rng.Next(Model.Players.Length)];
+            Model.ActivePlayer = Model.IsDemo ? Model.DemoNextActive : Model.Players[rng.Next(Model.Players.Length)];
         }
 
         private void BeginTurn()
@@ -161,6 +161,10 @@ namespace Cardgame
                 }
                 Model.ActivePlayer = Model.Players[nextPlayer];
             }
+            else
+            {
+                Model.ActivePlayer = Model.DemoNextActive;
+            }
         }
 
         private void SkipBuyIfNoCash()
@@ -185,7 +189,7 @@ namespace Cardgame
 
         internal bool DrawCard(string player, string id = null)
         {
-            var deck = Model.Decks[player];
+            var deck = Model.Decks[player];        
             var hand = Model.Hands[player];
 
             if (id != null)
@@ -240,9 +244,11 @@ namespace Cardgame
             Model.ChoicePrompt = prompt;
             Model.ChoiceInput = JsonSerializer.Serialize(input);
 
+            Console.WriteLine("getting choice from " + player);
             inputTCS = new TaskCompletionSource<string>();
             ActionUpdated?.Invoke();
             var output = await inputTCS.Task;
+            Console.WriteLine("got choice from " + player);
 
             Model.ChoosingPlayers.Pop();
 

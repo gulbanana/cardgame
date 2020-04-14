@@ -37,6 +37,13 @@ namespace Cardgame
 
                     break;
 
+                case SetNextPlayerCommand nextPlayer:
+                    if (!Model.IsDemo) throw new CommandException("Game must be in demo mode.");
+
+                    Model.DemoNextActive = nextPlayer.Player;
+
+                    break;
+
                 case ChatCommand chat:
                     if (chat.Message.Length > LogEntry.MAX) throw new CommandException("Chat message too long.");
 
@@ -178,7 +185,7 @@ namespace Cardgame
                     Model.ActionsRemaining--;
                     Model.IsExecutingAction = true;
                     var host = new ActionHost(this, Model.ActivePlayer);
-                    action.ExecuteAsync(host).ContinueWith(CompleteAction);
+                    action.ExecuteActionAsync(host).ContinueWith(CompleteAction);
                     break;
                 
                 case CardType.Treasure when playedCard is Cards.TreasureCardModel treasure:
