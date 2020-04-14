@@ -35,7 +35,7 @@
     <div style="grid-area: board" class="game-view__board">
         <div style="grid-area: kingdom" class="game-view__kingdom">
             <div class="game-view__trash">
-                <SpecialCard Name="trash" Stack="@(Model.Trash.Count + 1)" />
+                <SpecialCard Name="trash" Stack="@(!Model.IsStarted ? 1 : Model.Trash.Count + 1)" />
             </div>
 
             @if (Model.IsStarted)

@@ -4,26 +4,37 @@
     [Parameter] public int Stack { get; set; }
 }
 
-<WithTooltip>
-    <Content>
-        <Stacked Size="@Stack" Type="special" Half="@Half">
-            <div class="special-card">
-                @if (Half)
-                {
-                    <img class="special-card__1x" src="/@(Name)-half.jpg" />
-                }
-                else
-                {
+@if (Half)
+{
+    <WithTooltip>
+        <Content>
+            <Stacked Size="@Stack" Type="special" Half="true">
+                <div class="special-card">
+                    @if (Half)
+                    {
+                        <img class="special-card__1x" src="/@(Name)-half.jpg" />
+                    }
+                    else
+                    {
+                        <img class="special-card__2x" src="/@(Name)-full.jpg" />
+                    }
+                </div>
+            </Stacked>
+        </Content>
+        <Tooltip>
+            <Magnify>
+                <div class="special-card">
                     <img class="special-card__2x" src="/@(Name)-full.jpg" />
-                }
-            </div>
-        </Stacked>
-    </Content>
-    <Tooltip>
-        <Magnify>
-            <div class="special-card">
-                <img class="special-card__2x" src="/@(Name)-full.jpg" />
-            </div>
-        </Magnify>
-    </Tooltip>
-</WithTooltip>
+                </div>
+            </Magnify>
+        </Tooltip>
+    </WithTooltip>
+}
+else
+{
+    <Stacked Size="@Stack" Type="special">
+        <div class="special-card">
+            <img class="special-card__2x" src="/@(Name)-full.jpg" />
+        </div>
+    </Stacked>
+}
