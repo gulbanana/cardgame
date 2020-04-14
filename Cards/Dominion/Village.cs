@@ -12,5 +12,11 @@ namespace Cardgame.Cards
         <run>+2 Actions</run>
     </lines>
 </block>");
+
+        protected override void Play(IActionHost host)
+        {
+            host.DrawCards(1);
+            host.AddActions(2);
+        }
     }
 }
