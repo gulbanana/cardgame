@@ -223,7 +223,7 @@ namespace Cardgame
             var reshuffled = false;
             for (var i = 0; i < 5; i++)
             {
-                reshuffled = reshuffled || DrawCard(Model.ActivePlayer);
+                reshuffled = reshuffled | DrawCard(Model.ActivePlayer);
             }
             if (reshuffled)
             {
@@ -386,7 +386,7 @@ namespace Cardgame
             var reshuffled = false;
             for (var i = 0; i < n; i++)
             {
-                reshuffled = reshuffled || DrawCard(Model.ActivePlayer);
+                reshuffled = reshuffled | DrawCard(Model.ActivePlayer);
             }
             if (reshuffled)
             {
