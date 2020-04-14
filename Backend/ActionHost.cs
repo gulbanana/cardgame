@@ -28,6 +28,17 @@ namespace Cardgame
             }
         }
 
+        private string CardList(string[] ids)
+        {
+            return string.Join(Environment.NewLine, ids.Select((id, ix) => 
+            {
+                var suffix = ix == ids.Length -1 ? "."
+                    : ix < ids.Length - 2 ? ","
+                    : " and";
+                return $"<card suffix='{suffix}'>{id}</card>";
+            }));
+        }
+
         int IActionHost.GetHandCards()
         {
             return engine.Model.Hands[player].Count;
@@ -95,20 +106,11 @@ namespace Cardgame
                 engine.DiscardCard(player, card);
             }
 
-            var eventText = TextModel.Parse($@"<spans>
+            engine.LogPartialEvent($@"<spans>
                 <run>...</run>
-                {Verb("discard", "discards", "discarding")}                
-            </spans>") as TextModel.Spans;
-
-            eventText.Children = eventText.Children.Concat(cards.Select((card, ix) => new TextModel.Card
-            {
-                Name = card,
-                Suffix = ix == cards.Length -1 ? "."
-                    : ix < cards.Length - 2 ? ","
-                    : " and"
-            })).ToArray();
-
-            engine.LogPartialEvent(eventText);
+                {Verb("discard", "discards", "discarding")}
+                {CardList(cards)}
+            </spans>");
         }
 
         void IActionHost.TrashCards(string[] cards)
@@ -118,20 +120,12 @@ namespace Cardgame
                 engine.TrashCard(player, card);
             }
 
-            var eventText = TextModel.Parse($@"<spans>
+            engine.LogPartialEvent($@"<spans>
                 <run>...</run>
-                {Verb("trash", "trashes", "trashing")}             
-            </spans>") as TextModel.Spans;
-
-            eventText.Children = eventText.Children.Concat(cards.Select((card, ix) => new TextModel.Card
-            {
-                Name = card,
-                Suffix = ix == cards.Length -1 ? "."
-                    : ix < cards.Length - 2 ? ","
-                    : " and"
-            })).ToArray();
-
-            engine.LogPartialEvent(eventText);        }
+                {Verb("trash", "trashes", "trashing")}
+                {CardList(cards)}
+            </spans>");        
+        }
 
         void IActionHost.GainCard(string id)
         {

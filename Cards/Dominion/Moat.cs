@@ -6,12 +6,12 @@ namespace Cardgame.Cards
         public override string Art => "dom-moat";
         public override int Cost => 2;        
 
-        public override TextModel Text => TextModel.Parse(@"
+        public override string Text => @"
         <paras>
             <block>
                 <run>+2 Cards</run>
             </block>
             <run>When another player plays an Attack card, you may reveal this from your hand. If you do, you are unaffected by that attack.</run>
-        </paras>");
+        </paras>";
     }
 }

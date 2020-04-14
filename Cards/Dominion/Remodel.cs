@@ -8,7 +8,7 @@ namespace Cardgame.Cards
         public override string Art => "dom-remodel";
         public override int Cost => 4;
         
-        public override TextModel Text => TextModel.Parse(@"
+        public override string Text => @"
         <lines>
             <run>Trash a card from your hand.</run>
             <spans>
@@ -16,7 +16,7 @@ namespace Cardgame.Cards
                 <sym>coin2</sym>
                 <run>more than the trashed card.</run>
             </spans>
-        </lines>");
+        </lines>";
 
         protected override async Task ActAsync(IActionHost host)
         {

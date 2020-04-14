@@ -3,7 +3,7 @@
     [Parameter] public bool Enabled { get; set; }
     [Parameter] public Action<string> Action { get; set; }
     [Parameter] public ChoiceType Type { get; set; }
-    [Parameter] public TextModel Prompt { get; set; }
+    [Parameter] public string Prompt { get; set; }
     [Parameter] public string Input { get; set; }
     private SelectCardsInput selectCardsInput;
     private bool[] selectCardsChoices;

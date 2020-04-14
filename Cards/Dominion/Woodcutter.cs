@@ -5,13 +5,13 @@ namespace Cardgame.Cards
         public override string Art => "dom-woodcutter";
         public override int Cost => 3;
 
-        public override TextModel Text => TextModel.Parse(@"
+        public override string Text => @"
         <block>
             <lines>
                 <run>+1 Buy</run>
                 <sym prefix='+'>coin2</sym>
             </lines>
-        </block>");
+        </block>";
 
         protected override void Act(IActionHost host)
         {

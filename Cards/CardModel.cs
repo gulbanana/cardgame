@@ -5,7 +5,7 @@ namespace Cardgame.Cards
         public string Name { get; }
         public abstract CardType Type { get; }
         public abstract string Art { get; }
-        public abstract TextModel Text { get; }
+        public abstract string Text { get; }
         public abstract int Cost { get; }
 
         public CardModel()

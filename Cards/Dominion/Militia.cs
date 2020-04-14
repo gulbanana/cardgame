@@ -8,13 +8,13 @@ namespace Cardgame.Cards
         public override string Art => "dom-militia";
         public override int Cost => 4;        
 
-        public override TextModel Text => TextModel.Parse(@"
+        public override string Text => @"
         <paras>
             <block>
                 <sym prefix='+'>coin2</sym>
             </block>
             <run>Each other player discards down to 3 cards in his hand.</run>
-        </paras>");
+        </paras>";
 
         protected override async Task ActAsync(IActionHost host)
         {

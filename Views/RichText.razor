@@ -1,21 +1,30 @@
 @inject IUserSession Session
 @code {
-    [Parameter] public TextModel Model { get; set; }
+    [Parameter] public string Model { get; set; }
+    [Parameter] public TextModel Parsed { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Parsed == null)
+        {
+            Parsed = TextModel.Parse(Model);
+        }
+    }
 }
 
-@switch (Model)
+@switch (Parsed)
 {
     case TextModel.Spans spans:
         @foreach (var span in spans.Children)
         {
-            <RichText Model="@span" />
+            <RichText Parsed="@span" />
         }
         break;
 
     case TextModel.Lines lines:
         @foreach (var line in lines.Children)
         {
-            <RichText Model="@line" /><br />
+            <RichText Parsed="@line" /><br />
         }
         break;
 
@@ -24,7 +33,7 @@
             @foreach (var para in paras.Children)
             {
                 <p>
-                    <RichText Model="@para" />
+                    <RichText Parsed="@para" />
                 </p>
             }
         </div>
@@ -32,7 +41,7 @@
             
     case TextModel.Block block:
         <div class="rich-text__block">
-            <RichText Model="@block.Child" />
+            <RichText Parsed="@block.Child" />
         </div>
         break;
 
@@ -87,6 +96,6 @@
         break;
 
     default:
-        <text>@Model</text>
+        <text>@Parsed</text>
         break;
 }

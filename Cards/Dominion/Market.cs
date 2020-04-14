@@ -5,7 +5,7 @@ namespace Cardgame.Cards
         public override string Art => "dom-market";
         public override int Cost => 5;
 
-        public override TextModel Text => TextModel.Parse(@"
+        public override string Text => @"
         <block>
             <lines>
                 <run>+1 Card</run>
@@ -13,7 +13,7 @@ namespace Cardgame.Cards
                 <run>+1 Buy</run>
                 <sym prefix='+'>coin1</sym>
             </lines>
-        </block>");
+        </block>";
 
         protected override void Act(IActionHost host)
         {

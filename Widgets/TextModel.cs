@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Cardgame
+namespace Cardgame.Widgets
 {
     public abstract class TextModel
     {        

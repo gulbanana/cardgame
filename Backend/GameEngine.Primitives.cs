@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Cardgame
 {
@@ -15,32 +16,28 @@ namespace Cardgame
         public GameEngine()
         {
             Model = new GameModel();
-            Model.EventLog = new List<TextModel>();
+            Model.EventLog = new List<string>();
             Model.ChatLog = new List<LogEntry>();        
             Model.Players = new string[0];
         }
 
         private void LogEvent(string eventText)
         {
-            Model.EventLog.Add(TextModel.Parse(eventText));
-        }
-
-        internal void LogPartialEvent(TextModel eventText)
-        {
-            var partial = Model.EventLog[Model.EventLog.Count - 1];
-            var final = partial is TextModel.Lines l ? l : new TextModel.Lines
-            {
-                Children = new[] { partial }
-            };
-
-            final.Children = final.Children.Append(eventText).ToArray();
-            
-            Model.EventLog[Model.EventLog.Count - 1] = final;
+            Model.EventLog.Add(eventText);
         }
 
         internal void LogPartialEvent(string eventText)
         {
-            LogPartialEvent(TextModel.Parse(eventText));
+            var partial = Model.EventLog[Model.EventLog.Count - 1];
+            var partialXML = XDocument.Parse(partial).Root;
+            var finalXML = partialXML.Name == "lines" ? partialXML : new XElement("lines",
+                partialXML
+            );
+
+            var eventXML = XDocument.Parse(eventText).Root;
+            finalXML.Add(eventXML);
+            
+            Model.EventLog[Model.EventLog.Count - 1] = finalXML.ToString();
         }
 
         private void BeginGame()
@@ -240,7 +237,7 @@ namespace Cardgame
         {
             Model.ChoosingPlayers.Push(player);
             Model.ChoiceType = type;
-            Model.ChoicePrompt = TextModel.Parse(prompt);
+            Model.ChoicePrompt = prompt;
             Model.ChoiceInput = JsonSerializer.Serialize(input);
 
             inputTCS = new TaskCompletionSource<string>();
