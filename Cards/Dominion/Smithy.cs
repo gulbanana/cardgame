@@ -6,9 +6,9 @@ namespace Cardgame.Cards
         public override int Cost => 4;
 
         public override TextModel Text => TextModel.Parse(@"
-<block>
-    <run>+3 Cards</run>
-</block>");
+        <block>
+            <run>+3 Cards</run>
+        </block>");
 
         protected override void Act(IActionHost host)
         {
