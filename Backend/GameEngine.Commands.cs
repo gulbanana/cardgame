@@ -90,6 +90,16 @@ namespace Cardgame
 
                     break;
 
+                case PlayAllTreasuresCommand _:
+                    if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
+
+                    foreach (var card in Model.Hands[username].Select(id => Cards.All.ByName[id]).OfType<Cards.TreasureCardModel>().ToList())
+                    {
+                        PlayCard(username, card.Name);
+                    }
+
+                    break;
+
                 case BuyCardCommand buyCard:
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");

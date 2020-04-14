@@ -4,19 +4,28 @@
     [CascadingParameter] public Executor Dispatch { get; set; } 
     bool IsActivePlayer => Session.Username.Equals(Game.ActivePlayer);   
 }
+@{ 
+    var isEnabled = IsActivePlayer &&
+        !Game.IsExecutingAction;
+    var potentialMoney = Game.Hands[Game.ActivePlayer]
+        .Select(id => Cards.All.ByName[id])
+        .OfType<Cards.TreasureCardModel>()
+        .Select(card => card.Value)
+        .Sum();
+}
 
 <div class="board-view">
-    <p style="grid-area: stats">
-        <Bold If="@(!Game.BuyPhase && Game.ActionsRemaining > 0)">Actions: @Game.ActionsRemaining</Bold><br />
-        <Bold If="@(Game.BuysRemaining > 0)">Buys: @Game.BuysRemaining</Bold><br />
-        <Bold If="@(Game.MoneyRemaining > 0)">$@Game.MoneyRemaining</Bold>
+    <p style="grid-area: safe-commands">
+        <ActiveButton Label="@($"+ ${potentialMoney}")" Enabled="@(isEnabled && potentialMoney > 0)" Action="@(() => Dispatch(new PlayAllTreasuresCommand()))" />
+    </p>
+
+    <p style="grid-area: stats; text-align: center;">
+        <Bold If="@(!Game.BuyPhase && Game.ActionsRemaining > 0)">Actions: @Game.ActionsRemaining</Bold>
+        <Bold If="@(Game.BuysRemaining > 0)">Buys: @Game.BuysRemaining</Bold>
+        <Bold If="@(Game.MoneyRemaining > 0)">Money: $@Game.MoneyRemaining</Bold>
     </p>
 
     <p style="grid-area: global-commands">
-        @{ 
-            var isEnabled = IsActivePlayer &&
-                !Game.IsExecutingAction;
-        }
         <ActiveButton Label="End turn" Enabled="@isEnabled" Action="@(() => Dispatch(new EndTurnCommand()))" />
     </p>
 

@@ -2,8 +2,8 @@
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-areas: 'stats .     .             global-commands'
-                         'cards cards card-commands card-commands';
+    grid-template-areas: 'safe-commands stats stats         global-commands'
+                         'cards         cards card-commands card-commands';
     grid-template-columns: auto 1fr 1fr auto;
     grid-template-rows: auto 1fr;
 }

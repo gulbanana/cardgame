@@ -21,6 +21,8 @@ namespace Cardgame
         public string Id { get; set; }
     }
 
+    public class PlayAllTreasuresCommand : ClientCommand { }
+
     public class BuyCardCommand : ClientCommand
     {
         public string Id { get; set; }
