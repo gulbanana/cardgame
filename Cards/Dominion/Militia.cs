@@ -13,7 +13,7 @@ namespace Cardgame.Cards
             <block>
                 <sym prefix='+'>coin2</sym>
             </block>
-            <run>Each other player discards down to 3 cards in his hand.</run>
+            <run>Each other player discards down to 3 cards in their hand.</run>
         </paras>";
 
         protected override async Task ActAsync(IActionHost host)
