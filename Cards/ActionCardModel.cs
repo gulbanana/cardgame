@@ -8,10 +8,10 @@ namespace Cardgame.Cards
         public override CardType Type => CardType.Action;
         public virtual string SubType => null;
         
-        public Task ExecuteAsync(IActionHost host) => PlayAsync(host);
+        public Task ExecuteAsync(IActionHost host) => ActAsync(host);
 
-        protected virtual Task PlayAsync(IActionHost host) => Task.Run(() => Play(host));
+        protected virtual Task ActAsync(IActionHost host) => Task.Run(() => Act(host));
 
-        protected virtual void Play(IActionHost host) => throw new NotImplementedException($"{Name}: card not yet implemented.");
+        protected virtual void Act(IActionHost host) => throw new NotImplementedException($"{Name}: card not yet implemented.");
     }
 }

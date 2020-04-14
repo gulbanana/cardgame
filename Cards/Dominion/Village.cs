@@ -13,7 +13,7 @@ namespace Cardgame.Cards
     </lines>
 </block>");
 
-        protected override void Play(IActionHost host)
+        protected override void Act(IActionHost host)
         {
             host.DrawCards(1);
             host.AddActions(2);

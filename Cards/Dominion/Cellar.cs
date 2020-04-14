@@ -18,7 +18,7 @@ namespace Cardgame.Cards
     </lines>
 </paras>");
 
-        protected override async Task PlayAsync(IActionHost host)
+        protected override async Task ActAsync(IActionHost host)
         {
             host.AddActions(1);
             var discarded = await host.SelectCardsFromHand("Choose any number of cards to discard.");
