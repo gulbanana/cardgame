@@ -15,5 +15,11 @@ namespace Cardgame.Cards
         </spans>
     </lines>
 </block>");
+
+        protected override void Play(IActionHost host)
+        {
+            host.AddBuys(1);
+            host.AddMoney(2);
+        }
     }
 }
