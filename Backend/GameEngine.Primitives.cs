@@ -244,11 +244,9 @@ namespace Cardgame
             Model.ChoicePrompt = prompt;
             Model.ChoiceInput = JsonSerializer.Serialize(input);
 
-            Console.WriteLine("getting choice from " + player);
             inputTCS = new TaskCompletionSource<string>();
             ActionUpdated?.Invoke();
             var output = await inputTCS.Task;
-            Console.WriteLine("got choice from " + player);
 
             Model.ChoosingPlayers.Pop();
 
