@@ -32,13 +32,21 @@
             subType = kingdomCard.SubType;
         }
     }
+
+    private void OnClick()
+    {
+        if (Enabled)
+        {
+            Action();
+        }
+    }
 }
 
 @if (Large)
 {
     <div class="active-card__large-wrapper">
         <Magnify>
-            <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@Action">
+            <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
                 <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
             </div>
         </Magnify>
@@ -48,7 +56,7 @@ else
 {
     <WithTooltip>
         <Content>
-            <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@Action">
+            <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
                 <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
             </div>
         </Content>
