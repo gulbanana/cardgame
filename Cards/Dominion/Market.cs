@@ -11,7 +11,7 @@ namespace Cardgame.Cards
                 <run>+1 Card</run>
                 <run>+1 Action</run>
                 <run>+1 Buy</run>
-                <spans><run>+</run><sym>coin1</sym></spans>
+                <sym prefix='+'>coin1</sym>
             </lines>
         </block>");
 

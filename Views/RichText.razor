@@ -45,7 +45,7 @@
         break;
 
     case TextModel.Symbol symbol:
-        <img class="rich-text__symbol" src="symbols/@(symbol.Name).png" width="8" height="8">
+        @symbol.Prefix<img class="rich-text__symbol" src="symbols/@(symbol.Name).png" width="8" height="8">@symbol.Suffix
         break;
 
     case TextModel.Card card:
@@ -54,7 +54,7 @@
         var colorType = Cards.All.GetColor(model.Type, subType);
         <WithTooltip>
             <Content>
-                <span style="background: var(--card-type-@(colorType))">@card.Name</span>
+                @card.Prefix<span style="background: var(--card-type-@(colorType))">@card.Name</span>@card.Suffix
             </Content>
             <Tooltip>
                 <Magnify>
@@ -67,14 +67,13 @@
     case TextModel.Player player:
         if (Session.Username.Equals(player.Name))
         {
-            <text>You</text>
+            <text>@(player.Prefix)You@(player.Suffix)</text>
         }
         else
         {
-            <text>@player.Name</text>
+            <PlayerLink Name="@player.Name" Prefix="@player.Prefix" Suffix="@player.Suffix" />
         }
         break;
-
 
     case TextModel.Pronominal pro:
         if (Session.Username.Equals(pro.Name))

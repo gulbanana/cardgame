@@ -9,10 +9,7 @@ namespace Cardgame.Cards
         public override TextModel Text => TextModel.Parse(@"
         <paras>
             <block>
-                <spans>
-                    <run>+</run>
-                    <sym>coin2</sym>
-                </spans>
+                <sym prefix='+'>coin2</sym>
             </block>
             <run>Each other player discards down to 3 cards in his hand.</run>
         </paras>");

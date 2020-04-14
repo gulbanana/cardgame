@@ -28,11 +28,11 @@
                 var player = game.Players[i];
                 if (i < game.Players.Length - 1)
                 {
-                    <text><PlayerLink @key="@player" Name="@player" />, </text>
+                    <PlayerLink @key="@player" Name="@player" Suffix=", " />
                 }
                 else
                 {
-                    <text><PlayerLink @key="@player" Name="@player" /></text>
+                    <PlayerLink @key="@player" Name="@player" Suffix="." />
                 }
             }
         </p>

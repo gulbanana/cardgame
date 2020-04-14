@@ -11,8 +11,7 @@ namespace Cardgame.Cards
         public override TextModel Text => TextModel.Parse(@"
         <spans>
             <run>Gain a card costing up to</run>
-            <sym>coin4</sym>
-            <run>.</run>
+            <sym suffix='.'>coin4</sym>
         </spans>");
 
         protected override async Task ActAsync(IActionHost host)

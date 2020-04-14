@@ -51,9 +51,7 @@ namespace Cardgame
             {
                 LogPartialEvent($@"<spans>
                     <run>...</run>
-                    <run>(</run>
-                    <if you='you reshuffle.' them='reshuffling.'>{Model.ActivePlayer}</if>
-                    <run>)</run>
+                    <if you='(you reshuffle.)' them='(reshuffling.)'>{Model.ActivePlayer}</if>
                 </spans>");
             }
 
@@ -99,8 +97,7 @@ namespace Cardgame
             LogPartialEvent($@"<spans>
                 <run>...</run>
                 <if you='you gain' them='gaining'>{Model.ActivePlayer}</if>
-                <card>{id}</card>
-                <run>.</run>
+                <card suffix='.'>{id}</card>
             </spans>");
         }
 

@@ -171,11 +171,11 @@
                 {                    
                     if (i < Model.Players.Length - 1)
                     {
-                        <text><PlayerLink Name="@Model.Players[i]" />, </text>
+                        <PlayerLink @key="@Model.Players[i]" Name="@Model.Players[i]" Suffix=", " />
                     }
                     else
                     {
-                        <text><PlayerLink Name="@Model.Players[i]" />.</text>
+                        <PlayerLink @key="@Model.Players[i]" Name="@Model.Players[i]" Suffix="." />
                     }
                 }
             </span>

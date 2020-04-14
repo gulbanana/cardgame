@@ -143,8 +143,7 @@ namespace Cardgame
             LogEvent($@"<spans>
                 <player>{player}</player>
                 <if you='buy' them='buys'>{player}</if>
-                <card>{id}</card>
-                <run>.</run>
+                <card suffix='.'>{id}</card>
             </spans>");
 
             if (Model.BuysRemaining == 0)
@@ -193,8 +192,7 @@ namespace Cardgame
             LogEvent($@"<spans>
                 <player>{player}</player>
                 <if you='play' them='plays'>{player}</if>
-                <card>{id}</card>
-                <run>.</run>
+                <card suffix='.'>{id}</card>
             </spans>");
         }
 

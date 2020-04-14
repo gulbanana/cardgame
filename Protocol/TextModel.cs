@@ -38,16 +38,22 @@ namespace Cardgame
         public class Symbol : TextModel
         {
             public string Name { get; set; }
+            public string Prefix { get; set; }
+            public string Suffix { get; set; }
         }
 
         public class Card : TextModel
         {
             public string Name { get; set; }
+            public string Prefix { get; set; }
+            public string Suffix { get; set; }
         }
 
         public class Player : TextModel
         {
             public string Name { get; set; }
+            public string Prefix { get; set; }
+            public string Suffix { get; set; }
         }
 
         public class Pronominal : TextModel
@@ -86,13 +92,28 @@ namespace Cardgame
                     return new Error { Text = element.Value };
 
                 case "sym":
-                    return new Symbol { Name = element.Value };
+                    return new Symbol 
+                    { 
+                        Name = element.Value,
+                        Prefix = element.Attribute("prefix")?.Value,
+                        Suffix = element.Attribute("suffix")?.Value
+                    };
 
                 case "card":
-                    return new Card { Name = element.Value };
+                    return new Card 
+                    { 
+                        Name = element.Value,
+                        Prefix = element.Attribute("prefix")?.Value,
+                        Suffix = element.Attribute("suffix")?.Value
+                    };
 
                 case "player":
-                    return new Player { Name = element.Value };
+                    return new Player 
+                    { 
+                        Name = element.Value,
+                        Prefix = element.Attribute("prefix")?.Value,
+                        Suffix = element.Attribute("suffix")?.Value
+                    };
 
                 case "if":
                     return new Pronominal 

@@ -141,10 +141,8 @@ namespace Cardgame
             if (reshuffled)
             {
                 LogEvent($@"<spans>
-                    <run>(</run>
-                    <player>{Model.ActivePlayer}</player>
-                    <if you='reshuffle.' them='reshuffles.'>{Model.ActivePlayer}</if>
-                    <run>)</run>
+                    <player prefix='('>{Model.ActivePlayer}</player>
+                    <if you='reshuffle.)' them='reshuffles.)'>{Model.ActivePlayer}</if>
                 </spans>");
             }
 

@@ -9,10 +9,7 @@ namespace Cardgame.Cards
         <block>
             <lines>
                 <run>+1 Buy</run>
-                <spans>
-                    <run>+</run>
-                    <sym>coin2</sym>
-                </spans>
+                <sym prefix='+'>coin2</sym>
             </lines>
         </block>");
 

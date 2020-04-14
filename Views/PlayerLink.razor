@@ -3,6 +3,8 @@
 @code {
     [Parameter] public string Name { get; set; }
     [Parameter] public string Text { get; set; }
+    [Parameter] public string Prefix { get; set; }
+    [Parameter] public string Suffix { get; set; }
 
     protected override void OnParametersSet()
     {
@@ -14,9 +16,9 @@
 }
 
 <Subscribed Endpoint="@UserEndpoint">
-    <span class="player-link 
+    @Prefix<span class="player-link 
     @(Name.Equals(Session.Username) ? "player-link--you" : "")
     @(!context.Contains(Name) ? "player-link--disconnected" : "")
-    ">@Text</span>
+    ">@Text</span>@Suffix
 </Subscribed>
 
