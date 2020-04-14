@@ -6,6 +6,8 @@ namespace Cardgame
 {
     public interface IActionHost
     {
+        int GetHandCards();
+
         void DrawCards(int n);
         void AddActions(int n);
         void AddBuys(int n);
@@ -16,7 +18,9 @@ namespace Cardgame
         void GainCard(string card);
 
         Task<T> SelectCard<T>(string prompt, CardSource source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel;
-        Task<string[]> SelectCardsFromHand(string prompt);        
+        Task<string[]> SelectCardsFromHand(string prompt, int? number = null);
+
+        Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act);
     }
 
     public static class ActionHostExtensions
@@ -39,6 +43,11 @@ namespace Cardgame
         public static Task<Cards.CardModel> SelectCard(this IActionHost host, string prompt)
         {
             return host.SelectCard<Cards.CardModel>(prompt, CardSource.Hand, x => x);
+        }
+
+        public static Task Attack(this IActionHost host, Func<IActionHost, Task> act)
+        {
+            return host.Attack(_ => true, act);
         }
     }
 }

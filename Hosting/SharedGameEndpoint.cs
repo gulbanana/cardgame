@@ -50,7 +50,7 @@ namespace Cardgame.Hosting
             games[name].Execute("demo", new PlayCardCommand { Seq = 11, Id = "Copper" });
             games[name].Execute("demo", new PlayCardCommand { Seq = 12, Id = "Copper" });
             games[name].Execute("demo", new PlayCardCommand { Seq = 13, Id = "Copper" });
-            games[name].Execute("demo", new BuyCardCommand { Seq = 14, Id = "Remodel" });
+            games[name].Execute("demo", new BuyCardCommand { Seq = 14, Id = "Militia" });
             games[name].Execute("demo", new EndTurnCommand { Seq = 15 });
         }
     }

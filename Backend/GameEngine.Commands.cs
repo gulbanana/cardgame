@@ -110,7 +110,7 @@ namespace Cardgame
                     break;
 
                 case EnterChoiceCommand choice:
-                    if (Model.ChoosingPlayer != username) throw new CommandException("You are not the choosing player.");
+                    if (Model.ChoosingPlayers.Peek() != username) throw new CommandException("You are not the choosing player.");
 
                     inputTCS.SetResult(choice.Output);
 
@@ -162,6 +162,12 @@ namespace Cardgame
             Model.Hands[player].Remove(id);
             Model.PlayedCards.Add(id);
 
+            LogEvent($@"<spans>
+                <player>{player}</player>
+                <if you='play' them='plays'>{player}</if>
+                <card suffix='.'>{id}</card>
+            </spans>");
+
             var playedCard = Cards.All.ByName[id];                    
             switch (playedCard.Type)
             {                    
@@ -171,7 +177,8 @@ namespace Cardgame
 
                     Model.ActionsRemaining--;
                     Model.IsExecutingAction = true;
-                    action.ExecuteAsync(this).ContinueWith(CompleteAction);
+                    var host = new ActionHost(this, Model.ActivePlayer);
+                    action.ExecuteAsync(host).ContinueWith(CompleteAction);
                     break;
                 
                 case CardType.Treasure when playedCard is Cards.TreasureCardModel treasure:
@@ -188,12 +195,6 @@ namespace Cardgame
                 default:
                     throw new CommandException($"You can't play {playedCard.Type} cards.");
             }
-
-            LogEvent($@"<spans>
-                <player>{player}</player>
-                <if you='play' them='plays'>{player}</if>
-                <card suffix='.'>{id}</card>
-            </spans>");
         }
 
         private void CompleteAction(Task t)

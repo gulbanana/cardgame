@@ -15,6 +15,9 @@ namespace Cardgame
         public GameEngine()
         {
             Model = new GameModel();
+            Model.EventLog = new List<TextModel>();
+            Model.ChatLog = new List<LogEntry>();        
+            Model.Players = new string[0];
         }
 
         private void LogEvent(string eventText)
@@ -22,7 +25,7 @@ namespace Cardgame
             Model.EventLog.Add(TextModel.Parse(eventText));
         }
 
-        private void LogPartialEvent(TextModel eventText)
+        internal void LogPartialEvent(TextModel eventText)
         {
             var partial = Model.EventLog[Model.EventLog.Count - 1];
             var final = partial is TextModel.Lines l ? l : new TextModel.Lines
@@ -35,7 +38,7 @@ namespace Cardgame
             Model.EventLog[Model.EventLog.Count - 1] = final;
         }
 
-        private void LogPartialEvent(string eventText)
+        internal void LogPartialEvent(string eventText)
         {
             LogPartialEvent(TextModel.Parse(eventText));
         }
@@ -48,6 +51,7 @@ namespace Cardgame
 
             Model.PlayedCards = new List<string>();
             Model.Trash = new List<string>();
+            Model.ChoosingPlayers = new Stack<string>();
             Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<string>());
             Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<string>());
             Model.Decks = Model.Players.ToDictionary(k => k, _ => 
@@ -182,7 +186,7 @@ namespace Cardgame
             }
         }
 
-        private bool DrawCard(string player, string id = null)
+        internal bool DrawCard(string player, string id = null)
         {
             var deck = Model.Decks[player];
             var hand = Model.Hands[player];
@@ -214,28 +218,27 @@ namespace Cardgame
             }
         }
 
-        private void DiscardCard(string player, string id)
+        internal void DiscardCard(string player, string id)
         {
             Model.Hands[player].Remove(id);
             Model.Discards[player].Add(id);
         }
 
-        private void TrashCard(string player, string id)
+        internal void TrashCard(string player, string id)
         {
             Model.Hands[player].Remove(id);
             Model.Trash.Add(id);
         }
 
-        private void GainCard(string player, string id)
+        internal void GainCard(string player, string id)
         {
             Model.CardStacks[id]--;
             Model.Discards[player].Add(id);
         }
 
-        private async Task<TOutput> Choose<TInput, TOutput>(ChoiceType type, string prompt, TInput input)
+        internal async Task<TOutput> Choose<TInput, TOutput>(string player, ChoiceType type, string prompt, TInput input)
         {
-            Model.IsRequestingChoice = true;
-            Model.ChoosingPlayer = Model.ActivePlayer;
+            Model.ChoosingPlayers.Push(player);
             Model.ChoiceType = type;
             Model.ChoicePrompt = TextModel.Parse(prompt);
             Model.ChoiceInput = JsonSerializer.Serialize(input);
@@ -243,7 +246,7 @@ namespace Cardgame
             inputTCS = new TaskCompletionSource<string>();
             var output = await inputTCS.Task;
 
-            Model.IsRequestingChoice = false;
+            Model.ChoosingPlayers.Pop();
 
             return JsonSerializer.Deserialize<TOutput>(output);
         }

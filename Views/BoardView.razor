@@ -29,7 +29,7 @@
         <ActiveButton Label="End turn" Enabled="@isEnabled" Action="@(() => Dispatch(new EndTurnCommand()))" />
     </p>
 
-    <div style="grid-area: cards; grid-column-end: @(Game.IsRequestingChoice ? "3" : "5")">
+    <div style="grid-area: cards; grid-column-end: @(Game.ChoosingPlayers.Any() ? "3" : "5")">
         <GappedRow>
             @for (var i = 0; i < Game.PlayedCards.Count; i++)
             {
@@ -38,12 +38,12 @@
         </GappedRow>
     </div>
 
-    @if (Game.IsRequestingChoice)
+    @if (Game.ChoosingPlayers.Any())
     {
         <div style="grid-area: card-commands" class="board-view__choice">
-            @if (Game.ChoosingPlayer.Equals(Session.Username) || !Game.Players.Contains(Session.Username))
+            @if (Game.ChoosingPlayers.Peek().Equals(Session.Username) || !Game.Players.Contains(Session.Username))
             {
-                <ActiveChoice Enabled="@Game.ChoosingPlayer.Equals(Session.Username)"
+                <ActiveChoice Enabled="@Game.ChoosingPlayers.Peek().Equals(Session.Username)"
                               Action="@(output => Dispatch(new EnterChoiceCommand { Output = output }))"
                               Prompt="@Game.ChoicePrompt"
                               Type="@Game.ChoiceType"
@@ -51,7 +51,7 @@
             }
             else
             {
-                <p>Waiting for <PlayerLink Name="@Game.ChoosingPlayer" /> to make a choice...</p>
+                <p>Waiting for <PlayerLink @key="Game.ChoosingPlayers.Peek()" Name="@Game.ChoosingPlayers.Peek()" /> to make a choice...</p>
             }
         </div>
     }

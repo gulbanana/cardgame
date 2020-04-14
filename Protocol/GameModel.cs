@@ -8,9 +8,9 @@ namespace Cardgame
         public int Seq { get; set; }
 
         // metagame state
-        public List<TextModel> EventLog { get; } = new List<TextModel>();
-        public List<LogEntry> ChatLog { get; } = new List<LogEntry>();        
-        public string[] Players { get; set; } = new string[0];
+        public List<TextModel> EventLog { get; set; } 
+        public List<LogEntry> ChatLog { get; set; } 
+        public string[] Players { get; set; } 
         public bool IsStarted { get; set; }
 
         // game fixed setup
@@ -34,8 +34,7 @@ namespace Cardgame
         public int MoneyRemaining { get; set; }
 
         // interrupt state
-        public bool IsRequestingChoice { get; set; }
-        public string ChoosingPlayer { get; set; }
+        public Stack<string> ChoosingPlayers { get; set; }
         public TextModel ChoicePrompt { get; set; }
         public ChoiceType ChoiceType { get; set; }
         public string ChoiceInput { get; set; }
