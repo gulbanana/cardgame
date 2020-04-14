@@ -14,5 +14,13 @@ namespace Cardgame.Cards
         <spans><run>+</run><sym>coin1</sym></spans>
     </lines>
 </block>");    
+
+        protected override void Play(IActionHost host)
+        {
+            host.DrawCards(1);
+            host.AddActions(1);
+            host.AddBuys(1);
+            host.AddMoney(1);
+        }
     }
 }
