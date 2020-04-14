@@ -1,0 +1,56 @@
+@using System.Text.Json
+@code {
+    [Parameter] public bool Enabled { get; set; }
+    [Parameter] public Action<string> Action { get; set; }
+    [Parameter] public ChoiceType Type { get; set; }
+    [Parameter] public TextModel Prompt { get; set; }
+    [Parameter] public string Input { get; set; }
+    private string[] selectCardsIds;
+    private bool[] selectCardsChoices;
+
+    protected override void OnParametersSet()
+    {
+        switch (Type)
+        {
+            case ChoiceType.SelectCards:
+                selectCardsIds = JsonSerializer.Deserialize<string[]>(Input);
+                selectCardsChoices = new bool[selectCardsIds.Length];
+                break;
+        }
+    }
+
+    private void SelectCardsToggle(int ix)
+    {
+        selectCardsChoices[ix] = !selectCardsChoices[ix];
+        StateHasChanged();
+    }
+
+    private void SelectCardsSubmit()
+    {
+        var selected = selectCardsIds
+            .Select((id, ix) => (id, ix))
+            .Where(t => selectCardsChoices[t.ix])
+            .Select(t => t.id)
+            .ToArray();
+
+        Action(JsonSerializer.Serialize(selected));
+    }
+}
+
+<h3>
+    <RichText Model="@Prompt" />
+</h3>
+
+<p class="active-choice__select-cards">
+    @for (var i = 0; i < selectCardsIds.Length; i++)
+    {
+        var ix = i;
+        <div @key="ix" class="@(selectCardsChoices[ix] ? "" : "active-choice__select-cards__deselected")">
+            <ActiveCard Id="@selectCardsIds[ix]" Enabled="@Enabled" Half="true" Action="@(() => SelectCardsToggle(ix))" />
+        </div>
+    }
+</p>
+
+<p>
+    <ActiveButton Label="Select" Enabled="@Enabled" Action="SelectCardsSubmit" />
+</p>

@@ -26,5 +26,10 @@ namespace Cardgame
         public string Id { get; set; }
     }
 
+    public class EnterChoiceCommand : ClientCommand 
+    {
+        public string Output { get; set; }
+    }
+
     public class EndTurnCommand : ClientCommand {}
 }

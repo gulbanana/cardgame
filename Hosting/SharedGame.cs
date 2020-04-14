@@ -18,7 +18,7 @@ namespace Cardgame.Hosting
             engine = new GameEngine();
             this.name = name;
 
-            engine.ActionCompleted += OnActionCompleted;
+            engine.ActionUpdated += OnActionUpdated;
 
             UpdateSummary();
         }
@@ -50,7 +50,7 @@ namespace Cardgame.Hosting
             }
         }
 
-        private void OnActionCompleted()
+        private void OnActionUpdated()
         {
             Notify();
         }

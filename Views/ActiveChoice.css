@@ -1,0 +1,9 @@
+.active-choice__select-cards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.active-choice__select-cards__deselected {
+    opacity: 50%;
+}
