@@ -1,6 +1,7 @@
 ﻿@page "/demo"
 @inject NavigationManager Navigation
 @inject IUserSession Session
+@inject IGameEndpoint Endpoint
 @code {
     Guid id;
 
@@ -11,6 +12,7 @@
         {
             Session.Login($"demo");
         }
+        Endpoint.CreateDemoGame($"demo-{id}");
     }
 
     protected override void OnAfterRender(bool firstRender)

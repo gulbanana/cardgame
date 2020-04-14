@@ -5,6 +5,8 @@ namespace Cardgame
         public int Seq { get; set; }
     }
 
+    public class SetDemoCommand : ClientCommand { }
+
     public class JoinGameCommand : ClientCommand { }
     public class LeaveGameCommand : ClientCommand { }
     public class StartGameCommand : ClientCommand { }

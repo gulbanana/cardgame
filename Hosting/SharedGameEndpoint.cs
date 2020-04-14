@@ -25,22 +25,30 @@ namespace Cardgame.Hosting
                 games[name] = new SharedGame(name);
                 games[name].SummaryUpdated += Notify;
 
-                if (name.StartsWith("demo"))
-                {
-                    games[name].Execute("agatha", new JoinGameCommand { Seq = 0 });
-                    games[name].Execute("agatha", new ChatCommand { Seq = 1, Message = "Hello, kingdom!" });
-                    games[name].Execute("beto", new JoinGameCommand { Seq = 2 });
-                    games[name].Execute("beto", new ChatCommand { Seq = 3, Message = "Don't cramp my style." });
-                    games[name].Execute("cawdelia", new JoinGameCommand { Seq = 4 });
-                    games[name].Execute("cawdelia", new ChatCommand { Seq = 5, Message = "Nevermore." });
-                    games[name].Execute("demo", new JoinGameCommand { Seq = 6 });
-                    games[name].Execute("demo", new StartGameCommand { Seq = 7 });
-                }
-
                 Notify();
             }
 
             return games[name];
+        }
+
+        public void CreateDemoGame(string name)
+        {
+            games[name] = new SharedGame(name);
+            games[name].SummaryUpdated += Notify;
+
+            games[name].Execute("demo", new SetDemoCommand { Seq = 0 });
+            games[name].Execute("agatha", new JoinGameCommand { Seq = 1 });
+            games[name].Execute("agatha", new ChatCommand { Seq = 2, Message = "Hello, kingdom!" });
+            games[name].Execute("beto", new JoinGameCommand { Seq = 3 });
+            games[name].Execute("beto", new ChatCommand { Seq = 4, Message = "Don't cramp my style." });
+            games[name].Execute("cawdelia", new JoinGameCommand { Seq = 5 });
+            games[name].Execute("cawdelia", new ChatCommand { Seq = 6, Message = "Nevermore." });
+            games[name].Execute("demo", new JoinGameCommand { Seq = 7 });
+            games[name].Execute("demo", new StartGameCommand { Seq = 8 });
+            games[name].Execute("demo", new PlayCardCommand { Seq = 9, Id = "Copper" });
+            games[name].Execute("demo", new PlayCardCommand { Seq = 10, Id = "Copper" });
+            games[name].Execute("demo", new PlayCardCommand { Seq = 11, Id = "Copper" });
+            games[name].Execute("demo", new BuyCardCommand { Seq = 12, Id = "Village" });
         }
     }
 }

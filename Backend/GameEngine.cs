@@ -39,6 +39,13 @@ namespace Cardgame
 
             switch (command)
             {
+                case SetDemoCommand demo:
+                    if (Model.Seq != 0) throw new CommandException("Game has been modified and cannot be set to demo mode.");
+
+                    Model.IsDemo = true;
+
+                    break;
+
                 case ChatCommand chat:
                     if (chat.Message.Length > LogEntry.MAX) throw new CommandException("Chat message too long.");
 
@@ -173,13 +180,25 @@ namespace Cardgame
 
             foreach (var player in Model.Players)
             {
-                for (var i = 0; i < 5; i++)
+                if (Model.IsDemo)
                 {
+                    DrawCard(player, "Copper");
+                    DrawCard(player, "Copper");
+                    DrawCard(player, "Copper");
+                    DrawCard(player, "Estate");
+                    DrawCard(player, "Estate");
+                }
+                else
+                {
+                    DrawCard(player);
+                    DrawCard(player);
+                    DrawCard(player);
+                    DrawCard(player);
                     DrawCard(player);
                 }
             }
             
-            Model.ActivePlayer = Model.Players.Contains("demo") ? "demo" : Model.Players[rng.Next(Model.Players.Length)];
+            Model.ActivePlayer = Model.IsDemo ? Model.Players.Last() : Model.Players[rng.Next(Model.Players.Length)];
         }
 
         private void BeginTurn()
@@ -235,7 +254,7 @@ namespace Cardgame
                 </spans>");
             }
 
-            if (Model.ActivePlayer != "demo")
+            if (!Model.IsDemo)
             {
                 var nextPlayer = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
                 if (nextPlayer >= Model.Players.Length)
@@ -266,14 +285,22 @@ namespace Cardgame
             }
         }
 
-        private bool DrawCard(string player)
+        private bool DrawCard(string player, string card = null)
         {
             var deck = Model.Decks[player];
             var hand = Model.Hands[player];
 
-            var first = deck[0];
-            deck.RemoveAt(0);
-            hand.Add(first);
+            if (card != null)
+            {
+                deck.Remove(card);
+                hand.Add(card);
+            }
+            else
+            {
+                var first = deck[0];
+                deck.RemoveAt(0);
+                hand.Add(first);
+            }
             
             if (!deck.Any())
             {
