@@ -12,6 +12,7 @@ namespace Cardgame.Hosting
         private readonly string name;
         public GameSummary Summary { get; private set; }
         public event Action SummaryUpdated;
+        public event Action<string> GameEnded;
 
         public SharedGame(string name)
         {
@@ -39,9 +40,15 @@ namespace Cardgame.Hosting
                 
                 Notify();
 
-                if (engine.Model.IsFinished || command is JoinGameCommand || command is LeaveGameCommand || command is StartGameCommand)
+                if (command is JoinGameCommand || command is LeaveGameCommand || command is StartGameCommand)
                 {
                     UpdateSummary();
+                }
+
+                if (engine.Model.IsFinished)
+                {
+                    UpdateSummary();
+                    GameEnded?.Invoke(name);
                 }
 
                 return null;

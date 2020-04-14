@@ -193,13 +193,18 @@ namespace Cardgame
                     builder.AppendLine($"<spans><player>{player}</player><run>scored:</run></spans>");                    
                     var dominion = Model.Decks[player].Concat(Model.Hands[player]).Concat(Model.Discards[player]);
                     var victoryCards = dominion.Select(id => Cards.All.ByName[id]).OfType<Cards.VictoryCardModel>().GroupBy(card => card.Name);
+                    var total = 0;
                     foreach (var group in victoryCards)
                     {
+                        var exemplar = group.First();
+                        var score = exemplar.VictoryPoints * group.Count();
+                        total += score;
                         builder.AppendLine("<spans>");
                         builder.AppendLine($"<card>{group.Key}</card>");
-                        builder.AppendLine($"<run>x{group.Count()}</run>");                    
+                        builder.AppendLine($"<run>x{group.Count()}: {score} VP</run>");
                         builder.AppendLine("</spans>");
-                    }                    
+                    }
+                    builder.AppendLine($"<run>Total: {total} Victory Points</run>");
                 builder.AppendLine("</lines>");
                 return builder.ToString();
             })) 

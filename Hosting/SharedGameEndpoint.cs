@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Cardgame.Hosting
 {
@@ -24,6 +26,7 @@ namespace Cardgame.Hosting
             {
                 games[name] = new SharedGame(name);
                 games[name].SummaryUpdated += Notify;
+                games[name].GameEnded += OnGameEnded;
 
                 Notify();
             }
@@ -35,6 +38,7 @@ namespace Cardgame.Hosting
         {
             games[name] = new SharedGame(name);
             games[name].SummaryUpdated += Notify;
+            games[name].GameEnded += OnGameEnded;
 
             int seq = 0;
             games[name].Execute("demo", new SetDemoCommand { Seq = seq++ });
@@ -67,6 +71,15 @@ namespace Cardgame.Hosting
             
             // games[name].Execute("agatha", new EndTurnCommand { Seq = seq++ });
             // games[name].Execute("agatha", new PlayCardCommand { Seq = seq++, Id = "Militia" });
+        }
+
+        // clean up finished games
+        private void OnGameEnded(string name)
+        {
+            Task.Delay(TimeSpan.FromMinutes(5)).ContinueWith(t => 
+            {
+                games.Remove(name);
+            });
         }
     }
 }
