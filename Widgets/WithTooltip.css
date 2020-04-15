@@ -1,5 +1,7 @@
+/* we want to use this in lines of text, but in Chrome an inline doesn't cover for the purpose of opacity */
+/* possibly https://bugs.chromium.org/p/chromium/issues/detail?id=764011 is related? */
 .with-tooltip {
-    display: inline;
+    display: inline-block; 
 }
 
 .with-tooltip__tooltip {
