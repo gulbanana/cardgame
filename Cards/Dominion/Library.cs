@@ -19,7 +19,9 @@ namespace Cardgame.Cards.Dominion
 
             while (host.GetHand().Count() < 7)
             {
-                var drawn = host.DrawCards(1).Single();
+                var drawn = host.DrawCards(1).SingleOrDefault();
+                if (drawn == null) break; // no cards left in deck or discard
+
                 if (drawn.Type == CardType.Action)
                 {
                     var shouldSkip = await host.YesNo("Skip drawing Action?", $@"<spans>

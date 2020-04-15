@@ -367,14 +367,13 @@ namespace Cardgame
             {
                 for (var i = 0; i < 5; i++)
                 {
-                    EnsureDeck(player);
                     if (isDemo)
                     {
-                        DrawCard(player, "Copper");
+                        DrawCardIfAny(player, "Copper");
                     }
                     else
                     {
-                        DrawCard(player);
+                        DrawCardIfAny(player);
                     }
                 }
             }
@@ -434,7 +433,7 @@ namespace Cardgame
             for (var i = 0; i < 5; i++)
             {
                 reshuffled = reshuffled | EnsureDeck(Model.ActivePlayer);
-                DrawCard(Model.ActivePlayer);
+                DrawCardIfAny(Model.ActivePlayer);
             }
             if (reshuffled)
             {
@@ -541,10 +540,15 @@ namespace Cardgame
             }
         }
 
-        internal string DrawCard(string player, string id = null, Zone to = Zone.Hand)
+        internal string DrawCardIfAny(string player, string id = null, Zone to = Zone.Hand)
         {
             var deck = Model.Decks[player];        
             var hand = Model.Hands[player];
+
+            if (!deck.Any())
+            {
+                return null;
+            }
 
             if (id != null)
             {

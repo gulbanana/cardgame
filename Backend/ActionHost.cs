@@ -138,7 +138,15 @@ namespace Cardgame
             for (var i = 0; i < n; i++)
             {
                 reshuffled = reshuffled | engine.EnsureDeck(Player);
-                drawn.Add(engine.DrawCard(Player));
+                var id = engine.DrawCardIfAny(Player);
+                if (id != null)
+                {
+                    drawn.Add(id);
+                }
+                else
+                {
+                    break;
+                }
             }
             if (reshuffled)
             {
@@ -225,7 +233,7 @@ namespace Cardgame
                 {
                     NoteReshuffle();
                 }
-                engine.DrawCard(Player, to: Zone.TopDeck);
+                engine.DrawCardIfAny(Player, to: Zone.TopDeck);
             }
 
             var revealed = from switch {

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cardgame.Cards.Dominion
@@ -14,7 +15,10 @@ namespace Cardgame.Cards.Dominion
         protected override async Task ActAsync(IActionHost host)
         {
             var cards = await host.SelectCards("Choose cards to trash.", 0, 4);
-            host.Trash(cards);            
+            if (cards.Any())
+            {
+                host.Trash(cards);            
+            }
         }
     }
 }
