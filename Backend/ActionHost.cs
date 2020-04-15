@@ -47,7 +47,7 @@ namespace Cardgame
         {
             return string.Join(Environment.NewLine, ids.Select((id, ix) => 
             {
-                var suffix = ix == ids.Length -1 ? "."
+                var suffix = ix == ids.Length -1 ? (terminal ? "." : "")
                     : ix < ids.Length - 2 ? ","
                     : " and";
                 return $"<card suffix='{suffix}'>{id}</card>";
