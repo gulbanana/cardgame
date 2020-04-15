@@ -89,6 +89,11 @@ namespace Cardgame
             host.Discard(cards.Select(card => card.Name).ToArray(), from);
         }
 
+        public static void Discard(this IActionHost host, Cards.CardModel card, Zone from)
+        {
+            host.Discard(card.Name, from);
+        }
+
         public static void Discard(this IActionHost host, Cards.CardModel[] cards)
         {
             host.Discard(cards.Select(card => card.Name).ToArray(), Zone.Hand);

@@ -45,6 +45,11 @@ namespace Cardgame
 
         private string LogCardList(string[] ids, bool terminal = true)
         {
+            if (!ids.Any())
+            {
+                return "<span>nothing</span>";
+            }
+
             return string.Join(Environment.NewLine, ids.Select((id, ix) => 
             {
                 var suffix = ix == ids.Length -1 ? (terminal ? "." : "")
