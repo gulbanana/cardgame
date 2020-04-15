@@ -5,7 +5,7 @@
     [CascadingParameter] public Executor Dispatch { get; set; }
 }
 
-@if (Game.Stacks[Id] > 0)
+@if (Game.Supply[Id] > 0)
 {
     var isEnabled = Session.Username.Equals(Game.ActivePlayer) &&
         !Game.IsFinished &&
@@ -16,7 +16,7 @@
     <ActiveCard Id="@Id" 
                 Enabled="isEnabled" 
                 Half="true" 
-                Stack="@Game.Stacks[Id]"
+                Stack="@Game.Supply[Id]"
                 Action="@(() => Dispatch(new BuyCardCommand { Id = Id }))" />
 }
 else

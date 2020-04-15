@@ -192,7 +192,7 @@ namespace Cardgame
 
         void IActionHost.Gain(string id, Zone to)
         {
-            engine.MoveCard(Player, id, Zone.Kingdom, to);
+            engine.MoveCard(Player, id, Zone.Supply, to);
 
             if (to == Zone.Discard)
             {
@@ -280,7 +280,7 @@ namespace Cardgame
             var sourceCards = source switch 
             {
                 Zone.Hand => engine.Model.Hands[Player],
-                Zone.Kingdom => engine.Model.KingdomCards.Concat(new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold"}).Where(id => engine.Model.Stacks[id] > 0),
+                Zone.Supply => engine.Model.KingdomCards.Concat(new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold"}).Where(id => engine.Model.Supply[id] > 0),
                 Zone other => throw new CommandException($"Unknown CardSource {other}")
             };
 

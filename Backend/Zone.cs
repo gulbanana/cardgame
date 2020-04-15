@@ -3,7 +3,7 @@ namespace Cardgame
     public enum Zone
     {
         Hand,
-        Kingdom,
+        Supply,
         Discard,
         Trash,
         TopDeck,

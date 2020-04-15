@@ -140,7 +140,7 @@ namespace Cardgame
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");
-                    if (Model.Stacks[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
+                    if (Model.Supply[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
 
                     BuyCard(username, buyCard.Id);
                     
@@ -184,7 +184,7 @@ namespace Cardgame
             var boughtCard = Cards.All.ByName(id);
             if (boughtCard.Cost > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
 
-            Model.Stacks[id]--;
+            Model.Supply[id]--;
             Model.Discards[player].Add(id);
             Model.MoneyRemaining -= boughtCard.Cost;
             Model.BuysRemaining -= 1;
@@ -348,7 +348,7 @@ namespace Cardgame
             });
 
             var victoryCount = Model.Players.Length == 2 ? 8 : 12;
-            Model.Stacks = new Dictionary<string, int>
+            Model.Supply = new Dictionary<string, int>
             {
                 { "Estate", victoryCount },
                 { "Duchy", victoryCount },
@@ -360,7 +360,7 @@ namespace Cardgame
             };
             foreach (var card in Model.KingdomCards.Select(Cards.All.ByName))
             {
-                Model.Stacks[card.Name] = card.Type == CardType.Victory ? victoryCount : 10;
+                Model.Supply[card.Name] = card.Type == CardType.Victory ? victoryCount : 10;
             }
 
             foreach (var player in Model.Players)
@@ -443,7 +443,7 @@ namespace Cardgame
                 </spans>");
             }
 
-            if (Model.Stacks["Province"] == 0 || Model.Stacks.Values.Where(v => v == 0).Count() >= 3)
+            if (Model.Supply["Province"] == 0 || Model.Supply.Values.Where(v => v == 0).Count() >= 3)
             {
                 EndGame();
             }
@@ -510,7 +510,7 @@ namespace Cardgame
                 .Select(card => card.Value)
                 .Sum();
 
-            var minimumCost = Model.Stacks
+            var minimumCost = Model.Supply
                 .Where(kvp => kvp.Value > 0)
                 .Select(kvp => Cards.All.ByName(kvp.Key).Cost)
                 .Min();
@@ -582,9 +582,9 @@ namespace Cardgame
                     Model.Discards[player].Remove(id);
                     break;
                 
-                case Zone.Kingdom:
-                    if (Model.Stacks[id] < 1) throw new CommandException($"No {id} cards remaining in stack.");
-                    Model.Stacks[id]--;
+                case Zone.Supply:
+                    if (Model.Supply[id] < 1) throw new CommandException($"No {id} cards remaining in stack.");
+                    Model.Supply[id]--;
                     break;
 
                 case Zone.TopDeck:
@@ -616,8 +616,8 @@ namespace Cardgame
                     Model.Discards[player].Add(id);
                     break;
                 
-                case Zone.Kingdom:
-                    Model.Stacks[id]++;
+                case Zone.Supply:
+                    Model.Supply[id]++;
                     break;
 
                 case Zone.TopDeck:

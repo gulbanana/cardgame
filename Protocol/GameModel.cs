@@ -20,7 +20,7 @@ namespace Cardgame
 
         // game state
         public string ActivePlayer { get; set; }
-        public Dictionary<string, int> Stacks { get; set; }
+        public Dictionary<string, int> Supply { get; set; }
         public Dictionary<string, List<string>> Hands { get; set; }
         public Dictionary<string, List<string>> Decks { get; set; }
         public Dictionary<string, List<string>> Discards { get; set; }
