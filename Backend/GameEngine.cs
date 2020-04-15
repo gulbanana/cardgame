@@ -481,12 +481,12 @@ namespace Cardgame
                 builder.AppendLine("<lines>");
                     builder.AppendLine($"<spans><player>{player}</player><run>scored:</run></spans>");                    
                     var total = 0;
-                    var dominion = Model.Decks[player].Concat(Model.Hands[player]).Concat(Model.Discards[player]);
+                    var dominion = Model.Decks[player].Concat(Model.Hands[player]).Concat(Model.Discards[player]).ToArray();
                     var victoryCards = dominion.Select(Cards.All.ByName).OfType<Cards.VictoryCardModel>().GroupBy(card => card.Name);
                     foreach (var group in victoryCards)
                     {
                         var exemplar = group.First();
-                        var score = exemplar.VictoryPoints * group.Count();
+                        var score = exemplar.Score(dominion) * group.Count();
                         total += score;
                         builder.AppendLine("<spans>");
                         builder.AppendLine($"<card>{group.Key}</card>");
