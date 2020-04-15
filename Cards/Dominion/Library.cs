@@ -24,10 +24,10 @@ namespace Cardgame.Cards.Dominion
 
                 if (drawn.Type == CardType.Action)
                 {
-                    var shouldSkip = await host.YesNo("Skip drawing Action?", $@"<spans>
-                        <run>You may skip</run>
+                    var shouldSkip = await host.YesNo("Library", $@"<spans>
+                        <run>Skip drawing</run>
                         <card>{drawn.Name}</card>
-                        <run>and put it into your discard pile</run>
+                        <run>and put it into your discard pile?</run>
                     </spans>");
                     
                     if (shouldSkip)

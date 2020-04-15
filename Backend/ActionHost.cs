@@ -176,6 +176,22 @@ namespace Cardgame
             </spans>");
         }
 
+        void IActionHost.DiscardEntireDeck()
+        {
+            var deck = engine.Model.Decks[Player];
+            while (deck.Any())
+            {
+                engine.MoveCard(Player, deck[0], Zone.TopDeck, Zone.Discard);
+            }
+
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{level}' />
+                {LogVerbInitial("discard", "discards", "discarding")}
+                <if you='your' them='their'>{Player}</if>
+                <run>deck.</run>
+            </spans>");
+        }
+
         void IActionHost.Trash(string[] cards, Zone from)
         {
             foreach (var card in cards)

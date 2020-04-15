@@ -24,10 +24,10 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task<Reaction> ReactAsync(IActionHost host, string trigger)
         {
-            var shouldReveal = await host.YesNo("Reveal Moat?", $@"<spans>
-                <run>You may reveal</run>
+            var shouldReveal = await host.YesNo("Moat", $@"<spans>
+                <run>Reveal</run>
                 <card>Moat</card>
-                <run>from your hand to be unaffected by {trigger}'s attack.</run>
+                <run>from your hand to be unaffected by {trigger}'s attack?</run>
             </spans>");
 
             if (shouldReveal)

@@ -25,7 +25,7 @@ namespace Cardgame
         void RevealAndMove(string card, Zone from, Zone to);
 
         void PlayAction(Cards.ActionCardModel card, Zone from);
-
+        void DiscardEntireDeck();
         Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter, int? min, int? max) where T : Cards.CardModel;
         Task<bool> YesNo(string prompt, string message);
 
