@@ -20,7 +20,7 @@ namespace Cardgame.Cards.Dominion
         protected override async Task ActAsync(IActionHost host)
         {
             host.AddActions(1);
-            var discarded = await host.SelectCardsFromHand("Choose any number of cards to discard.");
+            var discarded = await host.SelectCards("Choose any number of cards to discard.");
             host.Discard(discarded);
             host.DrawCards(discarded.Length);
         }

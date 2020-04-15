@@ -23,7 +23,7 @@ namespace Cardgame.Cards.Dominion
             await host.Attack(player => player.GetHand().Length > 3, async player =>
             {
                 var n = player.GetHand().Length - 3;
-                var discardedCards = await player.SelectCardsFromHand(n == 1 ? "Choose a card to discard" : $"Choose {n} cards to discard.", n);
+                var discardedCards = await player.SelectCards(n == 1 ? "Choose a card to discard" : $"Choose {n} cards to discard.", n, n);
                 player.Discard(discardedCards);
             });
         }

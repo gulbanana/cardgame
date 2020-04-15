@@ -5,21 +5,16 @@
     [Parameter] public ChoiceType Type { get; set; }
     [Parameter] public string Prompt { get; set; }
     [Parameter] public string Input { get; set; }
-    private SelectCardsInput selectCardsInput;
+    private SelectCards selectCardsInput;
     private bool[] selectCardsChoices;
-    private string[] selectCardInput;
     private string yesNoMessage;
 
     protected override void OnParametersSet()
     {
         switch (Type)
         {
-            case ChoiceType.SelectCard:
-                selectCardInput = JsonSerializer.Deserialize<string[]>(Input);
-                break;
-
             case ChoiceType.SelectCards:
-                selectCardsInput = JsonSerializer.Deserialize<SelectCardsInput>(Input);
+                selectCardsInput = JsonSerializer.Deserialize<SelectCards>(Input);
                 selectCardsChoices = new bool[selectCardsInput.Choices.Length];
                 break;
 
@@ -27,11 +22,6 @@
                 yesNoMessage = JsonSerializer.Deserialize<string>(Input);
                 break;
         }
-    }
-
-    private void SelectCardSubmit(string id)
-    {
-        Action(JsonSerializer.Serialize(id));
     }
 
     private void SelectCardsToggle(int ix)
@@ -42,8 +32,9 @@
 
     private bool SelectCardsValid()
     {
-        return !selectCardsInput.NumberRequired.HasValue || 
-            selectCardsChoices.Where(b => b).Count() == selectCardsInput.NumberRequired.Value;
+        var selectedCount = selectCardsChoices.Where(b => b).Count();
+        return (!selectCardsInput.Min.HasValue || selectCardsInput.Min.Value <= selectedCount)
+            && (!selectCardsInput.Max.HasValue || selectCardsInput.Max.Value >= selectedCount);
     }
 
     private void SelectCardsSubmit()
@@ -57,6 +48,11 @@
         Action(JsonSerializer.Serialize(selected));
     }
 
+    private void SelectCardSubmitOne(string id)
+    {
+        Action(JsonSerializer.Serialize(new string[] { id }));
+    }
+
     private void YesNoSubmit(bool yesOrNo)
     {
         Action(JsonSerializer.Serialize(yesOrNo));
@@ -67,29 +63,32 @@
 
 @switch (Type)
 {
-    case ChoiceType.SelectCard:
-        <p @key="Input" class="active-choice__select-cards">
-            @foreach (var id in selectCardInput)
-            {
-                <ActiveCard Id="@id" Enabled="@Enabled" Half="true" Action="@(() => SelectCardSubmit(id))" />
-            }
-        </p>
-        break;
-
     case ChoiceType.SelectCards:
-        <p @key="Input" class="active-choice__select-cards">
-            @for (var i = 0; i < selectCardsInput.Choices.Length; i++)
-            {
-                var ix = i;
-                <div @key="ix" class="@(selectCardsChoices[ix] ? "" : "active-choice__select-cards__deselected")">
-                    <ActiveCard Id="@selectCardsInput.Choices[ix]" Enabled="@Enabled" Half="true" Action="@(() => SelectCardsToggle(ix))" />
-                </div>
-            }
-        </p>
+        @if (!selectCardsInput.Min.HasValue || selectCardsInput.Min < 1 || !selectCardsInput.Max.HasValue || selectCardsInput.Max.Value > 1)
+        {
+            <p @key="Input" class="active-choice__select-cards">
+                @for (var i = 0; i < selectCardsInput.Choices.Length; i++)
+                {
+                    var ix = i;
+                    <div @key="ix" class="@(selectCardsChoices[ix] ? "" : "active-choice__select-cards__deselected")">
+                        <ActiveCard Id="@selectCardsInput.Choices[ix]" Enabled="@Enabled" Half="true" Action="@(() => SelectCardsToggle(ix))" />
+                    </div>
+                }
+            </p>
 
-        <div>
-            <ActiveButton Label="Select" Enabled="@(Enabled && SelectCardsValid())" Action="SelectCardsSubmit" />
-        </div>
+            <div>
+                <ActiveButton Label="Select" Enabled="@(Enabled && SelectCardsValid())" Action="SelectCardsSubmit" />
+            </div>
+        }
+        else
+        {
+            <p @key="Input" class="active-choice__select-cards">
+                @foreach (var id in selectCardsInput.Choices)
+                {
+                    <ActiveCard Id="@id" Enabled="@Enabled" Half="true" Action="@(() => SelectCardSubmitOne(id))" />
+                }
+            </p>
+        }
         break;
 
     case ChoiceType.YesNo:

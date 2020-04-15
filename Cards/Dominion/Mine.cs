@@ -27,7 +27,7 @@ namespace Cardgame.Cards.Dominion
 
             if (trashedCard != null)
             {
-                host.Trash(trashedCard.Name);
+                host.Trash(trashedCard);
             
                 var gainedCard = await host.SelectCard(
                     "Choose a Treasure to gain.", 

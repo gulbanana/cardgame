@@ -267,7 +267,7 @@ namespace Cardgame
             engine.BeginAction(level + 1, Player, card, from);
         }
 
-        async Task<T> IActionHost.SelectCard<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter)
+        async Task<T[]> IActionHost.SelectCards<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter, int? min, int? max)
         {
             var sourceCards = source switch 
             {
@@ -279,31 +279,22 @@ namespace Cardgame
             var filteredCards = filter(sourceCards.Select(Cards.All.ByName));
             if (!filteredCards.Any())
             {
-                return null;
+                return Array.Empty<T>();
             }
 
-            var id = await engine.Choose<string[], string>(
-                Player,
-                ChoiceType.SelectCard, 
-                prompt,
-                filteredCards.Select(card => card.Name).ToArray()
-            );
-
-            return filteredCards.First(card => card.Name == id);
-        }
-
-        Task<string[]> IActionHost.SelectCardsFromHand(string prompt, int? number)
-        {
-            return engine.Choose<SelectCardsInput, string[]>(
+            var ids = await engine.Choose<SelectCards, string[]>(
                 Player,
                 ChoiceType.SelectCards, 
                 prompt,
-                new SelectCardsInput
+                new SelectCards
                 {
-                    Choices = engine.Model.Hands[Player].ToArray(),
-                    NumberRequired = number
+                    Choices = filteredCards.Select(card => card.Name).ToArray(),
+                    Min = min,
+                    Max = max
                 }
             );
+
+            return ids.Select(Cards.All.ByName).Cast<T>().ToArray();
         }
 
         Task<bool> IActionHost.YesNo(string prompt, string message)
