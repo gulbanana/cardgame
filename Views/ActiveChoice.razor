@@ -93,7 +93,7 @@
 
     case ChoiceType.YesNo:
         <p>
-            <RichText Model="@yesNoMessage" />
+            <RichText @key="yesNoMessage.GetHashCode()" Model="@yesNoMessage" />
         </p>
         <div>
             <ActiveButton Label="Yes" Enabled="@Enabled" Action="@(() => YesNoSubmit(true))" />

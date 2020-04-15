@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,8 +24,7 @@ namespace Cardgame.Cards.Dominion
             host.DrawCards(1);
             host.AddActions(1);
 
-            await SpyOn(host, host);
-            
+            await SpyOn(host, host);            
             await host.Attack(player => SpyOn(host, player));
         }
 
@@ -35,9 +33,9 @@ namespace Cardgame.Cards.Dominion
             var revealed = target.RevealAll(Zone.DeckTop1).SingleOrDefault();
             if (revealed != null)
             {
+                var subject = host == target ? "<run>Do you want</run>" : $"<run>Force</run><player>{target.Player}</player>";
                 if (await host.YesNo("Spy", $@"<spans>
-                    <run>Force</run>
-                    <player>{target.Player}</player>
+                    {subject}
                     <run>to discard</run>
                     <card suffix='?'>{revealed.Name}</card>
                 </spans>"))
