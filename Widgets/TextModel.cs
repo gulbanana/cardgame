@@ -36,6 +36,11 @@ namespace Cardgame.Widgets
             public string Text { get; set; }
         }
 
+        public class Indent : TextModel
+        {
+            public int Level { get; set; }
+        }
+
         public class Symbol : TextModel
         {
             public string Name { get; set; }
@@ -99,6 +104,10 @@ namespace Cardgame.Widgets
 
                 case "error":
                     return new Error { Text = element.Value };
+
+
+                case "indent":
+                    return new Indent { Level = int.Parse(element.Attribute("level").Value) } ;
 
                 case "sym":
                     return new Symbol 

@@ -212,7 +212,7 @@ namespace Cardgame
                     if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
 
                     Model.ActionsRemaining--;
-                    BeginAction(player, action, Zone.Hand);
+                    BeginAction(1, player, action, Zone.Hand);
 
                     break;
                 
@@ -233,12 +233,12 @@ namespace Cardgame
             }
         }
 
-        internal void BeginAction(string player, Cards.ActionCardModel card, Zone from)
+        internal void BeginAction(int indentLevel, string player, Cards.ActionCardModel card, Zone from)
         {
             MoveCard(player, card.Name, from, Zone.InPlay);            
 
             Model.ExecutingActions++;
-            var host = new ActionHost(this, Model.ActivePlayer);
+            var host = new ActionHost(indentLevel, this, Model.ActivePlayer);
             var task = card.ExecuteActionAsync(host);
             
             if (task.IsCompleted)

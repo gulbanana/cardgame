@@ -53,6 +53,13 @@
         <span class="rich-text__error">@error.Text</span>
         break;
 
+    case TextModel.Indent indent:
+        @for (var i = 0; i < indent.Level; i++)
+        {
+            <text>...</text>
+        }
+        break;
+
     case TextModel.Symbol symbol:
         @symbol.Prefix<img class="rich-text__symbol" src="symbols/@(symbol.Name).png" width="8" height="8">@symbol.Suffix
         break;

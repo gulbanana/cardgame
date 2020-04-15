@@ -8,11 +8,13 @@ namespace Cardgame
     internal class ActionHost : IActionHost
     {
         private readonly GameEngine engine;
+        private readonly int level;
         public string Player { get; }
         public int ShuffleCount { get; private set; }
 
-        public ActionHost(GameEngine engine, string player)
+        public ActionHost(int level, GameEngine engine, string player)
         {
+            this.level = level;
             this.engine = engine;
             this.Player = player;
         }
@@ -85,7 +87,7 @@ namespace Cardgame
         {
             ShuffleCount++;
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 <if you='(you reshuffle.)' them='(reshuffling.)'>{Player}</if>
             </spans>");
         }
@@ -100,7 +102,7 @@ namespace Cardgame
             engine.Model.ActionsRemaining += n;
 
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 <if you='you get' them='getting'>{engine.Model.ActivePlayer}</if>
                 <run>+{n} actions.</run>
             </spans>");
@@ -111,7 +113,7 @@ namespace Cardgame
             engine.Model.BuysRemaining += n;
 
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 <if you='you get' them='getting'>{engine.Model.ActivePlayer}</if>
                 <run>+{n} buys.</run>
             </spans>");
@@ -122,7 +124,7 @@ namespace Cardgame
             engine.Model.MoneyRemaining += n;
 
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 <if you='you get' them='getting'>{engine.Model.ActivePlayer}</if>
                 <run>+${n}.</run>
             </spans>");
@@ -141,7 +143,7 @@ namespace Cardgame
             }
 
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 {LogVerbInitial("draw", "draws", "drawing")}
                 <run>{(n == 1 ? "a card." : $"{n} cards.")}</run>
             </spans>");
@@ -155,7 +157,7 @@ namespace Cardgame
             }
 
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 {LogVerbInitial("discard", "discards", "discarding")}
                 {LogCardList(cards)}
             </spans>");
@@ -169,7 +171,7 @@ namespace Cardgame
             }
 
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 {LogVerbInitial("trash", "trashes", "trashing")}
                 {LogCardList(cards)}
             </spans>");        
@@ -182,7 +184,7 @@ namespace Cardgame
             if (to == Zone.Discard)
             {
                 engine.LogPartialEvent($@"<spans>
-                    <run>...</run>
+                    <indent level='{level}' />
                     {LogVerbInitial("gain", "gains", "gaining")}
                     <card suffix='.'>{id}</card>
                 </spans>");
@@ -190,7 +192,7 @@ namespace Cardgame
             else
             {
                 engine.LogPartialEvent($@"<spans>
-                    <run>...</run>
+                    <indent level='{level}' />
                     {LogVerbInitial("gain", "gains", "gaining")}
                     <card>{id}</card>
                     <run>and</run>
@@ -204,7 +206,7 @@ namespace Cardgame
             engine.MoveCard(Player, card, Zone.TopDeck, Zone.Hand);
 
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 {LogVerbInitial("draw", "draws", "drawing")}
                 <card suffix='.'>{card}</card>
             </spans>");        
@@ -228,7 +230,7 @@ namespace Cardgame
             };
 
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 {LogVerbInitial("reveal", "reveals", "revealing")}
                 {LogCardList(revealed.ToArray())}
             </spans>");
@@ -241,7 +243,7 @@ namespace Cardgame
             engine.MoveCard(Player, id, from, to);
 
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 {LogVerbInitial("reveal", "reveals", "revealing")}
                 <card>{id}</card>
                 <run>and</run>
@@ -252,12 +254,12 @@ namespace Cardgame
         void IActionHost.PlayAction(Cards.ActionCardModel card, Zone from)
         {
             engine.LogPartialEvent($@"<spans>
-                <run>...</run>
+                <indent level='{level}' />
                 {LogVerbInitial("play", "plays", "playing")}
                 <card suffix='.'>{card.Name}</card>
             </spans>");
 
-            engine.BeginAction(Player, card, from);
+            engine.BeginAction(level + 1, Player, card, from);
         }
 
         async Task<T> IActionHost.SelectCard<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter)
@@ -313,7 +315,7 @@ namespace Cardgame
         {
             var targetPlayers = engine.Model.Players
                 .Except(new[]{ Player })
-                .Select(player => new ActionHost(engine, player))
+                .Select(player => new ActionHost(1, engine, player))
                 .Where(filter)
                 .ToList();
             
@@ -330,7 +332,7 @@ namespace Cardgame
                     var potentialReaction = reactions.First();
                     hand.RemoveAt(hand.FindIndex(e => e.Equals(potentialReaction.Name)));
 
-                    var targetHost = new ActionHost(engine, target.Player);
+                    var targetHost = new ActionHost(1, engine, target.Player);
                     var reaction = await potentialReaction.ExecuteReactionAsync(targetHost);          
                     if (reaction.Type == ReactionType.Replace)
                     {
