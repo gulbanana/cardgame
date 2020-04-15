@@ -5,18 +5,18 @@
     [CascadingParameter] public Executor Dispatch { get; set; }
 }
 
-@if (Game.CardStacks[Id] > 0)
+@if (Game.Stacks[Id] > 0)
 {
     var isEnabled = Session.Username.Equals(Game.ActivePlayer) &&
         !Game.IsFinished &&
         !Game.IsExecutingAction &&
         Game.BuysRemaining > 0 &&
-        Cards.All.ByName.ContainsKey(Id) &&
-        Cards.All.ByName[Id].Cost <= Game.MoneyRemaining;
+        Cards.All.Exists(Id) &&
+        Cards.All.ByName(Id).Cost <= Game.MoneyRemaining;
     <ActiveCard Id="@Id" 
                 Enabled="isEnabled" 
                 Half="true" 
-                Stack="@Game.CardStacks[Id]"
+                Stack="@Game.Stacks[Id]"
                 Action="@(() => Dispatch(new BuyCardCommand { Id = Id }))" />
 }
 else

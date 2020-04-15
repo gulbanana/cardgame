@@ -5,11 +5,11 @@ namespace Cardgame.Cards
 {
     public static class All
     {
-        public static readonly Dictionary<string, CardModel> ByName;
+        private static readonly Dictionary<string, CardModel> byName;
 
         static All()
         {
-            ByName = new Dictionary<string, CardModel>();
+            byName = new Dictionary<string, CardModel>();
 
             var baseType = typeof(CardModel);
             var types = typeof(All).Assembly.GetTypes()
@@ -20,7 +20,19 @@ namespace Cardgame.Cards
             foreach (var t in types)
             {
                 var o = t.GetConstructor(new System.Type[0]).Invoke(new object[0]);
-                ByName[t.Name] = (CardModel)o;
+                byName[t.Name] = (CardModel)o;
+            }
+        }
+
+        public static CardModel ByName(string id)
+        {
+            if (byName.ContainsKey(id))
+            {
+                return byName[id];
+            }
+            else
+            {
+                return new DummyCard(id);
             }
         }
 
@@ -43,6 +55,11 @@ namespace Cardgame.Cards
                 default:
                     return "action";
             }
+        }
+
+        public static bool Exists(string id)
+        {
+            return byName.ContainsKey(id);
         }
     }
 }

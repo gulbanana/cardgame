@@ -86,21 +86,8 @@
 
         <div style="grid-area: actions">
             @if (!Model.IsStarted)
-            {            
-                <GappedColumn>
-                    @if (!Model.Players.Contains(Session.Username) && Model.Players.Length < 4)
-                    {
-                        <ActiveButton Label="Join game" Action="@(() => Dispatch(new JoinGameCommand()))" />
-                    }
-                    else
-                    {
-                        @if (Model.Players.Length > 1)
-                        {
-                            <ActiveButton Label="Start game" Action="@(() => Dispatch(new StartGameCommand()))" />
-                        }
-                        <ActiveButton Label="Leave game" Action="@(() => Dispatch(new LeaveGameCommand()))" />
-                    }
-                </GappedColumn>
+            {   
+                <ConfigView Game="@Model" />
             }
             else
             {
@@ -125,7 +112,7 @@
                 {
                     foreach (var id in Model.Hands[PlayerOrSpectatee])
                     {
-                        var card = Cards.All.ByName[@id];
+                        var card = Cards.All.ByName(@id);
                         var isEnabled = IsActivePlayer &&
                             !Model.IsFinished &&
                             !Model.IsExecutingAction &&

@@ -1,4 +1,4 @@
-﻿@page "/demo"
+﻿@page "/demo2"
 @inject NavigationManager Navigation
 @inject IUserSession Session
 @inject IGameEndpoint Endpoint
@@ -12,7 +12,8 @@
         {
             Session.Login($"demo");
         }
-        Endpoint.CreateDemoGame($"demo-{id}");
+        var game = Endpoint.FindGame($"demo-{id}");
+        game.Execute("other-player", new JoinGameCommand { Seq = 0 });
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -21,4 +22,4 @@
     }
 }
 
-<p>Loading demo game...</p>
+<p>Loading empty game...</p>

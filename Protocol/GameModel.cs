@@ -17,12 +17,13 @@ namespace Cardgame
         public bool IsStarted { get; set; }
         public bool IsFinished { get; set; }
 
-        // game fixed setup
-        public string[] KingdomCards { get; set; } 
-        public Dictionary<string, int> CardStacks { get; set; }
+        // game config
+        public CardSet KingdomSet { get; set; }
+        public string[] KingdomCards { get; set; }         
 
         // game state
         public string ActivePlayer { get; set; }
+        public Dictionary<string, int> Stacks { get; set; }
         public Dictionary<string, List<string>> Hands { get; set; }
         public Dictionary<string, List<string>> Decks { get; set; }
         public Dictionary<string, List<string>> Discards { get; set; }

@@ -13,18 +13,11 @@
     {
         if (Model == null)
         {
-            if (Cards.All.ByName.ContainsKey(Id))
-            {
-                Model = Cards.All.ByName[Id];
-            }
-            else
-            {
-                Model = new Cards.DummyCard(Id);
-            }
+            Model = Cards.All.ByName(Id);
         }
         else 
         {
-            Id = Model.GetType().Name;
+            Id = Model.Name;
         }
 
         if (Model is Cards.ActionCardModel kingdomCard)

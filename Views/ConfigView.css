@@ -1,0 +1,8 @@
+.config-view {
+    display: grid;
+    justify-content: space-around;
+    grid-template-areas: 'players setup'
+                         'pcmds   scmds';
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+}

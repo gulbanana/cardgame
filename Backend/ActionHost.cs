@@ -159,11 +159,11 @@ namespace Cardgame
             var sourceCards = source switch 
             {
                 CardSource.Hand => engine.Model.Hands[Player],
-                CardSource.Kingdom => engine.Model.KingdomCards.Concat(new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold"}).Where(id => engine.Model.CardStacks[id] > 0),
+                CardSource.Kingdom => engine.Model.KingdomCards.Concat(new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold"}).Where(id => engine.Model.Stacks[id] > 0),
                 CardSource other => throw new CommandException($"Unknown CardSource {other}")
             };
 
-            var filteredCards = filter(sourceCards.Select(id => Cards.All.ByName[id]));
+            var filteredCards = filter(sourceCards.Select(Cards.All.ByName));
 
             var id = await engine.Choose<string[], string>(
                 Player,
@@ -211,7 +211,7 @@ namespace Cardgame
             {
                 var hand = target.GetHand().ToList();
                 var reactions = hand
-                    .Select(id => Cards.All.ByName[id])
+                    .Select(Cards.All.ByName)
                     .OfType<Cards.ActionCardModel>()
                     .Where(card => card.ReactionTrigger == TriggerType.Attack);
 

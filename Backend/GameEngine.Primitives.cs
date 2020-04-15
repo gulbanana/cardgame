@@ -44,8 +44,40 @@ namespace Cardgame
         {
             var rng = new Random();
 
-            Model.IsStarted = true;
+            // first, try to apply config
+            Model.KingdomCards = Model.KingdomSet switch 
+            {
+                CardSet.FirstGame => new[]
+                { "Cellar", "Market", "Militia", "Mine", "Moat", "Remodel", "Smithy", "Village", "Woodcutter", "Workshop" },
 
+                CardSet.BigMoney => new[] 
+                { "Adventurer", "Bureaucrat", "Chancellor", "Chapel", "Feast", "Laboratory", "Market", "Mine", "Moneylender", "Throne Room" },
+
+                CardSet.Interaction => new[] 
+                { "Bureaucrat", "Chancellor", "Council Room", "Festival", "Library", "Militia", "Moat", "Spy", "Thief", "Village" },
+
+                CardSet.SizeDistortion => new[] 
+                { "Cellar", "Chapel", "Feast", "Gardens", "Laboratory", "Thief", "Village", "Witch", "Woodcutter", "Workshop" },
+
+                CardSet.VillageSquare => new[] 
+                { "Bureaucrat", "Cellar", "Festival", "Library", "Market", "Remodel", "Smithy", "Throne Room", "Village", "Woodcutter" },
+
+                _ => throw new CommandException($"Unknown card set {Model.KingdomSet}")
+            };
+
+            var byCost = Model.KingdomCards.Select(Cards.All.ByName).OrderBy(card => card.Cost).Select(card => card.Name).ToArray();
+            Model.KingdomCards[0] = byCost[0];
+            Model.KingdomCards[5] = byCost[1];
+            Model.KingdomCards[1] = byCost[2];
+            Model.KingdomCards[6] = byCost[3];
+            Model.KingdomCards[2] = byCost[4];
+            Model.KingdomCards[7] = byCost[5];
+            Model.KingdomCards[3] = byCost[6];
+            Model.KingdomCards[8] = byCost[7];
+            Model.KingdomCards[4] = byCost[8];
+            Model.KingdomCards[9] = byCost[9];
+
+            Model.IsStarted = true;
             Model.PlayedCards = new List<string>();
             Model.Trash = new List<string>();
             Model.ChoosingPlayers = new Stack<string>();
@@ -58,14 +90,8 @@ namespace Cardgame
                 return deck;
             });
 
-            Model.KingdomCards = new[] // XX pick at random instead!
-            {
-                "Cellar", "Market", "Mine", "Remodel", "Moat",
-                "Smithy", "Village", "Woodcutter", "Workshop", "Militia"
-            };
-
             var victoryCount = Model.Players.Length == 2 ? 8 : 12;
-            Model.CardStacks = new Dictionary<string, int>
+            Model.Stacks = new Dictionary<string, int>
             {
                 { "Estate", victoryCount },
                 { "Duchy", victoryCount },
@@ -75,9 +101,9 @@ namespace Cardgame
                 { "Gold", 30 },
                 { "Curse", (Model.Players.Length - 1) * 10 },
             };
-            foreach (var card in Model.KingdomCards.Select(id => Cards.All.ByName[id]))
+            foreach (var card in Model.KingdomCards.Select(Cards.All.ByName))
             {
-                Model.CardStacks[card.Name] = card.Type == CardType.Victory ? victoryCount : 10;
+                Model.Stacks[card.Name] = card.Type == CardType.Victory ? victoryCount : 10;
             }
 
             foreach (var player in Model.Players)
@@ -112,7 +138,7 @@ namespace Cardgame
             Model.MoneyRemaining = Model.IsDemo ? 10 : 0;
 
             Model.BuyPhase = !Model.Hands[Model.ActivePlayer]
-                .Select(id => Cards.All.ByName[id])
+                .Select(Cards.All.ByName)
                 .OfType<Cards.ActionCardModel>()
                 .Any();
 
@@ -154,7 +180,7 @@ namespace Cardgame
                 </spans>");
             }
 
-            if (Model.CardStacks["Province"] == 0 || Model.CardStacks.Values.Where(v => v == 0).Count() >= 3)
+            if (Model.Stacks["Province"] == 0 || Model.Stacks.Values.Where(v => v == 0).Count() >= 3)
             {
                 EndGame();
             }
@@ -192,7 +218,7 @@ namespace Cardgame
                 builder.AppendLine("<lines>");
                     builder.AppendLine($"<spans><player>{player}</player><run>scored:</run></spans>");                    
                     var dominion = Model.Decks[player].Concat(Model.Hands[player]).Concat(Model.Discards[player]);
-                    var victoryCards = dominion.Select(id => Cards.All.ByName[id]).OfType<Cards.VictoryCardModel>().GroupBy(card => card.Name);
+                    var victoryCards = dominion.Select(Cards.All.ByName).OfType<Cards.VictoryCardModel>().GroupBy(card => card.Name);
                     var total = 0;
                     foreach (var group in victoryCards)
                     {
@@ -216,14 +242,14 @@ namespace Cardgame
         private void SkipBuyIfNoCash()
         {
             var totalRemaining = Model.MoneyRemaining + Model.Hands[Model.ActivePlayer]
-                .Select(id => Cards.All.ByName[id])
+                .Select(Cards.All.ByName)
                 .OfType<Cards.TreasureCardModel>()
                 .Select(card => card.Value)
                 .Sum();
 
-            var minimumCost = Model.CardStacks
+            var minimumCost = Model.Stacks
                 .Where(kvp => kvp.Value > 0)
-                .Select(kvp => Cards.All.ByName[kvp.Key].Cost)
+                .Select(kvp => Cards.All.ByName(kvp.Key).Cost)
                 .Min();
 
             if (totalRemaining < minimumCost)
@@ -277,13 +303,13 @@ namespace Cardgame
 
         internal void GainCard(string player, string id)
         {
-            Model.CardStacks[id]--;
+            Model.Stacks[id]--;
             Model.Discards[player].Add(id);
         }
 
         internal void GainCardToHand(string player, string id)
         {
-            Model.CardStacks[id]--;
+            Model.Stacks[id]--;
             Model.Hands[player].Add(id);
         }
 

@@ -78,11 +78,12 @@ namespace Cardgame
                     </spans>");
                     break;
 
-                case StartGameCommand _:
+                case StartGameCommand startGame:
                     if (Model.IsStarted) throw new CommandException("The game is already in progress.");
                     if (!Model.Players.Contains(username)) throw new CommandException("You are not in the game.");
                     if (Model.Players.Length < 2) throw new CommandException("Not enough players.");
 
+                    Model.KingdomSet = startGame.KingdomSet;
                     BeginGame();
                     BeginTurn();
 
@@ -92,7 +93,7 @@ namespace Cardgame
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");
-                    if (!Cards.All.ByName.ContainsKey(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
+                    if (!Cards.All.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
 
                     PlayCard(username, playCard.Id);
 
@@ -102,7 +103,7 @@ namespace Cardgame
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
 
-                    foreach (var card in Model.Hands[username].Select(id => Cards.All.ByName[id]).OfType<Cards.TreasureCardModel>().ToList())
+                    foreach (var card in Model.Hands[username].Select(Cards.All.ByName).OfType<Cards.TreasureCardModel>().ToList())
                     {
                         PlayCard(username, card.Name);
                     }
@@ -113,7 +114,7 @@ namespace Cardgame
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");
-                    if (Model.CardStacks[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
+                    if (Model.Stacks[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
 
                     BuyCard(username, buyCard.Id);
 
@@ -144,10 +145,10 @@ namespace Cardgame
 
         private void BuyCard(string player, string id)
         {
-            var boughtCard = Cards.All.ByName[id];
+            var boughtCard = Cards.All.ByName(id);
             if (boughtCard.Cost > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
 
-            Model.CardStacks[id]--;
+            Model.Stacks[id]--;
             Model.Discards[player].Add(id);
             Model.MoneyRemaining -= boughtCard.Cost;
             Model.BuysRemaining -= 1;
@@ -180,10 +181,10 @@ namespace Cardgame
                 <card suffix='.'>{id}</card>
             </spans>");
 
-            var playedCard = Cards.All.ByName[id];                    
-            switch (playedCard.Type)
+            var playedCard = Cards.All.ByName(id);                    
+            switch (playedCard)
             {                    
-                case CardType.Action when playedCard is Cards.ActionCardModel action:
+                case Cards.ActionCardModel action:
                     if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
                     if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
 
@@ -193,7 +194,7 @@ namespace Cardgame
                     action.ExecuteActionAsync(host).ContinueWith(CompleteAction);
                     break;
                 
-                case CardType.Treasure when playedCard is Cards.TreasureCardModel treasure:
+                case Cards.TreasureCardModel treasure:
                     if (!Model.BuyPhase)
                     {
                         Model.BuyPhase = true;
@@ -202,8 +203,6 @@ namespace Cardgame
                     Model.MoneyRemaining += treasure.Value;
                     break;
 
-                case CardType.Victory:
-                case CardType.Curse:
                 default:
                     throw new CommandException($"You can't play {playedCard.Type} cards.");
             }

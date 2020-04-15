@@ -13,7 +13,10 @@ namespace Cardgame
 
     public class JoinGameCommand : ClientCommand { }
     public class LeaveGameCommand : ClientCommand { }
-    public class StartGameCommand : ClientCommand { }
+    public class StartGameCommand : ClientCommand 
+    { 
+        public CardSet KingdomSet { get; set; }
+    }
 
     public class ChatCommand : ClientCommand 
     { 

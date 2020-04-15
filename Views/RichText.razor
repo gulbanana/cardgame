@@ -58,7 +58,7 @@
         break;
 
     case TextModel.Card card:
-        var model = Cards.All.ByName[card.Name];
+        var model = Cards.All.ByName(card.Name);
         var subType = (model as Cards.ActionCardModel)?.SubType;
         var colorType = Cards.All.GetColor(model.Type, subType);
         <WithTooltip>

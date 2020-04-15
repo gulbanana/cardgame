@@ -1,0 +1,58 @@
+@using System.Text.RegularExpressions
+@inject IUserSession Session
+@code {
+    [Parameter] public GameModel Game { get; set; }
+    [CascadingParameter] public Executor Dispatch { get; set; } 
+    CardSet configSet;
+
+    private void OnStartGame()
+    {
+        Dispatch(new StartGameCommand
+        {
+            KingdomSet = configSet
+        });
+    }
+}
+
+<div class="config-view">
+    <div>
+        <h3>Joined players (2-4)</h3>
+        <ul>
+            @foreach (var player in Game.Players)
+            {
+                <li>@player</li>
+            }
+        </ul>
+    </div>
+
+    <div>
+        <h3>Game setup</h3>
+        Card set:
+        <select disabled="@(!Game.Players.Contains(Session.Username))" @bind="configSet">
+            @foreach (var member in System.Enum.GetNames(typeof(CardSet)))
+            {
+                var caption = Regex.Replace(member, @"((?<=[a-z])[A-Z]|(?<!^)[A-Z](?=[a-z]))", " $1");
+                <option value="@member">@caption</option>
+            }
+        </select>
+        <br/>
+    </div>
+
+    <div>
+        @if (!Game.Players.Contains(Session.Username) && Game.Players.Length < 4)
+        {
+            <ActiveButton Label="Join game" Action="@(() => Dispatch(new JoinGameCommand()))" />
+        }
+        else
+        {
+            <ActiveButton Label="Leave game" Action="@(() => Dispatch(new LeaveGameCommand()))" />
+        }
+    </div>
+
+    <div>
+        @if (Game.Players.Contains(Session.Username))
+        {
+            <ActiveButton Label="Start game" Action="@OnStartGame" Enabled="@(Game.Players.Length > 1)" />
+        }
+    </div>
+</div>
