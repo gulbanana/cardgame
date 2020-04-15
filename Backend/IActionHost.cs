@@ -17,7 +17,7 @@ namespace Cardgame
         void AddMoney(int n);
 
         void Discard(string[] cards, Zone from);
-        void Trash(string[] cards);
+        void Trash(string[] cards, Zone from);
         void Gain(string card, Zone to);        
         void Draw(string name);
         
@@ -35,19 +35,34 @@ namespace Cardgame
     public static class ActionHostExtensions
     {
         #region Trash
+        public static void Trash(this IActionHost host, string card, Zone from)
+        {
+            host.Trash(new[] { card }, from);
+        }
+
+        public static void Trash(this IActionHost host, Cards.CardModel[] cards, Zone from)
+        {
+            host.Trash(cards.Select(card => card.Name).ToArray(), from);
+        }
+
+        public static void Trash(this IActionHost host, Cards.CardModel card, Zone from)
+        {
+            host.Trash(new[] { card.Name }, from);
+        }
+
         public static void Trash(this IActionHost host, string card)
         {
-            host.Trash(new[] { card });
+            host.Trash(new[] { card }, Zone.Hand);
         }
 
         public static void Trash(this IActionHost host, Cards.CardModel[] cards)
         {
-            host.Trash(cards.Select(card => card.Name).ToArray());
+            host.Trash(cards.Select(card => card.Name).ToArray(), Zone.Hand);
         }
 
         public static void Trash(this IActionHost host, Cards.CardModel card)
         {
-            host.Trash(new[] { card.Name });
+            host.Trash(new[] { card.Name }, Zone.Hand);
         }
         #endregion
 
@@ -83,10 +98,22 @@ namespace Cardgame
         }
         #endregion Discard
 
+        #region Gain
         public static void Gain(this IActionHost host, string card)
         {
             host.Gain(card, Zone.Discard);
         }
+
+        public static void Gain(this IActionHost host, Cards.CardModel card, Zone to)
+        {
+            host.Gain(card.Name, to);
+        }
+
+        public static void Gain(this IActionHost host, Cards.CardModel card)
+        {
+            host.Gain(card.Name, Zone.Discard);
+        }
+        #endregion
 
         public static void PlayAction(this IActionHost host, Cards.ActionCardModel card)
         {

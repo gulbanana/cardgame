@@ -176,11 +176,11 @@ namespace Cardgame
             </spans>");
         }
 
-        void IActionHost.Trash(string[] cards)
+        void IActionHost.Trash(string[] cards, Zone from)
         {
             foreach (var card in cards)
             {
-                engine.MoveCard(Player, card, Zone.Hand, Zone.Trash);
+                engine.MoveCard(Player, card, from, Zone.Trash);
             }
 
             engine.LogPartialEvent($@"<spans>
