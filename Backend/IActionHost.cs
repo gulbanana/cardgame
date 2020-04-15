@@ -30,8 +30,7 @@ namespace Cardgame
         Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter, int? min, int? max) where T : Cards.CardModel;
         Task<bool> YesNo(string prompt, string message);
 
-        Task Attack(Func<IActionHost, bool> filter, Action<IActionHost> act);
-        Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act);
+        Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool benign = false);
     }
 
     public static class ActionHostExtensions
@@ -213,14 +212,25 @@ namespace Cardgame
         }
         #endregion
 
-        public static Task Attack(this IActionHost host, Action<IActionHost> act)
+        #region Attack
+        public static Task Attack(this IActionHost host, Func<IActionHost, bool> filter, Action<IActionHost> act, bool benign = false)
         {
-            return host.Attack(_ => true, act);
+            return host.Attack(filter, target =>
+            {
+                act(target);
+                return Task.CompletedTask;
+            }, benign);
         }
 
-        public static Task Attack(this IActionHost host, Func<IActionHost, Task> act)
+        public static Task Attack(this IActionHost host, Action<IActionHost> act, bool benign = false)
         {
-            return host.Attack(_ => true, act);
+            return host.Attack(_ => true, act, benign);
         }
+
+        public static Task Attack(this IActionHost host, Func<IActionHost, Task> act, bool benign = false)
+        {
+            return host.Attack(_ => true, act, benign);
+        }
+        #endregion
     }
 }

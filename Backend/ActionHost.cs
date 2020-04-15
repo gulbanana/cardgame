@@ -356,7 +356,7 @@ namespace Cardgame
             );
         }
 
-        async Task IActionHost.Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act)
+        async Task IActionHost.Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool benign)
         {
             var targetPlayers = engine.Model.Players
                 .Except(new[]{ Player })
@@ -366,29 +366,33 @@ namespace Cardgame
             
             foreach (var target in targetPlayers)
             {
-                var hand = target.GetHand().ToList();
-                var reactions = hand
-                    .OfType<Cards.ActionCardModel>()
-                    .Where(card => card.ReactionTrigger == TriggerType.Attack);
-
                 var replaced = false;
-                while (reactions.Any())
+
+                if (!benign)
                 {
-                    var potentialReaction = reactions.First();
-                    hand.RemoveAt(hand.FindIndex(e => e.Equals(potentialReaction.Name)));
+                    var hand = target.GetHand().ToList();
+                    var reactions = hand
+                        .OfType<Cards.ActionCardModel>()
+                        .Where(card => card.ReactionTrigger == TriggerType.Attack);
 
-                    var targetHost = new ActionHost(1, engine, target.Player);
-                    var reaction = await potentialReaction.ExecuteReactionAsync(targetHost, Player);          
-                    if (reaction.Type == ReactionType.Replace)
+                    while (reactions.Any())
                     {
-                        engine.LogPartialEvent($@"<spans>
-                            <player>{target.Player}</player>
-                            <if you='reveal' them='reveals'>{target.Player}</if>
-                            <card suffix='!'>{potentialReaction.Name}</card>
-                        </spans>");
+                        var potentialReaction = reactions.First();
+                        hand.RemoveAt(hand.FindIndex(e => e.Equals(potentialReaction.Name)));
 
-                        replaced = true;
-                        reaction.Enact(targetHost, this);
+                        var targetHost = new ActionHost(1, engine, target.Player);
+                        var reaction = await potentialReaction.ExecuteReactionAsync(targetHost, Player);          
+                        if (reaction.Type == ReactionType.Replace)
+                        {
+                            engine.LogPartialEvent($@"<spans>
+                                <player>{target.Player}</player>
+                                <if you='reveal' them='reveals'>{target.Player}</if>
+                                <card suffix='!'>{potentialReaction.Name}</card>
+                            </spans>");
+
+                            replaced = true;
+                            reaction.Enact(targetHost, this);
+                        }
                     }
                 }
 
@@ -397,15 +401,6 @@ namespace Cardgame
                     await act(target);
                 }
             }
-        }
-
-        Task IActionHost.Attack(Func<IActionHost, bool> filter, Action<IActionHost> act)
-        {
-            return ((IActionHost)this).Attack(filter, target =>
-            {
-                act(target);
-                return Task.CompletedTask;
-            });
         }
     }
 }

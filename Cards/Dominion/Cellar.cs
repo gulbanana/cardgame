@@ -12,9 +12,7 @@ namespace Cardgame.Cards.Dominion
             <block>
                 <run>+1 Action</run>
             </block>
-            <lines>
-                <run>Discard any number of cards, then draw that many.</run>
-            </lines>
+            <run>Discard any number of cards, then draw that many.</run>
         </paras>";
 
         protected override async Task ActAsync(IActionHost host)

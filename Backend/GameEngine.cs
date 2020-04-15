@@ -311,7 +311,7 @@ namespace Cardgame
                 { "Adventurer", "Bureaucrat", "Chancellor", "Chapel", "Feast", "Laboratory", "Market", "Mine", "Moneylender", "ThroneRoom" },
 
                 CardSet.Interaction => new[] 
-                { "Bureaucrat", "Chancellor", "Council Room", "Festival", "Library", "Militia", "Moat", "Spy", "Thief", "Village" },
+                { "Bureaucrat", "Chancellor", "CouncilRoom", "Festival", "Library", "Militia", "Moat", "Spy", "Thief", "Village" },
 
                 CardSet.SizeDistortion => new[] 
                 { "Cellar", "Chapel", "Feast", "Gardens", "Laboratory", "Thief", "Village", "Witch", "Woodcutter", "Workshop" },
