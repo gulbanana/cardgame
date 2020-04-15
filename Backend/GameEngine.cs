@@ -243,32 +243,32 @@ namespace Cardgame
             
             if (task.IsCompleted)
             {
-                CompleteAction();
+                CompleteAction(task, card.Name);
             }
             else
             {
-                task.ContinueWith(EndAction);
+                task.ContinueWith(EndAction, card.Name);
             }
         }
 
-        private void EndAction(Task t)
+        private void EndAction(Task t, object id)
         {
             lock (this)
             {
-                if (t.Status == TaskStatus.Faulted)
-                {
-                    var e = t.Exception.InnerException ?? t.Exception;
-                    LogEvent($"<error>Error: {e.Message}</error>");
-                    // rollback somehow?
-                }
-
-                CompleteAction();
+                CompleteAction(t, id as string);
                 ActionUpdated?.Invoke();
             }
         }
 
-        private void CompleteAction()
+        private void CompleteAction(Task t, string id)
         {
+            if (t.Status == TaskStatus.Faulted)
+            {
+                var e = t.Exception.InnerException ?? t.Exception;
+                LogEvent($"<error>{id}: {e.Message}</error>");
+                // rollback somehow?
+            }
+
             Model.ExecutingActions--;
 
             if (Model.ActionsRemaining == 0)
@@ -432,7 +432,7 @@ namespace Cardgame
             var reshuffled = false;
             for (var i = 0; i < 5; i++)
             {
-                reshuffled = reshuffled | EnsureDeck(Model.ActivePlayer);
+                reshuffled = reshuffled | ReshuffleIfEmpty(Model.ActivePlayer);
                 DrawCardIfAny(Model.ActivePlayer);
             }
             if (reshuffled)
@@ -532,7 +532,7 @@ namespace Cardgame
             }
         }
 
-        internal bool EnsureDeck(string player)
+        internal bool ReshuffleIfEmpty(string player)
         {
             var deck = Model.Decks[player];        
 
@@ -562,12 +562,12 @@ namespace Cardgame
 
             if (id != null)
             {
-                MoveCard(player, id, Zone.TopDeck, to);
+                MoveCard(player, id, Zone.DeckTop1, to);
             }
             else
             {
                 id = deck[0];
-                MoveCard(player, id, Zone.TopDeck, to);
+                MoveCard(player, id, Zone.DeckTop1, to);
             }
 
             return id;
@@ -597,9 +597,14 @@ namespace Cardgame
                     Model.Supply[id]--;
                     break;
 
-                case Zone.TopDeck:
+                case Zone.DeckTop1:
                     if (!Model.Decks[player].First().Equals(id)) throw new CommandException($"Top of deck is not card {id}.");
-                    Model.Decks[player].RemoveAt(0);
+                    Model.Decks[player].Remove(id);
+                    break;
+
+                case Zone.DeckTop2:
+                    if (!Model.Decks[player].Take(2).Contains(id)) throw new CommandException($"Top of deck does not contain card {id}.");
+                    Model.Decks[player].Remove(id);
                     break;
 
                 case Zone.InPlay:
@@ -630,7 +635,7 @@ namespace Cardgame
                     Model.Supply[id]++;
                     break;
 
-                case Zone.TopDeck:
+                case Zone.DeckTop1:
                     Model.Decks[player].Insert(0, id);
                     break;
 
@@ -641,6 +646,37 @@ namespace Cardgame
                 default:
                     throw new Exception($"Unknown zone {to}");
             }
+        }
+
+        
+        internal string[] GetCards(string player, Zone source, Action onShuffle)
+        {
+            if (source == Zone.DeckTop1 && Model.Decks[player].Count < 1)
+            {
+                ReshuffleIfEmpty(player);
+                onShuffle();
+            }
+
+            if (source == Zone.DeckTop2 && Model.Decks[player].Count < 2)
+            {
+                var setAside = Model.Decks[player].ToArray();
+                Model.Decks[player].Clear();                
+                ReshuffleIfEmpty(player);
+                Model.Decks[player].InsertRange(0, setAside);
+                onShuffle();
+            }
+
+            return source switch 
+            {
+                Zone.DeckTop1 => Model.Decks[player].Take(1).ToArray(),
+                Zone.DeckTop2 => Model.Decks[player].Take(2).ToArray(),
+                Zone.Discard => Model.Discards[player].ToArray(),
+                Zone.Hand => Model.Hands[player].ToArray(),
+                Zone.InPlay => Model.PlayedCards.ToArray(),
+                Zone.Supply => Model.KingdomCards.Concat(new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold", "Curse"}).Where(id => Model.Supply[id] > 0).ToArray(),
+                Zone.Trash => Model.Trash.ToArray(),
+                Zone other => throw new CommandException($"Unknown CardSource {other}")
+            };
         }
 
         internal async Task<TOutput> Choose<TInput, TOutput>(string player, ChoiceType type, string prompt, TInput input)

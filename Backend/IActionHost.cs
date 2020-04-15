@@ -18,7 +18,8 @@ namespace Cardgame
 
         void Discard(string[] cards, Zone from);
         void Trash(string[] cards, Zone from);
-        void Gain(string card, Zone to);        
+        void Gain(string card, Zone to);
+        void GainFrom(string[] cards, Zone from);
         void Draw(string name);
         
         Cards.CardModel[] RevealAll(Zone from);
@@ -114,6 +115,11 @@ namespace Cardgame
         {
             host.Gain(card.Name, Zone.Discard);
         }
+
+        public static void GainFrom(this IActionHost host, Cards.CardModel[] cards, Zone from)
+        {
+            host.GainFrom(cards.Select(card => card.Name).ToArray(), from);
+        }
         #endregion
 
         public static void PlayAction(this IActionHost host, Cards.ActionCardModel card)
@@ -157,14 +163,30 @@ namespace Cardgame
             return host.SelectCards<T>(prompt, Zone.Hand, filter, null, null);
         }
 
+        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, IEnumerable<T> choices) where T : Cards.CardModel
+        {
+            return host.SelectCards<T>(prompt, Zone.Hand, _ => choices, null, null);
+        }
+
         public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter, int min, int max) where T : Cards.CardModel
         {
             return host.SelectCards<T>(prompt, Zone.Hand, filter, min, max);
         }
 
+        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, IEnumerable<T> choices, int min, int max) where T : Cards.CardModel
+        {
+            return host.SelectCards<T>(prompt, Zone.Hand, _ => choices, min, max);
+        }
+
         public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel
         {
             var cards = await host.SelectCards<T>(prompt, Zone.Hand, filter, 1, 1);
+            return cards.Single();
+        }
+
+        public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, IEnumerable<T> choices) where T : Cards.CardModel
+        {
+            var cards = await host.SelectCards<T>(prompt, Zone.Hand, _ => choices, 1, 1);
             return cards.Single();
         }
 

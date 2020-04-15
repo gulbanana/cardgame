@@ -12,5 +12,15 @@ namespace Cardgame.Cards
         {
             Name = this.GetType().Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is CardModel other && this.Name == other.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
     }
 }

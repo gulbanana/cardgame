@@ -6,7 +6,8 @@ namespace Cardgame
         Supply,
         Discard,
         Trash,
-        TopDeck,
+        DeckTop1,
+        DeckTop2,
         InPlay
     }
 }

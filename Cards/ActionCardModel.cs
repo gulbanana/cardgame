@@ -17,10 +17,10 @@ namespace Cardgame.Cards
             return Task.CompletedTask;
         } 
 
-        protected virtual void Act(IActionHost host) => throw new NotImplementedException($"{Name}: card not implemented.");
+        protected virtual void Act(IActionHost host) => throw new NotImplementedException($"Card not implemented.");
 
         public Task<Reaction> ExecuteReactionAsync(IActionHost host, string trigger) => ReactAsync(host, trigger);
 
-        protected virtual Task<Reaction> ReactAsync(IActionHost host, string trigger) => throw new NotImplementedException($"{Name}: no reaction implemented.");
+        protected virtual Task<Reaction> ReactAsync(IActionHost host, string trigger) => throw new NotImplementedException($"No reaction implemented.");
     }
 }

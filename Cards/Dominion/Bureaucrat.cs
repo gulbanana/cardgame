@@ -15,7 +15,7 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
-            host.Gain("Silver", Zone.TopDeck);
+            host.Gain("Silver", Zone.DeckTop1);
 
             await host.Attack(async player =>
             {
@@ -26,7 +26,7 @@ namespace Cardgame.Cards.Dominion
                         Zone.Hand, 
                         cards => cards.OfType<VictoryCardModel>()
                     );
-                    player.RevealAndMove(onTop.Name, Zone.Hand, Zone.TopDeck);
+                    player.RevealAndMove(onTop.Name, Zone.Hand, Zone.DeckTop1);
                 }
                 else
                 {
