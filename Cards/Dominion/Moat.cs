@@ -14,7 +14,7 @@ namespace Cardgame.Cards.Dominion
             <block>
                 <run>+2 Cards</run>
             </block>
-            <run>When another player plays an Attack card, you may reveal this from your hand. If you do, you are unaffected by that attack.</run>
+            <run>When another player plays an Attack card, you may first reveal this from your hand, to be unaffected by it.</run>
         </paras>";
 
         protected override void Act(IActionHost host)

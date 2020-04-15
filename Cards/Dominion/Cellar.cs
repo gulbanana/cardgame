@@ -13,8 +13,7 @@ namespace Cardgame.Cards.Dominion
                 <run>+1 Action</run>
             </block>
             <lines>
-                <run>Discard any number of cards.</run>
-                <run>+1 Card per card discarded.</run>
+                <run>Discard any number of cards, then draw that many.</run>
             </lines>
         </paras>";
 

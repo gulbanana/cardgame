@@ -14,7 +14,7 @@ namespace Cardgame.Cards.Dominion
             <spans>
                 <run>Gain a card costing up to</run>
                 <sym>coin2</sym>
-                <run>more than the trashed card.</run>
+                <run>more than it.</run>
             </spans>
         </lines>";
 

@@ -9,14 +9,14 @@ namespace Cardgame.Cards.Dominion
         public override int Cost => 5;
 
         public override string Text => @"
-        <lines>
-            <run>Trash a Treasure card from your hand.</run>
+        <spans>
+            <run>You may trash a Treasure from your hand.</run>
             <spans>
-                <run>Gain a Treasure card costing up to</run>
+                <run>Gain a Treasure to your hand costing up to</run>
                 <sym>coin3</sym>
-                <run>more; put it into your hand.</run>
+                <run>more than it.</run>
             </spans>
-        </lines>";
+        </spans>";
 
         protected override async Task ActAsync(IActionHost host)
         {
@@ -24,14 +24,19 @@ namespace Cardgame.Cards.Dominion
                 "Choose a Treasure to trash.", 
                 cards => cards.OfType<TreasureCardModel>()
             );
-            host.Trash(trashedCard.Name);
 
-            var gainedCard = await host.SelectCard(
-                "Choose a Treasure to gain.", 
-                Zone.Kingdom, 
-                cards => cards.OfType<TreasureCardModel>().Where(card => card.Cost <= trashedCard.Cost + 3)
-            );
-            host.Gain(gainedCard.Name, Zone.Hand);
+            if (trashedCard != null)
+            {
+                host.Trash(trashedCard.Name);
+            
+                var gainedCard = await host.SelectCard(
+                    "Choose a Treasure to gain.", 
+                    Zone.Kingdom, 
+                    cards => cards.OfType<TreasureCardModel>().Where(card => card.Cost <= trashedCard.Cost + 3)
+                );
+
+                host.Gain(gainedCard.Name, Zone.Hand);
+            }
         }
     }
 }
