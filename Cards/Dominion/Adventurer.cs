@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Cardgame.Cards.Dominion
 {
     public class Adventurer : ActionCardModel
@@ -18,7 +20,7 @@ namespace Cardgame.Cards.Dominion
 
             while (foundTreasures < 2 && host.ShuffleCount - reshuffles < 2)
             {
-                var revealedCard = host.Reveal();
+                var revealedCard = host.RevealAll(Zone.TopDeck).Single();
                 if (revealedCard.Type == CardType.Treasure)
                 {
                     foundTreasures++;

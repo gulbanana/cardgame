@@ -8,7 +8,7 @@ namespace Cardgame
     {
         string Player { get; }
         int ShuffleCount { get; }
-        string[] GetHand();
+        Cards.CardModel[] GetHand();
 
         void DrawCards(int n);
         void AddActions(int n);
@@ -17,11 +17,13 @@ namespace Cardgame
 
         void Discard(string[] cards, Zone from);
         void Trash(string[] cards);
-        void Gain(string card, Zone to);
+        void Gain(string card, Zone to);        
         void Draw(string name);
-        Cards.CardModel Reveal();
+        
+        Cards.CardModel[] RevealAll(Zone from);
+        void RevealAndMove(string name, Zone from, Zone to);
 
-        Task<T> SelectCard<T>(string prompt, CardSource source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel;
+        Task<T> SelectCard<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel;
         Task<string[]> SelectCardsFromHand(string prompt, int? number = null);
         Task<bool> YesNo(string prompt);
 
@@ -55,19 +57,19 @@ namespace Cardgame
             host.Gain(card, Zone.Discard);
         }
 
-        public static Task<Cards.CardModel> SelectCard(this IActionHost host, string prompt, CardSource source)
+        public static Task<Cards.CardModel> SelectCard(this IActionHost host, string prompt, Zone source)
         {
             return host.SelectCard<Cards.CardModel>(prompt, source, x => x);
         }
 
         public static Task<T> SelectCard<T>(this IActionHost host, string prompt, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel
         {
-            return host.SelectCard<T>(prompt, CardSource.Hand, filter);
+            return host.SelectCard<T>(prompt, Zone.Hand, filter);
         }
 
         public static Task<Cards.CardModel> SelectCard(this IActionHost host, string prompt)
         {
-            return host.SelectCard<Cards.CardModel>(prompt, CardSource.Hand, x => x);
+            return host.SelectCard<Cards.CardModel>(prompt, Zone.Hand, x => x);
         }
 
         public static Task Attack(this IActionHost host, Func<IActionHost, Task> act)

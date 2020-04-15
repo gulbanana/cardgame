@@ -90,9 +90,9 @@ namespace Cardgame
             </spans>");
         }
 
-        string[] IActionHost.GetHand()
+        Cards.CardModel[] IActionHost.GetHand()
         {
-            return engine.Model.Hands[Player].ToArray();
+            return engine.Model.Hands[Player].Select(Cards.All.ByName).ToArray();
         }
 
         void IActionHost.AddActions(int n)
@@ -177,7 +177,7 @@ namespace Cardgame
 
         void IActionHost.Gain(string id, Zone to)
         {
-            engine.MoveCard(Player, id, Zone.Stacks, to);
+            engine.MoveCard(Player, id, Zone.Kingdom, to);
 
             if (to == Zone.Discard)
             {
@@ -210,32 +210,52 @@ namespace Cardgame
             </spans>");        
         }
 
-        Cards.CardModel IActionHost.Reveal()
+        Cards.CardModel[] IActionHost.RevealAll(Zone from)
         {
-            var reshuffled = engine.DrawCard(Player, to: Zone.TopDeck);
-            if (reshuffled)
+            if (from == Zone.TopDeck)
             {
-                NoteReshuffle();
+                var reshuffled = engine.DrawCard(Player, to: Zone.TopDeck);
+                if (reshuffled)
+                {
+                    NoteReshuffle();
+                }
             }
 
-            var topCard = engine.Model.Decks[Player].First();
+            var revealed = from switch {
+                Zone.TopDeck => engine.Model.Decks[Player].Take(1),
+                Zone.Hand => engine.Model.Hands[Player],
+                Zone other => throw new CommandException($"Unknown zone {other}")
+            };
 
             engine.LogPartialEvent($@"<spans>
                 <run>...</run>
                 {LogVerbInitial("reveal", "reveals", "revealing")}
-                <card suffix='.'>{topCard}</card>
+                {LogCardList(revealed.ToArray())}
             </spans>");
 
-            return Cards.All.ByName(topCard);
+            return revealed.Select(Cards.All.ByName).ToArray();
+        }
+        
+        void IActionHost.RevealAndMove(string card, Zone from, Zone to)
+        {
+            engine.MoveCard(Player, card, from, to);
+
+            engine.LogPartialEvent($@"<spans>
+                <run>...</run>
+                {LogVerbInitial("reveal", "reveals", "revealing")}
+                <card>{card}</card>
+                <run>and</run>
+                {LogDestination(to)}
+            </spans>");   
         }
 
-        async Task<T> IActionHost.SelectCard<T>(string prompt, CardSource source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter)
+        async Task<T> IActionHost.SelectCard<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter)
         {
             var sourceCards = source switch 
             {
-                CardSource.Hand => engine.Model.Hands[Player],
-                CardSource.Kingdom => engine.Model.KingdomCards.Concat(new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold"}).Where(id => engine.Model.Stacks[id] > 0),
-                CardSource other => throw new CommandException($"Unknown CardSource {other}")
+                Zone.Hand => engine.Model.Hands[Player],
+                Zone.Kingdom => engine.Model.KingdomCards.Concat(new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold"}).Where(id => engine.Model.Stacks[id] > 0),
+                Zone other => throw new CommandException($"Unknown CardSource {other}")
             };
 
             var filteredCards = filter(sourceCards.Select(Cards.All.ByName));
@@ -286,7 +306,6 @@ namespace Cardgame
             {
                 var hand = target.GetHand().ToList();
                 var reactions = hand
-                    .Select(Cards.All.ByName)
                     .OfType<Cards.ActionCardModel>()
                     .Where(card => card.ReactionTrigger == TriggerType.Attack);
 

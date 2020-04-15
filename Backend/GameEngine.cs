@@ -552,7 +552,7 @@ namespace Cardgame
                     Model.Discards[player].Remove(id);
                     break;
                 
-                case Zone.Stacks:
+                case Zone.Kingdom:
                     if (Model.Stacks[id] < 1) throw new CommandException($"No {id} cards remaining in stack.");
                     Model.Stacks[id]--;
                     break;
@@ -580,7 +580,7 @@ namespace Cardgame
                     Model.Discards[player].Add(id);
                     break;
                 
-                case Zone.Stacks:
+                case Zone.Kingdom:
                     Model.Stacks[id]++;
                     break;
 
@@ -594,12 +594,22 @@ namespace Cardgame
         }
 
         internal async Task<TOutput> Choose<TInput, TOutput>(string player, ChoiceType type, string prompt, TInput input)
-        {
-            Model.ChoosingPlayers.Push(player);
+        {            
             Model.ChoiceType = type;
             Model.ChoicePrompt = prompt;
             Model.ChoiceInput = JsonSerializer.Serialize(input);
 
+            if (bots.Contains(player))
+            {
+                var botOutput = AI.PlayChoice(Model);
+                if (botOutput != null)
+                {
+                    return JsonSerializer.Deserialize<TOutput>(botOutput);
+                }
+            }
+
+            Model.ChoosingPlayers.Push(player);
+            
             inputTCS = new TaskCompletionSource<string>();
             ActionUpdated?.Invoke();
             var output = await inputTCS.Task;

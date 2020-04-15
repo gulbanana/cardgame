@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Dominion
 
             var gainedCard = await host.SelectCard(
                 "Choose a Treasure to gain.", 
-                CardSource.Kingdom, 
+                Zone.Kingdom, 
                 cards => cards.OfType<TreasureCardModel>().Where(card => card.Cost <= trashedCard.Cost + 3)
             );
             host.Gain(gainedCard.Name, Zone.Hand);
