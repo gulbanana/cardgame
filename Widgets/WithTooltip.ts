@@ -10,7 +10,7 @@ namespace WithTooltip {
 
         element.style.left = x+2 + "px";
 
-        if (window.innerHeight - y < 200) {
+        if (window.innerHeight - y < 300) {
             let zoomedChild = element.querySelector(".magnify");
             if (zoomedChild != null) {
                 zoomedChild.classList.add("magnify--bottom-left");
