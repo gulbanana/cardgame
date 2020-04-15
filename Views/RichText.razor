@@ -45,6 +45,12 @@
         </div>
         break;
 
+    case TextModel.Small small:
+        <span class="rich-text__small">
+            <RichText Parsed="@small.Child" />
+        </span>
+        break;
+
     case TextModel.Run run:
         <text>@run.Text</text>
         break;

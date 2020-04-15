@@ -12,6 +12,10 @@
     font-size: 1.2em;
 }
 
+.rich-text__small {
+    font-size: 0.8em;
+}
+
 .rich-text__symbol {
     vertical-align: bottom;
 }

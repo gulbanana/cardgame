@@ -10,10 +10,12 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-thief";
         public override int Cost => 4;
 
-        public override string Text => @"<lines>
-            <run>Each other player reveals the top 2 cards of their deck.</run>
-            <run>If they revealed any Treasure cards, they trash one of them that you choose. You may gain any or all of these trashed cards. They discard the other revealed cards.</run>
-        </lines>";
+        public override string Text => @"<small>
+            <lines>
+                <run>Each other player reveals the top 2 cards of their deck.</run>
+                <run>If they revealed any Treasure cards, they trash one of them that you choose. You may gain any or all of these trashed cards. They discard the other revealed cards.</run>
+            </lines>
+        </small>";
 
         protected override async Task ActAsync(IActionHost host)
         {

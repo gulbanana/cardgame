@@ -26,6 +26,11 @@ namespace Cardgame.Widgets
             public TextModel Child { get; set; }
         }
 
+        public class Small : TextModel
+        {
+            public TextModel Child { get; set; }
+        }
+
         public class Run : TextModel
         {
             public string Text { get; set; }
@@ -99,12 +104,14 @@ namespace Cardgame.Widgets
                 case "block":
                     return new Block { Child = Parse(element.Elements().Single()) };
 
+                case "small":
+                    return new Small { Child = Parse(element.Elements().Single()) };
+
                 case "run":
                     return new Run { Text = element.Value };
 
                 case "error":
                     return new Error { Text = element.Value };
-
 
                 case "indent":
                     return new Indent { Level = int.Parse(element.Attribute("level").Value) } ;
