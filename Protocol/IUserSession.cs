@@ -7,5 +7,6 @@ namespace Cardgame
         string Username { get; }
         bool Login(string username);
         void Logout();
+        void CreateBot(string username);
     }
 }

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Cardgame.Cards
+namespace Cardgame.Cards.Dominion
 {
     public class Cellar : ActionCardModel
     {
@@ -22,7 +22,7 @@ namespace Cardgame.Cards
         {
             host.AddActions(1);
             var discarded = await host.SelectCardsFromHand("Choose any number of cards to discard.");
-            host.DiscardCards(discarded);
+            host.Discard(discarded);
             host.DrawCards(discarded.Length);
         }
     }

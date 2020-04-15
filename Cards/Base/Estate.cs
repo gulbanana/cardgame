@@ -1,4 +1,4 @@
-namespace Cardgame.Cards
+namespace Cardgame.Cards.Base
 {
     public class Estate : VictoryCardModel
     {

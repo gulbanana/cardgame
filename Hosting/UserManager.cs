@@ -6,16 +6,16 @@ namespace Cardgame.Hosting
 {
     class UserManager
     {
-        private readonly List<NameclaimUserSession> sessions;
-        public IReadOnlyList<NameclaimUserSession> Sessions => sessions;
+        private readonly List<IUserSession> sessions;
+        public IReadOnlyList<IUserSession> Sessions => sessions;
         public event Action SessionsUpdated;
 
         public UserManager()
         {
-            sessions = new List<NameclaimUserSession>();
+            sessions = new List<IUserSession>();
         }
 
-        public bool Add(NameclaimUserSession session)
+        public bool Add(IUserSession session)
         {
             var result = false;
             lock (sessions)
@@ -39,7 +39,7 @@ namespace Cardgame.Hosting
             return result;
         }
 
-        public bool Remove(NameclaimUserSession session)
+        public bool Remove(IUserSession session)
         {
             var result = sessions.Remove(session);
 

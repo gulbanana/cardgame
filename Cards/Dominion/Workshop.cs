@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cardgame.Cards
+namespace Cardgame.Cards.Dominion
 {
     public class Workshop : ActionCardModel
     {
@@ -21,7 +21,7 @@ namespace Cardgame.Cards
                 CardSource.Kingdom, 
                 cards => cards.Where(card => card.Cost <= 4)
             );
-            host.GainCard(gainedCard.Name);
+            host.Gain(gainedCard.Name);
         }
     }
 }

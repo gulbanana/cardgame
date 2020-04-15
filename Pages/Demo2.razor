@@ -12,8 +12,11 @@
         {
             Session.Login($"demo");
         }
+
         var game = Endpoint.FindGame($"demo-{id}");
-        game.Execute("other-player", new JoinGameCommand { Seq = 0 });
+
+        Session.CreateBot("bot1");
+        game.Execute("bot1", new JoinGameCommand { Seq = 0, IsBot = true });
     }
 
     protected override void OnAfterRender(bool firstRender)

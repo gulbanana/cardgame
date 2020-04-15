@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace Cardgame
 {
-    public class ActionHost : IActionHost
+    internal class ActionHost : IActionHost
     {
         private readonly GameEngine engine;
         public string Player { get; }
+        public int ShuffleCount { get; private set; }
 
         public ActionHost(GameEngine engine, string player)
         {
@@ -16,7 +17,7 @@ namespace Cardgame
             this.Player = player;
         }
 
-        private string Verb(string secondPerson, string thirdPerson, string continuous)
+        private string LogVerbInitial(string secondPerson, string thirdPerson, string continuous)
         {
             if (Player == engine.Model.ActivePlayer)
             {
@@ -28,7 +29,19 @@ namespace Cardgame
             }
         }
 
-        private string CardList(string[] ids)
+        private string LogVerb(string secondPerson, string thirdPerson, string continuous)
+        {
+            if (Player == engine.Model.ActivePlayer)
+            {
+                return $"<if you='{secondPerson}' them='{continuous}'>{Player}</if>";
+            }
+            else
+            {
+                return $"<if you='{secondPerson}' them='{thirdPerson}'>{Player}</if>";
+            }
+        }
+
+        private string LogCardList(string[] ids)
         {
             return string.Join(Environment.NewLine, ids.Select((id, ix) => 
             {
@@ -37,6 +50,44 @@ namespace Cardgame
                     : " and";
                 return $"<card suffix='{suffix}'>{id}</card>";
             }));
+        }
+
+        private string LogDestination(Zone to)
+        {
+            switch (to)
+            {
+                case Zone.TopDeck:
+                    return $@"{LogVerb("put", "puts", "putting")}
+                              <run>it on top of</run>
+                              <if you='your' them='their'>{Player}</if>
+                              <run>deck.</run>";
+
+                case Zone.Hand:
+                    return $@"{LogVerb("put", "puts", "putting")}
+                              <run>it into</run>
+                              <if you='your' them='their'>{Player}</if>
+                              <run>hand.</run>";
+
+                case Zone.Discard:
+                    return $@"{LogVerb("discard", "discards", "discarding")}
+                              <run>it.</run>";
+
+                case Zone.Trash:
+                    return $@"{LogVerb("trash", "trashes", "trashing")}
+                              <run>it.</run>";
+
+                default:
+                    throw new CommandException($"Unknown zone {to}");
+            }
+        }
+
+        private void NoteReshuffle()
+        {
+            ShuffleCount++;
+            engine.LogPartialEvent($@"<spans>
+                <run>...</run>
+                <if you='(you reshuffle.)' them='(reshuffling.)'>{Player}</if>
+            </spans>");
         }
 
         string[] IActionHost.GetHand()
@@ -86,72 +137,96 @@ namespace Cardgame
             }
             if (reshuffled)
             {
-                engine.LogPartialEvent($@"<spans>
-                    <run>...</run>
-                    <if you='(you reshuffle.)' them='(reshuffling.)'>{Player}</if>
-                </spans>");
+                NoteReshuffle();
             }
 
             engine.LogPartialEvent($@"<spans>
                 <run>...</run>
-                {Verb("draw", "draws", "drawing")}
+                {LogVerbInitial("draw", "draws", "drawing")}
                 <run>{(n == 1 ? "a card." : $"{n} cards.")}</run>
             </spans>");
         }
 
-        void IActionHost.DiscardCards(string[] cards)
+        void IActionHost.Discard(string[] cards, Zone from)
         {
             foreach (var card in cards)
             {
-                engine.DiscardCard(Player, card);
+                engine.MoveCard(Player, card, from, Zone.Discard);
             }
 
             engine.LogPartialEvent($@"<spans>
                 <run>...</run>
-                {Verb("discard", "discards", "discarding")}
-                {CardList(cards)}
+                {LogVerbInitial("discard", "discards", "discarding")}
+                {LogCardList(cards)}
             </spans>");
         }
 
-        void IActionHost.TrashCards(string[] cards)
+        void IActionHost.Trash(string[] cards)
         {
             foreach (var card in cards)
             {
-                engine.TrashCard(Player, card);
+                engine.MoveCard(Player, card, Zone.Hand, Zone.Trash);
             }
 
             engine.LogPartialEvent($@"<spans>
                 <run>...</run>
-                {Verb("trash", "trashes", "trashing")}
-                {CardList(cards)}
+                {LogVerbInitial("trash", "trashes", "trashing")}
+                {LogCardList(cards)}
             </spans>");        
         }
 
-        void IActionHost.GainCard(string id)
+        void IActionHost.Gain(string id, Zone to)
         {
-            engine.GainCard(Player, id);
+            engine.MoveCard(Player, id, Zone.Stacks, to);
 
-            engine.LogPartialEvent($@"<spans>
-                <run>...</run>
-                {Verb("gain", "gains", "gaining")}
-                <card suffix='.'>{id}</card>
-            </spans>");
+            if (to == Zone.Discard)
+            {
+                engine.LogPartialEvent($@"<spans>
+                    <run>...</run>
+                    {LogVerbInitial("gain", "gains", "gaining")}
+                    <card suffix='.'>{id}</card>
+                </spans>");
+            }
+            else
+            {
+                engine.LogPartialEvent($@"<spans>
+                    <run>...</run>
+                    {LogVerbInitial("gain", "gains", "gaining")}
+                    <card>{id}</card>
+                    <run>and</run>
+                    {LogDestination(to)}
+                </spans>");
+            }
         }
 
-        void IActionHost.GainCardToHand(string id)
+        void IActionHost.Draw(string card)
         {
-            engine.GainCardToHand(Player, id);
+            engine.MoveCard(Player, card, Zone.TopDeck, Zone.Hand);
 
             engine.LogPartialEvent($@"<spans>
                 <run>...</run>
-                {Verb("gain", "gains", "gaining")}
-                <card>{id}</card>
-                <run>and</run>
-                <if you='put' them='putting'>{Player}</if>
-                <run>it into</run>
-                <if you='your' them='their'>{Player}</if>
-                <run>hand.</run>
+                {LogVerbInitial("draw", "draws", "drawing")}
+                <card suffix='.'>{card}</card>
+            </spans>");        
+        }
+
+        Cards.CardModel IActionHost.Reveal()
+        {
+            var reshuffled = engine.DrawCard(Player, to: Zone.TopDeck);
+            if (reshuffled)
+            {
+                NoteReshuffle();
+            }
+
+            var topCard = engine.Model.Decks[Player].First();
+
+            engine.LogPartialEvent($@"<spans>
+                <run>...</run>
+                {LogVerbInitial("reveal", "reveals", "revealing")}
+                <card suffix='.'>{topCard}</card>
             </spans>");
+
+            return Cards.All.ByName(topCard);
         }
 
         async Task<T> IActionHost.SelectCard<T>(string prompt, CardSource source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter)

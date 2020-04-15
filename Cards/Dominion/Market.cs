@@ -1,4 +1,4 @@
-namespace Cardgame.Cards
+namespace Cardgame.Cards.Dominion
 {
     public class Market : ActionCardModel
     {

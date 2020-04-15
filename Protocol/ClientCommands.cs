@@ -11,7 +11,10 @@ namespace Cardgame
         public string Player { get; set; }
     }
 
-    public class JoinGameCommand : ClientCommand { }
+    public class JoinGameCommand : ClientCommand
+    {
+        public bool IsBot { get; set; }
+    }
     public class LeaveGameCommand : ClientCommand { }
     public class StartGameCommand : ClientCommand 
     { 

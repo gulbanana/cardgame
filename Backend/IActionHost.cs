@@ -7,6 +7,7 @@ namespace Cardgame
     public interface IActionHost
     {
         string Player { get; }
+        int ShuffleCount { get; }
         string[] GetHand();
 
         void DrawCards(int n);
@@ -14,10 +15,11 @@ namespace Cardgame
         void AddBuys(int n);
         void AddMoney(int n);
 
-        void DiscardCards(string[] cards);
-        void TrashCards(string[] cards);
-        void GainCard(string card);
-        void GainCardToHand(string card);
+        void Discard(string[] cards, Zone from);
+        void Trash(string[] cards);
+        void Gain(string card, Zone to);
+        void Draw(string name);
+        Cards.CardModel Reveal();
 
         Task<T> SelectCard<T>(string prompt, CardSource source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel;
         Task<string[]> SelectCardsFromHand(string prompt, int? number = null);
@@ -28,9 +30,29 @@ namespace Cardgame
 
     public static class ActionHostExtensions
     {
-        public static void TrashCard(this IActionHost host, string card)
+        public static void Trash(this IActionHost host, string card)
         {
-            host.TrashCards(new[] { card });
+            host.Trash(new[] { card });
+        }
+
+        public static void Discard(this IActionHost host, string card, Zone from)
+        {
+            host.Discard(new[] { card }, from);
+        }
+
+        public static void Discard(this IActionHost host, string[] cards)
+        {
+            host.Discard(cards, Zone.Hand);
+        }
+
+        public static void Discard(this IActionHost host, string card)
+        {
+            host.Discard(new[] { card }, Zone.Hand);
+        }
+
+        public static void Gain(this IActionHost host, string card)
+        {
+            host.Gain(card, Zone.Discard);
         }
 
         public static Task<Cards.CardModel> SelectCard(this IActionHost host, string prompt, CardSource source)

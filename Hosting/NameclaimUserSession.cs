@@ -31,6 +31,11 @@ namespace Cardgame.Hosting
             manager.Remove(this);
         }
 
+        public void CreateBot(string username)
+        {
+            manager.Add(new BotUserSession(username));
+        }
+
         public void Dispose() => Logout();
 
         public override Task<AuthenticationState> GetAuthenticationStateAsync()

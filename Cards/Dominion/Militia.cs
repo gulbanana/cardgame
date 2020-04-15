@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Cardgame.Cards
+namespace Cardgame.Cards.Dominion
 {
     public class Militia : ActionCardModel
     {
@@ -24,7 +24,7 @@ namespace Cardgame.Cards
             {
                 var n = player.GetHand().Length - 3;
                 var discardedCards = await player.SelectCardsFromHand(n == 1 ? "Choose a card to discard" : $"Choose {n} cards to discard.", n);
-                player.DiscardCards(discardedCards);
+                player.Discard(discardedCards);
             });
         }
     }

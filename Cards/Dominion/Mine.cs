@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cardgame.Cards
+namespace Cardgame.Cards.Dominion
 {
     public class Mine : ActionCardModel
     {
@@ -24,14 +24,14 @@ namespace Cardgame.Cards
                 "Choose a Treasure to trash.", 
                 cards => cards.OfType<TreasureCardModel>()
             );
-            host.TrashCard(trashedCard.Name);
+            host.Trash(trashedCard.Name);
 
             var gainedCard = await host.SelectCard(
                 "Choose a Treasure to gain.", 
                 CardSource.Kingdom, 
                 cards => cards.OfType<TreasureCardModel>().Where(card => card.Cost <= trashedCard.Cost + 3)
             );
-            host.GainCardToHand(gainedCard.Name);
+            host.Gain(gainedCard.Name, Zone.Hand);
         }
     }
 }

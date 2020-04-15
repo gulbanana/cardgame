@@ -4,9 +4,6 @@ namespace Cardgame
 {
     public class GameModel
     {
-        public bool IsDemo { get; set; }
-        public string DemoNextActive { get; set; }
-
         // protection against weird command orderings
         public int Seq { get; set; }
 

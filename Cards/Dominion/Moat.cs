@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Cardgame.Cards
+namespace Cardgame.Cards.Dominion
 {
     public class Moat : ActionCardModel
     {
