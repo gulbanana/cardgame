@@ -29,6 +29,7 @@ namespace Cardgame
         Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter, int? min, int? max) where T : Cards.CardModel;
         Task<bool> YesNo(string prompt, string message);
 
+        Task Attack(Func<IActionHost, bool> filter, Action<IActionHost> act);
         Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act);
     }
 
@@ -184,6 +185,11 @@ namespace Cardgame
             return cards.Single();
         }
         #endregion
+
+        public static Task Attack(this IActionHost host, Action<IActionHost> act)
+        {
+            return host.Attack(_ => true, act);
+        }
 
         public static Task Attack(this IActionHost host, Func<IActionHost, Task> act)
         {

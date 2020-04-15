@@ -35,7 +35,7 @@
             </div>
             <div class="card__text-separator" />
             <div class="card__text">
-                <RichText Model="@Text" />
+                <RichText @key="Text.GetHashCode()" Model="@Text" />
             </div>
         }
         <div class="card__footer card-view__title">

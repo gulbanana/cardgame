@@ -208,6 +208,17 @@ namespace Cardgame
 
         void IActionHost.Gain(string id, Zone to)
         {
+            if (engine.Model.Supply[id] == 0)
+            {
+                engine.LogPartialEvent($@"<spans>
+                    <indent level='{level}' />
+                    {LogVerbInitial("don&apos;t gain", "doesn&apos;t gain", "not gaining")}
+                    <card suffix=','>{id}</card>
+                    <run>because there are none left.</run>
+                </spans>");
+                return;
+            }
+
             engine.MoveCard(Player, id, Zone.Supply, to);
 
             if (to == Zone.Discard)
@@ -372,6 +383,15 @@ namespace Cardgame
                     await act(target);
                 }
             }
+        }
+
+        Task IActionHost.Attack(Func<IActionHost, bool> filter, Action<IActionHost> act)
+        {
+            return ((IActionHost)this).Attack(filter, target =>
+            {
+                act(target);
+                return Task.CompletedTask;
+            });
         }
     }
 }

@@ -480,9 +480,9 @@ namespace Cardgame
                 var builder = new System.Text.StringBuilder();
                 builder.AppendLine("<lines>");
                     builder.AppendLine($"<spans><player>{player}</player><run>scored:</run></spans>");                    
+                    var total = 0;
                     var dominion = Model.Decks[player].Concat(Model.Hands[player]).Concat(Model.Discards[player]);
                     var victoryCards = dominion.Select(Cards.All.ByName).OfType<Cards.VictoryCardModel>().GroupBy(card => card.Name);
-                    var total = 0;
                     foreach (var group in victoryCards)
                     {
                         var exemplar = group.First();
@@ -491,6 +491,16 @@ namespace Cardgame
                         builder.AppendLine("<spans>");
                         builder.AppendLine($"<card>{group.Key}</card>");
                         builder.AppendLine($"<run>x{group.Count()}: {score} VP</run>");
+                        builder.AppendLine("</spans>");
+                    }
+                    var curseCards = dominion.Select(Cards.All.ByName).OfType<Cards.Base.Curse>();
+                    if (curseCards.Any())
+                    {
+                        var score = curseCards.Count();
+                        total -= score;
+                        builder.AppendLine("<spans>");
+                        builder.AppendLine($"<card>Curse</card>");
+                        builder.AppendLine($"<run>x{curseCards.Count()}: -{score} VP</run>");
                         builder.AppendLine("</spans>");
                     }
                     builder.AppendLine($"<run>Total: {total} Victory Points</run>");
