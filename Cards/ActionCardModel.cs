@@ -19,8 +19,8 @@ namespace Cardgame.Cards
 
         protected virtual void Act(IActionHost host) => throw new NotImplementedException($"{Name}: card not implemented.");
 
-        public Task<Reaction> ExecuteReactionAsync(IActionHost host) => ReactAsync(host);
+        public Task<Reaction> ExecuteReactionAsync(IActionHost host, string trigger) => ReactAsync(host, trigger);
 
-        protected virtual Task<Reaction> ReactAsync(IActionHost host) => throw new NotImplementedException($"{Name}: no reaction implemented.");
+        protected virtual Task<Reaction> ReactAsync(IActionHost host, string trigger) => throw new NotImplementedException($"{Name}: no reaction implemented.");
     }
 }

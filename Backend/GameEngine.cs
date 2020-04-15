@@ -365,21 +365,17 @@ namespace Cardgame
 
             foreach (var player in Model.Players)
             {
-                if (isDemo)
+                for (var i = 0; i < 5; i++)
                 {
-                    DrawCard(player, "Copper");
-                    DrawCard(player, "Copper");
-                    DrawCard(player, "Copper");
-                    DrawCard(player, "Copper");
-                    DrawCard(player, "Copper");
-                }
-                else
-                {
-                    DrawCard(player);
-                    DrawCard(player);
-                    DrawCard(player);
-                    DrawCard(player);
-                    DrawCard(player);
+                    EnsureDeck(player);
+                    if (isDemo)
+                    {
+                        DrawCard(player, "Copper");
+                    }
+                    else
+                    {
+                        DrawCard(player);
+                    }
                 }
             }
             
@@ -437,7 +433,8 @@ namespace Cardgame
             var reshuffled = false;
             for (var i = 0; i < 5; i++)
             {
-                reshuffled = reshuffled | DrawCard(Model.ActivePlayer);
+                reshuffled = reshuffled | EnsureDeck(Model.ActivePlayer);
+                DrawCard(Model.ActivePlayer);
             }
             if (reshuffled)
             {
@@ -526,20 +523,28 @@ namespace Cardgame
             }
         }
 
-        internal bool DrawCard(string player, string id = null, Zone to = Zone.Hand)
+        internal bool EnsureDeck(string player)
         {
             var deck = Model.Decks[player];        
-            var hand = Model.Hands[player];
 
-            var reshuffled = false;
             if (!deck.Any())
             {
                 var discard = Model.Discards[player];
                 deck.AddRange(discard);
                 deck.Shuffle();
                 discard.Clear();
-                reshuffled = true;
+                return true;
             }
+            else
+            {
+                return false;
+            }
+        }
+
+        internal string DrawCard(string player, string id = null, Zone to = Zone.Hand)
+        {
+            var deck = Model.Decks[player];        
+            var hand = Model.Hands[player];
 
             if (id != null)
             {
@@ -547,11 +552,11 @@ namespace Cardgame
             }
             else
             {
-                var first = deck[0];
-                MoveCard(player, first, Zone.TopDeck, to);
+                id = deck[0];
+                MoveCard(player, id, Zone.TopDeck, to);
             }
 
-            return reshuffled;
+            return id;
         }
 
         internal void MoveCard(string player, string id, Zone from, Zone to)

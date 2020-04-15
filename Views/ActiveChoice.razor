@@ -8,6 +8,7 @@
     private SelectCardsInput selectCardsInput;
     private bool[] selectCardsChoices;
     private string[] selectCardInput;
+    private string yesNoMessage;
 
     protected override void OnParametersSet()
     {
@@ -20,6 +21,10 @@
             case ChoiceType.SelectCards:
                 selectCardsInput = JsonSerializer.Deserialize<SelectCardsInput>(Input);
                 selectCardsChoices = new bool[selectCardsInput.Choices.Length];
+                break;
+
+            case ChoiceType.YesNo:
+                yesNoMessage = JsonSerializer.Deserialize<string>(Input);
                 break;
         }
     }
@@ -58,9 +63,7 @@
     }
 }
 
-<span class="active-choice__prompt">
-    <RichText @key="Prompt.GetHashCode()" Model="@Prompt" />
-</span>
+<span @key="Prompt.GetHashCode()" class="active-choice__prompt">@Prompt</span>
 
 @switch (Type)
 {
@@ -84,16 +87,19 @@
             }
         </p>
 
-        <span>
+        <div>
             <ActiveButton Label="Select" Enabled="@(Enabled && SelectCardsValid())" Action="SelectCardsSubmit" />
-        </span>
+        </div>
         break;
 
     case ChoiceType.YesNo:
         <p>
+            <RichText Model="@yesNoMessage" />
+        </p>
+        <div>
             <ActiveButton Label="Yes" Enabled="@Enabled" Action="@(() => YesNoSubmit(true))" />
             <ActiveButton Label="No" Enabled="@Enabled" Action="@(() => YesNoSubmit(false))" />
-        </p>
+        </div>
         break;
 
     default:

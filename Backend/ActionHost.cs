@@ -130,12 +130,15 @@ namespace Cardgame
             </spans>");
         }
 
-        void IActionHost.DrawCards(int n)
+        Cards.CardModel[] IActionHost.DrawCards(int n)
         {
+            var drawn = new List<string>();
+
             var reshuffled = false;
             for (var i = 0; i < n; i++)
             {
-                reshuffled = reshuffled | engine.DrawCard(Player);
+                reshuffled = reshuffled | engine.EnsureDeck(Player);
+                drawn.Add(engine.DrawCard(Player));
             }
             if (reshuffled)
             {
@@ -147,6 +150,8 @@ namespace Cardgame
                 {LogVerbInitial("draw", "draws", "drawing")}
                 <run>{(n == 1 ? "a card." : $"{n} cards.")}</run>
             </spans>");
+
+            return drawn.Select(Cards.All.ByName).ToArray();
         }
 
         void IActionHost.Discard(string[] cards, Zone from)
@@ -216,11 +221,11 @@ namespace Cardgame
         {
             if (from == Zone.TopDeck)
             {
-                var reshuffled = engine.DrawCard(Player, to: Zone.TopDeck);
-                if (reshuffled)
+                if (engine.EnsureDeck(Player))
                 {
                     NoteReshuffle();
                 }
+                engine.DrawCard(Player, to: Zone.TopDeck);
             }
 
             var revealed = from switch {
@@ -280,7 +285,7 @@ namespace Cardgame
             var id = await engine.Choose<string[], string>(
                 Player,
                 ChoiceType.SelectCard, 
-                $"<run>{prompt}</run>", 
+                prompt,
                 filteredCards.Select(card => card.Name).ToArray()
             );
 
@@ -292,7 +297,7 @@ namespace Cardgame
             return engine.Choose<SelectCardsInput, string[]>(
                 Player,
                 ChoiceType.SelectCards, 
-                $"<run>{prompt}</run>",
+                prompt,
                 new SelectCardsInput
                 {
                     Choices = engine.Model.Hands[Player].ToArray(),
@@ -301,13 +306,13 @@ namespace Cardgame
             );
         }
 
-        Task<bool> IActionHost.YesNo(string prompt)
+        Task<bool> IActionHost.YesNo(string prompt, string message)
         {
-            return engine.Choose<bool, bool>(
+            return engine.Choose<string, bool>(
                 Player,
                 ChoiceType.YesNo,
-                $"<run>{prompt}</run>",
-                false
+                prompt,
+                message
             );
         }
 
@@ -333,7 +338,7 @@ namespace Cardgame
                     hand.RemoveAt(hand.FindIndex(e => e.Equals(potentialReaction.Name)));
 
                     var targetHost = new ActionHost(1, engine, target.Player);
-                    var reaction = await potentialReaction.ExecuteReactionAsync(targetHost);          
+                    var reaction = await potentialReaction.ExecuteReactionAsync(targetHost, Player);          
                     if (reaction.Type == ReactionType.Replace)
                     {
                         engine.LogPartialEvent($@"<spans>

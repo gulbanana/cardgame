@@ -10,7 +10,7 @@ namespace Cardgame
         int ShuffleCount { get; }
         Cards.CardModel[] GetHand();
 
-        void DrawCards(int n);
+        Cards.CardModel[] DrawCards(int n);
         void AddActions(int n);
         void AddBuys(int n);
         void AddMoney(int n);
@@ -27,7 +27,7 @@ namespace Cardgame
 
         Task<T> SelectCard<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel;
         Task<string[]> SelectCardsFromHand(string prompt, int? number = null);
-        Task<bool> YesNo(string prompt);
+        Task<bool> YesNo(string prompt, string message);
 
         Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act);
     }

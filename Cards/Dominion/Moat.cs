@@ -22,10 +22,15 @@ namespace Cardgame.Cards.Dominion
             host.DrawCards(2);
         }
 
-        protected override async Task<Reaction> ReactAsync(IActionHost host)
+        protected override async Task<Reaction> ReactAsync(IActionHost host, string trigger)
         {
-            var shouldReact = await host.YesNo("Reveal Moat from your hand?");
-            if (shouldReact)
+            var shouldReveal = await host.YesNo("Reveal Moat?", $@"<spans>
+                <run>You may reveal</run>
+                <card>Moat</card>
+                <run>from your hand to be unaffected by {trigger}'s attack.</run>
+            </spans>");
+
+            if (shouldReveal)
             {
                 return Reaction.Cancel();
             }
