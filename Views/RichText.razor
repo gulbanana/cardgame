@@ -63,7 +63,7 @@
         var colorType = Cards.All.GetColor(model.Type, subType);
         <WithTooltip>
             <Content>
-                @card.Prefix<span style="background: var(--card-type-@(colorType))">@card.Name</span>@card.Suffix
+                @card.Prefix<span style="background: var(--card-type-@(colorType))">@Strings.TitleCase(card.Name)</span>@card.Suffix
             </Content>
             <Tooltip>
                 <Magnify>

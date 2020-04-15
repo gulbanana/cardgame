@@ -27,7 +27,7 @@ namespace Cardgame
         public List<string> Trash { get; set; }
 
         // turn state
-        public bool IsExecutingAction { get; set; }
+        public int ExecutingActions { get; set; }
         public bool BuyPhase { get; set; }
         public List<string> PlayedCards { get; set; }        
         public int ActionsRemaining { get; set; }

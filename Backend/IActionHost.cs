@@ -21,7 +21,9 @@ namespace Cardgame
         void Draw(string name);
         
         Cards.CardModel[] RevealAll(Zone from);
-        void RevealAndMove(string name, Zone from, Zone to);
+        void RevealAndMove(string card, Zone from, Zone to);
+
+        void PlayAction(Cards.ActionCardModel card, Zone from);
 
         Task<T> SelectCard<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel;
         Task<string[]> SelectCardsFromHand(string prompt, int? number = null);
@@ -55,6 +57,11 @@ namespace Cardgame
         public static void Gain(this IActionHost host, string card)
         {
             host.Gain(card, Zone.Discard);
+        }
+
+        public static void PlayAction(this IActionHost host, Cards.ActionCardModel card)
+        {
+            host.PlayAction(card, Zone.Hand);
         }
 
         public static Task<Cards.CardModel> SelectCard(this IActionHost host, string prompt, Zone source)

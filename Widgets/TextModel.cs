@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -65,8 +66,16 @@ namespace Cardgame.Widgets
 
         public static TextModel Parse(string xml)
         {
-            var node = XDocument.Parse(xml);
-            return Parse(node.Root);
+            try
+            {
+                var node = XDocument.Parse(xml);
+                return Parse(node.Root);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return new Run { Text = xml };
+            }
         }
 
         public static TextModel Parse(XElement element)

@@ -7,7 +7,7 @@
 @{ 
     var isEnabled = IsActivePlayer &&
         !Game.IsFinished &&
-        !Game.IsExecutingAction;
+        Game.ExecutingActions == 0;
     var potentialMoney = Game.Hands[Game.ActivePlayer]
         .Select(Cards.All.ByName)
         .OfType<Cards.TreasureCardModel>()

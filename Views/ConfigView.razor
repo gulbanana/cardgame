@@ -31,7 +31,7 @@
         <select disabled="@(!Game.Players.Contains(Session.Username))" @bind="configSet">
             @foreach (var member in System.Enum.GetNames(typeof(CardSet)))
             {
-                var caption = Regex.Replace(member, @"((?<=[a-z])[A-Z]|(?<!^)[A-Z](?=[a-z]))", " $1");
+                var caption = Strings.TitleCase(member);
                 <option value="@member">@caption</option>
             }
         </select>

@@ -17,6 +17,7 @@
 
         Session.CreateBot("bot1");
         game.Execute("bot1", new JoinGameCommand { Seq = 0, IsBot = true });
+        game.Execute("demo", new JoinGameCommand { Seq = 1 });
     }
 
     protected override void OnAfterRender(bool firstRender)

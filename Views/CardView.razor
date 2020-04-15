@@ -20,7 +20,7 @@
 
 <Stacked Size="@Stack" Type="@Color" Half="@Half">
     <div class="card-view">
-        <div class="card__header card-view__title">@Name</div>
+        <div class="card__header card-view__title">@Strings.TitleCase(Name)</div>
         @if (Half) {
             <div class="card__image card-view__picture">
                 <img src="/cards/@(Art).jpg" />

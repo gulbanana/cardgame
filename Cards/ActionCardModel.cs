@@ -11,7 +11,11 @@ namespace Cardgame.Cards
         
         public Task ExecuteActionAsync(IActionHost host) => ActAsync(host);
 
-        protected virtual Task ActAsync(IActionHost host) => Task.Run(() => Act(host));
+        protected virtual Task ActAsync(IActionHost host)
+        {
+            Act(host);
+            return Task.CompletedTask;
+        } 
 
         protected virtual void Act(IActionHost host) => throw new NotImplementedException($"{Name}: card not implemented.");
 

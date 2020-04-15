@@ -236,17 +236,28 @@ namespace Cardgame
             return revealed.Select(Cards.All.ByName).ToArray();
         }
         
-        void IActionHost.RevealAndMove(string card, Zone from, Zone to)
+        void IActionHost.RevealAndMove(string id, Zone from, Zone to)
         {
-            engine.MoveCard(Player, card, from, to);
+            engine.MoveCard(Player, id, from, to);
 
             engine.LogPartialEvent($@"<spans>
                 <run>...</run>
                 {LogVerbInitial("reveal", "reveals", "revealing")}
-                <card>{card}</card>
+                <card>{id}</card>
                 <run>and</run>
                 {LogDestination(to)}
             </spans>");   
+        }
+
+        void IActionHost.PlayAction(Cards.ActionCardModel card, Zone from)
+        {
+            engine.LogPartialEvent($@"<spans>
+                <run>...</run>
+                {LogVerbInitial("play", "plays", "playing")}
+                <card suffix='.'>{card.Name}</card>
+            </spans>");
+
+            engine.BeginAction(Player, card, from);
         }
 
         async Task<T> IActionHost.SelectCard<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter)
@@ -259,6 +270,10 @@ namespace Cardgame
             };
 
             var filteredCards = filter(sourceCards.Select(Cards.All.ByName));
+            if (!filteredCards.Any())
+            {
+                return null;
+            }
 
             var id = await engine.Choose<string[], string>(
                 Player,

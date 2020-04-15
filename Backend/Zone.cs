@@ -6,6 +6,7 @@ namespace Cardgame
         Kingdom,
         Discard,
         Trash,
-        TopDeck
+        TopDeck,
+        InPlay
     }
 }

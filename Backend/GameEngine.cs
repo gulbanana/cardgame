@@ -198,9 +198,6 @@ namespace Cardgame
 
         private void PlayCard(string player, string id)
         {
-            Model.Hands[player].Remove(id);
-            Model.PlayedCards.Add(id);
-
             LogEvent($@"<spans>
                 <player>{player}</player>
                 <if you='play' them='plays'>{player}</if>
@@ -215,18 +212,20 @@ namespace Cardgame
                     if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
 
                     Model.ActionsRemaining--;
-                    Model.IsExecutingAction = true;
-                    var host = new ActionHost(this, Model.ActivePlayer);
-                    action.ExecuteActionAsync(host).ContinueWith(CompleteAction);
+                    BeginAction(player, action, Zone.Hand);
+
                     break;
                 
                 case Cards.TreasureCardModel treasure:
+                    MoveCard(player, id, Zone.Hand, Zone.InPlay);
+
                     if (!Model.BuyPhase)
                     {
                         Model.BuyPhase = true;
                         SkipBuyIfNoCash();
                     }
                     Model.MoneyRemaining += treasure.Value;
+
                     break;
 
                 default:
@@ -234,7 +233,25 @@ namespace Cardgame
             }
         }
 
-        private void CompleteAction(Task t)
+        internal void BeginAction(string player, Cards.ActionCardModel card, Zone from)
+        {
+            MoveCard(player, card.Name, from, Zone.InPlay);            
+
+            Model.ExecutingActions++;
+            var host = new ActionHost(this, Model.ActivePlayer);
+            var task = card.ExecuteActionAsync(host);
+            
+            if (task.IsCompleted)
+            {
+                CompleteAction();
+            }
+            else
+            {
+                task.ContinueWith(EndAction);
+            }
+        }
+
+        private void EndAction(Task t)
         {
             lock (this)
             {
@@ -245,15 +262,19 @@ namespace Cardgame
                     // rollback somehow?
                 }
 
-                Model.IsExecutingAction = false;
-
-                if (Model.ActionsRemaining == 0)
-                {
-                    Model.BuyPhase = true;
-                    SkipBuyIfNoCash();
-                }
-
+                CompleteAction();
                 ActionUpdated?.Invoke();
+            }
+        }
+
+        private void CompleteAction()
+        {
+            Model.ExecutingActions--;
+
+            if (Model.ActionsRemaining == 0)
+            {
+                Model.BuyPhase = true;
+                SkipBuyIfNoCash();
             }
         }
 
@@ -287,7 +308,7 @@ namespace Cardgame
                 { "Cellar", "Market", "Militia", "Mine", "Moat", "Remodel", "Smithy", "Village", "Woodcutter", "Workshop" },
 
                 CardSet.BigMoney => new[] 
-                { "Adventurer", "Bureaucrat", "Chancellor", "Chapel", "Feast", "Laboratory", "Market", "Mine", "Moneylender", "Throne Room" },
+                { "Adventurer", "Bureaucrat", "Chancellor", "Chapel", "Feast", "Laboratory", "Market", "Mine", "Moneylender", "ThroneRoom" },
 
                 CardSet.Interaction => new[] 
                 { "Bureaucrat", "Chancellor", "Council Room", "Festival", "Library", "Militia", "Moat", "Spy", "Thief", "Village" },
@@ -296,7 +317,7 @@ namespace Cardgame
                 { "Cellar", "Chapel", "Feast", "Gardens", "Laboratory", "Thief", "Village", "Witch", "Woodcutter", "Workshop" },
 
                 CardSet.VillageSquare => new[] 
-                { "Bureaucrat", "Cellar", "Festival", "Library", "Market", "Remodel", "Smithy", "Throne Room", "Village", "Woodcutter" },
+                { "Bureaucrat", "Cellar", "Festival", "Library", "Market", "Remodel", "Smithy", "ThroneRoom", "Village", "Woodcutter" },
 
                 _ => throw new CommandException($"Unknown card set {Model.KingdomSet}")
             };
@@ -562,6 +583,12 @@ namespace Cardgame
                     Model.Decks[player].RemoveAt(0);
                     break;
 
+                case Zone.InPlay:
+                    if (!Model.PlayedCards.Contains(id)) throw new CommandException($"No {id} card has been played.");
+                    var last = Model.PlayedCards.FindLastIndex(e => e.Equals(id));
+                    Model.PlayedCards.RemoveAt(last);
+                    break;
+
                 default:
                     throw new CommandException($"Unknown zone {from}");
             }
@@ -586,6 +613,10 @@ namespace Cardgame
 
                 case Zone.TopDeck:
                     Model.Decks[player].Insert(0, id);
+                    break;
+
+                case Zone.InPlay:
+                    Model.PlayedCards.Add(id);
                     break;
 
                 default:
