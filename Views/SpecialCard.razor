@@ -2,13 +2,14 @@
     [Parameter] public string Name { get; set; }
     [Parameter] public bool Half { get; set; }
     [Parameter] public int Stack { get; set; }
+    private int TrueCount => Name == "trash" ? Stack - 1 : Stack;
 }
 
-@if (Half)
+@if (Half || TrueCount > 1)
 {
     <WithTooltip>
         <Content>
-            <Stacked Size="@Stack" Type="special" Half="true">
+            <Stacked Size="@Stack" Type="special" Half="@Half">
                 <div class="special-card">
                     @if (Half)
                     {
@@ -23,8 +24,12 @@
         </Content>
         <Tooltip>
             <Magnify>
-                <div class="special-card">
-                    <img class="special-card__2x" src="/@(Name)-full.jpg" />
+                <div>
+                    <StackHeader Size="@TrueCount">
+                        <div class="special-card">
+                            <img class="special-card__2x" src="/@(Name)-full.jpg" />
+                        </div>
+                    </StackHeader>
                 </div>
             </Magnify>
         </Tooltip>

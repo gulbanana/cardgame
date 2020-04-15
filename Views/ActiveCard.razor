@@ -55,7 +55,9 @@ else
         </Content>
         <Tooltip>
             <Magnify>
-                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="false" />
+                <StackHeader Size="@Stack">
+                    <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="false" />
+                </StackHeader>
             </Magnify>
         </Tooltip>
     </WithTooltip>    

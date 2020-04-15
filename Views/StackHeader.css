@@ -1,0 +1,9 @@
+.stack-header__wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.stack-header {
+    margin: 0;
+    text-align: center;
+}
