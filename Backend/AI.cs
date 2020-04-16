@@ -13,6 +13,17 @@ namespace Cardgame
             {
                 return new PlayAllTreasuresCommand { Seq = state.Seq };
             }
+            else
+            {
+                var priorities = new[]{ "Province", "Gold", "Silver", "Copper" }.Select(Cards.All.ByName);
+                foreach (var card in priorities)
+                {
+                    if (state.Supply[card.Name] > 0 && state.MoneyRemaining >= card.Cost)
+                    {
+                        return new BuyCardCommand { Seq = state.Seq, Id = card.Name };
+                    }
+                }
+            }
 
             return new EndTurnCommand { Seq = state.Seq };
         }
