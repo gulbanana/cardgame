@@ -40,6 +40,7 @@ namespace Cardgame.Hosting
             Task.Delay(TimeSpan.FromMinutes(5)).ContinueWith(t => 
             {
                 games.Remove(name);
+                Notify();
             });
         }
     }
