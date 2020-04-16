@@ -33,7 +33,7 @@
             <select disabled="@(!Game.Players.Contains(Session.Username))" @bind="configSet">
                 @foreach (var member in System.Enum.GetNames(typeof(CardSet)))
                 {
-                    var caption = Strings.TitleCase(member).Replace("1st", " (first edition)");
+                    var caption = Strings.TitleCase(member).Replace("1st", " (first edition)").Replace("2nd", " (second edition)");
                     <option value="@member">@caption</option>
                 }
             </select>

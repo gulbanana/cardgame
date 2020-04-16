@@ -2,7 +2,7 @@ namespace Cardgame
 {
     public enum CardSet
     {
-        Dominion,
-        Dominion1st
+        Dominion1st,
+        Dominion2nd,        
     }
 }

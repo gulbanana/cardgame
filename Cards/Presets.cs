@@ -13,7 +13,7 @@ namespace Cardgame.Cards
                 { "Size Distortion", new[]{ "Cellar", "Chapel", "Feast", "Gardens", "Laboratory", "Thief", "Village", "Witch", "Woodcutter", "Workshop" }},
                 { "Village Square", new[]{ "Bureaucrat", "Cellar", "Festival", "Library", "Market", "Remodel", "Smithy", "ThroneRoom", "Village", "Woodcutter" }}
             } },
-            { CardSet.Dominion, new Dictionary<string, string[]> {
+            { CardSet.Dominion2nd, new Dictionary<string, string[]> {
                 { "First Game", new[]{ "Cellar", "Market", "Merchant", "Militia", "Mine", "Moat", "Remodel", "Smithy", "Village", "Workshop" }}
             } }
         };
