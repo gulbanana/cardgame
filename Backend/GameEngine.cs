@@ -241,15 +241,42 @@ namespace Cardgame
 
             Model.ExecutingActions++;
             var host = new ActionHost(indentLevel, this, Model.ActivePlayer);
-            var task = card.ExecuteActionAsync(host);
-            
-            if (task.IsCompleted)
+
+            try
             {
-                CompleteAction(task, card.Name);
+                var task = card.ExecuteActionAsync(host);                            
+                if (task.IsCompleted)
+                {
+                    CompleteAction(task, card.Name);
+                }
+                else
+                {
+                    task.ContinueWith(EndAction, card.Name);
+                }
             }
-            else
+            catch (CommandException)
             {
-                task.ContinueWith(EndAction, card.Name);
+                Model.ExecutingActions--;
+
+                if (Model.ActionsRemaining == 0)
+                {
+                    Model.BuyPhase = true;
+                    SkipBuyIfNoCash();
+                }
+
+                throw;
+            }
+            catch (Exception e)
+            {
+                Model.ExecutingActions--;
+
+                if (Model.ActionsRemaining == 0)
+                {
+                    Model.BuyPhase = true;
+                    SkipBuyIfNoCash();
+                }
+
+                LogEvent($"<error>{card.Name}: {e.Message}</error>");
             }
         }
 
