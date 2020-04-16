@@ -72,7 +72,7 @@
 
     case TextModel.Card card:
         var model = All.Cards.ByName(card.Name);
-        var subType = (model as Cards.ActionCardModel)?.SubType;
+        var subType = (model as IActionCard)?.SubType;
         var colorType = All.Cards.GetColor(model.Type, subType);
         <WithTooltip>
             <Content>

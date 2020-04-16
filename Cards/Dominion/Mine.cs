@@ -23,7 +23,7 @@ namespace Cardgame.Cards.Dominion
         {
             var trashedCard = await host.SelectCard(
                 "Choose a Treasure to trash.", 
-                cards => cards.OfType<TreasureCardModel>()
+                cards => cards.OfType<ITreasureCard>()
             );
 
             if (trashedCard != null)
@@ -33,7 +33,7 @@ namespace Cardgame.Cards.Dominion
                 var gainedCard = await host.SelectCard(
                     "Choose a Treasure to gain.", 
                     Zone.Supply, 
-                    cards => cards.OfType<TreasureCardModel>().Where(card => card.Cost <= trashedCard.Cost + 3)
+                    cards => cards.OfType<ITreasureCard>().Where(card => card.Cost <= trashedCard.Cost + 3)
                 );
 
                 host.Gain(gainedCard.Name, Zone.Hand);

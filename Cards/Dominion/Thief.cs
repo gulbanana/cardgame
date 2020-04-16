@@ -20,12 +20,12 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
-            var trashed = new List<CardModel>();
+            var trashed = new List<ICard>();
             
             await host.Attack(async player => 
             {
                 var top2 = player.RevealAll(Zone.DeckTop2);
-                var treasures = top2.OfType<TreasureCardModel>();
+                var treasures = top2.OfType<ITreasureCard>();
                 if (treasures.Any())
                 {
                     if (treasures.Count() == 1 || treasures.First().Equals(treasures.Last()))

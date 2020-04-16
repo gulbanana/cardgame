@@ -10,7 +10,7 @@
         Game.ExecutingActions == 0;
     var potentialMoney = Game.Hands[Game.ActivePlayer]
         .Select(All.Cards.ByName)
-        .OfType<Cards.TreasureCardModel>()
+        .OfType<ITreasureCard>()
         .Select(card => card.Value)
         .Sum();
 }

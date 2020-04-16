@@ -20,9 +20,9 @@
             Id = Model.Name;
         }
 
-        if (Model is Cards.ActionCardModel kingdomCard)
+        if (Model is IActionCard actionCard)
         {
-            subType = kingdomCard.SubType;
+            subType = actionCard.SubType;
         }
     }
 

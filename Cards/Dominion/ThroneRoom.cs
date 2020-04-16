@@ -15,7 +15,7 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
-            var doubledCard = await host.SelectCard("Choose an Action card.", Zone.Hand, cards => cards.OfType<ActionCardModel>());
+            var doubledCard = await host.SelectCard("Choose an Action card.", Zone.Hand, cards => cards.OfType<IActionCard>());
             if (doubledCard != null)
             {
                 host.PlayAction(doubledCard, Zone.Hand);
