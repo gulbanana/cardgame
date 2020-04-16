@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Cardgame.Hosting;
-using Cardgame.Protocol;
+using Cardgame.Client;
 
 namespace Cardgame
 {

@@ -3,7 +3,7 @@ using System.Text.Json;
 using Cardgame.API;
 using Cardgame.Shared;
 
-namespace Cardgame.Backend
+namespace Cardgame.Server
 {
     internal static class AI
     {

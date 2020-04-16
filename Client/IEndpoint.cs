@@ -1,6 +1,6 @@
 using System;
 
-namespace Cardgame.Protocol
+namespace Cardgame.Client
 {
     public interface IEndpoint<T>
     {        

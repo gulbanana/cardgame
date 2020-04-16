@@ -1,4 +1,4 @@
-namespace Cardgame
+namespace Cardgame.API
 {
     public enum Zone
     {

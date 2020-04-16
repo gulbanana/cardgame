@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Cardgame.Protocol;
+using Cardgame.Client;
 
 namespace Cardgame.Hosting
 {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Cardgame.API;
 using Cardgame.Shared;
 
-namespace Cardgame.Backend
+namespace Cardgame.Server
 {
     internal class ActionHost : IActionHost
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Cardgame.Backend
+namespace Cardgame.Server
 {
     // why?
     public class CommandException : Exception

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Cardgame.Backend
+namespace Cardgame.Server
 {
     internal static class ListExtensions
     {

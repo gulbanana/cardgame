@@ -1,29 +1,37 @@
-in theory, this app could be split into client and server pieces with a WASM frontend. the components are strictly layered:
+In theory, this app could be split into client and server pieces with a WASM frontend. The components are strictly layered:
 
-                     +---------+
-                     |  Main   +-
-                     +---------+ \            
-                   /              \
-                  v                \
-                 /                  v
-     +---------+     +---------+     \
-     |  Pages  |     | Protocol+-<    \ 
-     +----+----+     +----+----+  \    |
-          |        /      |        \ +-+-------+
-          v       ^       v         -+ Hosting |
-          |      /        |          +----+----+
-     +----+----+     +----+----+          |
-     |  Views  |     |  Shared |          v
-     +----+----+     |----+----+          |
-          |      \        |          +----+----+
-          v       v       ^         -+ Backend |
-          |        \      |        / +---------+           
-     +----+----+     +----+----+  /
-     | Widgets |     |   All   +-<
-     +---------+     +----+----+
+                     ♣---------♣
+                     |  Main   |
+                     ♣---------♣            
+                   /             \
+                  v               v
+                 /                 \
+     ♦---------♦     ♠---------♠     ♥---------♥
+     |  Pages  |     |  Client +--<--+ Hosting |
+     ♦----+----♦     ♠----+----♠     ♥----+----♥
+          |        /      |               |
+          v       ^       v               v
+          |      /        |               |
+     ♦----+----♦     ♠----+----♠     ♥----+----♥
+     |  Views  |     | Shared  |     | Server  |
+     ♦----+----♦     ♠----+----♠     ♥---------♥
+          |      \        |        /
+          v       v       ^       v
+          |        \      |      /
+     ♦----+----♦     ♠----+----♠ 
+     | Widgets |     |   All   |
+     ♦---------♦     ♠----+----♠
                           |      
                           v      
                           |         
-                     +----+----+     +---------+
-                     |   API   +--<--+  Cards  |
-                     +---------+     +---------+
+                     ♠----+----♠
+                     |   API   |
+                     ♠----+----♠
+                          |
+                          ^
+♣ composition             |
+♦ frontend           ♠----+----♠
+♥ backend            |  Cards  |
+♠ common             ♠---------♠
+
+For a client-server version, replace the Hosting namespace which uses shared-memory with alternate implementations of the Client namespace that communicate with Server over an API.

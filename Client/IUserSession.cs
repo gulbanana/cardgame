@@ -1,4 +1,4 @@
-namespace Cardgame.Protocol
+namespace Cardgame.Client
 {
     // theoretical client-server separation point
     public interface IUserSession
