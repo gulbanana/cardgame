@@ -37,7 +37,7 @@ namespace Cardgame
                 }
                 catch (CommandException e)
                 {
-                    LogEvent($"<error>Error: {e.Message}</error>");
+                    LogEvent($"<error>{username}: {e.Message}</error>");
                 }
             }
         }
@@ -415,10 +415,21 @@ namespace Cardgame
             if (!isDemo && bots.Contains(Model.ActivePlayer))
             {
                 var botPlayer = Model.ActivePlayer;
-                while (botPlayer == Model.ActivePlayer)
-                {
-                    var command = AI.PlayTurn(Model);
-                    Execute(botPlayer, command);
+                while (botPlayer == Model.ActivePlayer && !Model.IsFinished)
+                {                    
+                    try
+                    {
+                        var command = AI.PlayTurn(Model);
+                        ExecuteImpl(botPlayer, command);
+                    }
+                    catch (Exception e)
+                    {
+                        LogEvent($"<error>{Model.ActivePlayer}: {e.Message}</error>");
+                        
+                        EndTurn();
+                        BeginTurn();
+                        break;
+                    }
                 }
             }
         }
