@@ -3,9 +3,8 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Moat : ActionCardModel
+    public class Moat : ReactionCardModel
     {
-        public override string SubType => "Reaction";
         public override TriggerType ReactionTrigger => TriggerType.Attack;
         public override string Art => "dom-moat";
         public override int Cost => 2;        

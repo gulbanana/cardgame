@@ -8,7 +8,6 @@ namespace Cardgame.Cards
     {
         public override CardType Type => CardType.Action;
         public virtual string SubType => null;
-        public virtual TriggerType ReactionTrigger => TriggerType.None;
         
         public Task ExecuteActionAsync(IActionHost host) => ActAsync(host);
 
@@ -19,9 +18,5 @@ namespace Cardgame.Cards
         } 
 
         protected virtual void Act(IActionHost host) => throw new NotImplementedException($"Card not implemented.");
-
-        public Task<Reaction> ExecuteReactionAsync(IActionHost host, string trigger) => ReactAsync(host, trigger);
-
-        protected virtual Task<Reaction> ReactAsync(IActionHost host, string trigger) => throw new NotImplementedException($"No reaction implemented.");
     }
 }

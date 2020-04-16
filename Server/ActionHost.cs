@@ -372,19 +372,18 @@ namespace Cardgame.Server
 
                 if (!benign)
                 {
-                    var hand = target.GetHand().ToList();
-                    var reactions = hand
-                        .OfType<IActionCard>()
-                        .Where(card => card.ReactionTrigger == TriggerType.Attack);
+                    var reactions = target.GetHand()
+                        .OfType<IReactor>()
+                        .ToList();
 
                     while (reactions.Any())
                     {
                         var potentialReaction = reactions.First();
-                        hand.RemoveAt(hand.FindIndex(e => e.Equals(potentialReaction.Name)));
+                        reactions.Remove(potentialReaction);
 
                         var targetHost = new ActionHost(1, engine, target.Player);
-                        var reaction = await potentialReaction.ExecuteReactionAsync(targetHost, Player);          
-                        if (reaction.Type == ReactionType.Replace)
+                        var reaction = await potentialReaction.ExecuteReactionAsync(targetHost, TriggerType.Attack, Player);
+                        if (reaction.Type == ReactionType.Replace || reaction.Type == ReactionType.Before)
                         {
                             engine.LogPartialEvent($@"<spans>
                                 <player>{target.Player}</player>
@@ -392,8 +391,8 @@ namespace Cardgame.Server
                                 <card suffix='!'>{potentialReaction.Name}</card>
                             </spans>");
 
-                            replaced = true;
                             reaction.Enact(targetHost, this);
+                            replaced = reaction.Type == ReactionType.Replace;
                         }
                     }
                 }
