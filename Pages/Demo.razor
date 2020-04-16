@@ -12,7 +12,12 @@
         {
             Session.Login($"demo");
         }
-        Endpoint.CreateDemoGame($"demo-{id}");
+
+        var game = Endpoint.FindGame($"demo-{id}");
+
+        Session.CreateBot("bot1");
+        game.Execute("bot1", new JoinGameCommand { Seq = 0, IsBot = true });
+        game.Execute("demo", new JoinGameCommand { Seq = 1 });
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -21,4 +26,4 @@
     }
 }
 
-<p>Loading demo game...</p>
+<p>Loading empty game...</p>
