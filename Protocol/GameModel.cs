@@ -16,6 +16,7 @@ namespace Cardgame
 
         // game config
         public CardSet KingdomSet { get; set; }
+        public string KingdomPreset { get; set; }
         public string[] KingdomCards { get; set; }         
 
         // game state

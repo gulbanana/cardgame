@@ -19,6 +19,7 @@ namespace Cardgame
     public class StartGameCommand : ClientCommand 
     { 
         public CardSet KingdomSet { get; set; }
+        public string KingdomPreset { get; set; }
     }
 
     public class ChatCommand : ClientCommand 

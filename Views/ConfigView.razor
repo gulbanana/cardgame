@@ -1,15 +1,16 @@
-@using System.Text.RegularExpressions
 @inject IUserSession Session
 @code {
     [Parameter] public GameModel Game { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; } 
     CardSet configSet;
+    string configPreset;
 
     private void OnStartGame()
     {
         Dispatch(new StartGameCommand
         {
-            KingdomSet = configSet
+            KingdomSet = configSet,
+            KingdomPreset = configPreset
         });
     }
 }
@@ -27,15 +28,23 @@
 
     <div>
         <h3>Game setup</h3>
-        Card set:
-        <select disabled="@(!Game.Players.Contains(Session.Username))" @bind="configSet">
-            @foreach (var member in System.Enum.GetNames(typeof(CardSet)))
-            {
-                var caption = Strings.TitleCase(member);
-                <option value="@member">@caption</option>
-            }
-        </select>
-        <br/>
+        <div class="config-view__sets">
+            <span>Card sets:</span>
+            <select disabled="@(!Game.Players.Contains(Session.Username))" @bind="configSet">
+                @foreach (var member in System.Enum.GetNames(typeof(CardSet)))
+                {
+                    var caption = Strings.TitleCase(member).Replace("1st", " (first edition)");
+                    <option value="@member">@caption</option>
+                }
+            </select>
+            <span>Preset:</span>
+            <select disabled="@(!Game.Players.Contains(Session.Username))" @bind="configPreset">
+                @foreach (var preset in Cards.Presets.BySet[configSet].Keys)
+                {
+                    <option @key="preset" value="@preset">@preset</option>
+                }
+            </select>
+        </div>
     </div>
 
     <div>

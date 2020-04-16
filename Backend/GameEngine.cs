@@ -110,6 +110,8 @@ namespace Cardgame
                     if (Model.Players.Length < 2) throw new CommandException("Not enough players.");
 
                     Model.KingdomSet = startGame.KingdomSet;
+                    Model.KingdomPreset = startGame.KingdomPreset ?? Cards.Presets.BySet[Model.KingdomSet].Keys.First();
+
                     BeginGame();
                     BeginTurn();
 
@@ -302,26 +304,7 @@ namespace Cardgame
             var rng = new Random();
 
             // first, try to apply config
-            Model.KingdomCards = Model.KingdomSet switch 
-            {
-                CardSet.FirstGame => new[]
-                { "Cellar", "Market", "Militia", "Mine", "Moat", "Remodel", "Smithy", "Village", "Woodcutter", "Workshop" },
-
-                CardSet.BigMoney => new[] 
-                { "Adventurer", "Bureaucrat", "Chancellor", "Chapel", "Feast", "Laboratory", "Market", "Mine", "Moneylender", "ThroneRoom" },
-
-                CardSet.Interaction => new[] 
-                { "Bureaucrat", "Chancellor", "CouncilRoom", "Festival", "Library", "Militia", "Moat", "Spy", "Thief", "Village" },
-
-                CardSet.SizeDistortion => new[] 
-                { "Cellar", "Chapel", "Feast", "Gardens", "Laboratory", "Thief", "Village", "Witch", "Woodcutter", "Workshop" },
-
-                CardSet.VillageSquare => new[] 
-                { "Bureaucrat", "Cellar", "Festival", "Library", "Market", "Remodel", "Smithy", "ThroneRoom", "Village", "Woodcutter" },
-
-                _ => throw new CommandException($"Unknown card set {Model.KingdomSet}")
-            };
-
+            Model.KingdomCards = Cards.Presets.BySet[Model.KingdomSet][Model.KingdomPreset];
             var byCost = Model.KingdomCards.Select(Cards.All.ByName).OrderBy(card => card.Cost).Select(card => card.Name).ToArray();
             Model.KingdomCards[0] = byCost[0];
             Model.KingdomCards[5] = byCost[1];
