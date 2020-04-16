@@ -49,7 +49,7 @@ namespace Cardgame.Server
         {
             if (!ids.Any())
             {
-                return "<run>nothing</run>";
+                return terminal ? "<run>nothing.</run>" : "<run>nothing</run>";
             }
 
             return string.Join(Environment.NewLine, ids.Select((id, ix) => 
