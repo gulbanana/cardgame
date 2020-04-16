@@ -1,3 +1,5 @@
+using Cardgame.Protocol;
+
 namespace Cardgame.Hosting
 {
     public class BotUserSession : IUserSession

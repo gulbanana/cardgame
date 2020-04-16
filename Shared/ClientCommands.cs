@@ -1,4 +1,4 @@
-namespace Cardgame
+namespace Cardgame.Shared
 {
     public abstract class ClientCommand 
     { 

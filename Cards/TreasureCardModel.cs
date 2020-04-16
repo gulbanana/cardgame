@@ -1,6 +1,8 @@
+using Cardgame.API;
+
 namespace Cardgame.Cards
 {
-    public abstract class TreasureCardModel : CardModel
+    public abstract class TreasureCardModel : CardModel, ITreasureCard
     {
         public override CardType Type => CardType.Treasure;
         public override string Text => null;

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Cardgame.Shared;
 
-namespace Cardgame.Cards
+namespace Cardgame.All
 {
     public static class Presets
     {

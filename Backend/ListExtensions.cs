@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Cardgame
+namespace Cardgame.Backend
 {
-    public static class ListExtensions
+    internal static class ListExtensions
     {
         public static void Shuffle(this List<string> source)
         {
@@ -18,17 +18,6 @@ namespace Cardgame
                 source.RemoveAt(i);
             }
             source.AddRange(temp);
-        }
-
-        public static IEnumerable<T> Without<T>(this IEnumerable<T> source, IEnumerable<T> removals)
-        {
-            var all = source.ToList();
-            foreach (var element in removals)
-            {
-                var index = all.FindIndex(e => element.Equals(e));
-                all.RemoveAt(index);
-            }
-            return all;
         }
     }
 }

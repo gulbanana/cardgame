@@ -71,9 +71,9 @@
         break;
 
     case TextModel.Card card:
-        var model = Cards.All.ByName(card.Name);
+        var model = All.Cards.ByName(card.Name);
         var subType = (model as Cards.ActionCardModel)?.SubType;
-        var colorType = Cards.All.GetColor(model.Type, subType);
+        var colorType = All.Cards.GetColor(model.Type, subType);
         <WithTooltip>
             <Content>
                 @card.Prefix<span style="background: var(--card-type-@(colorType))">@Strings.TitleCase(card.Name)</span>@card.Suffix

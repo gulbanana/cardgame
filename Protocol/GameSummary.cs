@@ -1,4 +1,4 @@
-namespace Cardgame
+namespace Cardgame.Protocol
 {
     public class GameSummary
     {

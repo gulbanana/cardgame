@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using Cardgame.Backend;
+using Cardgame.Protocol;
+using Cardgame.Shared;
 
 namespace Cardgame.Hosting
 {

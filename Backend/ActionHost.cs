@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cardgame.API;
+using Cardgame.Shared;
 
-namespace Cardgame
+namespace Cardgame.Backend
 {
     internal class ActionHost : IActionHost
     {
@@ -109,9 +111,9 @@ namespace Cardgame
             </spans>");
         }
 
-        Cards.CardModel[] IActionHost.GetHand()
+        ICard[] IActionHost.GetHand()
         {
-            return engine.GetCards(Player, Zone.Hand, NoteReshuffle).Select(Cards.All.ByName).ToArray();
+            return engine.GetCards(Player, Zone.Hand, NoteReshuffle).Select(All.Cards.ByName).ToArray();
         }
 
         void IActionHost.AddActions(int n)
@@ -147,7 +149,7 @@ namespace Cardgame
             </spans>");
         }
 
-        Cards.CardModel[] IActionHost.DrawCards(int n)
+        ICard[] IActionHost.DrawCards(int n)
         {
             var drawn = new List<string>();
 
@@ -176,7 +178,7 @@ namespace Cardgame
                 <run>{(n == 1 ? "a card." : $"{n} cards.")}</run>
             </spans>");
 
-            return drawn.Select(Cards.All.ByName).ToArray();
+            return drawn.Select(All.Cards.ByName).ToArray();
         }
 
         void IActionHost.Discard(string[] cards, Zone from)
@@ -284,7 +286,7 @@ namespace Cardgame
             </spans>");        
         }
 
-        Cards.CardModel[] IActionHost.RevealAll(Zone source)
+        ICard[] IActionHost.RevealAll(Zone source)
         {
             var sourceCards = engine.GetCards(Player, source, NoteReshuffle);
 
@@ -294,7 +296,7 @@ namespace Cardgame
                 {LogCardList(sourceCards)}
             </spans>");
 
-            return sourceCards.Select(Cards.All.ByName).ToArray();
+            return sourceCards.Select(All.Cards.ByName).ToArray();
         }
         
         void IActionHost.RevealAndMove(string id, Zone from, Zone to)
@@ -310,7 +312,7 @@ namespace Cardgame
             </spans>");   
         }
 
-        void IActionHost.PlayAction(Cards.ActionCardModel card, Zone from)
+        void IActionHost.PlayAction(IActionCard card, Zone from)
         {
             engine.LogPartialEvent($@"<spans>
                 <indent level='{level}' />
@@ -321,11 +323,11 @@ namespace Cardgame
             engine.BeginAction(level + 1, Player, card, from);
         }
 
-        async Task<T[]> IActionHost.SelectCards<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter, int? min, int? max)
+        async Task<T[]> IActionHost.SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max)
         {            
             var sourceCards = engine.GetCards(Player, source, NoteReshuffle);
 
-            var filteredCards = filter(sourceCards.Select(Cards.All.ByName));
+            var filteredCards = filter(sourceCards.Select(All.Cards.ByName));
             if (!filteredCards.Any())
             {
                 return Array.Empty<T>();
@@ -343,7 +345,7 @@ namespace Cardgame
                 }
             );
 
-            return ids.Select(Cards.All.ByName).Cast<T>().ToArray();
+            return ids.Select(All.Cards.ByName).Cast<T>().ToArray();
         }
 
         Task<bool> IActionHost.YesNo(string prompt, string message)
@@ -372,7 +374,7 @@ namespace Cardgame
                 {
                     var hand = target.GetHand().ToList();
                     var reactions = hand
-                        .OfType<Cards.ActionCardModel>()
+                        .OfType<IActionCard>()
                         .Where(card => card.ReactionTrigger == TriggerType.Attack);
 
                     while (reactions.Any())

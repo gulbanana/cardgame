@@ -1,4 +1,6 @@
-namespace Cardgame
+using Cardgame.Shared;
+
+namespace Cardgame.Protocol
 {
     // theoretical client-server separation point
     public interface IGame : IEndpoint<GameModel>

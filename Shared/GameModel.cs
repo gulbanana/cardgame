@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Cardgame
+namespace Cardgame.Shared
 {
     public class GameModel
     {

@@ -1,6 +1,8 @@
+using Cardgame.API;
+
 namespace Cardgame.Cards
 {
-    public abstract class CardModel
+    public abstract class CardModel : ICard
     {
         public string Name { get; protected set; }
         public abstract CardType Type { get; }
@@ -15,7 +17,7 @@ namespace Cardgame.Cards
 
         public override bool Equals(object obj)
         {
-            return obj is CardModel other && this.Name == other.Name;
+            return obj is ICard other && this.Name == other.Name;
         }
 
         public override int GetHashCode()

@@ -112,7 +112,7 @@
                 {
                     foreach (var id in Model.Hands[PlayerOrSpectatee])
                     {
-                        var card = Cards.All.ByName(@id);
+                        var card = All.Cards.ByName(@id);
                         var isEnabled = IsActivePlayer &&
                             !Model.IsFinished &&
                             Model.ExecutingActions == 0 &&

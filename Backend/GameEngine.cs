@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Cardgame.API;
+using Cardgame.Shared;
 
-namespace Cardgame
+namespace Cardgame.Backend
 {
     internal class GameEngine
     {
@@ -110,7 +112,7 @@ namespace Cardgame
                     if (Model.Players.Length < 2) throw new CommandException("Not enough players.");
 
                     Model.KingdomSet = startGame.KingdomSet;
-                    Model.KingdomPreset = startGame.KingdomPreset ?? Cards.Presets.BySet[Model.KingdomSet].Keys.First();
+                    Model.KingdomPreset = startGame.KingdomPreset ?? All.Presets.BySet[Model.KingdomSet].Keys.First();
 
                     BeginGame();
                     BeginTurn();
@@ -121,7 +123,7 @@ namespace Cardgame
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");
-                    if (!Cards.All.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
+                    if (!All.Cards.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
 
                     PlayCard(username, playCard.Id);
 
@@ -131,7 +133,7 @@ namespace Cardgame
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
 
-                    foreach (var card in Model.Hands[username].Select(Cards.All.ByName).OfType<Cards.TreasureCardModel>().ToList())
+                    foreach (var card in Model.Hands[username].Select(All.Cards.ByName).OfType<ITreasureCard>().ToList())
                     {
                         PlayCard(username, card.Name);
                     }
@@ -183,7 +185,7 @@ namespace Cardgame
 
         private void BuyCard(string player, string id)
         {
-            var boughtCard = Cards.All.ByName(id);
+            var boughtCard = All.Cards.ByName(id);
             if (boughtCard.Cost > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
 
             Model.Supply[id]--;
@@ -206,10 +208,10 @@ namespace Cardgame
                 <card suffix='.'>{id}</card>
             </spans>");
 
-            var playedCard = Cards.All.ByName(id);                    
+            var playedCard = All.Cards.ByName(id);                    
             switch (playedCard)
             {                    
-                case Cards.ActionCardModel action:
+                case IActionCard action:
                     if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
                     if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
 
@@ -218,7 +220,7 @@ namespace Cardgame
 
                     break;
                 
-                case Cards.TreasureCardModel treasure:
+                case ITreasureCard treasure:
                     MoveCard(player, id, Zone.Hand, Zone.InPlay);
 
                     if (!Model.BuyPhase)
@@ -235,7 +237,7 @@ namespace Cardgame
             }
         }
 
-        internal void BeginAction(int indentLevel, string player, Cards.ActionCardModel card, Zone from)
+        internal void BeginAction(int indentLevel, string player, IActionCard card, Zone from)
         {
             MoveCard(player, card.Name, from, Zone.InPlay);            
 
@@ -331,8 +333,8 @@ namespace Cardgame
             var rng = new Random();
 
             // first, try to apply config
-            Model.KingdomCards = Cards.Presets.BySet[Model.KingdomSet][Model.KingdomPreset];
-            var byCost = Model.KingdomCards.Select(Cards.All.ByName).OrderBy(card => card.Cost).Select(card => card.Name).ToArray();
+            Model.KingdomCards = All.Presets.BySet[Model.KingdomSet][Model.KingdomPreset];
+            var byCost = Model.KingdomCards.Select(All.Cards.ByName).OrderBy(card => card.Cost).Select(card => card.Name).ToArray();
             Model.KingdomCards[0] = byCost[0];
             Model.KingdomCards[5] = byCost[1];
             Model.KingdomCards[1] = byCost[2];
@@ -368,7 +370,7 @@ namespace Cardgame
                 { "Gold", 30 },
                 { "Curse", (Model.Players.Length - 1) * 10 },
             };
-            foreach (var card in Model.KingdomCards.Select(Cards.All.ByName))
+            foreach (var card in Model.KingdomCards.Select(All.Cards.ByName))
             {
                 Model.Supply[card.Name] = card.Type == CardType.Victory ? victoryCount : 10;
             }
@@ -400,8 +402,8 @@ namespace Cardgame
             Model.MoneyRemaining = isDemo ? 10 : 0;
 
             Model.BuyPhase = !Model.Hands[Model.ActivePlayer]
-                .Select(Cards.All.ByName)
-                .OfType<Cards.ActionCardModel>()
+                .Select(All.Cards.ByName)
+                .OfType<IActionCard>()
                 .Any();
 
             LogEvent($@"<block>
@@ -503,7 +505,7 @@ namespace Cardgame
                     builder.AppendLine($"<spans><player>{player}</player><run>scored:</run></spans>");                    
                     var total = 0;
                     var dominion = Model.Decks[player].Concat(Model.Hands[player]).Concat(Model.Discards[player]).ToArray();
-                    var victoryCards = dominion.Select(Cards.All.ByName).OfType<Cards.VictoryCardModel>().GroupBy(card => card.Name);
+                    var victoryCards = dominion.Select(All.Cards.ByName).OfType<IVictoryCard>().GroupBy(card => card.Name);
                     foreach (var group in victoryCards)
                     {
                         var exemplar = group.First();
@@ -514,7 +516,7 @@ namespace Cardgame
                         builder.AppendLine($"<run>x{group.Count()}: {score} VP</run>");
                         builder.AppendLine("</spans>");
                     }
-                    var curseCards = dominion.Select(Cards.All.ByName).OfType<Cards.Base.Curse>();
+                    var curseCards = dominion.Select(All.Cards.ByName).OfType<Cards.Base.Curse>();
                     if (curseCards.Any())
                     {
                         var score = curseCards.Count();
@@ -536,14 +538,14 @@ namespace Cardgame
         private void SkipBuyIfNoCash()
         {
             var totalRemaining = Model.MoneyRemaining + Model.Hands[Model.ActivePlayer]
-                .Select(Cards.All.ByName)
-                .OfType<Cards.TreasureCardModel>()
+                .Select(All.Cards.ByName)
+                .OfType<ITreasureCard>()
                 .Select(card => card.Value)
                 .Sum();
 
             var minimumCost = Model.Supply
                 .Where(kvp => kvp.Value > 0)
-                .Select(kvp => Cards.All.ByName(kvp.Key).Cost)
+                .Select(kvp => All.Cards.ByName(kvp.Key).Cost)
                 .Min();
 
             if (totalRemaining < minimumCost)

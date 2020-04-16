@@ -1,3 +1,5 @@
+using Cardgame.API;
+
 namespace Cardgame.Cards.Base
 {
     public class Curse : CardModel

@@ -1,7 +1,8 @@
 using System;
 
-namespace Cardgame
+namespace Cardgame.Backend
 {
+    // why?
     public class CommandException : Exception
     {
         public CommandException(string message) : base(message) { }

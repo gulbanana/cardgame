@@ -1,8 +1,8 @@
-namespace Cardgame
+namespace Cardgame.API
 {
     public enum TriggerType
     {
         None,
-        Attack
+        Attack,
     }
 }

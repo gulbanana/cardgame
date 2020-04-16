@@ -1,18 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cardgame.API;
 
-namespace Cardgame.Cards
+namespace Cardgame.All
 {
-    public static class All
+    public static class Cards
     {
-        private static readonly Dictionary<string, CardModel> byName;
+        private static readonly Dictionary<string, ICard> byName;
 
-        static All()
+        static Cards()
         {
-            byName = new Dictionary<string, CardModel>();
+            byName = new Dictionary<string, ICard>();
 
-            var baseType = typeof(CardModel);
-            var types = typeof(All).Assembly.GetTypes()
+            var baseType = typeof(ICard);
+            var types = typeof(Cards).Assembly.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
                 .Where(t => baseType.IsAssignableFrom(t));
@@ -20,11 +21,11 @@ namespace Cardgame.Cards
             foreach (var t in types)
             {
                 var o = t.GetConstructor(new System.Type[0]).Invoke(new object[0]);
-                byName[t.Name] = (CardModel)o;
+                byName[t.Name] = (ICard)o;
             }
         }
 
-        public static CardModel ByName(string id)
+        public static ICard ByName(string id)
         {
             if (byName.ContainsKey(id))
             {

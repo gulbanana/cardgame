@@ -11,8 +11,8 @@
         !Game.IsFinished &&
         Game.ExecutingActions == 0 &&
         Game.BuysRemaining > 0 &&
-        Cards.All.Exists(Id) &&
-        Cards.All.ByName(Id).Cost <= Game.MoneyRemaining;
+        All.Cards.Exists(Id) &&
+        All.Cards.ByName(Id).Cost <= Game.MoneyRemaining;
     <ActiveCard Id="@Id" 
                 Enabled="isEnabled" 
                 Half="true" 

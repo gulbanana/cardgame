@@ -39,7 +39,7 @@
             </select>
             <span>Preset:</span>
             <select disabled="@(!Game.Players.Contains(Session.Username))" @bind="configPreset">
-                @foreach (var preset in Cards.Presets.BySet[configSet].Keys)
+                @foreach (var preset in All.Presets.BySet[configSet].Keys)
                 {
                     <option @key="preset" value="@preset">@preset</option>
                 }

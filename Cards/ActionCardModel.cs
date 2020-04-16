@@ -1,9 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using Cardgame.API;
 
 namespace Cardgame.Cards
 {
-    public abstract class ActionCardModel : CardModel
+    public abstract class ActionCardModel : CardModel, IActionCard
     {
         public override CardType Type => CardType.Action;
         public virtual string SubType => null;

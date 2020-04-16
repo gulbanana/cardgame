@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cardgame
+namespace Cardgame.API
 {
     public interface IActionHost
     {
         string Player { get; }
         int ShuffleCount { get; }
-        Cards.CardModel[] GetHand();
+        ICard[] GetHand();
 
-        Cards.CardModel[] DrawCards(int n);
+        ICard[] DrawCards(int n);
         void AddActions(int n);
         void AddBuys(int n);
         void AddMoney(int n);
@@ -22,12 +22,12 @@ namespace Cardgame
         void GainFrom(string[] cards, Zone from);
         void Draw(string name);
         
-        Cards.CardModel[] RevealAll(Zone from);
+        ICard[] RevealAll(Zone from);
         void RevealAndMove(string card, Zone from, Zone to);
 
-        void PlayAction(Cards.ActionCardModel card, Zone from);
+        void PlayAction(IActionCard card, Zone from);
         void DiscardEntireDeck();
-        Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter, int? min, int? max) where T : Cards.CardModel;
+        Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max) where T : ICard;
         Task<bool> YesNo(string prompt, string message);
 
         Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool benign = false);
@@ -41,12 +41,12 @@ namespace Cardgame
             host.Trash(new[] { card }, from);
         }
 
-        public static void Trash(this IActionHost host, Cards.CardModel[] cards, Zone from)
+        public static void Trash(this IActionHost host, ICard[] cards, Zone from)
         {
             host.Trash(cards.Select(card => card.Name).ToArray(), from);
         }
 
-        public static void Trash(this IActionHost host, Cards.CardModel card, Zone from)
+        public static void Trash(this IActionHost host, ICard card, Zone from)
         {
             host.Trash(new[] { card.Name }, from);
         }
@@ -56,12 +56,12 @@ namespace Cardgame
             host.Trash(new[] { card }, Zone.Hand);
         }
 
-        public static void Trash(this IActionHost host, Cards.CardModel[] cards)
+        public static void Trash(this IActionHost host, ICard[] cards)
         {
             host.Trash(cards.Select(card => card.Name).ToArray(), Zone.Hand);
         }
 
-        public static void Trash(this IActionHost host, Cards.CardModel card)
+        public static void Trash(this IActionHost host, ICard card)
         {
             host.Trash(new[] { card.Name }, Zone.Hand);
         }
@@ -83,22 +83,22 @@ namespace Cardgame
             host.Discard(new[] { card }, Zone.Hand);
         }
 
-        public static void Discard(this IActionHost host, Cards.CardModel[] cards, Zone from)
+        public static void Discard(this IActionHost host, ICard[] cards, Zone from)
         {
             host.Discard(cards.Select(card => card.Name).ToArray(), from);
         }
 
-        public static void Discard(this IActionHost host, Cards.CardModel card, Zone from)
+        public static void Discard(this IActionHost host, ICard card, Zone from)
         {
             host.Discard(card.Name, from);
         }
 
-        public static void Discard(this IActionHost host, Cards.CardModel[] cards)
+        public static void Discard(this IActionHost host, ICard[] cards)
         {
             host.Discard(cards.Select(card => card.Name).ToArray(), Zone.Hand);
         }
 
-        public static void Discard(this IActionHost host, Cards.CardModel card)
+        public static void Discard(this IActionHost host, ICard card)
         {
             host.Discard(new[]{ card.Name }, Zone.Hand);
         }
@@ -110,104 +110,104 @@ namespace Cardgame
             host.Gain(card, Zone.Discard);
         }
 
-        public static void Gain(this IActionHost host, Cards.CardModel card, Zone to)
+        public static void Gain(this IActionHost host, ICard card, Zone to)
         {
             host.Gain(card.Name, to);
         }
 
-        public static void Gain(this IActionHost host, Cards.CardModel card)
+        public static void Gain(this IActionHost host, ICard card)
         {
             host.Gain(card.Name, Zone.Discard);
         }
 
-        public static void GainFrom(this IActionHost host, Cards.CardModel[] cards, Zone from)
+        public static void GainFrom(this IActionHost host, ICard[] cards, Zone from)
         {
             host.GainFrom(cards.Select(card => card.Name).ToArray(), from);
         }
         #endregion
 
-        public static void PlayAction(this IActionHost host, Cards.ActionCardModel card)
+        public static void PlayAction(this IActionHost host, IActionCard card)
         {
             host.PlayAction(card, Zone.Hand);
         }
 
         #region SelectCards
         // no numbers
-        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel
+        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter) where T : ICard
         {
             return host.SelectCards(prompt, source, filter, null, null);
         }
 
-        public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, Zone source, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel
+        public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter) where T : ICard
         {
             var cards = await host.SelectCards(prompt, source, filter, 1, 1);
             return cards.Single();
         }
 
         // no filter
-        public static Task<Cards.CardModel[]> SelectCards(this IActionHost host, string prompt, Zone source)
+        public static Task<ICard[]> SelectCards(this IActionHost host, string prompt, Zone source)
         {
-            return host.SelectCards<Cards.CardModel>(prompt, source, x => x, null, null);
+            return host.SelectCards<ICard>(prompt, source, x => x, null, null);
         }
 
-        public static Task<Cards.CardModel[]> SelectCards(this IActionHost host, string prompt, Zone source, int min, int max)
+        public static Task<ICard[]> SelectCards(this IActionHost host, string prompt, Zone source, int min, int max)
         {
-            return host.SelectCards<Cards.CardModel>(prompt, source, x => x, min, max);
+            return host.SelectCards<ICard>(prompt, source, x => x, min, max);
         }
 
-        public static async Task<Cards.CardModel> SelectCard(this IActionHost host, string prompt, Zone source)
+        public static async Task<ICard> SelectCard(this IActionHost host, string prompt, Zone source)
         {
-            var cards = await host.SelectCards<Cards.CardModel>(prompt, source, x => x, 1, 1);
+            var cards = await host.SelectCards<ICard>(prompt, source, x => x, 1, 1);
             return cards.Single();
         }
 
         // no zone
-        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel
+        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, Func<IEnumerable<ICard>, IEnumerable<T>> filter) where T : ICard
         {
             return host.SelectCards<T>(prompt, Zone.Hand, filter, null, null);
         }
 
-        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, IEnumerable<T> choices) where T : Cards.CardModel
+        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, IEnumerable<T> choices) where T : ICard
         {
             return host.SelectCards<T>(prompt, Zone.Hand, _ => choices, null, null);
         }
 
-        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter, int min, int max) where T : Cards.CardModel
+        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int min, int max) where T : ICard
         {
             return host.SelectCards<T>(prompt, Zone.Hand, filter, min, max);
         }
 
-        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, IEnumerable<T> choices, int min, int max) where T : Cards.CardModel
+        public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, IEnumerable<T> choices, int min, int max) where T : ICard
         {
             return host.SelectCards<T>(prompt, Zone.Hand, _ => choices, min, max);
         }
 
-        public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, Func<IEnumerable<Cards.CardModel>, IEnumerable<T>> filter) where T : Cards.CardModel
+        public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, Func<IEnumerable<ICard>, IEnumerable<T>> filter) where T : ICard
         {
             var cards = await host.SelectCards<T>(prompt, Zone.Hand, filter, 1, 1);
             return cards.Single();
         }
 
-        public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, IEnumerable<T> choices) where T : Cards.CardModel
+        public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, IEnumerable<T> choices) where T : ICard
         {
             var cards = await host.SelectCards<T>(prompt, Zone.Hand, _ => choices, 1, 1);
             return cards.Single();
         }
 
         // no filter or zone
-        public static Task<Cards.CardModel[]> SelectCards(this IActionHost host, string prompt)
+        public static Task<ICard[]> SelectCards(this IActionHost host, string prompt)
         {
-            return host.SelectCards<Cards.CardModel>(prompt, Zone.Hand, x => x, null, null);
+            return host.SelectCards<ICard>(prompt, Zone.Hand, x => x, null, null);
         }
 
-        public static Task<Cards.CardModel[]> SelectCards(this IActionHost host, string prompt, int min, int max)
+        public static Task<ICard[]> SelectCards(this IActionHost host, string prompt, int min, int max)
         {
-            return host.SelectCards<Cards.CardModel>(prompt, Zone.Hand, x => x, min, max);
+            return host.SelectCards<ICard>(prompt, Zone.Hand, x => x, min, max);
         }
 
-        public static async Task<Cards.CardModel> SelectCard(this IActionHost host, string prompt)
+        public static async Task<ICard> SelectCard(this IActionHost host, string prompt)
         {
-            var cards = await host.SelectCards<Cards.CardModel>(prompt, Zone.Hand, x => x, 1, 1);
+            var cards = await host.SelectCards<ICard>(prompt, Zone.Hand, x => x, 1, 1);
             return cards.Single();
         }
         #endregion
