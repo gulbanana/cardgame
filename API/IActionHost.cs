@@ -28,14 +28,19 @@ namespace Cardgame.API
         ICard[] RevealAll(Zone from);
         void RevealAndMove(string card, Zone from, Zone to);                
 
+        void Reorder(string[] cards, Zone @in);
+
         void AddEffect(string effect);
         void RemoveEffect(string effect);
 
-        // interactive actions and user inputs
+        // potentially-interactive actions
         Task PlayCard(string card, Zone from);
         Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool benign = false);
-        Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max) where T : ICard;
+
+        // user inputs
         Task<bool> YesNo(string prompt, string message);
+        Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max) where T : ICard;
+        Task<ICard[]> OrderCards(string prompt, Zone source);        
     }
 
     public static class ActionHostExtensions
@@ -137,6 +142,11 @@ namespace Cardgame.API
             host.PlaceOnDeck(card.Name, from);
         }
         #endregion
+
+        public static void Reorder(this IActionHost host, ICard[] cards, Zone @in)
+        {
+            host.Reorder(cards.Select(card => card.Name).ToArray(), @in);
+        }
 
         public static void PlayCard(this IActionHost host, string card)
         {

@@ -664,8 +664,30 @@ namespace Cardgame.Server
                 Zone.InPlay => Model.PlayedCards.ToArray(),
                 Zone.Supply => Model.KingdomCards.Concat(new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold", "Curse"}).Where(id => Model.Supply[id] > 0).ToArray(),
                 Zone.Trash => Model.Trash.ToArray(),
-                Zone other => throw new CommandException($"Unknown CardSource {other}")
+                Zone other => throw new CommandException($"Unknown Zone {other}")
             };
+        }
+
+        internal void SetCards(string player, string[] cards, Zone destination)
+        {
+            switch (destination)
+            {
+                case Zone.DeckTop1:
+                    Model.Decks[player][0] = cards[0];
+                    break;
+
+                case Zone.DeckTop2:
+                    Model.Decks[player][0] = cards[0];
+                    Model.Decks[player][1] = cards[1];
+                    break;
+
+                case Zone.Discard:
+                    Model.Discards[player] = cards.ToList();
+                    break;
+
+                default:
+                    throw new CommandException($"Unsupported Zone {destination} for reorder");
+            }
         }
 
         internal List<IReactor> GetReactions(string player)

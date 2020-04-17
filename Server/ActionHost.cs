@@ -65,13 +65,17 @@ namespace Cardgame.Server
         {
             switch (from)
             {
-                case Zone.Hand:
-                    return $@"<run>from</run>
+                case Zone.DeckTop2:
+                    return $@"<run>the top two cards of</run>
                     <if you='your' them='their'>{Player}</if>
+                    <run>deck.</run>";
+
+                case Zone.Hand:
+                    return $@"<if you='your' them='their'>{Player}</if>
                     <run>hand.</run>";
 
                 case Zone.Trash:
-                    return $@"<run>from the trash.</run>";
+                    return $@"<run>the trash.</run>";
 
                 default:
                     throw new CommandException($"Unknown zone {from}");
@@ -276,6 +280,7 @@ namespace Cardgame.Server
                 <indent level='{level}' />
                 {LogVerbInitial("gain", "gains", "gaining")}
                 {LogCardList(cards, terminal: false)}
+                <run>from</run>
                 {LogSource(from)}
             </spans>");
         }
@@ -290,7 +295,7 @@ namespace Cardgame.Server
                 <card>{card}</card>
                 <run>onto</run>
                 <if you='your' them='their'>{Player}</if>
-                <run>deck</run>
+                <run>deck from</run>
                 {LogSource(from)}
             </spans>");
         }
@@ -330,6 +335,23 @@ namespace Cardgame.Server
             </spans>");   
         }
 
+        void IActionHost.Reorder(string[] cards, Zone @in)
+        {
+            var existingCards = engine.GetCards(Player, @in, NoteReshuffle);
+            if (existingCards.Length != cards.Length || !existingCards.OrderBy(id => id).SequenceEqual(cards.OrderBy(id => id)))
+            {
+                throw new Exception("reordered cards are not the correct set");
+            }
+
+            engine.SetCards(Player, cards, @in);
+
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{level}' />
+                {LogVerbInitial("reorder", "reorders", "reordering")}
+                {LogSource(@in)}
+            </spans>");
+        }
+
         async Task IActionHost.PlayCard(string card, Zone from)
         {
             engine.LogPartialEvent($@"<spans>
@@ -339,6 +361,16 @@ namespace Cardgame.Server
             </spans>");
 
             await engine.PlayCardAsync(level + 1, Player, card, from);
+        }
+
+        Task<bool> IActionHost.YesNo(string prompt, string message)
+        {
+            return engine.Choose<string, bool>(
+                Player,
+                ChoiceType.YesNo,
+                prompt,
+                message
+            );
         }
 
         async Task<T[]> IActionHost.SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max)
@@ -366,14 +398,18 @@ namespace Cardgame.Server
             return ids.Select(All.Cards.ByName).Cast<T>().ToArray();
         }
 
-        Task<bool> IActionHost.YesNo(string prompt, string message)
+        async Task<ICard[]> IActionHost.OrderCards(string prompt, Zone source)
         {
-            return engine.Choose<string, bool>(
+            var sourceCards = engine.GetCards(Player, source, NoteReshuffle);
+
+            var ids = await engine.Choose<string[], string[]>(
                 Player,
-                ChoiceType.YesNo,
+                ChoiceType.OrderCards,
                 prompt,
-                message
+                sourceCards
             );
+
+            return ids.Select(All.Cards.ByName).ToArray();
         }
 
         async Task IActionHost.Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool benign)

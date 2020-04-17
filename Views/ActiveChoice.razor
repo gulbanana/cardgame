@@ -5,23 +5,33 @@
     [Parameter] public ChoiceType Type { get; set; }
     [Parameter] public string Prompt { get; set; }
     [Parameter] public string Input { get; set; }
+    private string yesNoMessage;
     private SelectCards selectCardsInput;
     private bool[] selectCardsChoices;
-    private string yesNoMessage;
+    private List<string> orderCardsChoices;
 
     protected override void OnParametersSet()
     {
         switch (Type)
         {
+            case ChoiceType.YesNo:
+                yesNoMessage = JsonSerializer.Deserialize<string>(Input);
+                break;
+
             case ChoiceType.SelectCards:
                 selectCardsInput = JsonSerializer.Deserialize<SelectCards>(Input);
                 selectCardsChoices = new bool[selectCardsInput.Choices.Length];
                 break;
 
-            case ChoiceType.YesNo:
-                yesNoMessage = JsonSerializer.Deserialize<string>(Input);
+            case ChoiceType.OrderCards:
+                orderCardsChoices = JsonSerializer.Deserialize<string[]>(Input).ToList();
                 break;
         }
+    }
+
+    private void YesNoSubmit(bool yesOrNo)
+    {
+        Action(JsonSerializer.Serialize(yesOrNo));
     }
 
     private void SelectCardsToggle(int ix)
@@ -53,9 +63,25 @@
         Action(JsonSerializer.Serialize(new string[] { id }));
     }
 
-    private void YesNoSubmit(bool yesOrNo)
+    private void OrderCardsIncrement(int i)
     {
-        Action(JsonSerializer.Serialize(yesOrNo));
+        var e = orderCardsChoices[i];
+        orderCardsChoices.RemoveAt(i);
+        orderCardsChoices.Insert(i+1, e);
+        StateHasChanged();
+    }
+
+    private void OrderCardsDecrement(int i)
+    {
+        var e = orderCardsChoices[i];
+        orderCardsChoices.RemoveAt(i);
+        orderCardsChoices.Insert(i-1, e);
+        StateHasChanged();
+    }
+
+    private void OrderCardsSubmit()
+    {
+        Action(JsonSerializer.Serialize(orderCardsChoices.ToArray()));
     }
 }
 
@@ -63,6 +89,17 @@
 
 @switch (Type)
 {
+    case ChoiceType.YesNo:
+        <p>
+            <RichText @key="yesNoMessage.GetHashCode()" Model="@yesNoMessage" />
+        </p>
+
+        <div>
+            <ActiveButton Label="Yes" Enabled="@Enabled" Action="@(() => YesNoSubmit(true))" />
+            <ActiveButton Label="No" Enabled="@Enabled" Action="@(() => YesNoSubmit(false))" />
+        </div>
+        break;
+
     case ChoiceType.SelectCards:
         @if (!selectCardsInput.Min.HasValue || selectCardsInput.Min < 1 || !selectCardsInput.Max.HasValue || selectCardsInput.Max.Value > 1)
         {
@@ -91,13 +128,21 @@
         }
         break;
 
-    case ChoiceType.YesNo:
-        <p>
-            <RichText @key="yesNoMessage.GetHashCode()" Model="@yesNoMessage" />
+    case ChoiceType.OrderCards:
+        <p @key="Input" class="active-choice__order">
+            @for (var i = 0; i < orderCardsChoices.Count; i++)
+            {                
+                var ix = i;
+                <div class="active-choice__order-option">
+                    <ActiveButton Action="@(() => OrderCardsDecrement(ix))" Label="<" Enabled="@(Enabled && ix > 0)" /> 
+                    <ActiveButton Action="@(() => OrderCardsIncrement(ix))" Label=">" Enabled="@(Enabled && ix < orderCardsChoices.Count - 1)" />
+                    <ActiveCard @key="orderCardsChoices[ix]" Id="@orderCardsChoices[ix]" Enabled="false" Half="true" />
+                </div>
+            }
         </p>
+
         <div>
-            <ActiveButton Label="Yes" Enabled="@Enabled" Action="@(() => YesNoSubmit(true))" />
-            <ActiveButton Label="No" Enabled="@Enabled" Action="@(() => YesNoSubmit(false))" />
+            <ActiveButton Label="Reorder" Enabled="@Enabled" Action="OrderCardsSubmit" />
         </div>
         break;
 
