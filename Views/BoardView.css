@@ -8,6 +8,15 @@
     grid-template-rows: auto 1fr;
 }
 
+.board-view__statbar {
+    text-align: center;
+    display: grid;
+    grid-auto-flow: column;
+    grid-column-gap: 0.5em;
+    justify-content: center;
+    align-items: center;
+}
+
 .board-view__played-cards {
     display: flex;
     flex-direction: column;

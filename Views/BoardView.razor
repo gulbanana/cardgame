@@ -20,7 +20,7 @@
         <ActiveButton Label="@($"+ ${potentialMoney}")" Enabled="@(isEnabled && potentialMoney > 0)" Action="@(() => Dispatch(new PlayAllTreasuresCommand()))" />
     </p>
 
-    <p style="grid-area: stats; text-align: center;">
+    <p style="grid-area: stats" class="board-view__statbar">
         <Bold If="@(!Model.BuyPhase && Model.ActionsRemaining > 0)">Actions: @Model.ActionsRemaining</Bold>
         <Bold If="@(Model.BuysRemaining > 0)">Buys: @Model.BuysRemaining</Bold>
         <Bold If="@(Model.MoneyRemaining > 0)">Money: $@Model.MoneyRemaining</Bold>

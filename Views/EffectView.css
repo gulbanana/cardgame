@@ -1,10 +1,13 @@
 .effect-view__icon {
     vertical-align: bottom;
+    border: 2px solid var(--card-type-action);
+    border-radius: 4px;
 }
 
 .effect-view__tooltip {
+    padding: 0.5em;
     font-size: calc(var(--card-body-font) * var(--local-scale));
     background: var(--card-text-background);
-    border: 1px solid var(--card-type-action);
-    padding: 0.5em;
+    border: 2px solid var(--card-type-action);
+    border-radius: 4px;
 }
