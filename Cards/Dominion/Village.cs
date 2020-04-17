@@ -2,7 +2,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Village : ActionCardModel
+    public class Village : ActionCardBase
     {
         public override string Art => "dom-village";
         public override int Cost => 3;

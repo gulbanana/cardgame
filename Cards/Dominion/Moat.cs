@@ -3,9 +3,9 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Moat : ReactionCardModel
+    public class Moat : ReactionCardBase
     {
-        public override TriggerType ReactionTrigger => TriggerType.Attack;
+        public override Trigger ReactionTrigger => Trigger.Attack;
         public override string Art => "dom-moat";
         public override int Cost => 2;        
 
@@ -22,22 +22,9 @@ namespace Cardgame.Cards.Dominion
             host.DrawCards(2);
         }
 
-        protected override async Task<Reaction> ReactAsync(IActionHost host, string trigger)
+        protected override Reaction React(IActionHost host, string trigger)
         {
-            var shouldReveal = await host.YesNo("Moat", $@"<spans>
-                <run>Reveal</run>
-                <card>Moat</card>
-                <run>from your hand to be unaffected by {trigger}'s attack?</run>
-            </spans>");
-
-            if (shouldReveal)
-            {
-                return Reaction.Cancel();
-            }
-            else
-            {
-                return Reaction.None();
-            }
+            return Reaction.Cancel();
         }
     }
 }

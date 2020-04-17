@@ -7,7 +7,7 @@
 @{ 
     var isEnabled = IsActivePlayer &&
         !Game.IsFinished &&
-        Game.ExecutingActions == 0;
+        Game.ExecutingCards == 0;
     var potentialMoney = Game.Hands[Game.ActivePlayer]
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()
@@ -24,6 +24,10 @@
         <Bold If="@(!Game.BuyPhase && Game.ActionsRemaining > 0)">Actions: @Game.ActionsRemaining</Bold>
         <Bold If="@(Game.BuysRemaining > 0)">Buys: @Game.BuysRemaining</Bold>
         <Bold If="@(Game.MoneyRemaining > 0)">Money: $@Game.MoneyRemaining</Bold>
+        @foreach (var effect in Game.ActiveEffects)
+        {
+            <EffectView Id="@effect" />
+        }
     </p>
 
     <p style="grid-area: global-commands">

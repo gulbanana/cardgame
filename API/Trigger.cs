@@ -1,7 +1,8 @@
 namespace Cardgame.API
 {
-    public enum TriggerType
+    public enum Trigger
     {
         Attack,
+        PlayCard,
     }
 }

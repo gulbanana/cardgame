@@ -4,7 +4,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Chapel : ActionCardModel
+    public class Chapel : ActionCardBase
     {
         public override string Art => "dom-chapel";
         public override int Cost => 2;

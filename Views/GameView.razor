@@ -115,7 +115,7 @@
                         var card = All.Cards.ByName(@id);
                         var isEnabled = IsActivePlayer &&
                             !Model.IsFinished &&
-                            Model.ExecutingActions == 0 &&
+                            Model.ExecutingCards == 0 &&
                             card.Type != CardType.Victory &&
                             card.Type != CardType.Curse &&
                             (!Model.BuyPhase || card.Type != CardType.Action);

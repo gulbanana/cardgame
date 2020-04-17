@@ -1,8 +1,9 @@
+using System.Threading.Tasks;
 using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Merchant : ActionCardModel
+    public class Merchant : ActionCardBase
     {
         public override string Art => "dom-merchant";
         public override int Cost => 3;
@@ -24,8 +25,7 @@ namespace Cardgame.Cards.Dominion
         {
             host.DrawCards(1);
             host.AddActions(1);
-
-            throw new System.NotImplementedException();
+            host.AddEffect(nameof(MerchantEffect));
         }
     }
 }

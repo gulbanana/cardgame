@@ -2,7 +2,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards
 {
-    public abstract class CardModel : ICard
+    public abstract class CardBase : ICard
     {
         public string Name { get; protected set; }
         public abstract CardType Type { get; }
@@ -10,7 +10,7 @@ namespace Cardgame.Cards
         public abstract string Text { get; }
         public abstract int Cost { get; }
 
-        public CardModel()
+        public CardBase()
         {
             Name = this.GetType().Name;
         }

@@ -2,7 +2,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Smithy : ActionCardModel
+    public class Smithy : ActionCardBase
     {
         public override string Art => "dom-smithy";
         public override int Cost => 4;

@@ -5,7 +5,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Thief : ActionCardModel
+    public class Thief : ActionCardBase
     {
         public override string SubType => "Attack";
         public override string Art => "dom-thief";

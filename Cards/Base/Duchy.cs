@@ -1,6 +1,6 @@
 namespace Cardgame.Cards.Base
 {
-    public class Duchy : VictoryCardModel
+    public class Duchy : VictoryCardBase
     {
         public override string Art => "duchy-2x";
         public override int Cost => 5;

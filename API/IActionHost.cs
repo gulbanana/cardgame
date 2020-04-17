@@ -22,15 +22,20 @@ namespace Cardgame.API
         void GainFrom(string[] cards, Zone from);
         void Draw(string name);
         
-        ICard[] RevealAll(Zone from);
-        void RevealAndMove(string card, Zone from, Zone to);
-
-        void PlayAction(IActionCard card, Zone from);
         void DiscardEntireDeck();
+
+        void Reveal(string card);
+        ICard[] RevealAll(Zone from);
+        void RevealAndMove(string card, Zone from, Zone to);                
+
+        void AddEffect(string effect);
+        void RemoveEffect(string effect);
+
+        // interactive actions and user inputs
+        Task PlayCard(string card, Zone from);
+        Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool benign = false);
         Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max) where T : ICard;
         Task<bool> YesNo(string prompt, string message);
-
-        Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool benign = false);
     }
 
     public static class ActionHostExtensions
@@ -126,9 +131,19 @@ namespace Cardgame.API
         }
         #endregion
 
-        public static void PlayAction(this IActionHost host, IActionCard card)
+        public static void PlayCard(this IActionHost host, string card)
         {
-            host.PlayAction(card, Zone.Hand);
+            host.PlayCard(card, Zone.Hand);
+        }
+
+        public static void PlayCard(this IActionHost host, IActionCard card, Zone from)
+        {
+            host.PlayCard(card.Name, from);
+        }
+
+        public static void PlayCard(this IActionHost host, IActionCard card)
+        {
+            host.PlayCard(card.Name, Zone.Hand);
         }
 
         #region SelectCards

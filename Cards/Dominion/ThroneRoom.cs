@@ -4,7 +4,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class ThroneRoom : ActionCardModel
+    public class ThroneRoom : ActionCardBase
     {
         public override string Art => "dom-throne-room";
         public override int Cost => 4;
@@ -18,8 +18,8 @@ namespace Cardgame.Cards.Dominion
             var doubledCard = await host.SelectCard("Choose an Action card.", Zone.Hand, cards => cards.OfType<IActionCard>());
             if (doubledCard != null)
             {
-                host.PlayAction(doubledCard, Zone.Hand);
-                host.PlayAction(doubledCard, Zone.InPlay);
+                host.PlayCard(doubledCard, Zone.Hand);
+                host.PlayCard(doubledCard, Zone.InPlay);
             }
         }
     }

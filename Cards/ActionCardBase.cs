@@ -4,7 +4,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards
 {
-    public abstract class ActionCardModel : CardModel, IActionCard
+    public abstract class ActionCardBase : CardBase, IActionCard
     {
         public override CardType Type => CardType.Action;
         public virtual string SubType => null;

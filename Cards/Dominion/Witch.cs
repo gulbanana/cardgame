@@ -3,7 +3,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Witch : ActionCardModel
+    public class Witch : ActionCardBase
     {
         public override string SubType => "Attack";
         public override string Art => "dom-witch";

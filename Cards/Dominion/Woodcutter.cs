@@ -2,7 +2,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Woodcutter : ActionCardModel
+    public class Woodcutter : ActionCardBase
     {
         public override string Art => "dom-woodcutter";
         public override int Cost => 3;

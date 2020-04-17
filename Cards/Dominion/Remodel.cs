@@ -4,7 +4,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Remodel : ActionCardModel
+    public class Remodel : ActionCardBase
     {
         public override string Art => "dom-remodel";
         public override int Cost => 4;

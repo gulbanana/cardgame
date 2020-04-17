@@ -28,9 +28,11 @@ namespace Cardgame.Shared
         public List<string> Trash { get; set; }
 
         // turn state
-        public int ExecutingActions { get; set; }
+        public List<string> PlayedCards { get; set; }
+        public List<string> ActiveEffects { get; set; }
+        public int ExecutingCards { get; set; }
         public bool BuyPhase { get; set; }
-        public List<string> PlayedCards { get; set; }        
+        
         public int ActionsRemaining { get; set; }
         public int BuysRemaining { get; set; }
         public int MoneyRemaining { get; set; }

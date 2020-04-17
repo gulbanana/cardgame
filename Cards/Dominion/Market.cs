@@ -2,7 +2,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Market : ActionCardModel
+    public class Market : ActionCardBase
     {
         public override string Art => "dom-market";
         public override int Cost => 5;

@@ -1,0 +1,9 @@
+.effect-view__icon {
+    vertical-align: bottom;
+}
+
+.effect-view__tooltip {
+    font-size: 7px;
+    background: var(--card-text-background);
+    border: 1px solid var(--card-type-action);
+}

@@ -286,6 +286,15 @@ namespace Cardgame.Server
             </spans>");        
         }
 
+        void IActionHost.Reveal(string card)
+        {
+            engine.LogPartialEvent($@"<spans>
+                <player>{Player}</player>
+                <if you='reveal' them='reveals'>{Player}</if>
+                <card suffix='!'>{card}</card>
+            </spans>");
+        }
+
         ICard[] IActionHost.RevealAll(Zone source)
         {
             var sourceCards = engine.GetCards(Player, source, NoteReshuffle);
@@ -312,15 +321,15 @@ namespace Cardgame.Server
             </spans>");   
         }
 
-        void IActionHost.PlayAction(IActionCard card, Zone from)
+        async Task IActionHost.PlayCard(string card, Zone from)
         {
             engine.LogPartialEvent($@"<spans>
                 <indent level='{level}' />
                 {LogVerbInitial("play", "plays", "playing")}
-                <card suffix='.'>{card.Name}</card>
+                <card suffix='.'>{card}</card>
             </spans>");
 
-            engine.BeginAction(level + 1, Player, card, from);
+            await engine.PlayCardAsync(level + 1, Player, card, from);
         }
 
         async Task<T[]> IActionHost.SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max)
@@ -368,40 +377,21 @@ namespace Cardgame.Server
             
             foreach (var target in targetPlayers)
             {
-                var replaced = false;
-
-                if (!benign)
-                {
-                    var reactions = target.GetHand()
-                        .OfType<IReactor>()
-                        .ToList();
-
-                    while (reactions.Any())
-                    {
-                        var potentialReaction = reactions.First();
-                        reactions.Remove(potentialReaction);
-
-                        var targetHost = new ActionHost(1, engine, target.Player);
-                        var reaction = await potentialReaction.ExecuteReactionAsync(targetHost, TriggerType.Attack, Player);
-                        if (reaction.Type == ReactionType.Replace || reaction.Type == ReactionType.Before)
-                        {
-                            engine.LogPartialEvent($@"<spans>
-                                <player>{target.Player}</player>
-                                <if you='reveal' them='reveals'>{target.Player}</if>
-                                <card suffix='!'>{potentialReaction.Name}</card>
-                            </spans>");
-
-                            reaction.Enact(targetHost, this);
-                            replaced = reaction.Type == ReactionType.Replace;
-                        }
-                    }
-                }
-
-                if (!replaced)
+                await engine.Act(level, target.Player, Trigger.Attack, Player, async () =>
                 {
                     await act(target);
-                }
+                });
             }
+        }
+    
+        void IActionHost.AddEffect(string effect)
+        {
+            engine.Model.ActiveEffects.Add(effect);
+        }
+
+        void IActionHost.RemoveEffect(string effect)
+        {
+            engine.Model.ActiveEffects.Remove(effect);
         }
     }
 }

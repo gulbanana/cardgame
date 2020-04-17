@@ -125,7 +125,13 @@ namespace Cardgame.Server
                     if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");
                     if (!All.Cards.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
 
-                    PlayCard(username, playCard.Id);
+                    LogEvent($@"<spans>
+                        <player>{username}</player>
+                        <if you='play' them='plays'>{username}</if>
+                        <card suffix='.'>{playCard.Id}</card>
+                    </spans>");
+
+                    BeginPlayCard(1, username, playCard.Id, Zone.Hand);
 
                     break;
 
@@ -135,7 +141,7 @@ namespace Cardgame.Server
 
                     foreach (var card in Model.Hands[username].Select(All.Cards.ByName).OfType<ITreasureCard>().ToList())
                     {
-                        PlayCard(username, card.Name);
+                        BeginPlayCard(1, username, card.Name, Zone.Hand);
                     }
 
                     break;
@@ -152,10 +158,6 @@ namespace Cardgame.Server
                     {
                         EndTurn();
                         BeginTurn();
-                    }
-                    else
-                    {
-                        SkipBuyIfNoCash();
                     }
 
                     break;
@@ -200,98 +202,45 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        private void PlayCard(string player, string id)
+        private void BeginPlayCard(int indentLevel, string player, string id, Zone from)
         {
-            LogEvent($@"<spans>
-                <player>{player}</player>
-                <if you='play' them='plays'>{player}</if>
-                <card suffix='.'>{id}</card>
-            </spans>");
-
-            var playedCard = All.Cards.ByName(id);                    
-            switch (playedCard)
-            {                    
-                case IActionCard action:
-                    if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
-                    if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
-
-                    Model.ActionsRemaining--;
-                    BeginAction(1, player, action, Zone.Hand);
-
-                    break;
-                
-                case ITreasureCard treasure:
-                    MoveCard(player, id, Zone.Hand, Zone.InPlay);
-
-                    if (!Model.BuyPhase)
-                    {
-                        Model.BuyPhase = true;
-                        SkipBuyIfNoCash();
-                    }
-                    Model.MoneyRemaining += treasure.Value;
-
-                    break;
-
-                default:
-                    throw new CommandException($"You can't play {playedCard.Type} cards.");
-            }
-        }
-
-        internal void BeginAction(int indentLevel, string player, IActionCard card, Zone from)
-        {
-            MoveCard(player, card.Name, from, Zone.InPlay);            
-
-            Model.ExecutingActions++;
-            var host = new ActionHost(indentLevel, this, Model.ActivePlayer);
-
+            Model.ExecutingCards++;
             try
             {
-                var task = card.ExecuteActionAsync(host);                            
+                var task = PlayCardAsync(indentLevel, player, id, from);
                 if (task.IsCompleted)
                 {
-                    CompleteAction(task, card.Name);
+                    CompletePlayCard(task, id);
                 }
                 else
                 {
-                    task.ContinueWith(EndAction, card.Name);
+                    task.ContinueWith(EndPlayCard, id);
                 }
             }
             catch (CommandException)
             {
-                Model.ExecutingActions--;
-
-                if (Model.ActionsRemaining == 0)
-                {
-                    Model.BuyPhase = true;
-                    SkipBuyIfNoCash();
-                }
+                Model.ExecutingCards--;
 
                 throw;
             }
             catch (Exception e)
             {
-                Model.ExecutingActions--;
+                Model.ExecutingCards--;
 
-                if (Model.ActionsRemaining == 0)
-                {
-                    Model.BuyPhase = true;
-                    SkipBuyIfNoCash();
-                }
-
-                LogEvent($"<error>{card.Name}: {e.Message}</error>");
+                LogEvent($"<error>{id}: {e.Message}</error>");
             }
         }
 
-        private void EndAction(Task t, object id)
+        private void EndPlayCard(Task t, object id)
         {
             lock (this)
             {
-                CompleteAction(t, id as string);
+                CompletePlayCard(t, id as string);
                 ActionUpdated?.Invoke();
             }
         }
 
-        private void CompleteAction(Task t, string id)
+        private void CompletePlayCard(Task t, string id)
         {
             if (t.Status == TaskStatus.Faulted)
             {
@@ -300,13 +249,48 @@ namespace Cardgame.Server
                 // rollback somehow?
             }
 
-            Model.ExecutingActions--;
+            Model.ExecutingCards--;
+        }
 
-            if (Model.ActionsRemaining == 0)
+        internal async Task PlayCardAsync(int indentLevel, string player, string id, Zone from)
+        {            
+            await Act(indentLevel, player, Trigger.PlayCard, id, async () =>
             {
-                Model.BuyPhase = true;
-                SkipBuyIfNoCash();
-            }
+                var card = All.Cards.ByName(id);
+                switch (card)
+                {                    
+                    case IActionCard action:
+                        if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
+                        if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
+
+                        MoveCard(player, id, from, Zone.InPlay);
+
+                        Model.ActionsRemaining--;
+                        var host = new ActionHost(indentLevel, this, player);
+                        await action.ExecuteActionAsync(host);
+
+                        if (Model.ActionsRemaining == 0)
+                        {
+                            Model.BuyPhase = true;
+                        }
+
+                        break;
+                    
+                    case ITreasureCard treasure:
+                        MoveCard(player, id, from, Zone.InPlay);
+
+                        if (!Model.BuyPhase)
+                        {
+                            Model.BuyPhase = true;
+                        }
+                        Model.MoneyRemaining += treasure.Value;
+
+                        break;
+
+                    default:
+                        throw new CommandException($"You can't play {card.Type} cards.");
+                }
+            });
         }
 
         private void LogEvent(string eventText)
@@ -348,6 +332,7 @@ namespace Cardgame.Server
 
             Model.IsStarted = true;
             Model.PlayedCards = new List<string>();
+            Model.ActiveEffects = new List<string>();
             Model.Trash = new List<string>();
             Model.ChoosingPlayers = new Stack<string>();
             Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<string>());
@@ -446,6 +431,8 @@ namespace Cardgame.Server
                 discard.Add(first);
             }
 
+            Model.ActiveEffects.Clear();
+
             var hand = Model.Hands[Model.ActivePlayer];
             while (hand.Any())
             {
@@ -532,26 +519,6 @@ namespace Cardgame.Server
             })) 
             {
                 LogEvent(text);
-            }
-        }
-
-        private void SkipBuyIfNoCash()
-        {
-            var totalRemaining = Model.MoneyRemaining + Model.Hands[Model.ActivePlayer]
-                .Select(All.Cards.ByName)
-                .OfType<ITreasureCard>()
-                .Select(card => card.Value)
-                .Sum();
-
-            var minimumCost = Model.Supply
-                .Where(kvp => kvp.Value > 0)
-                .Select(kvp => All.Cards.ByName(kvp.Key).Cost)
-                .Min();
-
-            if (totalRemaining < minimumCost)
-            {
-                EndTurn();
-                BeginTurn();
             }
         }
 
@@ -671,7 +638,6 @@ namespace Cardgame.Server
             }
         }
 
-        
         internal string[] GetCards(string player, Zone source, Action onShuffle)
         {
             if (source == Zone.DeckTop1 && Model.Decks[player].Count < 1)
@@ -702,6 +668,15 @@ namespace Cardgame.Server
             };
         }
 
+        internal List<IReactor> GetReactions(string player)
+        {
+            return GetCards(player, Zone.Hand, () => {;})
+                .Select(All.Cards.ByName) 
+                .OfType<IReactor>()
+                .Concat(Model.ActiveEffects.Select(All.Effects.ByName).OfType<IReactor>())
+                .ToList();
+        }
+
         internal async Task<TOutput> Choose<TInput, TOutput>(string player, ChoiceType type, string prompt, TInput input)
         {            
             Model.ChoiceType = type;
@@ -726,6 +701,50 @@ namespace Cardgame.Server
             Model.ChoosingPlayers.Pop();
 
             return JsonSerializer.Deserialize<TOutput>(output);
+        }
+
+        internal async Task Act(int indentLevel, string player, Trigger trigger, string parameter, Func<Task> f)
+        {
+            var reactions = GetReactions(player);
+            var replaced = false;
+            var afterReactions = new List<Action>();
+
+            while (reactions.Any())
+            {
+                var potentialReaction = reactions.First();
+                reactions.Remove(potentialReaction);
+
+                var host = new ActionHost(indentLevel, this, player);
+                var reaction = await potentialReaction.ExecuteReactionAsync(host, trigger, parameter);                
+                switch (reaction.Type)
+                {
+                    case ReactionType.None:
+                        break;
+
+                    case ReactionType.Replace:
+                    case ReactionType.Before:
+                        replaced = reaction.Type == ReactionType.Replace;
+                        reaction.Enact();
+                        break;
+
+                    case ReactionType.After:
+                        afterReactions.Add(reaction.Enact);
+                        break;
+
+                    default:
+                        throw new Exception($"unknown ReactionType {reaction.Type}");
+                }
+            }
+
+            if (!replaced)
+            {
+                await f();
+            }
+
+            foreach (var enactor in afterReactions)
+            {
+                enactor();
+            }
         }
     }
 }

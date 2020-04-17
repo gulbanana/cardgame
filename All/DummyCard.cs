@@ -8,7 +8,7 @@ namespace Cardgame.All
         public CardType Type => CardType.Victory;
         public string Art => "dom-village";
         public int Cost => 0;
-        public string Text => "<run>Card not found.</run>";
+        public string Text => $"<run>{Name}: Card not found.</run>";
 
         public DummyCard(string name)
         {

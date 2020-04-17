@@ -2,7 +2,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Laboratory : ActionCardModel
+    public class Laboratory : ActionCardBase
     {
         public override string Art => "dom-laboratory";
         public override int Cost => 5;

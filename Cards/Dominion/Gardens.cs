@@ -1,6 +1,6 @@
 namespace Cardgame.Cards.Dominion
 {
-    public class Gardens : VictoryCardModel
+    public class Gardens : VictoryCardBase
     {
         public override string Art => "dom-gardens";
         public override int Cost => 4;

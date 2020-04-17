@@ -1,6 +1,6 @@
 namespace Cardgame.Cards.Base
 {
-    public class Copper : TreasureCardModel
+    public class Copper : TreasureCardBase
     {
         public override string Art => "copper-2x";
         public override int Cost => 0;
