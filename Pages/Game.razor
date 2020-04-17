@@ -26,7 +26,9 @@
 }
 
 <Subscribed Endpoint="@game">
-    <CascadingValue Value="@(new Executor(c => OnExecute(context, c)))">
-        <GameView Model="@context" />
+    <CascadingValue Value="@context">
+        <CascadingValue Value="@(new Executor(c => OnExecute(context, c)))">
+            <GameView />
+        </CascadingValue>
     </CascadingValue>
 </Subscribed>

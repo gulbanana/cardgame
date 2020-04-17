@@ -9,3 +9,7 @@
 .player-link--disconnected {
     text-decoration: line-through;
 }
+
+.player-link--active {
+    font-weight: bold;
+}

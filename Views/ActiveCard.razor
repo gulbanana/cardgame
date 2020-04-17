@@ -39,7 +39,7 @@
 {
     <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
         <Magnify>        
-            <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />        
+            <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />        
         </Magnify>
     </div>
 }
@@ -48,13 +48,13 @@ else
     <WithTooltip>
         <Content>
             <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
-                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
+                <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
             </div>
         </Content>
         <Tooltip>
             <Magnify>
                 <StackHeader Size="@Stack">                
-                    <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="false" />
+                    <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="false" />
                 </StackHeader>
             </Magnify>
         </Tooltip>

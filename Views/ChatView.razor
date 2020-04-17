@@ -1,6 +1,6 @@
 @inject IUserSession Session
 @code {
-    [Parameter] public IReadOnlyList<LogEntry> Model { get; set; }
+    [CascadingParameter] public GameModel Model { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; }
     string newMessage;
 
@@ -17,7 +17,7 @@
 <div class="chat-view">
     <VerticalLog>
         <div class="chat-view__log">
-            @foreach (var entry in Model)
+            @foreach (var entry in Model.ChatLog)
             {
                 <span class="chat-view__username">&lt;@entry.Username&gt;</span>
                 <span>@entry.Message</span>

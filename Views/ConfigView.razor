@@ -1,6 +1,6 @@
 @inject IUserSession Session
 @code {
-    [Parameter] public GameModel Game { get; set; }
+    [CascadingParameter] public GameModel Model { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; } 
     CardSet configSet;
     string configPreset;
@@ -19,7 +19,7 @@
     <div>
         <h3>Joined players (2-4)</h3>
         <ul>
-            @foreach (var player in Game.Players)
+            @foreach (var player in Model.Players)
             {
                 <li>@player</li>
             }
@@ -30,7 +30,7 @@
         <h3>Game setup</h3>
         <div class="config-view__sets">
             <span>Card sets:</span>
-            <select disabled="@(!Game.Players.Contains(Session.Username))" @bind="configSet">
+            <select disabled="@(!Model.Players.Contains(Session.Username))" @bind="configSet">
                 @foreach (var member in System.Enum.GetNames(typeof(CardSet)))
                 {
                     var caption = Strings.TitleCase(member).Replace("1st", " (first edition)").Replace("2nd", " (second edition)");
@@ -38,7 +38,7 @@
                 }
             </select>
             <span>Preset:</span>
-            <select disabled="@(!Game.Players.Contains(Session.Username))" @bind="configPreset">
+            <select disabled="@(!Model.Players.Contains(Session.Username))" @bind="configPreset">
                 @foreach (var preset in All.Presets.BySet[configSet].Keys)
                 {
                     <option @key="preset" value="@preset">@preset</option>
@@ -48,7 +48,7 @@
     </div>
 
     <div>
-        @if (!Game.Players.Contains(Session.Username) && Game.Players.Length < 4)
+        @if (!Model.Players.Contains(Session.Username) && Model.Players.Length < 4)
         {
             <ActiveButton Label="Join game" Action="@(() => Dispatch(new JoinGameCommand()))" />
         }
@@ -59,9 +59,9 @@
     </div>
 
     <div>
-        @if (Game.Players.Contains(Session.Username))
+        @if (Model.Players.Contains(Session.Username))
         {
-            <ActiveButton Label="Start game" Action="@OnStartGame" Enabled="@(Game.Players.Length > 1)" />
+            <ActiveButton Label="Start game" Action="@OnStartGame" Enabled="@(Model.Players.Length > 1)" />
         }
     </div>
 </div>

@@ -1,8 +1,8 @@
 @inject IUserSession Session
 @code {
-    [Parameter] public GameModel Game { get; set; }
-    [Parameter] public string Id { get; set; }
+    [CascadingParameter] public GameModel Game { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; }
+    [Parameter] public string Id { get; set; }
 }
 
 @if (Game.Supply[Id] > 0)

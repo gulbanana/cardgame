@@ -1,6 +1,7 @@
 @inject IUserSession Session
 @inject IUserEndpoint UserEndpoint
 @code {
+    [CascadingParameter] GameModel Game { get; set; }
     [Parameter] public string Name { get; set; }
     [Parameter] public string Text { get; set; }
     [Parameter] public string Prefix { get; set; }
@@ -19,6 +20,7 @@
     @Prefix<span class="player-link 
     @(Name.Equals(Session.Username) ? "player-link--you" : "")
     @(!context.Contains(Name) ? "player-link--disconnected" : "")
+    @(Game != null && Game.ActivePlayer == Name ? "player-link--active" : "")
     ">@Text</span>@Suffix
 </Subscribed>
 

@@ -1,6 +1,6 @@
 @inject IUserSession Session
 @code {
-    [Parameter] public GameModel Model { get; set; }
+    [CascadingParameter] public GameModel Model { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; }
     bool IsActivePlayer => Session.Username.Equals(Model.ActivePlayer);
     string PlayerOrSpectatee => Model.Players.Contains(Session.Username) ? Session.Username : Model.ActivePlayer;
@@ -40,25 +40,25 @@
 
             @if (Model.IsStarted)
             {
-                <BuyStack Game="@Model" Id="Estate" />
-                <BuyStack Game="@Model" Id="Duchy" />
-                <BuyStack Game="@Model" Id="Province" />
+                <SupplyView Id="Estate" />
+                <SupplyView Id="Duchy" />
+                <SupplyView Id="Province" />
 
-                <BuyStack Game="@Model" Id="@Model.KingdomCards[0]" />
-                <BuyStack Game="@Model" Id="@Model.KingdomCards[1]" />
-                <BuyStack Game="@Model" Id="@Model.KingdomCards[2]" />
-                <BuyStack Game="@Model" Id="@Model.KingdomCards[3]" />
-                <BuyStack Game="@Model" Id="@Model.KingdomCards[4]" />
+                <SupplyView Id="@Model.KingdomCards[0]" />
+                <SupplyView Id="@Model.KingdomCards[1]" />
+                <SupplyView Id="@Model.KingdomCards[2]" />
+                <SupplyView Id="@Model.KingdomCards[3]" />
+                <SupplyView Id="@Model.KingdomCards[4]" />
 
-                <BuyStack Game="@Model" Id="Copper" />
-                <BuyStack Game="@Model" Id="Silver" />
-                <BuyStack Game="@Model" Id="Gold" />
+                <SupplyView Id="Copper" />
+                <SupplyView Id="Silver" />
+                <SupplyView Id="Gold" />
 
-                <BuyStack Game="@Model" Id="@Model.KingdomCards[5]" />  
-                <BuyStack Game="@Model" Id="@Model.KingdomCards[6]" />
-                <BuyStack Game="@Model" Id="@Model.KingdomCards[7]" />
-                <BuyStack Game="@Model" Id="@Model.KingdomCards[8]" />
-                <BuyStack Game="@Model" Id="@Model.KingdomCards[9]" />            
+                <SupplyView Id="@Model.KingdomCards[5]" />  
+                <SupplyView Id="@Model.KingdomCards[6]" />
+                <SupplyView Id="@Model.KingdomCards[7]" />
+                <SupplyView Id="@Model.KingdomCards[8]" />
+                <SupplyView Id="@Model.KingdomCards[9]" />            
             }
             else
             {
@@ -87,11 +87,11 @@
         <div style="grid-area: actions">
             @if (!Model.IsStarted)
             {   
-                <ConfigView Game="@Model" />
+                <ConfigView />
             }
             else
             {
-                <BoardView Game="@Model" />
+                <BoardView />
             }
         </div>
 
@@ -181,5 +181,5 @@
         }
     </div>
 
-    <ChatView Model="@Model.ChatLog" />
+    <ChatView />
 </div>
