@@ -11,12 +11,20 @@
 .board-view__played-cards {
     display: flex;
     flex-direction: column;
-    justify-content: center;;
+    justify-content: center;
+    width: 100%;
 }
 
 .board-view__played-cards__centered-row {
     display: grid;
     grid-template-columns: 50% 50%;
+    width: 100%;
+}
+
+.board-view__played-cards__centered-row__actual-played-cards {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    overflow-x: auto;
 }
 
 .board-view__choice {
