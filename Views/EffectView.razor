@@ -13,8 +13,10 @@
         <img class="effect-view__icon" width="32" src="cards/@(effect.Art).jpg" />
     </Content>
     <Tooltip>
-        <div class="effect-view__tooltip">
-            <RichText @key="effect.Text.GetHashCode()" Model="@effect.Text" />
-        </div>
+        <Magnify>
+            <div class="effect-view__tooltip">
+                <RichText @key="effect.Text.GetHashCode()" Model="@effect.Text" />
+            </div>
+        </Magnify>
     </Tooltip>
 </WithTooltip>
