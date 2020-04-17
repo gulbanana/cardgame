@@ -18,6 +18,9 @@ namespace Cardgame.All
                 { "First Game", new[]{ "Cellar", "Market", "Merchant", "Militia", "Mine", "Moat", "Remodel", "Smithy", "Village", "Workshop" }},
                 { "Size Distortion", new[]{ "Artisan", "Bandit", "Bureaucrat", "Chapel", "Festival", "Gardens", "Sentry", "ThroneRoom", "Witch", "Workshop" }},
                 { "Deck Top", new[]{ "Artisan", "Bureaucrat", "CouncilRoom", "Festival", "Harbinger", "Laboratory", "Moneylender", "Sentry", "Vassal", "Village" }},
+                { "Sleight of Hand", new[]{ "Cellar", "CouncilRoom", "Festival", "Gardens", "Library", "Harbinger", "Militia", "Poacher", "Smithy", "ThroneRoom" }},
+                { "Improvements", new[]{ "Artisan", "Cellar", "Market", "Merchant", "Mine", "Moat", "Moneylender", "Poacher", "Remodel", "Witch" }},
+                { "Silver & Gold", new[]{ "Bandit", "Bureaucrat", "Chapel", "Harbinger", "Laboratory", "Merchant", "Mine", "Moneylender", "ThroneRoom", "Vassal" }}
             } }
         };
     }
