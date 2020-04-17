@@ -31,8 +31,6 @@
 }
 
 .board-view__played-cards__centered-row__actual-played-cards {
-    display: grid;
-    grid-template-columns: 50% 50%;
     overflow-x: auto;
 }
 

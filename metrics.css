@@ -4,9 +4,10 @@
     --card-width: 100px;
     --card-height: 161px;
     --card-header: 16px;
+    --card-icon: 14px;
     --card-body: calc(var(--card-height) - var(--card-header)*2 - 4px);
     --card-half-height: calc(var(--card-height) - var(--card-body)/2);
-    --card-border-width: 2px;
+    --card-border-width: 2px;    
 
     --card-type-victory: rgb(117, 197, 85);
     --card-type-treasure: rgb(243, 212, 114);

@@ -9,7 +9,7 @@
     [Parameter] public int Stack { get; set; }
     [Parameter] public string Color { get; set; }
     [Parameter] public CardSet? SetIcon { get; set; }
-    
+
     protected override void OnParametersSet()
     {
         if (Color == null)
@@ -42,7 +42,9 @@
             </div>
         }
         <div class="card__footer card-view__title">
-            <img class="card__footer-cost" src="/symbols/coin@(Cost).png" />
+            <div class="card__footer-cost">
+                <img class="card__icon" src="/symbols/coin@(Cost).png" />
+            </div>
 
             @if (SubType == null)
             {
@@ -55,7 +57,9 @@
 
             @if (SetIcon != null)
             {
-                <img class="card__footer-set" src="/symbols/set-@(SetIcon).png" />
+                <div class="card__footer-set">
+                    <img class="card__icon" src="/symbols/set-@(SetIcon).png" />
+                </div>
             }
         </div>
     </div>
