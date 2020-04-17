@@ -38,6 +38,7 @@ namespace Cardgame.Cards.Dominion
                     toDiscard
                 );
                 host.Discard(discarded);
+            }
         }
     }
 }
