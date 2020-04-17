@@ -140,7 +140,7 @@
                 var discard = Model.Discards[PlayerOrSpectatee];
                 if (discard.Any())
                 {
-                    <ActiveCard @key="discard.First()" Id="@discard.First()" Stack="@discard.Count" Color="special" />
+                    <ActiveCard @key="discard.First()" Id="@discard.First()" Stack="@discard.Count" OverrideColour="special" />
                 }
                 else
                 {

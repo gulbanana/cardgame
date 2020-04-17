@@ -1,25 +1,25 @@
 @code {
     [Parameter] public string Name { get; set; }
-    [Parameter] public CardType Type { get; set; }
+    [Parameter] public CardType[] Types { get; set; }
     [Parameter] public string SubType { get; set; }
     [Parameter] public string Art { get; set; } = "missing";
     [Parameter] public int Cost { get; set; }
     [Parameter] public string Text { get; set; }
     [Parameter] public bool Half { get; set; }
     [Parameter] public int Stack { get; set; }
-    [Parameter] public string Color { get; set; }
+    [Parameter] public string OverrideColour { get; set; }
     [Parameter] public CardSet? SetIcon { get; set; }
+    private string[] colours;
 
     protected override void OnParametersSet()
     {
-        if (Color == null)
-        {
-            Color = All.Cards.GetColor(Type, SubType);
-        }
+        colours = OverrideColour != null 
+            ? new[] { OverrideColour } 
+            : Types.Select(t => All.Cards.GetColor(t, SubType)).ToArray();
     }
 }
 
-<Stacked Size="@Stack" Type="@Color" Half="@Half">
+<Stacked Size="@Stack" Colours="@colours" Half="@Half">
     <div class="card-view">
         <div class="card__header card-view__title">
             @foreach (var word in Strings.TitleCase(Name).Split(" "))
@@ -51,13 +51,13 @@
                 <img class="card__icon" src="/symbols/coin@(Cost).png" />
             </div>
 
-            @if (SubType == null)
+            @foreach (var type in Types)
             {
-                <span class="card-view__type__word">@Type</span>
+                <span class="card-view__type__word">@type</span>
             }
-            else
+            @if (SubType != null)
             {
-                <span class="card-view__type__word">@SubType</span>
+                <span class="card-view__type__word">@SubType</span>    
             }
 
             @if (SetIcon != null)

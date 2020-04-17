@@ -84,14 +84,14 @@
     case TextModel.Card card:
         var model = All.Cards.ByName(card.Name);
         var subType = (model as IActionCard)?.SubType;
-        var colorType = All.Cards.GetColor(model.Types.First(), subType);
+        var background = Backgrounds.FromTypes(model.Types, subType);
         <WithTooltip>
             <Content>
-                @card.Prefix<span style="background: var(--card-type-@(colorType))">@Strings.TitleCase(card.Name)</span>@card.Suffix
+                @card.Prefix<span style="background: @background">@Strings.TitleCase(card.Name)</span>@card.Suffix
             </Content>
             <Tooltip>
                 <Magnify>
-                    <KingdomCard Name="@card.Name" Type="@model.Types.First()" SubType="@subType" Art="@model.Art" Text="@model.Text" Half="false" />
+                    <KingdomCard Name="@card.Name" Types="@model.Types" SubType="@subType" Art="@model.Art" Text="@model.Text" Half="false" />
                 </Magnify>
             </Tooltip>
         </WithTooltip>   

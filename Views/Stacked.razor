@@ -1,11 +1,18 @@
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public int Size { get; set; }
-    [Parameter] public string Type { get; set; }
+    [Parameter] public string Colour { get; set; }
+    [Parameter] public string[] Colours { get; set; }
     [Parameter] public bool Half { get; set; }
+    private string background;
+
+    protected override void OnParametersSet()
+    {
+        background = Backgrounds.FromColours(Colours ?? new[] { Colour });
+    }
 }
 
-<div class="stacked" style="--highlight: var(--card-type-@(Type))">
+<div class="stacked" style="--highlight: @background">
     @ChildContent
     @if (Size > 1)
     {
