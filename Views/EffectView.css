@@ -3,7 +3,7 @@
 }
 
 .effect-view__tooltip {
-    font-size: var(--card-body-font);
+    font-size: calc(var(--card-body-font) * var(--zoom-scale));
     background: var(--card-text-background);
     border: 1px solid var(--card-type-action);
 }

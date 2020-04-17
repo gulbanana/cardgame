@@ -1,20 +1,21 @@
 .special-card {
-    width: var(--card-width);
-    border: 2px solid var(--card-border-color);
+    width: calc(var(--local-scale) * var(--card-width));
+    border: solid var(--card-border-color);
+    border-width: calc(var(--local-scale) * 2px);
     display: flex;
     flex-direction: column;
     border-radius: 4px;
 }
 
 .special-card img {
-    max-width: calc(var(--card-width) - 4px);
+    max-width: calc(var(--local-scale) * (var(--card-width) - 4px));
     object-fit: cover;
 }
 
 .special-card__1x {
-    height: calc(var(--card-body)/2 + var(--card-header)*2 -1px);
+    height: calc(var(--local-scale) * (var(--card-body)/2 + var(--card-header)*2 -1px));
 }
 
 .special-card__2x {
-    height: calc(var(--card-body) + var(--card-header)*2);
+    height: calc(var(--local-scale) * (var(--card-body) + var(--card-header)*2));
 }

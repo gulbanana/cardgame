@@ -12,8 +12,3 @@
     --card-border-color: var(--active-focus-color);
     cursor: pointer;
 }
-
-.active-card__large-wrapper {
-    width: calc(var(--card-width) * var(--zoom-factor)); 
-    height:calc(var(--card-height) * var(--zoom-factor));
-}

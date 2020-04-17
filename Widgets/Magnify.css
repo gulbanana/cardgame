@@ -1,12 +1,3 @@
-.magnify > * {
-    transform: scale(var(--zoom-factor));
-    transform-origin: top left;
-}
-
-.magnify--center > * {
-    transform-origin: center;
-}
-
-.magnify--bottom-left > * {
-    transform-origin: bottom left;
+.magnify {
+    --local-scale: var(--zoom-scale);
 }

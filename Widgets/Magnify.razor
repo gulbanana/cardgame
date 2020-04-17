@@ -1,8 +1,7 @@
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public bool Center { get; set; }
 }
 
-<div class="magnify @(Center ? "magnify--center" : "")">
+<div class="magnify">
     @ChildContent
 </div>

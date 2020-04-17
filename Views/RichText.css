@@ -12,11 +12,13 @@
 }
 
 .rich-text__small {
-    font-size: var(--card-body-font-small);
+    font-size: calc(var(--local-scale) * var(--card-body-font-small));
 }
 
 .rich-text__symbol {
     vertical-align: bottom;
+    width: calc(var(--local-scale) * 8px);
+    height: calc(var(--local-scale) * 8px);
 }
 
 .rich-text__error {

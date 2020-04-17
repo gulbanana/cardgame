@@ -9,5 +9,5 @@
     background: rgba(255, 255, 255, 0.75);
     border-radius: 4px;
     font-weight: normal;
-    font-size: var(--stack-header-font);
+    font-size: calc(var(--local-scale) * var(--stack-header-font));
 }

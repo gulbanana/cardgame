@@ -37,11 +37,9 @@
 
 @if (Large)
 {
-    <div class="active-card__large-wrapper">
-        <Magnify>
-            <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
-                <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />
-            </div>
+    <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
+        <Magnify>        
+            <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="@Half" Stack="@Stack" />        
         </Magnify>
     </div>
 }
@@ -55,7 +53,7 @@ else
         </Content>
         <Tooltip>
             <Magnify>
-                <StackHeader Size="@Stack">
+                <StackHeader Size="@Stack">                
                     <CardView Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" Half="false" />
                 </StackHeader>
             </Magnify>
