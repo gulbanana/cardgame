@@ -212,7 +212,7 @@ namespace Cardgame.API
         public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter) where T : ICard
         {
             var cards = await host.SelectCards(prompt, source, filter, 1, 1);
-            return cards.Single();
+            return cards.SingleOrDefault();
         }
 
         // no filter
@@ -229,7 +229,7 @@ namespace Cardgame.API
         public static async Task<ICard> SelectCard(this IActionHost host, string prompt, Zone source)
         {
             var cards = await host.SelectCards<ICard>(prompt, source, x => x, 1, 1);
-            return cards.Single();
+            return cards.SingleOrDefault();
         }
 
         // no zone
@@ -256,13 +256,13 @@ namespace Cardgame.API
         public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, Func<IEnumerable<ICard>, IEnumerable<T>> filter) where T : ICard
         {
             var cards = await host.SelectCards<T>(prompt, Zone.Hand, filter, 1, 1);
-            return cards.Single();
+            return cards.SingleOrDefault();
         }
 
         public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, IEnumerable<T> choices) where T : ICard
         {
             var cards = await host.SelectCards<T>(prompt, Zone.Hand, _ => choices, 1, 1);
-            return cards.Single();
+            return cards.SingleOrDefault();
         }
 
         // no filter or zone
@@ -279,7 +279,7 @@ namespace Cardgame.API
         public static async Task<ICard> SelectCard(this IActionHost host, string prompt)
         {
             var cards = await host.SelectCards<ICard>(prompt, Zone.Hand, x => x, 1, 1);
-            return cards.Single();
+            return cards.SingleOrDefault();
         }
         #endregion
 
