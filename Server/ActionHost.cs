@@ -74,6 +74,10 @@ namespace Cardgame.Server
                     return $@"<if you='your' them='their'>{Player}</if>
                     <run>hand.</run>";
 
+                case Zone.Discard:
+                    return $@"<if you='your' them='their'>{Player}</if>
+                    <run>discard pile.</run>";
+
                 case Zone.Trash:
                     return $@"<run>the trash.</run>";
 
