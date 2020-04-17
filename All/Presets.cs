@@ -16,7 +16,7 @@ namespace Cardgame.All
             } },
             { CardSet.Dominion2nd, new Dictionary<string, string[]> {
                 { "First Game", new[]{ "Cellar", "Market", "Merchant", "Militia", "Mine", "Moat", "Remodel", "Smithy", "Village", "Workshop" }},
-                { "Size Distortion", new[]{ "Artisan", "Bandit", "Bureaucrat", "Chapel", "Festival", "Gardens", "Sentry", "Throne Room", "Witch", "Workshop" }},
+                { "Size Distortion", new[]{ "Artisan", "Bandit", "Bureaucrat", "Chapel", "Festival", "Gardens", "Sentry", "ThroneRoom", "Witch", "Workshop" }},
             } }
         };
     }
