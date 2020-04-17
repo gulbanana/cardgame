@@ -8,7 +8,8 @@
     [Parameter] public bool Half { get; set; }
     [Parameter] public int Stack { get; set; }
     [Parameter] public string Color { get; set; }
-
+    [Parameter] public CardSet? SetIcon { get; set; }
+    
     protected override void OnParametersSet()
     {
         if (Color == null)
@@ -50,6 +51,11 @@
             else
             {
                 <span>@SubType</span>
+            }
+
+            @if (SetIcon != null)
+            {
+                <img class="card__footer-set" src="/symbols/set-@(SetIcon).png" />
             }
         </div>
     </div>
