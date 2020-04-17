@@ -18,7 +18,7 @@ namespace Cardgame.Cards.Dominion
                 </lines>
             </block>
             <small>
-                <run>Each player (including you) reveals the top 2 card of their deck and either discards it or puts it back, your choice.</run>
+                <run>Each player (including you) reveals the top card of their deck and either discards it or puts it back, your choice.</run>
             </small>
         </paras>";
 
