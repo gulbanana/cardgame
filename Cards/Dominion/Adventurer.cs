@@ -25,7 +25,7 @@ namespace Cardgame.Cards.Dominion
                 if (top1 != null)
                 {
                     host.Reveal(top1, Zone.DeckTop1);
-                    if (top1.Type == CardType.Treasure)
+                    if (top1.Types.Contains(CardType.Treasure))
                     {
                         foundTreasures++;
                         host.DrawCards(1);

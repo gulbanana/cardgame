@@ -78,20 +78,20 @@
         break;
 
     case TextModel.Symbol symbol:
-        <span class="rich-text__no-break">@symbol.Prefix<img class="rich-text__symbol" src="symbols/@(symbol.Name).png">@symbol.Suffix</span>
+        <span class="rich-text__no-break">@symbol.Prefix<img class="rich-text__symbol@(symbol.IsLarge ? " rich-text__symbol--large" : "")" src="symbols/@(symbol.Name).png">@symbol.Suffix</span>
         break;
 
     case TextModel.Card card:
         var model = All.Cards.ByName(card.Name);
         var subType = (model as IActionCard)?.SubType;
-        var colorType = All.Cards.GetColor(model.Type, subType);
+        var colorType = All.Cards.GetColor(model.Types.First(), subType);
         <WithTooltip>
             <Content>
                 @card.Prefix<span style="background: var(--card-type-@(colorType))">@Strings.TitleCase(card.Name)</span>@card.Suffix
             </Content>
             <Tooltip>
                 <Magnify>
-                    <KingdomCard Name="@card.Name" Type="@model.Type" SubType="@subType" Art="@model.Art" Text="@model.Text" Half="false" />
+                    <KingdomCard Name="@card.Name" Type="@model.Types.First()" SubType="@subType" Art="@model.Art" Text="@model.Text" Half="false" />
                 </Magnify>
             </Tooltip>
         </WithTooltip>   

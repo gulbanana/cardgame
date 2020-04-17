@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Dominion
                 var trashed = false;
                 foreach (var card in top2)
                 {
-                    if (!trashed && card.Type == CardType.Treasure && card.Name != "Copper")
+                    if (!trashed && card.Types.Contains(CardType.Treasure) && card.Name != "Copper")
                     {
                         trashed = true;
                         player.Trash(card, Zone.DeckTop2);

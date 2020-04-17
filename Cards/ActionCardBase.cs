@@ -6,7 +6,7 @@ namespace Cardgame.Cards
 {
     public abstract class ActionCardBase : CardBase, IActionCard
     {
-        public override CardType Type => CardType.Action;
+        public override CardType[] Types => new[] { CardType.Action };
         public virtual string SubType => null;
         
         public Task ExecuteActionAsync(IActionHost host) => ActAsync(host);

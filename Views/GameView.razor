@@ -116,9 +116,8 @@
                         var isEnabled = IsActivePlayer &&
                             !Model.IsFinished &&
                             Model.ExecutingCards == 0 &&
-                            card.Type != CardType.Victory &&
-                            card.Type != CardType.Curse &&
-                            (!Model.BuyPhase || card.Type != CardType.Action);
+                            (card.Types.Contains(CardType.Treasure) ||
+                             (card.Types.Contains(CardType.Action) && !Model.BuyPhase));
                         <ActiveCard Model="@card" 
                                     Enabled="@isEnabled" 
                                     Action="@(() => Dispatch(new PlayCardCommand { Id = @id }))"/>

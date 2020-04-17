@@ -23,7 +23,7 @@ namespace Cardgame.Cards.Dominion
                 var drawn = host.DrawCards(1).SingleOrDefault();
                 if (drawn == null) break; // no cards left in deck or discard
 
-                if (drawn.Type == CardType.Action)
+                if (drawn.Types.Contains(CardType.Action))
                 {
                     var shouldSkip = await host.YesNo("Library", $@"<spans>
                         <run>Skip drawing</run>

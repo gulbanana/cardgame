@@ -41,7 +41,7 @@
 {
     <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
         <Magnify>        
-            <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="@Half" Stack="@Stack" />
+            <KingdomCard Name="@Id" Type="@Model.Types.First()" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="@Half" Stack="@Stack" />
         </Magnify>
     </div>
 }
@@ -50,13 +50,13 @@ else
     <WithTooltip>
         <Content>
             <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
-                <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="@Half" Stack="@Stack" />
+                <KingdomCard Name="@Id" Type="@Model.Types.First()" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="@Half" Stack="@Stack" />
             </div>
         </Content>
         <Tooltip>
             <Magnify>
                 <StackHeader Size="@Stack">                
-                    <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="false" />
+                    <KingdomCard Name="@Id" Type="@Model.Types.First()" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="false" />
                 </StackHeader>
             </Magnify>
         </Tooltip>

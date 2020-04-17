@@ -266,31 +266,28 @@ namespace Cardgame.Server
                 MoveCard(player, id, from, Zone.InPlay);
 
                 var card = All.Cards.ByName(id);
-                switch (card)
-                {                    
-                    case IActionCard action:
-                        var host = new ActionHost(indentLevel, this, player);
-                        await action.ExecuteActionAsync(host);
+                if (card is IActionCard action)
+                {
+                    var host = new ActionHost(indentLevel, this, player);
+                    await action.ExecuteActionAsync(host);
 
-                        if (Model.ActionsRemaining == 0)
-                        {
-                            Model.BuyPhase = true;
-                        }
+                    if (Model.ActionsRemaining == 0)
+                    {
+                        Model.BuyPhase = true;
+                    }
+                }
+                else if (card is ITreasureCard treasure)
+                {
+                    if (!Model.BuyPhase)
+                    {
+                        Model.BuyPhase = true;
+                    }
 
-                        break;
-                    
-                    case ITreasureCard treasure:
-                        if (!Model.BuyPhase)
-                        {
-                            Model.BuyPhase = true;
-                        }
-
-                        Model.MoneyRemaining += treasure.Value;
-
-                        break;
-
-                    default:
-                        throw new CommandException($"You can't play {card.Type} cards.");
+                    Model.MoneyRemaining += treasure.Value;
+                }
+                else
+                {
+                    throw new CommandException($"Only Actions and Treasures can be played.");
                 }
             });
         }
@@ -359,7 +356,7 @@ namespace Cardgame.Server
             };
             foreach (var card in Model.KingdomCards.Select(All.Cards.ByName))
             {
-                Model.Supply[card.Name] = card.Type == CardType.Victory ? victoryCount : 10;
+                Model.Supply[card.Name] = card.Types.Contains(CardType.Victory) ? victoryCount : 10;
             }
 
             foreach (var player in Model.Players)

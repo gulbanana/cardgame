@@ -56,6 +56,7 @@ namespace Cardgame.Widgets
             public string Name { get; set; }
             public string Prefix { get; set; }
             public string Suffix { get; set; }
+            public bool IsLarge { get; set; }
         }
 
         public class Card : TextModel
@@ -129,7 +130,8 @@ namespace Cardgame.Widgets
                     { 
                         Name = element.Value,
                         Prefix = element.Attribute("prefix")?.Value,
-                        Suffix = element.Attribute("suffix")?.Value
+                        Suffix = element.Attribute("suffix")?.Value,
+                        IsLarge = element.Attribute("large")?.Value == "true"
                     };
 
                 case "card":

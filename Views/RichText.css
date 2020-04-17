@@ -21,6 +21,12 @@
     height: calc(var(--local-scale) * 8px);
 }
 
+.rich-text__symbol--large {
+    vertical-align: bottom;
+    width: calc(var(--local-scale) * 16px);
+    height: calc(var(--local-scale) * 16px);
+}
+
 .rich-text__error {
     color: red;
 }

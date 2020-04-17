@@ -21,7 +21,7 @@ namespace Cardgame.Cards.Dominion
             await host.Attack(async player =>
             {
                 var hand = player.Examine(Zone.Hand);
-                if (hand.Any(card => card.Type == CardType.Victory))
+                if (hand.Any(card => card.Types.Contains(CardType.Victory)))
                 {
                     var onTop = await player.SelectCard(
                         "Choose a card to put onto your deck.", 

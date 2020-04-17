@@ -21,7 +21,7 @@ namespace Cardgame.Cards.Dominion
             host.AddMoney(2);
 
             var discarded = host.Examine(Zone.DeckTop1).SingleOrDefault();
-            if (discarded != null && discarded.Type == CardType.Action)
+            if (discarded != null && discarded.Types.Contains(CardType.Action))
             {
                 host.Discard(discarded, Zone.DeckTop1);
                 if (await host.YesNo("Vassal", $"<card prefix='Play ' suffix='?'>{discarded.Name}</card>"))
