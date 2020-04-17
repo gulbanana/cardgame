@@ -38,6 +38,17 @@
             }
         </div>
         break;
+
+    case TextModel.Split split:
+        @for (var i = 0; i < split.Children.Length; i++)
+        {
+            <RichText Parsed="@split.Children[i]" />
+            @if (i < split.Children.Length - 1)
+            {
+                <hr class="rich-text__bar" />
+            }
+        }
+        break;
             
     case TextModel.Block block:
         <span class="rich-text__block">

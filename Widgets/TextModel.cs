@@ -20,6 +20,11 @@ namespace Cardgame.Widgets
         {
             public TextModel[] Children { get; set; }
         }
+
+        public class Split : TextModel
+        {
+            public TextModel[] Children { get; set; }
+        }
         
         public class Block : TextModel
         {
@@ -100,6 +105,9 @@ namespace Cardgame.Widgets
 
                 case "paras":
                     return new Paras { Children = element.Elements().Select(Parse).ToArray() };
+
+                case "split":
+                    return new Split { Children = element.Elements().Select(Parse).ToArray() };
 
                 case "block":
                     return new Block { Child = Parse(element.Elements().Single()) };

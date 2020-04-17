@@ -9,13 +9,12 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-moat";
         public override int Cost => 2;        
 
-        public override string Text => @"
-        <paras>
+        public override string Text => @"<split>
             <block>
                 <run>+2 Cards</run>
             </block>
             <run>When another player plays an Attack card, you may first reveal this from your hand, to be unaffected by it.</run>
-        </paras>";
+        </split>";
 
         protected override void Act(IActionHost host)
         {

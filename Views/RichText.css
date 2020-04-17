@@ -28,3 +28,7 @@
 .rich-text__no-break {
     white-space: nowrap;
 }
+
+.rich-text__bar {
+    width: 70%;
+}
