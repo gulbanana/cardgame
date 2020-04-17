@@ -34,13 +34,13 @@
     --zoom-scale: 2.0;
 }
 
-@media (max-height: 740px) {
+@media (max-height: 760px) {
     :root {
         --zoom-scale: 1.5;
     }
 }
 
-@media (max-height: 640px) {
+@media (max-height: 680px) {
     :root {
         --zoom-scale: 1.0;
     }
