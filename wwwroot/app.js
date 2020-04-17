@@ -16,7 +16,8 @@ var WithTooltip;
     WithTooltip.register = register;
     function reposition(element, x, y) {
         element.classList.add("with-tooltip__tooltip--visible");
-        if (window.innerWidth - x < 100) {
+        if (window.innerWidth - x < 120) {
+            element.style.left = null;
             element.style.right = (window.innerWidth - x) + 2 + "px";
         }
         else {

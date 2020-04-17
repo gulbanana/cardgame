@@ -8,13 +8,13 @@ namespace WithTooltip {
     function reposition(element: HTMLElement, x: number, y: number) {
         element.classList.add("with-tooltip__tooltip--visible");
 
-        if (window.innerWidth - x < 100) {
+        if (window.innerWidth - x < 120) {
+            element.style.left = null;
             element.style.right = (window.innerWidth - x) + 2 + "px";
         } else {
             element.style.left = x + 2 + "px";
             element.style.right = null;
-        }
-        
+        }        
 
         if (window.innerHeight - y < 300) {
             element.style.top = null;
