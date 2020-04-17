@@ -17,6 +17,7 @@ namespace Cardgame.API
         ICard[] DrawCards(int n);        
 
         void Discard(string[] cards, Zone from);
+        ICard[] DiscardAll(Zone from);
         void Trash(string[] cards, Zone from);
         void Gain(string card, Zone to);
         void GainFrom(string[] cards, Zone from);

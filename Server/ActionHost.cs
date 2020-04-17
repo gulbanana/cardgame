@@ -65,6 +65,11 @@ namespace Cardgame.Server
         {
             switch (from)
             {
+                case Zone.DeckTop1:
+                    return $@"<run>the top of</run>
+                    <if you='your' them='their'>{Player}</if>
+                    <run>deck.</run>";
+
                 case Zone.DeckTop2:
                     return $@"<run>the top two cards of</run>
                     <if you='your' them='their'>{Player}</if>
@@ -208,6 +213,27 @@ namespace Cardgame.Server
             </spans>");
         }
 
+        ICard[] IActionHost.DiscardAll(Zone from)
+        {
+            var cards = engine.GetCards(Player, from, NoteReshuffle);
+            foreach (var card in cards)
+            {
+                engine.MoveCard(Player, card, from, Zone.Discard);
+            }
+
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{level}' />
+                {LogVerbInitial("discard", "discards", "discarding")}
+                {LogCardList(cards, terminal: false)}
+                <run>from</run>
+                {LogSource(from)}
+            </spans>");
+
+            return cards.Select(All.Cards.ByName).ToArray();
+        }
+
+        // this is a special case used by Chancellor: it does not count as 'discarding' each card, 
+        // and you may not see what cards were discarded
         void IActionHost.DiscardEntireDeck()
         {
             var deck = engine.Model.Decks[Player];
@@ -218,9 +244,11 @@ namespace Cardgame.Server
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{level}' />
-                {LogVerbInitial("discard", "discards", "discarding")}
+                {LogVerbInitial("put", "puts", "putting")}
                 <if you='your' them='their'>{Player}</if>
-                <run>deck.</run>
+                <run>deck into</run>
+                <if you='your' them='their'>{Player}</if>
+                <run>discard pile.</run>
             </spans>");
         }
 

@@ -125,6 +125,13 @@ namespace Cardgame.Server
                     if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");
                     if (!All.Cards.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
 
+                    if (All.Cards.ByName(playCard.Id) is IActionCard)
+                    {
+                        if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
+                        if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
+                        Model.ActionsRemaining--;
+                    }
+
                     LogEvent($@"<spans>
                         <player>{username}</player>
                         <if you='play' them='plays'>{username}</if>
@@ -256,16 +263,12 @@ namespace Cardgame.Server
         {            
             await Act(indentLevel, player, Trigger.PlayCard, id, async () =>
             {
+                MoveCard(player, id, from, Zone.InPlay);
+
                 var card = All.Cards.ByName(id);
                 switch (card)
                 {                    
                     case IActionCard action:
-                        if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
-                        if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
-
-                        MoveCard(player, id, from, Zone.InPlay);
-
-                        Model.ActionsRemaining--;
                         var host = new ActionHost(indentLevel, this, player);
                         await action.ExecuteActionAsync(host);
 
@@ -277,12 +280,11 @@ namespace Cardgame.Server
                         break;
                     
                     case ITreasureCard treasure:
-                        MoveCard(player, id, from, Zone.InPlay);
-
                         if (!Model.BuyPhase)
                         {
                             Model.BuyPhase = true;
                         }
+
                         Model.MoneyRemaining += treasure.Value;
 
                         break;
@@ -618,7 +620,7 @@ namespace Cardgame.Server
                     break;
 
                 case Zone.Discard:
-                    Model.Discards[player].Add(id);
+                    Model.Discards[player].Insert(0, id);
                     break;
                 
                 case Zone.Supply:
