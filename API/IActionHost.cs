@@ -11,17 +11,17 @@ namespace Cardgame.API
         int ShuffleCount { get; }
         ICard[] GetHand();
 
-        ICard[] DrawCards(int n);
         void AddActions(int n);
         void AddBuys(int n);
         void AddMoney(int n);
+        ICard[] DrawCards(int n);        
 
         void Discard(string[] cards, Zone from);
         void Trash(string[] cards, Zone from);
         void Gain(string card, Zone to);
         void GainFrom(string[] cards, Zone from);
-        void Draw(string name);
-        
+        void PlaceOnDeck(string card, Zone from);
+           
         void DiscardEntireDeck();
 
         void Reveal(string card);
@@ -128,6 +128,13 @@ namespace Cardgame.API
         public static void GainFrom(this IActionHost host, ICard[] cards, Zone from)
         {
             host.GainFrom(cards.Select(card => card.Name).ToArray(), from);
+        }
+        #endregion
+
+        #region Place
+        public static void PlaceOnDeck(this IActionHost host, ICard card, Zone from)
+        {
+            host.PlaceOnDeck(card.Name, from);
         }
         #endregion
 

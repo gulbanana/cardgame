@@ -65,6 +65,11 @@ namespace Cardgame.Server
         {
             switch (from)
             {
+                case Zone.Hand:
+                    return $@"<run>from</run>
+                    <if you='your' them='their'>{Player}</if>
+                    <run>hand.</run>";
+
                 case Zone.Trash:
                     return $@"<run>from the trash.</run>";
 
@@ -79,7 +84,7 @@ namespace Cardgame.Server
             {
                 case Zone.DeckTop1:
                     return $@"{LogVerb("put", "puts", "putting")}
-                              <run>it on top of</run>
+                              <run>it onto</run>
                               <if you='your' them='their'>{Player}</if>
                               <run>deck.</run>";
 
@@ -275,15 +280,19 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        void IActionHost.Draw(string card)
+        void IActionHost.PlaceOnDeck(string card, Zone from)
         {
-            engine.MoveCard(Player, card, Zone.DeckTop1, Zone.Hand);
-
+            engine.MoveCard(Player, card, from, Zone.DeckTop1);
+            
             engine.LogPartialEvent($@"<spans>
                 <indent level='{level}' />
-                {LogVerbInitial("draw", "draws", "drawing")}
-                <card suffix='.'>{card}</card>
-            </spans>");        
+                {LogVerbInitial("put", "puts", "putting")}
+                <card>{card}</card>
+                <run>onto</run>
+                <if you='your' them='their'>{Player}</if>
+                <run>deck</run>
+                {LogSource(from)}
+            </spans>");
         }
 
         void IActionHost.Reveal(string card)

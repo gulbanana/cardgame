@@ -25,7 +25,7 @@ namespace Cardgame.Cards.Dominion
                 if (revealedCard.Type == CardType.Treasure)
                 {
                     foundTreasures++;
-                    host.Draw(revealedCard.Name);
+                    host.DrawCards(1);
                 }
                 else
                 {
