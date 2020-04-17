@@ -67,7 +67,7 @@
         break;
 
     case TextModel.Symbol symbol:
-        @symbol.Prefix<img class="rich-text__symbol" src="symbols/@(symbol.Name).png">@symbol.Suffix
+        <span class="rich-text__no-break">@symbol.Prefix<img class="rich-text__symbol" src="symbols/@(symbol.Name).png">@symbol.Suffix</span>
         break;
 
     case TextModel.Card card:

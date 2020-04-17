@@ -24,3 +24,7 @@
 .rich-text__error {
     color: red;
 }
+
+.rich-text__no-break {
+    white-space: nowrap;
+}
