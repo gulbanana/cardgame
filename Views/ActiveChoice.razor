@@ -6,6 +6,7 @@
     [Parameter] public string Prompt { get; set; }
     [Parameter] public string Input { get; set; }
     private string yesNoMessage;
+    private string[] chooseOneInput;
     private SelectCards selectCardsInput;
     private bool[] selectCardsChoices;
     private List<string> orderCardsChoices;
@@ -16,6 +17,10 @@
         {
             case ChoiceType.YesNo:
                 yesNoMessage = JsonSerializer.Deserialize<string>(Input);
+                break;
+
+            case ChoiceType.ChooseOne:
+                chooseOneInput = JsonSerializer.Deserialize<string[]>(Input);
                 break;
 
             case ChoiceType.SelectCards:
@@ -32,6 +37,11 @@
     private void YesNoSubmit(bool yesOrNo)
     {
         Action(JsonSerializer.Serialize(yesOrNo));
+    }
+
+    private void ChooseOneSubmit(int ix)
+    {
+        Action(JsonSerializer.Serialize(ix));
     }
 
     private void SelectCardsToggle(int ix)
@@ -98,6 +108,16 @@
             <ActiveButton Label="Yes" Enabled="@Enabled" Action="@(() => YesNoSubmit(true))" />
             <ActiveButton Label="No" Enabled="@Enabled" Action="@(() => YesNoSubmit(false))" />
         </div>
+        break;
+
+    case ChoiceType.ChooseOne:
+        <p>
+            @for (var i = 0; i < chooseOneInput.Length; i++)
+            {
+                var ix = i;
+                <ActiveButton @key="ix" Label="@chooseOneInput[ix]" Enabled="@Enabled" Action="@(() => ChooseOneSubmit(ix))" />
+            }
+        </p>
         break;
 
     case ChoiceType.SelectCards:

@@ -371,6 +371,18 @@ namespace Cardgame.Server
             );
         }
 
+        public async Task ChooseOne(string prompt, string option1, Action action1, string option2, Action action2)
+        {
+            var result = await engine.Choose<string[], int>(
+                Player,
+                ChoiceType.ChooseOne,
+                prompt,
+                new[]{ option1, option2 }
+            );
+
+            (new[]{action1, action2})[result]();
+        }
+
         async Task<T[]> IActionHost.SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max)
         {            
             var sourceCards = engine.GetCards(Player, source, NoteReshuffle);

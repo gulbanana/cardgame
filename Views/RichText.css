@@ -6,9 +6,8 @@
     margin-bottom: 0;
 }
 
-.rich-text__block {
+.rich-text__bold {
     font-weight: bold;
-    text-align: center;
 }
 
 .rich-text__small {

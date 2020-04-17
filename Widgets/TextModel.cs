@@ -26,7 +26,7 @@ namespace Cardgame.Widgets
             public TextModel[] Children { get; set; }
         }
         
-        public class Block : TextModel
+        public class Bold : TextModel
         {
             public TextModel Child { get; set; }
         }
@@ -111,7 +111,7 @@ namespace Cardgame.Widgets
                     return new Split { Children = element.Elements().Select(Parse).ToArray() };
 
                 case "block":
-                    return new Block { Child = Parse(element.Elements().Single()) };
+                    return new Bold { Child = Parse(element.Elements().Single()) };
 
                 case "small":
                     return new Small { Child = Parse(element.Elements().Single()) };

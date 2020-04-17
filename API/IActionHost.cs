@@ -38,6 +38,7 @@ namespace Cardgame.API
 
         // user inputs
         Task<bool> YesNo(string prompt, string message);
+        Task ChooseOne(string prompt, string option1, Action action1, string option2, Action action2);
         Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max) where T : ICard;
         Task<ICard[]> OrderCards(string prompt, Zone source);
 

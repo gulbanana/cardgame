@@ -2,8 +2,9 @@ namespace Cardgame.Shared
 {
     public enum ChoiceType
     {
-        SelectCards,
         YesNo,
-        OrderCards
+        ChooseOne,
+        SelectCards,        
+        OrderCards,        
     }
 }
