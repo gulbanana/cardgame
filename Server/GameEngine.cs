@@ -195,11 +195,11 @@ namespace Cardgame.Server
         private void BuyCard(string player, string id)
         {
             var boughtCard = All.Cards.ByName(id);
-            if (boughtCard.Cost > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
+            if (boughtCard.GetCost(Model.GetModifiers()) > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
 
             Model.Supply[id]--;
             Model.Discards[player].Add(id);
-            Model.MoneyRemaining -= boughtCard.Cost;
+            Model.MoneyRemaining -= boughtCard.GetCost(Model.GetModifiers());
             Model.BuysRemaining -= 1;
 
             LogEvent($@"<spans>
@@ -320,7 +320,7 @@ namespace Cardgame.Server
 
             // first, try to apply config
             Model.KingdomCards = All.Presets.BySet[Model.KingdomSet][Model.KingdomPreset];
-            var byCost = Model.KingdomCards.Select(All.Cards.ByName).OrderBy(card => card.Cost).Select(card => card.Name).ToArray();
+            var byCost = Model.KingdomCards.Select(All.Cards.ByName).OrderBy(card => card.GetCost(Array.Empty<IModifier>())).Select(card => card.Name).ToArray();
             Model.KingdomCards[0] = byCost[0];
             Model.KingdomCards[5] = byCost[1];
             Model.KingdomCards[1] = byCost[2];

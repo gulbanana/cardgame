@@ -1,3 +1,5 @@
+using Cardgame.Shared;
+
 namespace Cardgame.API
 {
     public interface ICard
@@ -6,6 +8,6 @@ namespace Cardgame.API
         CardType Type { get; }
         string Art { get; }
         string Text { get; }
-        int Cost { get; }
+        int GetCost(IModifier[] modifiers);
     }
 }

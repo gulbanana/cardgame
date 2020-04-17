@@ -21,13 +21,15 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
+            var modifiers = host.GetModifiers();
+
             var trashedCard = await host.SelectCard("Choose a card to trash.");
             host.Trash(trashedCard.Name);
 
             var gainedCard = await host.SelectCard(
                 "Choose a card to gain.", 
                 Zone.Supply, 
-                cards => cards.Where(card => card.Cost <= trashedCard.Cost + 2)
+                cards => cards.Where(card => card.GetCost(modifiers) <= trashedCard.GetCost(modifiers) + 2)
             );
             host.Gain(gainedCard.Name);
         }

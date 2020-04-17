@@ -1,4 +1,7 @@
+using System;
+using System.Linq;
 using Cardgame.API;
+using Cardgame.Shared;
 
 namespace Cardgame.Cards
 {
@@ -13,6 +16,11 @@ namespace Cardgame.Cards
         public CardBase()
         {
             Name = this.GetType().Name;
+        }
+
+        public int GetCost(IModifier[] modifiers)
+        {
+            return Math.Max(0, Cost - modifiers.Select(m => m.ReduceCardCost).Sum());
         }
 
         public override bool Equals(object obj)

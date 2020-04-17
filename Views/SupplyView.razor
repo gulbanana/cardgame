@@ -12,7 +12,7 @@
         Game.ExecutingCards == 0 &&
         Game.BuysRemaining > 0 &&
         All.Cards.Exists(Id) &&
-        All.Cards.ByName(Id).Cost <= Game.MoneyRemaining;
+        All.Cards.ByName(Id).GetCost(Game.GetModifiers()) <= Game.MoneyRemaining;
     <ActiveCard Id="@Id" 
                 Enabled="isEnabled" 
                 Half="true" 

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Cardgame.Shared
 {
@@ -42,5 +44,20 @@ namespace Cardgame.Shared
         public string ChoicePrompt { get; set; }
         public ChoiceType ChoiceType { get; set; }
         public string ChoiceInput { get; set; }
+
+        public IModifier[] GetModifiers()
+        {
+            if (!IsStarted)
+            {
+                return Array.Empty<IModifier>();
+            }
+            else
+            {
+                return ActiveEffects
+                    .Select(All.Effects.ByName)
+                    .OfType<IModifier>()
+                    .ToArray();
+            }
+        }
     }
 }

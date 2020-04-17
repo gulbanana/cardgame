@@ -21,6 +21,8 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
+            var modifiers = host.GetModifiers();
+
             var trashedCard = await host.SelectCard(
                 "Choose a Treasure to trash.", 
                 cards => cards.OfType<ITreasureCard>()
@@ -33,7 +35,7 @@ namespace Cardgame.Cards.Dominion
                 var gainedCard = await host.SelectCard(
                     "Choose a Treasure to gain.", 
                     Zone.Supply, 
-                    cards => cards.OfType<ITreasureCard>().Where(card => card.Cost <= trashedCard.Cost + 3)
+                    cards => cards.OfType<ITreasureCard>().Where(card => card.GetCost(modifiers) <= trashedCard.GetCost(modifiers) + 3)
                 );
 
                 host.Gain(gainedCard.Name, Zone.Hand);

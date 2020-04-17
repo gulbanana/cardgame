@@ -1,4 +1,5 @@
 @code {
+    [CascadingParameter] public GameModel Game { get; set; }
     [Parameter] public string Id { get; set; }
     [Parameter] public bool Enabled { get; set; }
     [Parameter] public Action Action { get; set; }
@@ -8,6 +9,8 @@
     [Parameter] public int Stack { get; set; }
     [Parameter] public string Color { get; set; }
     private string subType;
+    private int cost;
+    private CardSet? setIcon;
 
     protected override void OnParametersSet()
     {
@@ -20,10 +23,9 @@
             Id = Model.Name;
         }
 
-        if (Model is IActionCard actionCard)
-        {
-            subType = actionCard.SubType;
-        }
+        if (Model is IActionCard actionCard) subType = actionCard.SubType;
+        cost = Model.GetCost(Game.GetModifiers());
+        setIcon = All.Cards.SetIcon(Id);
     }
 
     private void OnClick()
@@ -39,7 +41,7 @@
 {
     <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
         <Magnify>        
-            <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" SetIcon="@All.Cards.SetIcon(Id)" Half="@Half" Stack="@Stack" />
+            <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="@Half" Stack="@Stack" />
         </Magnify>
     </div>
 }
@@ -48,13 +50,13 @@ else
     <WithTooltip>
         <Content>
             <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
-                <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" SetIcon="@All.Cards.SetIcon(Id)" Half="@Half" Stack="@Stack" />
+                <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="@Half" Stack="@Stack" />
             </div>
         </Content>
         <Tooltip>
             <Magnify>
                 <StackHeader Size="@Stack">                
-                    <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@Model.Cost" Text="@Model.Text" SetIcon="@All.Cards.SetIcon(Id)" Half="false" />
+                    <KingdomCard Name="@Id" Type="@Model.Type" SubType="@subType" Color="@Color" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="false" />
                 </StackHeader>
             </Magnify>
         </Tooltip>

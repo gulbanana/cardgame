@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cardgame.Shared;
 
 namespace Cardgame.API
 {
@@ -41,6 +42,7 @@ namespace Cardgame.API
         Task<ICard[]> OrderCards(string prompt, Zone source);
 
         // advanced
+        IModifier[] GetModifiers();
         void AddEffect(string effect);
         void RemoveEffect(string effect);
     }

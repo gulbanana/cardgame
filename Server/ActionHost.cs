@@ -426,6 +426,11 @@ namespace Cardgame.Server
                 });
             }
         }
+
+        IModifier[] IActionHost.GetModifiers() 
+        {
+            return engine.Model.GetModifiers();
+        }
     
         void IActionHost.AddEffect(string effect)
         {

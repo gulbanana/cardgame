@@ -21,6 +21,9 @@ namespace Cardgame.All
                 { "Sleight of Hand", new[]{ "Cellar", "CouncilRoom", "Festival", "Gardens", "Library", "Harbinger", "Militia", "Poacher", "Smithy", "ThroneRoom" }},
                 { "Improvements", new[]{ "Artisan", "Cellar", "Market", "Merchant", "Mine", "Moat", "Moneylender", "Poacher", "Remodel", "Witch" }},
                 { "Silver & Gold", new[]{ "Bandit", "Bureaucrat", "Chapel", "Harbinger", "Laboratory", "Merchant", "Mine", "Moneylender", "ThroneRoom", "Vassal" }}
+            } },
+            { CardSet.Intrigue1st, new Dictionary<string, string[]> {
+                { "Victory Dance", new[] { "Bridge", "Duke", "GreatHall", "Harem", "Ironworks", "Masquerade", "Nobles", "Pawn", "Scout", "Upgrade" } }
             } }
         };
     }
