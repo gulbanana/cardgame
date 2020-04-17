@@ -59,6 +59,13 @@
     background: var(--card-text-background);
     border: solid var(--highlight);
     border-width: 0 var(--local-card-border-half);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card__text > * {
+    text-align: center;
 }
 
 .card__footer {
