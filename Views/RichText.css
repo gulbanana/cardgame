@@ -9,11 +9,10 @@
 .rich-text__block {
     font-weight: bold;
     text-align: center;
-    font-size: 1.2em;
 }
 
 .rich-text__small {
-    font-size: 0.8em;
+    font-size: var(--card-body-font-small);
 }
 
 .rich-text__symbol {

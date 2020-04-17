@@ -22,6 +22,11 @@
     --active-focus-color: blue;
 
     --zoom-factor: 2.0;
+
+    --card-body-font: 7.5px;
+    --card-body-font-small: 6px;
+    --card-title-font: 12px;
+    --stack-header-font: 18px;
 }
 
 

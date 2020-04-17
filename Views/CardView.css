@@ -23,7 +23,7 @@
 }
 
 .card__header {
-    font-size: 12px;
+    font-size: var(--card-title-font);
 }
 
 .card__image {
@@ -47,14 +47,14 @@
 
 .card__text {
     height: calc(var(--card-body) / 2 - 1px);
-    font-size: 7px;
+    font-size: var(--card-body-font);
     background: var(--card-text-background);
     border: 1px solid var(--highlight);
     border-width: 0 1px;
 }
 
 .card__footer {
-    font-size: 11px;
+    font-size: var(--card-title-font);
     position: relative;
 }
 

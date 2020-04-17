@@ -17,7 +17,9 @@ namespace Cardgame.Cards.Dominion
                     <run>+1 Action</run>
                 </lines>
             </block>
-            <run>Each player (including you) reveals the top 2 card of their deck and either discards it or puts it back, your choice.</run>
+            <small>
+                <run>Each player (including you) reveals the top 2 card of their deck and either discards it or puts it back, your choice.</run>
+            </small>
         </paras>";
 
         protected override async Task ActAsync(IActionHost host)
