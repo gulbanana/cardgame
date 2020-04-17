@@ -12,7 +12,7 @@
 }
 
 .rich-text__small {
-    font-size: calc(var(--local-scale) * var(--card-body-font-small));
+    font-size: calc(var(--local-scale) * var(--card-body-small-font));
 }
 
 .rich-text__symbol {

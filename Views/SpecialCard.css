@@ -13,9 +13,9 @@
 }
 
 .special-card__1x {
-    height: calc(var(--local-scale) * (var(--card-body)/2 + var(--card-header)*2 -1px));
+    height: calc(var(--local-scale) * (var(--card-body)/2 + var(--card-header) + var(--card-footer) -1px));
 }
 
 .special-card__2x {
-    height: calc(var(--local-scale) * (var(--card-body) + var(--card-header)*2));
+    height: calc(var(--local-scale) * (var(--card-body) + var(--card-header) + var(--card-footer)));
 }

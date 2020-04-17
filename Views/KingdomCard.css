@@ -3,8 +3,12 @@
     --local-card-border-width: calc(var(--local-scale) * var(--card-border-width));
     --local-card-border-half: calc(var(--local-card-border-width) / 2);
     --local-card-header: calc(var(--local-scale) * var(--card-header));
+    --local-card-footer: calc(var(--local-scale) * var(--card-footer));
     --local-card-body: calc(var(--local-scale) * var(--card-body));
     --local-card-title-font: calc(var(--local-scale) * var(--card-title-font));
+    --local-card-title-caps-font: calc(var(--local-scale) * var(--card-title-caps-font));
+    --local-card-type-font: calc(var(--local-scale) * var(--card-type-font));
+    --local-card-type-caps-font: calc(var(--local-scale) * var(--card-type-caps-font));
     --local-card-body-font: calc(var(--local-scale) * var(--card-body-font));
     --local-card-icon: calc(var(--local-scale) * var(--card-icon));
     width: var(--local-card-width);
@@ -13,6 +17,7 @@
     display: flex;
     flex-direction: column;
     border-radius: calc(var(--local-card-border-width) * 2);
+    font-family: var(--card-body-family);
 }
 
 .card-view img {
@@ -21,8 +26,25 @@
 
 .card-view__title {
     text-align: center;
-    height: var(--local-card-header);
     background: var(--highlight);
+    font-family: var(--card-title-family);
+    white-space: nowrap;
+}
+
+.card-view__title__word {
+    display: inline-block;
+}
+
+.card-view__title__word::first-letter {
+    font-size: var(--local-card-title-caps-font);
+}
+
+.card-view__type__word {
+    display: inline-block;
+}
+
+.card-view__type__word::first-letter {
+    font-size: var(--local-card-type-caps-font);
 }
 
 .card-view__picture {
@@ -32,6 +54,8 @@
 }
 
 .card__header {
+    height: var(--local-card-header);
+    line-height: var(--local-card-header);
     font-size: var(--local-card-title-font);
 }
 
@@ -63,6 +87,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding: 0 calc(var(--local-scale) * 2px);
 }
 
 .card__text > * {
@@ -70,7 +95,9 @@
 }
 
 .card__footer {
-    font-size: var(--local-card-title-font);
+    height: var(--local-card-footer);
+    line-height: var(--local-card-footer);
+    font-size: var(--local-card-type-font);
     position: relative;
 }
 
@@ -80,8 +107,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: var(--local-card-header);
-    height: var(--local-card-header);
+    width: var(--local-card-footer);
+    height: var(--local-card-footer);
 }
 
 .card__footer-cost {

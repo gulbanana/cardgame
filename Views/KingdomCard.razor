@@ -21,7 +21,12 @@
 
 <Stacked Size="@Stack" Type="@Color" Half="@Half">
     <div class="card-view">
-        <div class="card__header card-view__title">@Strings.TitleCase(Name)</div>
+        <div class="card__header card-view__title">
+            @foreach (var word in Strings.TitleCase(Name).Split(" "))
+            {
+                <span class="card-view__title__word">@word</span>
+            }
+        </div>
         @if (Half) {
             <div class="card__image card-view__picture">
                 <img src="/cards/@(Art).jpg" />
@@ -48,11 +53,11 @@
 
             @if (SubType == null)
             {
-                <span>@Type</span>
+                <span class="card-view__type__word">@Type</span>
             }
             else
             {
-                <span>@SubType</span>
+                <span class="card-view__type__word">@SubType</span>
             }
 
             @if (SetIcon != null)
