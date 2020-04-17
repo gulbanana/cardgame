@@ -35,6 +35,10 @@
     white-space: nowrap;
 }
 
+.rich-text__no-break--large {
+    font-size: calc(var(--local-scale) * var(--card-body-font) * 2);
+}
+
 .rich-text__bar {
     width: 70%;
 }
