@@ -10,33 +10,50 @@
     [Parameter] public string OverrideColour { get; set; }
     [Parameter] public CardSet? SetIcon { get; set; }
     private string[] colours;
+    private string[] typeNames;
+    private MarkupString type;
 
     protected override void OnParametersSet()
     {
         colours = OverrideColour != null 
             ? new[] { OverrideColour } 
             : Types.Select(t => All.Cards.GetColor(t, SubType)).ToArray();
+
+        typeNames = Types.Select(t => t.ToString()).Concat(SubType == null ? Array.Empty<string>() : new[]{ SubType } ).ToArray();
+
+        var builder = new System.Text.StringBuilder();
+        for (var i = 0; i < typeNames.Length; i++)
+        {
+            if (i != 0)
+            {
+                builder.Append(" - ");
+            }
+            builder.Append("<span class=\"card__type__word\">");
+            builder.Append(typeNames[i]);
+            builder.Append("</span>");
+        }
+        type = new MarkupString(builder.ToString());
     }
 }
 
 <Stacked Size="@Stack" Colours="@colours" Half="@Half">
     <div class="card-view">
-        <div class="card__header card-view__title">
+        <div class="card__header card__title">
             @foreach (var word in Strings.TitleCase(Name).Split(" "))
             {
-                <span class="card-view__title__word">@word</span>
+                <span class="card__title__word">@word</span>
             }
         </div>
         @if (Half) {
-            <div class="card__image card-view__picture">
+            <div class="card__image card__picture">
                 <img src="/cards/@(Art).jpg" />
             </div>
         } else if (Text == null) {
-            <div class="card__image-2x card-view__picture">
+            <div class="card__image-2x card__picture">
                 <img src="/cards/@(Art).jpg" />
             </div>
         } else {
-            <div class="card__image card-view__picture">
+            <div class="card__image card__picture">
                 <img src="/cards/@(Art).jpg" />
             </div>
             <div class="card__text-separator" />
@@ -46,19 +63,12 @@
                 </div>
             </div>
         }
-        <div class="card__footer card-view__title">
+        <div class="card__footer card__title">
             <div class="card__footer-cost">
                 <img class="card__icon" src="/symbols/coin@(Cost).png" />
             </div>
 
-            @foreach (var type in Types)
-            {
-                <span class="card-view__type__word">@type</span>
-            }
-            @if (SubType != null)
-            {
-                <span class="card-view__type__word">@SubType</span>    
-            }
+            <span class="card__type">@type</span>
 
             @if (SetIcon != null)
             {
