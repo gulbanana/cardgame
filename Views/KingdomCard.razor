@@ -12,6 +12,7 @@
     private string[] colours;
     private string[] typeNames;
     private MarkupString type;
+    private double typeScale;
 
     protected override void OnParametersSet()
     {
@@ -33,6 +34,11 @@
             builder.Append("</span>");
         }
         type = new MarkupString(builder.ToString());
+
+        typeScale = 
+            typeNames.Length == 1 ? 1.0 :
+            typeNames.Length == 2 ? 0.75 :
+            0.5;
     }
 }
 
@@ -68,7 +74,7 @@
                 <img class="card__icon" src="/symbols/coin@(Cost).png" />
             </div>
 
-            <span class="card__type">@type</span>
+            <span class="card__type" style="--type-scale: @typeScale;">@type</span>
 
             @if (SetIcon != null)
             {

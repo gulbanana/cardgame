@@ -114,8 +114,9 @@
 
 .card__type {
     overflow-x: hidden;
+    font-size: calc(var(--type-scale) * var(--local-card-type-font));
 }
 
 .card__type__word::first-letter {
-    font-size: var(--local-card-type-caps-font);
+    font-size: calc(var(--type-scale) * var(--local-card-type-caps-font));
 }
