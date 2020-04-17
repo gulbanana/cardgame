@@ -20,18 +20,20 @@ namespace Cardgame.Cards.Dominion
 
             await host.Attack(async player =>
             {
-                if (player.GetHand().Any(card => card.Type == CardType.Victory))
+                var hand = player.Examine(Zone.Hand);
+                if (hand.Any(card => card.Type == CardType.Victory))
                 {
                     var onTop = await player.SelectCard(
                         "Choose a card to put onto your deck.", 
                         Zone.Hand, 
                         cards => cards.OfType<IVictoryCard>()
                     );
-                    player.RevealAndMove(onTop.Name, Zone.Hand, Zone.DeckTop1);
+                    player.Reveal(onTop, Zone.Hand);
+                    player.PlaceOnDeck(onTop, Zone.Hand);
                 }
                 else
                 {
-                    player.RevealAll(Zone.Hand);
+                    player.Reveal(hand, Zone.Hand);
                 }
             });
         }

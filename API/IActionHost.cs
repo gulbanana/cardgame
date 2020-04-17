@@ -9,30 +9,27 @@ namespace Cardgame.API
     {
         string Player { get; }
         int ShuffleCount { get; }
-        ICard[] GetHand();
-
+        
+        // the four basic operations
+        ICard[] DrawCards(int n);
         void AddActions(int n);
         void AddBuys(int n);
         void AddMoney(int n);
-        ICard[] DrawCards(int n);        
-
+        
+        // move cards around
         void Discard(string[] cards, Zone from);
-        ICard[] DiscardAll(Zone from);
         void Trash(string[] cards, Zone from);
         void Gain(string card, Zone to);
         void GainFrom(string[] cards, Zone from);
         void PlaceOnDeck(string card, Zone from);
-           
-        void DiscardEntireDeck();
+        void Reveal(string[] cards, Zone from);
 
-        void Reveal(string card);
-        ICard[] RevealAll(Zone from);
-        void RevealAndMove(string card, Zone from, Zone to);                
-
+        // manipulate entire zones
+        ICard[] Examine(Zone @in);
         void Reorder(string[] cards, Zone @in);
 
-        void AddEffect(string effect);
-        void RemoveEffect(string effect);
+        // special cases
+        void DiscardEntireDeck();
 
         // potentially-interactive actions
         Task PlayCard(string card, Zone from);
@@ -41,7 +38,11 @@ namespace Cardgame.API
         // user inputs
         Task<bool> YesNo(string prompt, string message);
         Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max) where T : ICard;
-        Task<ICard[]> OrderCards(string prompt, Zone source);        
+        Task<ICard[]> OrderCards(string prompt, Zone source);
+
+        // advanced
+        void AddEffect(string effect);
+        void RemoveEffect(string effect);
     }
 
     public static class ActionHostExtensions
@@ -144,9 +145,46 @@ namespace Cardgame.API
         }
         #endregion
 
+        #region Reveal
+        public static void Reveal(this IActionHost host, string card, Zone from)
+        {
+            host.Reveal(new[] { card }, from);
+        }
+
+        public static void Reveal(this IActionHost host, string card)
+        {
+            host.Reveal(new[] { card }, Zone.Hand);
+        }
+        
+        public static void Reveal(this IActionHost host, ICard[] cards, Zone from)
+        {
+            host.Reveal(cards.Select(card => card.Name).ToArray(), from);
+        }
+
+        public static void Reveal(this IActionHost host, ICard[] cards)
+        {
+            host.Reveal(cards.Select(card => card.Name).ToArray(), Zone.Hand);
+        }
+
+        public static void Reveal(this IActionHost host, ICard card, Zone from)
+        {
+            host.Reveal(new[] { card.Name }, from);
+        }
+
+        public static void Reveal(this IActionHost host, ICard card)
+        {
+            host.Reveal(new[] { card.Name }, Zone.Hand);
+        }
+        #endregion
+
         public static void Reorder(this IActionHost host, ICard[] cards, Zone @in)
         {
             host.Reorder(cards.Select(card => card.Name).ToArray(), @in);
+        }
+
+        public static int Count(this IActionHost host, Zone @in)
+        {
+            return host.Examine(@in).Count();
         }
 
         public static void PlayCard(this IActionHost host, string card)

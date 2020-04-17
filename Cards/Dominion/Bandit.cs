@@ -22,7 +22,9 @@ namespace Cardgame.Cards.Dominion
             
             await host.Attack(async player => 
             {
-                var top2 = player.RevealAll(Zone.DeckTop2);
+                var top2 = player.Examine(Zone.DeckTop2);
+                player.Reveal(top2, Zone.DeckTop2);
+                
                 var trashed = false;
                 foreach (var card in top2)
                 {

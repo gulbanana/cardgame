@@ -4,10 +4,11 @@ namespace Cardgame.API
     {
         Hand,
         Supply,
+        SupplyEmpty,
         Discard,
         Trash,
         DeckTop1,
         DeckTop2,
-        InPlay
+        InPlay,        
     }
 }

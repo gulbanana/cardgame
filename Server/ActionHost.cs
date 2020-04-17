@@ -66,12 +66,8 @@ namespace Cardgame.Server
             switch (from)
             {
                 case Zone.DeckTop1:
-                    return $@"<run>the top of</run>
-                    <if you='your' them='their'>{Player}</if>
-                    <run>deck.</run>";
-
                 case Zone.DeckTop2:
-                    return $@"<run>the top two cards of</run>
+                    return $@"<run>the top of</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>";
 
@@ -129,9 +125,9 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        ICard[] IActionHost.GetHand()
+        ICard[] IActionHost.Examine(Zone @in)
         {
-            return engine.GetCards(Player, Zone.Hand, NoteReshuffle).Select(All.Cards.ByName).ToArray();
+            return engine.GetCards(Player, @in, NoteReshuffle).Select(All.Cards.ByName).ToArray();
         }
 
         void IActionHost.AddActions(int n)
@@ -206,30 +202,24 @@ namespace Cardgame.Server
                 engine.MoveCard(Player, card, from, Zone.Discard);
             }
 
-            engine.LogPartialEvent($@"<spans>
-                <indent level='{level}' />
-                {LogVerbInitial("discard", "discards", "discarding")}
-                {LogCardList(cards)}
-            </spans>");
-        }
-
-        ICard[] IActionHost.DiscardAll(Zone from)
-        {
-            var cards = engine.GetCards(Player, from, NoteReshuffle);
-            foreach (var card in cards)
+            if (from == Zone.Hand)
             {
-                engine.MoveCard(Player, card, from, Zone.Discard);
+                engine.LogPartialEvent($@"<spans>
+                    <indent level='{level}' />
+                    {LogVerbInitial("discard", "discards", "discarding")}
+                    {LogCardList(cards)}
+                </spans>");
             }
-
-            engine.LogPartialEvent($@"<spans>
+            else
+            {
+                engine.LogPartialEvent($@"<spans>
                 <indent level='{level}' />
-                {LogVerbInitial("discard", "discards", "discarding")}
-                {LogCardList(cards, terminal: false)}
-                <run>from</run>
-                {LogSource(from)}
-            </spans>");
-
-            return cards.Select(All.Cards.ByName).ToArray();
+                    {LogVerbInitial("discard", "discards", "discarding")}
+                    {LogCardList(cards, terminal: false)}
+                    <run>from</run>
+                    {LogSource(from)}
+                </spans>");            
+            }
         }
 
         // this is a special case used by Chancellor: it does not count as 'discarding' each card, 
@@ -332,39 +322,15 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        void IActionHost.Reveal(string card)
+        void IActionHost.Reveal(string[] cards, Zone from)
         {
-            engine.LogPartialEvent($@"<spans>
-                <player>{Player}</player>
-                <if you='reveal' them='reveals'>{Player}</if>
-                <card suffix='!'>{card}</card>
-            </spans>");
-        }
-
-        ICard[] IActionHost.RevealAll(Zone source)
-        {
-            var sourceCards = engine.GetCards(Player, source, NoteReshuffle);
-
             engine.LogPartialEvent($@"<spans>
                 <indent level='{level}' />
                 {LogVerbInitial("reveal", "reveals", "revealing")}
-                {LogCardList(sourceCards)}
+                {LogCardList(cards, terminal: false)}
+                <run>from</run>
+                {LogSource(from)}
             </spans>");
-
-            return sourceCards.Select(All.Cards.ByName).ToArray();
-        }
-        
-        void IActionHost.RevealAndMove(string id, Zone from, Zone to)
-        {
-            engine.MoveCard(Player, id, from, to);
-
-            engine.LogPartialEvent($@"<spans>
-                <indent level='{level}' />
-                {LogVerbInitial("reveal", "reveals", "revealing")}
-                <card>{id}</card>
-                <run>and</run>
-                {LogDestination(to)}
-            </spans>");   
         }
 
         void IActionHost.Reorder(string[] cards, Zone @in)

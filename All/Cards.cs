@@ -62,5 +62,10 @@ namespace Cardgame.All
         {
             return byName.ContainsKey(id);
         }
+
+        public static string[] Base()
+        {
+            return new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold", "Curse"};
+        }
     }
 }

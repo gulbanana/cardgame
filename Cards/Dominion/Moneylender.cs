@@ -16,7 +16,7 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
-            if (host.GetHand().Any(card => card is Base.Copper))
+            if (host.Examine(Zone.Hand).Any(card => card is Base.Copper))
             {
                 if (await host.YesNo("Moneylender", $@"<run>Do you want to trash a Copper?</run>"))
                 {

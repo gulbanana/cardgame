@@ -18,7 +18,7 @@ namespace Cardgame.Cards.Dominion
         {
             var setAside = new List<string>();
 
-            while (host.GetHand().Count() < 7)
+            while (host.Count(Zone.Hand) < 7)
             {
                 var drawn = host.DrawCards(1).SingleOrDefault();
                 if (drawn == null) break; // no cards left in deck or discard

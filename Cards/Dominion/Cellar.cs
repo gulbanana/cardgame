@@ -8,8 +8,7 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-cellar";
         public override int Cost => 2;
         
-        public override string Text => @"
-        <paras>
+        public override string Text => @"<paras>
             <block>
                 <run>+1 Action</run>
             </block>

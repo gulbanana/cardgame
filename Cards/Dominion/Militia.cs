@@ -21,9 +21,9 @@ namespace Cardgame.Cards.Dominion
         {
             host.AddMoney(2);
 
-            await host.Attack(player => player.GetHand().Length > 3, async player =>
+            await host.Attack(player => player.Count(Zone.Hand) > 3, async player =>
             {
-                var n = player.GetHand().Length - 3;
+                var n = player.Count(Zone.Hand) - 3;
                 var discardedCards = await player.SelectCards(n == 1 ? "Choose a card to discard" : $"Choose {n} cards to discard.", n, n);
                 player.Discard(discardedCards);
             });

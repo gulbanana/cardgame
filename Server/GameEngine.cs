@@ -664,7 +664,8 @@ namespace Cardgame.Server
                 Zone.Discard => Model.Discards[player].ToArray(),
                 Zone.Hand => Model.Hands[player].ToArray(),
                 Zone.InPlay => Model.PlayedCards.ToArray(),
-                Zone.Supply => Model.KingdomCards.Concat(new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold", "Curse"}).Where(id => Model.Supply[id] > 0).ToArray(),
+                Zone.Supply => Model.KingdomCards.Concat(All.Cards.Base()).Where(id => Model.Supply[id] > 0).ToArray(),
+                Zone.SupplyEmpty => Model.KingdomCards.Concat(All.Cards.Base()).Where(id => Model.Supply[id] == 0).ToArray(),
                 Zone.Trash => Model.Trash.ToArray(),
                 Zone other => throw new CommandException($"Unknown Zone {other}")
             };

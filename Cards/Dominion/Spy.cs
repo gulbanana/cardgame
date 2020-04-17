@@ -33,9 +33,11 @@ namespace Cardgame.Cards.Dominion
 
         private async Task SpyOn(IActionHost host, IActionHost target)
         {
-            var revealed = target.RevealAll(Zone.DeckTop1).SingleOrDefault();
+            var revealed = target.Examine(Zone.DeckTop1).SingleOrDefault();
             if (revealed != null)
             {
+                target.Reveal(revealed, Zone.DeckTop1);
+                
                 var subject = host == target ? "<run>Do you want</run>" : $"<run>Force</run><player>{target.Player}</player>";
                 if (await host.YesNo("Spy", $@"<spans>
                     {subject}
