@@ -16,11 +16,35 @@
     }
 }
 
-<Subscribed Endpoint="@UserEndpoint">
-    @Prefix<span class="player-link 
-    @(Name.Equals(Session.Username) ? "player-link--you" : "")
-    @(!context.Contains(Name) ? "player-link--disconnected" : "")
-    @(Game != null && Game.ActivePlayer == Name ? "player-link--active" : "")
-    ">@Text</span>@Suffix
-</Subscribed>
-
+@if (Game != null && Game.Players.Contains(Name))
+{
+    var score = All.Score.Calculate(Game, Name).Total;
+    var text = $"<sym prefix='Current score: {score}'>vp</sym>";
+    <Subscribed Endpoint="@UserEndpoint">
+        <WithTooltip>
+            <Content>
+                @Prefix<span class="player-link 
+                @(Name.Equals(Session.Username) ? "player-link--you" : "")
+                @(!context.Contains(Name) ? "player-link--disconnected" : "")
+                @(!Game.IsFinished && Game.ActivePlayer == Name ? "player-link--active" : "")
+                ">@Text</span>@Suffix
+            </Content>
+            <Tooltip>
+                <Magnify>
+                    <div @key="score" class="player-link__tooltip">
+                        <RichText Model="@text" />
+                    </div>
+                </Magnify>
+            </Tooltip>
+        </WithTooltip>
+    </Subscribed>
+}
+else
+{
+    <Subscribed Endpoint="@UserEndpoint">
+        @Prefix<span class="player-link 
+        @(Name.Equals(Session.Username) ? "player-link--you" : "")
+        @(!context.Contains(Name) ? "player-link--disconnected" : "")
+        ">@Text</span>@Suffix
+    </Subscribed>
+}

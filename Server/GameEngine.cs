@@ -487,40 +487,9 @@ namespace Cardgame.Server
                 </spans>
             </block>");
             
-            foreach (var text in Model.Players.Select(player => 
+            foreach (var score in Model.Players.Select(player => All.Score.Calculate(Model, player)))
             {
-                var builder = new System.Text.StringBuilder();
-                builder.AppendLine("<lines>");
-                    builder.AppendLine($"<spans><player>{player}</player><run>scored:</run></spans>");                    
-                    var total = 0;
-                    var dominion = Model.Decks[player].Concat(Model.Hands[player]).Concat(Model.Discards[player]).ToArray();
-                    var victoryCards = dominion.Select(All.Cards.ByName).OfType<IVictoryCard>().GroupBy(card => card.Name);
-                    foreach (var group in victoryCards)
-                    {
-                        var exemplar = group.First();
-                        var score = exemplar.Score(dominion) * group.Count();
-                        total += score;
-                        builder.AppendLine("<spans>");
-                        builder.AppendLine($"<card>{group.Key}</card>");
-                        builder.AppendLine($"<run>x{group.Count()}: {score} VP</run>");
-                        builder.AppendLine("</spans>");
-                    }
-                    var curseCards = dominion.Select(All.Cards.ByName).OfType<Cards.Base.Curse>();
-                    if (curseCards.Any())
-                    {
-                        var score = curseCards.Count();
-                        total -= score;
-                        builder.AppendLine("<spans>");
-                        builder.AppendLine($"<card>Curse</card>");
-                        builder.AppendLine($"<run>x{curseCards.Count()}: -{score} VP</run>");
-                        builder.AppendLine("</spans>");
-                    }
-                    builder.AppendLine($"<run>Total: {total} Victory Points</run>");
-                builder.AppendLine("</lines>");
-                return builder.ToString();
-            })) 
-            {
-                LogEvent(text);
+                LogEvent(score.Text());
             }
         }
 

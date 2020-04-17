@@ -1,15 +1,15 @@
 ﻿@page "/game/{GameName}"
 @attribute [Authorize]
 @inject NavigationManager Navigation
-@inject IGameEndpoint Endpoint
+@inject ILobbyEndpoint Lobby
 @inject IUserSession Session
 @code {
     [Parameter] public string GameName { get; set; }
-    private IGame game;
+    private IGameEndpoint game;
 
     protected override void OnInitialized()
     {
-        game = Endpoint.FindGame(GameName);
+        game = Lobby.FindGame(GameName);
     }
 
     private void OnExecute(GameModel model, ClientCommand command)

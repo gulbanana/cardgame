@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 
 namespace Cardgame.Hosting
 {
@@ -28,9 +30,11 @@ namespace Cardgame.Hosting
         protected void Notify()
         {
             var model = GetModel();
-            foreach (var subscriber in subscriptions)
+            foreach (var subscriber in subscriptions.ToList())
             {
-                subscriber(model);
+                var serialised = JsonSerializer.Serialize(model);
+                var clone = JsonSerializer.Deserialize<T>(serialised);
+                subscriber(clone);
             }
         }
     }

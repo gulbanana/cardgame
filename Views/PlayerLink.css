@@ -1,8 +1,9 @@
 .player-link {
-
+    color: rgb(145, 148, 175);
+    font-weight: 600;
 }
 
-.player-link--you {
+.player-link--active {
     font-style: italic;
 }
 
@@ -10,6 +11,10 @@
     text-decoration: line-through;
 }
 
-.player-link--active {
-    font-weight: bold;
+.player-link__tooltip {
+    padding: 0.5em;
+    border: 2px solid rgb(145, 148, 175);
+    border-radius: 4px;
+    background: var(--card-type-victory);
+    font-size: calc(var(--card-body-font) * var(--local-scale));
 }

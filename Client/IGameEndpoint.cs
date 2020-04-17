@@ -1,8 +1,11 @@
+using Cardgame.Shared;
+
 namespace Cardgame.Client
 {
     // theoretical client-server separation point
-    public interface IGameEndpoint : IEndpoint<GameSummary[]>
+    public interface IGameEndpoint : IEndpoint<GameModel>
     {
-        IGame FindGame(string name);
+        /// <returns>error message</return>
+        string Execute(string username, ClientCommand command);
     }
 }

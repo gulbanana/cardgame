@@ -1,7 +1,7 @@
 @page "/"
 @attribute [Authorize]
 @inject NavigationManager Navigation
-@inject IGameEndpoint GameEndpoint
+@inject ILobbyEndpoint Lobby
 @code {
     private string newGameName;
 
@@ -18,7 +18,7 @@
 </form>
 
 <h3>Current games</h3>
-<Subscribed Endpoint="@GameEndpoint">
+<Subscribed Endpoint="@Lobby">
     @foreach (var game in context)
     {    
         <p @key="game.Name">

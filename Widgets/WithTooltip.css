@@ -2,6 +2,7 @@
 /* possibly https://bugs.chromium.org/p/chromium/issues/detail?id=764011 is related? */
 .with-tooltip {
     display: inline-block; 
+    cursor: pointer;
 }
 
 .with-tooltip__tooltip {

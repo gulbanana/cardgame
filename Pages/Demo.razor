@@ -1,7 +1,7 @@
 ﻿@page "/demo"
 @inject NavigationManager Navigation
 @inject IUserSession Session
-@inject IGameEndpoint Endpoint
+@inject ILobbyEndpoint Lobby
 @code {
     Guid id;
 
@@ -13,7 +13,7 @@
             Session.Login($"demo");
         }
 
-        var game = Endpoint.FindGame($"demo-{id}");
+        var game = Lobby.FindGame($"demo-{id}");
 
         Session.CreateBot("bot1");
         game.Execute("bot1", new JoinGameCommand { Seq = 0, IsBot = true });

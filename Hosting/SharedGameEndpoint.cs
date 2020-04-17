@@ -1,48 +1,81 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Cardgame.Client;
+using Cardgame.Shared;
+using Cardgame.Server;
 
 namespace Cardgame.Hosting
 {
     // adapter implementing game protocol using shared memory
-    class SharedGameEndpoint : EndpointBase<GameSummary[]>, IGameEndpoint
+    class SharedGame : EndpointBase<GameModel>, IGameEndpoint
     {
-        private readonly Dictionary<string, SharedGame> games;
+        private readonly List<Action<GameModel>> subscriptions;
+        private readonly GameEngine engine;
+        private readonly string name;
+        public GameSummary Summary { get; private set; }
+        public event Action SummaryUpdated;
+        public event Action<string> GameEnded;
 
-        public SharedGameEndpoint()
+        public SharedGame(string name)
         {
-            games = new Dictionary<string, SharedGame>();
+            subscriptions = new List<Action<GameModel>>();
+            engine = new GameEngine();
+            this.name = name;
+
+            engine.ActionUpdated += OnActionUpdated;
+
+            UpdateSummary();
         }
 
-        protected override GameSummary[] GetModel()
+        protected override GameModel GetModel()
         {
-            return games.Values.Select(game => game.Summary).ToArray();
+            return engine.Model;
         }
 
-        public IGame FindGame(string name)
+        public string Execute(string username, ClientCommand command)
         {
-            if (!games.ContainsKey(name))
+            try
             {
-                games[name] = new SharedGame(name);
-                games[name].SummaryUpdated += Notify;
-                games[name].GameEnded += OnGameEnded;
-
+                engine.Execute(username, command);
+                
                 Notify();
+
+                if (command is JoinGameCommand || command is LeaveGameCommand || command is StartGameCommand)
+                {
+                    UpdateSummary();
+                }
+
+                if (engine.Model.IsFinished)
+                {
+                    UpdateSummary();
+                    GameEnded?.Invoke(name);
+                }
+
+                return null;
             }
-
-            return games[name];
+            catch (CommandException e)
+            {
+                return $"{username}: error executing command {command.GetType().Name}: {e.Message}";
+            }
         }
 
-        // clean up finished games
-        private void OnGameEnded(string name)
+        private void OnActionUpdated()
         {
-            Task.Delay(TimeSpan.FromMinutes(5)).ContinueWith(t => 
+            Notify();
+        }
+
+        private void UpdateSummary()
+        {
+            Summary = new GameSummary
             {
-                games.Remove(name);
-                Notify();
-            });
+                Name = name,
+                Players = engine.Model.Players,
+                Status = engine.Model.IsFinished ? "finished"
+                    : engine.Model.IsStarted ? "in progress" 
+                    : "waiting to start"
+            };            
+            
+            SummaryUpdated?.Invoke();
         }
     }
 }

@@ -29,8 +29,8 @@ namespace Cardgame
             services.AddScoped<IUserSession, NameclaimUserSession>();
             services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<IUserSession>() as AuthenticationStateProvider);
 
-            services.AddSingleton<SharedGameEndpoint>();
-            services.AddTransient<IGameEndpoint>(s => s.GetRequiredService<SharedGameEndpoint>());
+            services.AddSingleton<SharedLobbyEndpoint>();
+            services.AddTransient<ILobbyEndpoint>(s => s.GetRequiredService<SharedLobbyEndpoint>());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
