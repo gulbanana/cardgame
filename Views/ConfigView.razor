@@ -9,7 +9,7 @@
         set
         {
             configSet = value;
-            configPreset = All.Presets.BySet[configSet].Keys.First();
+            configPreset = All.Presets.BySet(configSet).Keys.First();
             Dispatch(new ConfigureGameCommand
             {
                 KingdomSet = configSet,
@@ -67,7 +67,7 @@
             </select>
             <span>Preset:</span>
             <select disabled="@(!Model.Players.Contains(Session.Username))" @bind="ConfigPreset">
-                @foreach (var preset in All.Presets.BySet[configSet].Keys)
+                @foreach (var preset in All.Presets.BySet(configSet).Keys)
                 {
                     <option @key="preset" value="@preset">@preset</option>
                 }

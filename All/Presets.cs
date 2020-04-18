@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cardgame.Shared;
 
 namespace Cardgame.All
 {
     public static class Presets
     {
-        public static Dictionary<CardSet, Dictionary<string, string[]>> BySet = new Dictionary<CardSet, Dictionary<string, string[]>>
+        private static Dictionary<CardSet, Dictionary<string, string[]>> bySet = new Dictionary<CardSet, Dictionary<string, string[]>>
         {
             { CardSet.Dominion1st, new Dictionary<string, string[]> {
                 { "First Game", new[]{ "Cellar", "Market", "Militia", "Mine", "Moat", "Remodel", "Smithy", "Village", "Woodcutter", "Workshop" }},
@@ -29,5 +31,21 @@ namespace Cardgame.All
                 { "Victory Dance", new[] { "Baron", "Courtier", "Duke", "Harem", "Ironworks", "Masquerade", "Mill", "Nobles", "Patrol", "Replace" } }
             } }
         };
+
+        public static IReadOnlyDictionary<string, string[]> BySet(CardSet set)
+        {
+            if (!bySet.ContainsKey(set))
+            {
+                return new Dictionary<string, string[]>();
+            }
+            else
+            {
+                return bySet[set].ToDictionary(kvp => kvp.Key, kvp =>
+                {
+                    var byCost = kvp.Value.Select(All.Cards.ByName).OrderBy(card => card.GetCost(Array.Empty<IModifier>())).Select(card => card.Name).ToArray();
+                    return new[] { byCost[0], byCost[2], byCost[4], byCost[6], byCost[8], byCost[1], byCost[3], byCost[5], byCost[7], byCost[9] };
+                });
+            }
+        }
     }
 }

@@ -111,7 +111,7 @@ namespace Cardgame.Server
                     if (Model.IsStarted) throw new CommandException("The game is already in progress.");
 
                     Model.KingdomSet = configureGame.KingdomSet;
-                    Model.KingdomPreset = configureGame.KingdomPreset ?? All.Presets.BySet[Model.KingdomSet].Keys.First();
+                    Model.KingdomPreset = configureGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
 
                     break;
 
@@ -121,7 +121,7 @@ namespace Cardgame.Server
                     if (Model.Players.Length < 2) throw new CommandException("Not enough players.");
 
                     Model.KingdomSet = startGame.KingdomSet;
-                    Model.KingdomPreset = startGame.KingdomPreset ?? All.Presets.BySet[Model.KingdomSet].Keys.First();
+                    Model.KingdomPreset = startGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
 
                     BeginGame();
                     BeginTurn();
@@ -326,20 +326,7 @@ namespace Cardgame.Server
         {
             var rng = new Random();
 
-            // first, try to apply config
-            Model.KingdomCards = All.Presets.BySet[Model.KingdomSet][Model.KingdomPreset];
-            var byCost = Model.KingdomCards.Select(All.Cards.ByName).OrderBy(card => card.GetCost(Array.Empty<IModifier>())).Select(card => card.Name).ToArray();
-            Model.KingdomCards[0] = byCost[0];
-            Model.KingdomCards[5] = byCost[1];
-            Model.KingdomCards[1] = byCost[2];
-            Model.KingdomCards[6] = byCost[3];
-            Model.KingdomCards[2] = byCost[4];
-            Model.KingdomCards[7] = byCost[5];
-            Model.KingdomCards[3] = byCost[6];
-            Model.KingdomCards[8] = byCost[7];
-            Model.KingdomCards[4] = byCost[8];
-            Model.KingdomCards[9] = byCost[9];
-
+            Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
             Model.IsStarted = true;
             Model.PlayedCards = new List<string>();
             Model.ActiveEffects = new List<string>();
