@@ -8,7 +8,7 @@
     {
         if (!string.IsNullOrWhiteSpace(username))
         {
-            if (!Session.Login(username))
+            if (!Session.Login(username.Trim()))
             {
                 error = "Another player with this username is already logged in.";
             }

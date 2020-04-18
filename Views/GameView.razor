@@ -11,11 +11,11 @@
         <a href="/">&lt; games</a> 
         @if (Model.Players.Contains(Session.Username))
         {
-            <text>Playing as <PlayerLink Name="@Session.Username" />.</text>
+            <text>Playing as <PlayerLink Name="@Session.Username" Suffix="." /></text>
         }
         else
         {
-            <text>Spectating as <PlayerLink Name="@Session.Username" />.</text>
+            <text>Spectating as <PlayerLink Name="@Session.Username" Suffix="." /></text>
         }
     </div>
 
