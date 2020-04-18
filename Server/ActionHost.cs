@@ -8,11 +8,12 @@ using Cardgame.Shared;
 namespace Cardgame.Server
 {
     internal class ActionHost : IActionHost
-    {
-        private readonly GameEngine engine;
+    {        
         private readonly int level;
+        private readonly GameEngine engine;
         public string Player { get; }
-        public int ShuffleCount { get; private set; }
+        public bool IsActive => engine.Model.ActivePlayer == Player;
+        public int ShuffleCount { get; private set; }        
 
         public ActionHost(int level, GameEngine engine, string player)
         {
@@ -227,26 +228,6 @@ namespace Cardgame.Server
             }
         }
 
-        // this is a special case used by Chancellor: it does not count as 'discarding' each card, 
-        // and you may not see what cards were discarded
-        void IActionHost.DiscardEntireDeck()
-        {
-            var deck = engine.Model.Decks[Player];
-            while (deck.Any())
-            {
-                engine.MoveCard(Player, deck[0], Zone.DeckTop1, Zone.Discard);
-            }
-
-            engine.LogPartialEvent($@"<spans>
-                <indent level='{level}' />
-                {LogVerbInitial("put", "puts", "putting")}
-                <if you='your' them='their'>{Player}</if>
-                <run>deck into</run>
-                <if you='your' them='their'>{Player}</if>
-                <run>discard pile.</run>
-            </spans>");
-        }
-
         void IActionHost.Trash(string[] cards, Zone from)
         {
             foreach (var card in cards)
@@ -454,10 +435,10 @@ namespace Cardgame.Server
             
             foreach (var target in targetPlayers)
             {
-                await engine.Act(level, target.Player, Trigger.Attack, Player, async () =>
+                if (!engine.Model.PreventedAttacks.Contains(target.Player))
                 {
                     await act(target);
-                });
+                }
             }
         }
 
@@ -474,6 +455,41 @@ namespace Cardgame.Server
         void IActionHost.RemoveEffect(string effect)
         {
             engine.Model.ActiveEffects.Remove(effect);
+        }
+
+        
+        // this is a special case used by Chancellor: it does not count as 'discarding' each card, 
+        // and you may not see what cards were discarded
+        void IActionHost.DiscardEntireDeck()
+        {
+            var deck = engine.Model.Decks[Player];
+            while (deck.Any())
+            {
+                engine.MoveCard(Player, deck[0], Zone.DeckTop1, Zone.Discard);
+            }
+
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{level}' />
+                {LogVerbInitial("put", "puts", "putting")}
+                <if you='your' them='their'>{Player}</if>
+                <run>deck into</run>
+                <if you='your' them='their'>{Player}</if>
+                <run>discard pile.</run>
+            </spans>");
+        }
+
+        // this is a special case used by Moat: it triggers *before* choices about an attack are made,
+        // but only for the duration of that one card's attack
+        public void PreventAttack(bool enable)
+        {
+            if (enable)
+            {
+                engine.Model.PreventedAttacks.Add(Player);
+            }
+            else
+            {
+                engine.Model.PreventedAttacks.Remove(Player);
+            }
         }
     }
 }

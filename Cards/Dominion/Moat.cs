@@ -1,11 +1,12 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Moat : ReactionCardBase
+    public class Moat : ActionReactionCardBase
     {
-        public override Trigger ReactionTrigger => Trigger.Attack;
+        public override Trigger ReactionTrigger => Trigger.PlayCard;
         public override string Art => "dom-moat";
         public override int Cost => 2;        
 
@@ -21,9 +22,24 @@ namespace Cardgame.Cards.Dominion
             host.DrawCards(2);
         }
 
-        protected override Reaction React(IActionHost host, string trigger)
+        protected override async Task<Reaction> ReactAsync(IActionHost host, string trigger)
         {
-            return Reaction.Cancel();
+            if (!host.IsActive && All.Cards.ByName(trigger).Types.Contains(CardType.Attack) && await host.YesNo("Moat", $@"<spans>
+                <run>Reveal</run>
+                <card>Moat</card>
+                <run>from your hand?</run>
+            </spans>"))
+            {
+                host.Reveal("Moat");
+                return Reaction.BeforeAndAfter(
+                    () => host.PreventAttack(true),
+                    () => host.PreventAttack(false)
+                );
+            }
+            else
+            {
+                return Reaction.None();
+            }
         }
     }
 }

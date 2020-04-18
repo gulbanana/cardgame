@@ -40,6 +40,7 @@ namespace Cardgame.Server
                 catch (CommandException e)
                 {
                     LogEvent($"<error>{username}: {e.Message}</error>");
+                    Console.WriteLine(e.ToString());
                 }
             }
         }
@@ -243,6 +244,7 @@ namespace Cardgame.Server
                 Model.ExecutingCards--;
 
                 LogEvent($"<error>{id}: {e.Message}</error>");
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -261,6 +263,7 @@ namespace Cardgame.Server
             {
                 var e = t.Exception.InnerException ?? t.Exception;
                 LogEvent($"<error>{id}: {e.Message}</error>");
+                Console.WriteLine(e.ToString());
                 // rollback somehow?
             }
 
@@ -268,11 +271,11 @@ namespace Cardgame.Server
         }
 
         internal async Task PlayCardAsync(int indentLevel, string player, string id, Zone from)
-        {            
+        {       
+            MoveCard(player, id, from, Zone.InPlay);
+
             await Act(indentLevel, player, Trigger.PlayCard, id, async () =>
             {
-                MoveCard(player, id, from, Zone.InPlay);
-
                 var card = All.Cards.ByName(id);
                 if (card is IActionCard action)
                 {
@@ -341,6 +344,7 @@ namespace Cardgame.Server
             Model.PlayedCards = new List<string>();
             Model.ActiveEffects = new List<string>();
             Model.Trash = new List<string>();
+            Model.PreventedAttacks = new HashSet<string>();
             Model.ChoosingPlayers = new Stack<string>();
             Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<string>());
             Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<string>());
@@ -419,7 +423,8 @@ namespace Cardgame.Server
                     catch (Exception e)
                     {
                         LogEvent($"<error>{Model.ActivePlayer}: {e.Message}</error>");
-                        
+                        Console.WriteLine(e.ToString());
+
                         EndTurn();
                         BeginTurn();
                         break;
@@ -694,15 +699,6 @@ namespace Cardgame.Server
             }
         }
 
-        internal List<IReactor> GetReactions(string player)
-        {
-            return GetCards(player, Zone.Hand, () => {;})
-                .Select(All.Cards.ByName) 
-                .OfType<IReactor>()
-                .Concat(Model.ActiveEffects.Select(All.Effects.ByName).OfType<IReactor>())
-                .ToList();
-        }
-
         internal async Task<TOutput> Choose<TInput, TOutput>(string player, ChoiceType type, string prompt, TInput input)
         {            
             Model.ChoiceType = type;
@@ -731,45 +727,47 @@ namespace Cardgame.Server
 
         internal async Task Act(int indentLevel, string player, Trigger trigger, string parameter, Func<Task> f)
         {
-            var reactions = GetReactions(player);
-            var replaced = false;
-            var afterReactions = new List<Action>();
+            var reactions = new List<Reaction>();
 
-            while (reactions.Any())
+            var globalReactors = Model.ActiveEffects
+                .Select(All.Effects.ByName)
+                .OfType<IReactor>()
+                .ToList();
+
+            while (globalReactors.Any())
             {
-                var potentialReaction = reactions.First();
-                reactions.Remove(potentialReaction);
-
+                var reactor = globalReactors.First();
+                globalReactors.Remove(reactor);
                 var host = new ActionHost(indentLevel, this, player);
-                var reaction = await potentialReaction.ExecuteReactionAsync(host, trigger, parameter);                
-                switch (reaction.Type)
+                reactions.Add(await reactor.ExecuteReactionAsync(host, trigger, parameter));
+            }
+
+            foreach (var target in Model.Players)
+            {
+                var targetReactors = GetCards(target, Zone.Hand, () => {;})
+                    .Select(All.Cards.ByName) 
+                    .OfType<IReactor>()
+                    .ToList();
+
+                while (targetReactors.Any())
                 {
-                    case ReactionType.None:
-                        break;
-
-                    case ReactionType.Replace:
-                    case ReactionType.Before:
-                        replaced = reaction.Type == ReactionType.Replace;
-                        reaction.Enact();
-                        break;
-
-                    case ReactionType.After:
-                        afterReactions.Add(reaction.Enact);
-                        break;
-
-                    default:
-                        throw new Exception($"unknown ReactionType {reaction.Type}");
+                    var reactor = targetReactors.First();
+                    targetReactors.Remove(reactor);
+                    var host = new ActionHost(indentLevel, this, target);
+                    reactions.Add(await reactor.ExecuteReactionAsync(host, trigger, parameter));
                 }
             }
 
-            if (!replaced)
+            foreach (var reaction in reactions)
             {
-                await f();
+                reaction.ActBefore();
             }
+            
+            await f();
 
-            foreach (var enactor in afterReactions)
+            foreach (var reaction in reactions)
             {
-                enactor();
+                reaction.ActAfter();
             }
         }
     }

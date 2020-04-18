@@ -1,7 +1,6 @@
 @code {
     [Parameter] public string Name { get; set; }
     [Parameter] public CardType[] Types { get; set; }
-    [Parameter] public string SubType { get; set; }
     [Parameter] public string Art { get; set; } = "missing";
     [Parameter] public int Cost { get; set; }
     [Parameter] public string Text { get; set; }
@@ -10,7 +9,6 @@
     [Parameter] public string OverrideColour { get; set; }
     [Parameter] public CardSet? SetIcon { get; set; }
     private string[] colours;
-    private string[] typeNames;
     private MarkupString type;
     private double typeScale;
 
@@ -18,26 +16,24 @@
     {
         colours = OverrideColour != null 
             ? new[] { OverrideColour } 
-            : Types.Select(t => All.Cards.GetColor(t, SubType)).ToArray();
-
-        typeNames = Types.Select(t => t.ToString()).Concat(SubType == null ? Array.Empty<string>() : new[]{ SubType } ).ToArray();
+            : Types.Select(All.Cards.GetColor).ToArray();
 
         var builder = new System.Text.StringBuilder();
-        for (var i = 0; i < typeNames.Length; i++)
+        for (var i = 0; i < Types.Length; i++)
         {
             if (i != 0)
             {
                 builder.Append(" - ");
             }
             builder.Append("<span class=\"card__type__word\">");
-            builder.Append(typeNames[i]);
+            builder.Append(Types[i].ToString());
             builder.Append("</span>");
         }
         type = new MarkupString(builder.ToString());
 
         typeScale = 
-            typeNames.Length == 1 ? 1.0 :
-            typeNames.Length == 2 ? 0.75 :
+            Types.Length == 1 ? 1.0 :
+            Types.Length == 2 ? 0.75 :
             0.5;
     }
 }

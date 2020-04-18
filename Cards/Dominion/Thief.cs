@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Dominion
 {
     public class Thief : ActionCardBase
     {
-        public override string SubType => "Attack";
+        public override CardType[] Types => new[] { CardType.Action, CardType.Attack };
         public override string Art => "dom-thief";
         public override int Cost => 4;
 

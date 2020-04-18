@@ -40,6 +40,8 @@ namespace Cardgame.Shared
         public int MoneyRemaining { get; set; }
 
         // interrupt state
+        public HashSet<string> PreventedAttacks { get; set; }
+
         public Stack<string> ChoosingPlayers { get; set; }
         public string ChoicePrompt { get; set; }
         public ChoiceType ChoiceType { get; set; }

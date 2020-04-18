@@ -6,21 +6,28 @@ namespace Cardgame.Views
 {
     internal static class Backgrounds
     {
-        public static string FromTypes(IEnumerable<CardType> types, string subType)
+        public static string FromTypes(IEnumerable<CardType> types)
         {
-            var colours = types.Select(t => All.Cards.GetColor(t, subType));
+            var colours = types.Select(All.Cards.GetColor);
             return FromColours(colours);
         }
 
         public static string FromColours(IEnumerable<string> colours)
         {
-            if (colours.Count() == 1)
+            if (colours.Distinct().Count() == 1)
             {
-                return $"var(--card-type-{colours.Single()})";
+                return $"var(--card-type-{colours.First()})";
             }
             else if (colours.Count() == 2)
             {
-                return $"linear-gradient(var(--card-type-{colours.First()}), var(--card-type-{colours.Last()}))";
+                if (colours.Contains("action") && colours.Contains("reaction"))
+                {
+                    return $"var(--card-type-reaction)";
+                }
+                else
+                {
+                    return $"linear-gradient(var(--card-type-{colours.First()}), var(--card-type-{colours.Last()}))";
+                }
             }
             else // give up
             {

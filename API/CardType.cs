@@ -5,6 +5,8 @@ namespace Cardgame.API
         Treasure,
         Victory,
         Curse,
-        Action
+        Action,
+        Attack,
+        Reaction
     }
 }

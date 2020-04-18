@@ -6,36 +6,31 @@ namespace Cardgame.API
     {
         public static Reaction None()
         {
-            return new Reaction(ReactionType.None, null);
+            return new Reaction(() => {;}, () => {;});
         }
 
         public static Reaction Before(Action act)
         {
-            return new Reaction(ReactionType.Before, act);
+            return new Reaction(act, () => {;});
         }
 
         public static Reaction After(Action act)
         {
-            return new Reaction(ReactionType.After, act);
+            return new Reaction(() => {;}, act);
         }
 
-        public static Reaction Replace(Action act)
+        public static Reaction BeforeAndAfter(Action actBefore, Action actAfter)
         {
-            return new Reaction(ReactionType.Replace, act);
+            return new Reaction(actBefore, actAfter);
         }
 
-        public static Reaction Cancel()
-        {
-            return new Reaction(ReactionType.Replace, () => {;});
-        }
+        public readonly Action ActBefore;
+        public readonly Action ActAfter;
 
-        public readonly ReactionType Type;
-        public readonly Action Enact;
-
-        private Reaction(ReactionType type, Action act)
+        private Reaction(Action before, Action after)
         {
-            this.Type = type;
-            this.Enact = act;
+            this.ActBefore = before;
+            this.ActAfter = after;
         }
     }
 }

@@ -4,20 +4,15 @@ using Cardgame.API;
 
 namespace Cardgame.Cards
 {
-    public abstract class ReactionCardBase : ActionCardBase, IReactor
+    public abstract class ActionReactionCardBase : ActionCardBase, IReactor
     {
-        public override string SubType => "Reaction";        
+        public override CardType[] Types => new[] { CardType.Action, CardType.Reaction };
         public abstract Trigger ReactionTrigger { get; }
 
         public async Task<Reaction> ExecuteReactionAsync(IActionHost host, Trigger triggerType, string triggerParameter)
         {
-            if (triggerType == ReactionTrigger && await host.YesNo(Name, $@"<spans>
-                <run>Reveal</run>
-                <card>Moat</card>
-                <run>from your hand?</run>
-            </spans>"))
+            if (triggerType == ReactionTrigger)
             {
-                host.Reveal(Name);
                 return await ReactAsync(host, triggerParameter);                        
             }
             else

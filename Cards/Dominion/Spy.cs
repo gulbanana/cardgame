@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Dominion
 {
     public class Spy : ActionCardBase
     {
-        public override string SubType => "Attack";
+        public override CardType[] Types => new[] { CardType.Action, CardType.Attack };
         public override string Art => "dom-spy";
         public override int Cost => 4;
 

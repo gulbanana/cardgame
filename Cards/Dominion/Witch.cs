@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Dominion
 {
     public class Witch : ActionCardBase
     {
-        public override string SubType => "Attack";
+        public override CardType[] Types => new[] { CardType.Action, CardType.Attack };
         public override string Art => "dom-witch";
         public override int Cost => 5;
 

@@ -52,10 +52,17 @@ namespace Cardgame.All
             }
         }
 
-        public static string GetColor(CardType type, string subType)
+        public static string GetColor(CardType type)
         {
             switch (type)
             {
+                case CardType.Action:
+                case CardType.Attack:
+                    return "action";
+
+                case CardType.Reaction:
+                    return "reaction";
+
                 case CardType.Treasure:
                     return "treasure";
 
@@ -63,13 +70,8 @@ namespace Cardgame.All
                     return "victory";
 
                 case CardType.Curse:
-                    return "curse";
-
-                case CardType.Action when subType == "Reaction":
-                    return "reaction";
-
                 default:
-                    return "action";
+                    return "curse";
             }
         }
 

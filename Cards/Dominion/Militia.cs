@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Dominion
 {
     public class Militia : ActionCardBase
     {
-        public override string SubType => "Attack";
+        public override CardType[] Types => new[] { CardType.Action, CardType.Attack };
         public override string Art => "dom-militia";
         public override int Cost => 4;        
 

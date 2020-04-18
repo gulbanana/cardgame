@@ -9,6 +9,7 @@ namespace Cardgame.API
     public interface IActionHost
     {
         string Player { get; }
+        bool IsActive { get; }
         int ShuffleCount { get; }
         
         // the four basic operations
@@ -30,9 +31,6 @@ namespace Cardgame.API
         ICard[] Examine(Zone @in);
         void Reorder(string[] cards, Zone @in);
 
-        // special cases
-        void DiscardEntireDeck();
-
         // potentially-interactive actions
         Task PlayCard(string card, Zone from);
         Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool benign = false);
@@ -47,6 +45,10 @@ namespace Cardgame.API
         IModifier[] GetModifiers();
         void AddEffect(string effect);
         void RemoveEffect(string effect);
+
+        // special cases
+        void DiscardEntireDeck();
+        void PreventAttack(bool enable);
     }
 
     public static class ActionHostExtensions
