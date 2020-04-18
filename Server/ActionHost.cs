@@ -435,7 +435,7 @@ namespace Cardgame.Server
             
             foreach (var target in targetPlayers)
             {
-                if (!engine.Model.PreventedAttacks.Contains(target.Player))
+                if (benign || !engine.Model.PreventedAttacks.Contains(target.Player))
                 {
                     await act(target);
                 }
@@ -456,8 +456,7 @@ namespace Cardgame.Server
         {
             engine.Model.ActiveEffects.Remove(effect);
         }
-
-        
+     
         // this is a special case used by Chancellor: it does not count as 'discarding' each card, 
         // and you may not see what cards were discarded
         void IActionHost.DiscardEntireDeck()
