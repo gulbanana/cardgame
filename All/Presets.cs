@@ -24,6 +24,9 @@ namespace Cardgame.All
             } },
             { CardSet.Intrigue1st, new Dictionary<string, string[]> {
                 { "Victory Dance", new[] { "Bridge", "Duke", "GreatHall", "Harem", "Ironworks", "Masquerade", "Nobles", "Pawn", "Scout", "Upgrade" } }
+            } },
+            { CardSet.Intrigue2nd, new Dictionary<string, string[]> {
+                { "Victory Dance", new[] { "Baron", "Courtier", "Duke", "Harem", "Ironworks", "Masquerade", "Mill", "Nobles", "Patrol", "Replace" } }
             } }
         };
     }
