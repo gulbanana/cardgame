@@ -36,7 +36,7 @@ namespace Cardgame.Server
             {                    
                 case ChoiceType.SelectCards:
                     var input = JsonSerializer.Deserialize<SelectCards>(state.ChoiceInput);
-                    var output = input.Choices.Take(input.Min??1).ToArray();
+                    var output = input.Choices.Take(input.Max??1).ToArray();
                     return JsonSerializer.Serialize<string[]>(output);
 
                 case ChoiceType.YesNo:
