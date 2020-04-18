@@ -39,7 +39,7 @@ namespace Cardgame.API
 
         // user inputs
         Task<bool> YesNo(string prompt, string message);
-        Task ChooseOne(string prompt, string option1, Action action1, string option2, Action action2);
+        Task ChooseOne(string prompt, params (string label, Action action)[] options);
         Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max) where T : ICard;
         Task<ICard[]> OrderCards(string prompt, Zone source);
 
@@ -211,6 +211,11 @@ namespace Cardgame.API
         public static void PlayCard(this IActionHost host, IActionCard card)
         {
             host.PlayCard(card.Name, Zone.Hand);
+        }
+
+        public static Task ChooseOne(this IActionHost host, string prompt, IEnumerable<(string label, Action action)> options)
+        {
+            return host.ChooseOne(prompt, options.ToArray());
         }
 
         #region SelectCards
