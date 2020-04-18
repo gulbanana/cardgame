@@ -1,9 +1,37 @@
 @inject IUserSession Session
 @code {
     [CascadingParameter] public GameModel Model { get; set; }
-    [CascadingParameter] public Executor Dispatch { get; set; } 
+    [CascadingParameter] public Executor Dispatch { get; set; }
     CardSet configSet;
+    CardSet ConfigSet 
+    { 
+        get => configSet;
+        set
+        {
+            configSet = value;
+            configPreset = All.Presets.BySet[configSet].Keys.First();
+            Dispatch(new ConfigureGameCommand
+            {
+                KingdomSet = configSet,
+                KingdomPreset = configPreset
+            });
+        }
+    }
+
     string configPreset;
+    string ConfigPreset
+    {
+        get => configPreset;
+        set
+        {
+            configPreset = value;
+            Dispatch(new ConfigureGameCommand
+            {
+                KingdomSet = configSet,
+                KingdomPreset = configPreset
+            });
+        }
+    }
 
     private void OnStartGame()
     {
@@ -30,7 +58,7 @@
         <h3>Game setup</h3>
         <div class="config-view__sets">
             <span>Card sets:</span>
-            <select disabled="@(!Model.Players.Contains(Session.Username))" @bind="configSet">
+            <select disabled="@(!Model.Players.Contains(Session.Username))" @bind="ConfigSet">
                 @foreach (var member in System.Enum.GetNames(typeof(CardSet)))
                 {
                     var caption = Strings.TitleCase(member).Replace("1st", " (first edition)").Replace("2nd", " (second edition)");
@@ -38,7 +66,7 @@
                 }
             </select>
             <span>Preset:</span>
-            <select disabled="@(!Model.Players.Contains(Session.Username))" @bind="configPreset">
+            <select disabled="@(!Model.Players.Contains(Session.Username))" @bind="ConfigPreset">
                 @foreach (var preset in All.Presets.BySet[configSet].Keys)
                 {
                     <option @key="preset" value="@preset">@preset</option>

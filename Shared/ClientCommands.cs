@@ -16,6 +16,13 @@ namespace Cardgame.Shared
         public bool IsBot { get; set; }
     }
     public class LeaveGameCommand : ClientCommand { }
+
+    public class ConfigureGameCommand : ClientCommand 
+    { 
+        public CardSet KingdomSet { get; set; }
+        public string KingdomPreset { get; set; }
+    }
+
     public class StartGameCommand : ClientCommand 
     { 
         public CardSet KingdomSet { get; set; }

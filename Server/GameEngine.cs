@@ -106,6 +106,14 @@ namespace Cardgame.Server
                     </spans>");
                     break;
 
+                case ConfigureGameCommand configureGame:
+                    if (Model.IsStarted) throw new CommandException("The game is already in progress.");
+
+                    Model.KingdomSet = configureGame.KingdomSet;
+                    Model.KingdomPreset = configureGame.KingdomPreset ?? All.Presets.BySet[Model.KingdomSet].Keys.First();
+
+                    break;
+
                 case StartGameCommand startGame:
                     if (Model.IsStarted) throw new CommandException("The game is already in progress.");
                     if (!Model.Players.Contains(username)) throw new CommandException("You are not in the game.");

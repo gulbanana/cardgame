@@ -62,25 +62,49 @@
             }
             else
             {
-                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Estate" />
-                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Duchy" />
-                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Province" />
+                <ActiveCard Enabled="false" Half="true" Stack="8" Id="Estate" />
+                <ActiveCard Enabled="false" Half="true" Stack="8" Id="Duchy" />
+                <ActiveCard Enabled="false" Half="true" Stack="8" Id="Province" />
 
-                <SpecialCard Name="card-back" Half="true" Stack="3" />
-                <SpecialCard Name="card-back" Half="true" Stack="3" />
-                <SpecialCard Name="card-back" Half="true" Stack="3" />
-                <SpecialCard Name="card-back" Half="true" Stack="3" />
-                <SpecialCard Name="card-back" Half="true" Stack="3" />
+                @if (Model.KingdomPreset == null)
+                {
+                    <SpecialCard Name="card-back" Half="true" Stack="10" />
+                    <SpecialCard Name="card-back" Half="true" Stack="10" />
+                    <SpecialCard Name="card-back" Half="true" Stack="10" />
+                    <SpecialCard Name="card-back" Half="true" Stack="10" />
+                    <SpecialCard Name="card-back" Half="true" Stack="10" />
+                }
+                else
+                {
+                    var preset = All.Presets.BySet[Model.KingdomSet][Model.KingdomPreset];
+                    <ActiveCard @key="preset[0]" Enabled="false" Half="true" Stack="10" Id="@preset[0]" />
+                    <ActiveCard @key="preset[1]" Enabled="false" Half="true" Stack="10" Id="@preset[1]" />
+                    <ActiveCard @key="preset[2]" Enabled="false" Half="true" Stack="10" Id="@preset[2]" />
+                    <ActiveCard @key="preset[3]" Enabled="false" Half="true" Stack="10" Id="@preset[3]" />
+                    <ActiveCard @key="preset[4]" Enabled="false" Half="true" Stack="10" Id="@preset[4]" />
+                }
 
-                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Copper" />
-                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Silver" />
-                <ActiveCard Enabled="false" Half="true" Stack="3" Id="Gold" />
+                <ActiveCard Enabled="false" Half="true" Stack="60" Id="Copper" />
+                <ActiveCard Enabled="false" Half="true" Stack="40" Id="Silver" />
+                <ActiveCard Enabled="false" Half="true" Stack="30" Id="Gold" />
 
-                <SpecialCard Name="card-back" Half="true" Stack="3" />
-                <SpecialCard Name="card-back" Half="true" Stack="3" />
-                <SpecialCard Name="card-back" Half="true" Stack="3" />
-                <SpecialCard Name="card-back" Half="true" Stack="3" />
-                <SpecialCard Name="card-back" Half="true" Stack="3" />
+                @if (Model.KingdomPreset == null)
+                {
+                    <SpecialCard Name="card-back" Half="true" Stack="3" />
+                    <SpecialCard Name="card-back" Half="true" Stack="3" />
+                    <SpecialCard Name="card-back" Half="true" Stack="3" />
+                    <SpecialCard Name="card-back" Half="true" Stack="3" />
+                    <SpecialCard Name="card-back" Half="true" Stack="3" />
+                }
+                else
+                {
+                    var preset = All.Presets.BySet[Model.KingdomSet][Model.KingdomPreset];
+                    <ActiveCard @key="preset[5]" Enabled="false" Half="true" Stack="10" Id="@preset[5]" />
+                    <ActiveCard @key="preset[6]" Enabled="false" Half="true" Stack="10" Id="@preset[6]" />
+                    <ActiveCard @key="preset[7]" Enabled="false" Half="true" Stack="10" Id="@preset[7]" />
+                    <ActiveCard @key="preset[8]" Enabled="false" Half="true" Stack="10" Id="@preset[8]" />
+                    <ActiveCard @key="preset[9]" Enabled="false" Half="true" Stack="10" Id="@preset[9]" />
+                }
             }
         </div>
 
