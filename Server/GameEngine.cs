@@ -556,12 +556,9 @@ namespace Cardgame.Server
                     break;
 
                 case Zone.DeckTop1:
-                    if (!Model.Decks[player].First().Equals(id)) throw new CommandException($"Top of deck is not card {id}.");
-                    Model.Decks[player].Remove(id);
-                    break;
-
                 case Zone.DeckTop2:
-                    if (!Model.Decks[player].Take(2).Contains(id)) throw new CommandException($"Top of deck does not contain card {id}.");
+                case Zone.DeckTop3:
+                case Zone.DeckTop4:
                     Model.Decks[player].Remove(id);
                     break;
 
@@ -594,6 +591,9 @@ namespace Cardgame.Server
                     break;
 
                 case Zone.DeckTop1:
+                case Zone.DeckTop2:
+                case Zone.DeckTop3:
+                case Zone.DeckTop4:
                     Model.Decks[player].Insert(0, id);
                     break;
 
@@ -613,8 +613,23 @@ namespace Cardgame.Server
                 ReshuffleIfEmpty(player);
                 onShuffle();
             }
-
-            if (source == Zone.DeckTop2 && Model.Decks[player].Count < 2)
+            else if (source == Zone.DeckTop2 && Model.Decks[player].Count < 2)
+            {
+                var setAside = Model.Decks[player].ToArray();
+                Model.Decks[player].Clear();                
+                ReshuffleIfEmpty(player);
+                Model.Decks[player].InsertRange(0, setAside);
+                onShuffle();
+            }
+            else if (source == Zone.DeckTop3 && Model.Decks[player].Count < 3)
+            {
+                var setAside = Model.Decks[player].ToArray();
+                Model.Decks[player].Clear();                
+                ReshuffleIfEmpty(player);
+                Model.Decks[player].InsertRange(0, setAside);
+                onShuffle();
+            }
+            else if (source == Zone.DeckTop4 && Model.Decks[player].Count < 4)
             {
                 var setAside = Model.Decks[player].ToArray();
                 Model.Decks[player].Clear();                
@@ -627,13 +642,15 @@ namespace Cardgame.Server
             {
                 Zone.DeckTop1 => Model.Decks[player].Take(1).ToArray(),
                 Zone.DeckTop2 => Model.Decks[player].Take(2).ToArray(),
+                Zone.DeckTop3 => Model.Decks[player].Take(3).ToArray(),
+                Zone.DeckTop4 => Model.Decks[player].Take(4).ToArray(),
                 Zone.Discard => Model.Discards[player].ToArray(),
                 Zone.Hand => Model.Hands[player].ToArray(),
                 Zone.InPlay => Model.PlayedCards.ToArray(),
                 Zone.Supply => Model.KingdomCards.Concat(All.Cards.Base()).Where(id => Model.Supply[id] > 0).ToArray(),
                 Zone.SupplyEmpty => Model.KingdomCards.Concat(All.Cards.Base()).Where(id => Model.Supply[id] == 0).ToArray(),
                 Zone.Trash => Model.Trash.ToArray(),
-                Zone other => throw new CommandException($"Unknown Zone {other}")
+                Zone other => throw new CommandException($"Unknown card zone {other}")
             };
         }
 
@@ -646,6 +663,16 @@ namespace Cardgame.Server
                     break;
 
                 case Zone.DeckTop2:
+                    Model.Decks[player][0] = cards[0];
+                    Model.Decks[player][1] = cards[1];
+                    break;
+
+                case Zone.DeckTop3:
+                    Model.Decks[player][0] = cards[0];
+                    Model.Decks[player][1] = cards[1];
+                    break;
+
+                case Zone.DeckTop4:
                     Model.Decks[player][0] = cards[0];
                     Model.Decks[player][1] = cards[1];
                     break;

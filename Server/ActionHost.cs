@@ -67,6 +67,8 @@ namespace Cardgame.Server
             {
                 case Zone.DeckTop1:
                 case Zone.DeckTop2:
+                case Zone.DeckTop3:
+                case Zone.DeckTop4:
                     return $@"<run>the top of</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>";
@@ -83,7 +85,7 @@ namespace Cardgame.Server
                     return $@"<run>the trash.</run>";
 
                 default:
-                    throw new CommandException($"Unknown zone {from}");
+                    throw new CommandException($"Unknown source zone {from}");
             }
         }
 
@@ -92,6 +94,9 @@ namespace Cardgame.Server
             switch (to)
             {
                 case Zone.DeckTop1:
+                case Zone.DeckTop2:
+                case Zone.DeckTop3:
+                case Zone.DeckTop4:
                     return $@"{LogVerb("put", "puts", "putting")}
                               <run>it onto</run>
                               <if you='your' them='their'>{Player}</if>
@@ -112,7 +117,7 @@ namespace Cardgame.Server
                               <run>it.</run>";
 
                 default:
-                    throw new CommandException($"Unknown zone {to}");
+                    throw new CommandException($"Unknown destination zone {to}");
             }
         }
 
@@ -319,6 +324,23 @@ namespace Cardgame.Server
                 <if you='your' them='their'>{Player}</if>
                 <run>deck from</run>
                 {LogSource(from)}
+            </spans>");
+        }
+
+        void IActionHost.PutIntoHand(string[] cards, Zone from)
+        {
+            foreach (var card in cards)
+            {
+                engine.MoveCard(Player, card, from, Zone.Hand);
+            }
+            
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{level}' />
+                {LogVerbInitial("put", "puts", "putting")}
+                {LogCardList(cards, terminal: false)}
+                <run>into</run>
+                <if you='your' them='their'>{Player}</if>
+                <run>hand.</run>
             </spans>");
         }
 

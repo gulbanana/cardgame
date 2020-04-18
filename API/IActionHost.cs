@@ -23,6 +23,7 @@ namespace Cardgame.API
         void Gain(string card, Zone to);
         void GainFrom(string[] cards, Zone from);
         void PlaceOnDeck(string card, Zone from);
+        void PutIntoHand(string[] cards, Zone from); // not a draw!
         void Reveal(string[] cards, Zone from);
 
         // manipulate entire zones
@@ -145,6 +146,13 @@ namespace Cardgame.API
         public static void PlaceOnDeck(this IActionHost host, ICard card, Zone from)
         {
             host.PlaceOnDeck(card.Name, from);
+        }
+        #endregion
+
+        #region Put
+        public static void PutIntoHand(this IActionHost host, ICard[] cards, Zone from)
+        {
+            host.PutIntoHand(cards.Select(card => card.Name).ToArray(), from);
         }
         #endregion
 

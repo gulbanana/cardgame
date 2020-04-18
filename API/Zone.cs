@@ -2,13 +2,15 @@ namespace Cardgame.API
 {
     public enum Zone
     {
-        Hand,
         Supply,
         SupplyEmpty,
-        Discard,
-        Trash,
         DeckTop1,
         DeckTop2,
-        InPlay,        
+        DeckTop3,
+        DeckTop4,
+        Hand,
+        InPlay,  
+        Discard,
+        Trash,      
     }
 }
