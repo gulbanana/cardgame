@@ -15,6 +15,7 @@ namespace Cardgame.Server
         private TaskCompletionSource<string> inputTCS;
         private bool isDemo;
         private string demoNextActive;
+        internal int ActionsThisTurn { get; private set; }
 
         public readonly GameModel Model;
         public event Action ActionUpdated;
@@ -279,6 +280,11 @@ namespace Cardgame.Server
                 var card = All.Cards.ByName(id);
                 if (card is IActionCard action)
                 {
+                    if (player == Model.ActivePlayer)
+                    {
+                        ActionsThisTurn++;
+                    }
+
                     var host = new ActionHost(indentLevel, this, player);
                     await action.ExecuteActionAsync(host);
 
@@ -380,6 +386,7 @@ namespace Cardgame.Server
         {
             if (Model.IsFinished) return;
 
+            ActionsThisTurn = 0;
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
             Model.MoneyRemaining = isDemo ? 10 : 0;

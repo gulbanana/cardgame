@@ -13,7 +13,8 @@ namespace Cardgame.Server
         private readonly GameEngine engine;
         public string Player { get; }
         public bool IsActive => engine.Model.ActivePlayer == Player;
-        public int ShuffleCount { get; private set; }        
+        public int ShuffleCount { get; private set; }
+        public int ActionCount => engine.ActionsThisTurn;
 
         public ActionHost(int level, GameEngine engine, string player)
         {

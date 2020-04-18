@@ -11,7 +11,8 @@ namespace Cardgame.API
         string Player { get; }
         bool IsActive { get; }
         int ShuffleCount { get; }
-        
+        int ActionCount { get; }
+
         // the four basic operations
         ICard[] DrawCards(int n);
         void AddActions(int n);
