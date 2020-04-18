@@ -95,7 +95,7 @@
     line-height: var(--local-card-footer);
     font-size: var(--local-card-type-font);
     display: grid;
-    grid-template-columns: var(--local-card-icon) 1fr var(--local-card-icon);
+    grid-template-columns: var(--local-card-footer) 1fr var(--local-card-footer);
 }
 
 .card__footer-cost, .card__footer-set
@@ -109,7 +109,6 @@
 
 .card__icon {
     width: var(--local-card-icon);
-    height: var(--local-card-icon);
 }
 
 .card__type {
