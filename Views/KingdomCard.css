@@ -29,6 +29,7 @@
     background: var(--highlight);
     font-family: var(--card-title-family);
     white-space: nowrap;
+    letter-spacing: -0.01em;
 }
 
 .card__title__word {
@@ -95,16 +96,23 @@
     line-height: var(--local-card-footer);
     font-size: var(--local-card-type-font);
     display: grid;
-    grid-template-columns: var(--local-card-footer) 1fr var(--local-card-footer);
+    grid-template-columns: calc(var(--local-card-footer) - 1px) 1fr calc(var(--local-card-footer) - 1px);
 }
 
-.card__footer-cost, .card__footer-set
-{
+.card__footer-cost, .card__footer-set {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: var(--local-card-footer);
+    width: calc(var(--local-card-footer) - 1px);
     height: var(--local-card-footer);
+}
+
+.card__footer-cost {
+    justify-content: flex-end;
+}
+
+.card__footer-set {
+    justify-content: flex-start;
 }
 
 .card__icon {
