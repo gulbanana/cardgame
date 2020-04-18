@@ -33,7 +33,7 @@ namespace Cardgame.API
 
         // potentially-interactive actions
         Task PlayCard(string card, Zone from);
-        Task Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool benign = false);
+        Task AllPlayers(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool isAttack = false);
 
         // user inputs
         Task<bool> YesNo(string prompt, string message);
@@ -49,6 +49,7 @@ namespace Cardgame.API
         // special cases
         void DiscardEntireDeck();
         void PreventAttack(bool enable);
+        void PassCardLeft(string card);
     }
 
     public static class ActionHostExtensions
@@ -301,24 +302,48 @@ namespace Cardgame.API
         }
         #endregion
 
-        #region Attack
-        public static Task Attack(this IActionHost host, Func<IActionHost, bool> filter, Action<IActionHost> act, bool benign = false)
+        #region AllPlayers
+        public static Task AllPlayers(this IActionHost host, Func<IActionHost, Task> act, bool isAttack = false)
         {
-            return host.Attack(filter, target =>
+            return host.AllPlayers(target => true, act, isAttack);
+        }
+
+        public static Task OtherPlayers(this IActionHost host, Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool isAttack = false)
+        {
+            return host.AllPlayers(target => filter(target) && target.Player != host.Player, act, isAttack);
+        }
+
+        public static Task OtherPlayers(this IActionHost host, Func<IActionHost, Task> act, bool isAttack = false)
+        {
+            return host.AllPlayers(target => target.Player != host.Player, act, isAttack);
+        }
+
+        public static Task OtherPlayers(this IActionHost host, Action<IActionHost> act, bool isAttack = false)
+        {
+            return host.AllPlayers(target => target.Player != host.Player, host =>
             {
-                act(target);
+                act(host);
                 return Task.CompletedTask;
-            }, benign);
+            }, isAttack);
         }
 
-        public static Task Attack(this IActionHost host, Action<IActionHost> act, bool benign = false)
+        public static Task Attack(this IActionHost host, Func<IActionHost, bool> filter, Func<IActionHost, Task> act)
         {
-            return host.Attack(_ => true, act, benign);
+            return host.AllPlayers(target => filter(target) && target.Player != host.Player, act, true);
         }
 
-        public static Task Attack(this IActionHost host, Func<IActionHost, Task> act, bool benign = false)
+        public static Task Attack(this IActionHost host, Func<IActionHost, Task> act)
         {
-            return host.Attack(_ => true, act, benign);
+            return host.AllPlayers(target => target.Player != host.Player, act, true);
+        }
+
+        public static Task Attack(this IActionHost host, Action<IActionHost> act)
+        {
+            return host.AllPlayers(target => target.Player != host.Player, host =>
+            {
+                act(host);
+                return Task.CompletedTask;
+            }, true);
         }
         #endregion
     }

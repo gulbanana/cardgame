@@ -27,27 +27,24 @@ namespace Cardgame.Cards.Dominion
             host.DrawCards(1);
             host.AddActions(1);
 
-            await SpyOn(host, host);            
-            await host.Attack(player => SpyOn(host, player));
-        }
-
-        private async Task SpyOn(IActionHost host, IActionHost target)
-        {
-            var revealed = target.Examine(Zone.DeckTop1).SingleOrDefault();
-            if (revealed != null)
+            await host.AllPlayers(async target =>
             {
-                target.Reveal(revealed, Zone.DeckTop1);
-                
-                var subject = host == target ? "<run>Do you want</run>" : $"<run>Force</run><player>{target.Player}</player>";
-                if (await host.YesNo("Spy", $@"<spans>
-                    {subject}
-                    <run>to discard</run>
-                    <card suffix='?'>{revealed.Name}</card>
-                </spans>"))
+                var revealed = target.Examine(Zone.DeckTop1).SingleOrDefault();
+                if (revealed != null)
                 {
-                    target.Discard(revealed, Zone.DeckTop1);
+                    target.Reveal(revealed, Zone.DeckTop1);
+                    
+                    var subject = host == target ? "<run>Do you want</run>" : $"<run>Force</run><player>{target.Player}</player>";
+                    if (await host.YesNo("Spy", $@"<spans>
+                        {subject}
+                        <run>to discard</run>
+                        <card suffix='?'>{revealed.Name}</card>
+                    </spans>"))
+                    {
+                        target.Discard(revealed, Zone.DeckTop1);
+                    }
                 }
-            }
+            }, isAttack: true);
         }
     }
 }

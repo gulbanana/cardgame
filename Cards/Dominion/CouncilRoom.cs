@@ -23,7 +23,7 @@ namespace Cardgame.Cards.Dominion
             host.DrawCards(4);
             host.AddBuys(1);
 
-            await host.Attack(target => target.DrawCards(1), benign: true);
+            await host.OtherPlayers(target => target.DrawCards(1));
         }
     }
 }

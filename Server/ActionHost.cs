@@ -425,17 +425,16 @@ namespace Cardgame.Server
             return ids.Select(All.Cards.ByName).ToArray();
         }
 
-        async Task IActionHost.Attack(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool benign)
+        async Task IActionHost.AllPlayers(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool isAttack)
         {
             var targetPlayers = engine.Model.Players
-                .Except(new[]{ Player })
                 .Select(player => new ActionHost(1, engine, player))
                 .Where(filter)
                 .ToList();
             
             foreach (var target in targetPlayers)
             {
-                if (benign || !engine.Model.PreventedAttacks.Contains(target.Player))
+                if (!isAttack || !engine.Model.PreventedAttacks.Contains(target.Player))
                 {
                     await act(target);
                 }
@@ -479,7 +478,7 @@ namespace Cardgame.Server
 
         // this is a special case used by Moat: it triggers *before* choices about an attack are made,
         // but only for the duration of that one card's attack
-        public void PreventAttack(bool enable)
+        void IActionHost.PreventAttack(bool enable)
         {
             if (enable)
             {
@@ -489,6 +488,25 @@ namespace Cardgame.Server
             {
                 engine.Model.PreventedAttacks.Remove(Player);
             }
+        }
+
+        // this is a special case used by Masquerade, but may be generalised in future
+        void IActionHost.PassCardLeft(string card)
+        {
+            var self = Array.FindIndex(engine.Model.Players, e => e == Player);
+            var left = self + 1; // clockwise
+            if (left >= engine.Model.Players.Length) left = 0;
+            var leftPlayer = engine.Model.Players[left];
+
+            engine.Model.Hands[Player].Remove(card);
+            engine.Model.Hands[leftPlayer].Add(card);
+
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{level}' />
+                {LogVerbInitial("pass", "passes", "passing")}
+                <run>a card to</run>
+                <player suffix='.'>{leftPlayer}</player>
+            </spans>");
         }
     }
 }
