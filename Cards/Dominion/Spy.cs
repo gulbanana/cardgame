@@ -4,9 +4,8 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Spy : ActionCardBase
+    public class Spy : ActionAttackCardBase
     {
-        public override CardType[] Types => new[] { CardType.Action, CardType.Attack };
         public override string Art => "dom-spy";
         public override int Cost => 4;
 

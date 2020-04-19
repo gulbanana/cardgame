@@ -4,9 +4,8 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class Saboteur : ActionCardBase
+    public class Saboteur : ActionAttackCardBase
     {
-        public override CardType[] Types => new[] { CardType.Action, CardType.Attack } ;
         public override string Art => "int-saboteur";
         public override int Cost => 5;
 
