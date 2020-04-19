@@ -19,14 +19,14 @@ In theory, this app could be split into client and server pieces with a WASM fro
           v       v       ^       v
           |        \      |      /
      ♦----+----♦     ♠----+----♠ 
-     | Widgets |     |   All   |
+     | Choices |     |   All   |
+     ♦----+----♦     ♠----+----♠
+          |               |      
+          v               v      
+          |               |         
+     ♦----+----♦     ♠----+----♠
+     | Widgets +-->--+   API   |
      ♦---------♦     ♠----+----♠
-                          |      
-                          v      
-                          |         
-                     ♠----+----♠
-                     |   API   |
-                     ♠----+----♠
                           |
                           ^
 ♣ composition             |

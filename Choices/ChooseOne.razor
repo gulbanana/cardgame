@@ -1,24 +1,9 @@
-@code {
-    [Parameter] public bool Enabled { get; set; }
-    [Parameter] public string Input { get; set; }
-    [Parameter] public Action<string> Output { get; set; }
-    private string[] input;
-
-    protected override void OnParametersSet()
-    {
-        input = JsonSerializer.Deserialize<string[]>(Input);
-    }
-
-    private void Submit(int x)
-    {
-        Output(JsonSerializer.Serialize(x));
-    }
-}
+@inherits ChoiceBase<string[], int>
 
 <p class="choose-one">
-    @for (var i = 0; i < input.Length; i++)
+    @for (var i = 0; i < Model.Length; i++)
     {
         var ix = i;
-        <ActiveButton @key="ix" Label="@input[ix]" Enabled="@Enabled" Action="@(() => Submit(ix))" />
+        <ActiveButton @key="ix" Label="@Model[ix]" Enabled="@Enabled" Action="@(() => EnterChoice(ix))" />
     }
 </p>

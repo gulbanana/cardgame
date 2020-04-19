@@ -1,0 +1,10 @@
+@inherits ChoiceBase<string, bool>
+
+<p>
+    <RichText @key="Model.GetHashCode()" Model="@Model" />
+</p>
+
+<div>
+    <ActiveButton Label="Yes" Enabled="@Enabled" Action="@(() => EnterChoice(true))" />
+    <ActiveButton Label="No" Enabled="@Enabled" Action="@(() => EnterChoice(false))" />
+</div>

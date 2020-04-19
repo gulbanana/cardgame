@@ -1,88 +1,9 @@
-@using System.Text.Json
 @code {
     [Parameter] public bool Enabled { get; set; }
     [Parameter] public Action<string> Action { get; set; }
     [Parameter] public ChoiceType Type { get; set; }
     [Parameter] public string Prompt { get; set; }
     [Parameter] public string Input { get; set; }
-    private string yesNoMessage;
-    private SelectCardsInput selectCardsInput;
-    private bool[] selectCardsChoices;
-    private List<string> orderCardsChoices;
-
-    protected override void OnParametersSet()
-    {
-        switch (Type)
-        {
-            case ChoiceType.YesNo:
-                yesNoMessage = JsonSerializer.Deserialize<string>(Input);
-                break;
-
-            case ChoiceType.SelectCards:
-                selectCardsInput = JsonSerializer.Deserialize<SelectCardsInput>(Input);
-                selectCardsChoices = new bool[selectCardsInput.Choices.Length];
-                break;
-
-            case ChoiceType.OrderCards:
-                orderCardsChoices = JsonSerializer.Deserialize<string[]>(Input).ToList();
-                break;
-        }
-    }
-
-    private void YesNoSubmit(bool yesOrNo)
-    {
-        Action(JsonSerializer.Serialize(yesOrNo));
-    }
-
-    private void SelectCardsToggle(int ix)
-    {
-        selectCardsChoices[ix] = !selectCardsChoices[ix];
-        StateHasChanged();
-    }
-
-    private bool SelectCardsValid()
-    {
-        var selectedCount = selectCardsChoices.Where(b => b).Count();
-        return (!selectCardsInput.Min.HasValue || selectCardsInput.Min.Value <= selectedCount)
-            && (!selectCardsInput.Max.HasValue || selectCardsInput.Max.Value >= selectedCount);
-    }
-
-    private void SelectCardsSubmit()
-    {
-        var selected = selectCardsInput.Choices
-            .Select((id, ix) => (id, ix))
-            .Where(t => selectCardsChoices[t.ix])
-            .Select(t => t.id)
-            .ToArray();
-
-        Action(JsonSerializer.Serialize(selected));
-    }
-
-    private void SelectCardSubmitOne(string id)
-    {
-        Action(JsonSerializer.Serialize(new string[] { id }));
-    }
-
-    private void OrderCardsIncrement(int i)
-    {
-        var e = orderCardsChoices[i];
-        orderCardsChoices.RemoveAt(i);
-        orderCardsChoices.Insert(i+1, e);
-        StateHasChanged();
-    }
-
-    private void OrderCardsDecrement(int i)
-    {
-        var e = orderCardsChoices[i];
-        orderCardsChoices.RemoveAt(i);
-        orderCardsChoices.Insert(i-1, e);
-        StateHasChanged();
-    }
-
-    private void OrderCardsSubmit()
-    {
-        Action(JsonSerializer.Serialize(orderCardsChoices.ToArray()));
-    }
 }
 
 <span @key="Prompt.GetHashCode()" class="active-choice__prompt">@Prompt</span>
@@ -90,14 +11,7 @@
 @switch (Type)
 {
     case ChoiceType.YesNo:
-        <p>
-            <RichText @key="yesNoMessage.GetHashCode()" Model="@yesNoMessage" />
-        </p>
-
-        <div>
-            <ActiveButton Label="Yes" Enabled="@Enabled" Action="@(() => YesNoSubmit(true))" />
-            <ActiveButton Label="No" Enabled="@Enabled" Action="@(() => YesNoSubmit(false))" />
-        </div>
+        <YesNo Enabled="@Enabled" Input="@Input" Output="@Action" />
         break;
 
     case ChoiceType.ChooseOne:
@@ -109,49 +23,11 @@
         break;
 
     case ChoiceType.SelectCards:
-        @if (!selectCardsInput.Min.HasValue || selectCardsInput.Min < 1 || !selectCardsInput.Max.HasValue || selectCardsInput.Max.Value > 1)
-        {
-            <p @key="Input" class="active-choice__select-cards">
-                @for (var i = 0; i < selectCardsInput.Choices.Length; i++)
-                {
-                    var ix = i;
-                    <div @key="ix" class="@(selectCardsChoices[ix] ? "" : "active-choice__select-cards__deselected")">
-                        <ActiveCard Id="@selectCardsInput.Choices[ix]" Enabled="@Enabled" Half="true" Action="@(() => SelectCardsToggle(ix))" />
-                    </div>
-                }
-            </p>
-
-            <div>
-                <ActiveButton Label="Select" Enabled="@(Enabled && SelectCardsValid())" Action="SelectCardsSubmit" />
-            </div>
-        }
-        else
-        {
-            <p @key="Input" class="active-choice__select-cards">
-                @foreach (var id in selectCardsInput.Choices)
-                {
-                    <ActiveCard Id="@id" Enabled="@Enabled" Half="true" Action="@(() => SelectCardSubmitOne(id))" />
-                }
-            </p>
-        }
+        <SelectCards Enabled="@Enabled" Input="@Input" Output="@Action" />
         break;
 
     case ChoiceType.OrderCards:
-        <p @key="Input" class="active-choice__order">
-            @for (var i = 0; i < orderCardsChoices.Count; i++)
-            {                
-                var ix = i;
-                <div class="active-choice__order-option">
-                    <ActiveButton Action="@(() => OrderCardsDecrement(ix))" Label="<" Enabled="@(Enabled && ix > 0)" /> 
-                    <ActiveButton Action="@(() => OrderCardsIncrement(ix))" Label=">" Enabled="@(Enabled && ix < orderCardsChoices.Count - 1)" />
-                    <ActiveCard @key="orderCardsChoices[ix]" Id="@orderCardsChoices[ix]" Enabled="false" Half="true" />
-                </div>
-            }
-        </p>
-
-        <div>
-            <ActiveButton Label="Reorder" Enabled="@Enabled" Action="OrderCardsSubmit" />
-        </div>
+        <OrderCards Enabled="@Enabled" Input="@Input" Output="@Action" />
         break;
 
     default:

@@ -1,0 +1,9 @@
+.select-cards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.select-cards__deselected .with-tooltip {
+    opacity: 50%;
+}

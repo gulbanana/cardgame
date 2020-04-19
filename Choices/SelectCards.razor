@@ -1,0 +1,65 @@
+@inherits ChoiceBase<SelectCardsInput, string[]>
+@code {
+    private bool[] choices;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        choices = new bool[Model.Choices.Length];
+    }
+
+    private void Toggle(int ix)
+    {
+        choices[ix] = !choices[ix];
+        StateHasChanged();
+    }
+
+    private bool IsValid()
+    {
+        var selectedCount = choices.Where(b => b).Count();
+        return (!Model.Min.HasValue || Model.Min.Value <= selectedCount)
+            && (!Model.Max.HasValue || Model.Max.Value >= selectedCount);
+    }
+
+    private void Submit()
+    {
+        var selected = Model.Choices
+            .Select((id, ix) => (id, ix))
+            .Where(t => choices[t.ix])
+            .Select(t => t.id)
+            .ToArray();
+
+        EnterChoice(selected);
+    }
+
+    private void SubmitOne(string id)
+    {
+        EnterChoice(new string[] { id });
+    }
+}
+
+@if (!Model.Min.HasValue || Model.Min < 1 || !Model.Max.HasValue || Model.Max.Value > 1)
+{
+    <p @key="Input" class="select-cards">
+        @for (var i = 0; i < Model.Choices.Length; i++)
+        {
+            var ix = i;
+            <div @key="ix" class="@(choices[ix] ? "" : "select-cards__deselected")">
+                <ActiveCard Id="@Model.Choices[ix]" Enabled="@Enabled" Half="true" Action="@(() => Toggle(ix))" />
+            </div>
+        }
+    </p>
+
+    <div>
+        <ActiveButton Label="Select" Enabled="@(Enabled && IsValid())" Action="Submit" />
+    </div>
+}
+else
+{
+    <p @key="Input" class="select-cards">
+        @foreach (var id in Model.Choices)
+        {
+            <ActiveCard Id="@id" Enabled="@Enabled" Half="true" Action="@(() => SubmitOne(id))" />
+        }
+    </p>
+}

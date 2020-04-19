@@ -1,20 +1,17 @@
+@inherits ChoiceBase<ChooseMultipleInput, int[]>
 @code {
-    [Parameter] public bool Enabled { get; set; }
-    [Parameter] public string Input { get; set; }
-    [Parameter] public Action<string> Output { get; set; }
-    private ChooseMultipleInput input;
     private bool[] choices;
 
     protected override void OnParametersSet()
     {
-        input = JsonSerializer.Deserialize<ChooseMultipleInput>(Input);
-        choices = new bool[input.Choices.Length];
+        base.OnParametersSet();
+        choices = new bool[Model.Choices.Length];
     }
 
     private bool IsValid()
     {
         var selectedCount = choices.Where(b => b).Count();
-        return input.Number == selectedCount;
+        return Model.Number == selectedCount;
     }
 
     private void Submit()
@@ -23,22 +20,22 @@
             .Where(i => choices[i])
             .ToArray();
 
-        Output(JsonSerializer.Serialize(selected));
+        EnterChoice(selected);
     }
 }
 
 <p class="choose-multiple">    
-    @for (var i = 0; i < input.Choices.Length; i++)
+    @for (var i = 0; i < Model.Choices.Length; i++)
     {
         var ix = i;
         <label>
             <input type="checkbox" @onchange="args => choices[ix] = (bool)args.Value">
-            <RichText Model="@input.Choices[ix]" />
+            <RichText Model="@Model.Choices[ix]" />
         </label>
         <br />
     }
 </p>
 
 <div>
-    <ActiveButton Label="@("Choose " + input.Number)" Enabled="@(Enabled && IsValid())" Action="@Submit" />
+    <ActiveButton Label="@("Choose " + Model.Number)" Enabled="@(Enabled && IsValid())" Action="@Submit" />
 </div>

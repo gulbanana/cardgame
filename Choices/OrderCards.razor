@@ -1,0 +1,39 @@
+@inherits ChoiceBase<List<string>, List<string>>
+@code {
+    private void Increment(int i)
+    {
+        var e = Model[i];
+        Model.RemoveAt(i);
+        Model.Insert(i+1, e);
+        StateHasChanged();
+    }
+
+    private void Decrement(int i)
+    {
+        var e = Model[i];
+        Model.RemoveAt(i);
+        Model.Insert(i-1, e);
+        StateHasChanged();
+    }
+
+    private void Submit()
+    {
+        EnterChoice(Model);
+    }
+}
+
+<p @key="Input" class="active-choice__order">
+    @for (var i = 0; i < Model.Count; i++)
+    {                
+        var ix = i;
+        <div class="active-choice__order-option">
+            <ActiveButton Action="@(() => Decrement(ix))" Label="<" Enabled="@(Enabled && ix > 0)" /> 
+            <ActiveButton Action="@(() => Increment(ix))" Label=">" Enabled="@(Enabled && ix < Model.Count - 1)" />
+            <ActiveCard @key="Model[ix]" Id="@Model[ix]" Enabled="false" Half="true" />
+        </div>
+    }
+</p>
+
+<div>
+    <ActiveButton Label="Reorder" Enabled="@Enabled" Action="Submit" />
+</div>
