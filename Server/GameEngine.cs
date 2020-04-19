@@ -652,6 +652,7 @@ namespace Cardgame.Server
         {
             return source switch 
             {
+                Zone.CountableDeck => Model.Decks[player].Count(),
                 Zone.DeckTop1 => Model.Decks[player].Take(1).Count(),
                 Zone.DeckTop2 => Model.Decks[player].Take(2).Count(),
                 Zone.DeckTop3 => Model.Decks[player].Take(3).Count(),
@@ -659,9 +660,9 @@ namespace Cardgame.Server
                 Zone.Discard => Model.Discards[player].Count(),
                 Zone.Hand => Model.Hands[player].Count,
                 Zone.InPlay => Model.PlayedCards.Count,
+                Zone.SupplyAll => Model.Supply.Keys.Count,
                 Zone.SupplyAvailable => Model.Supply.Keys.Count(id => Model.Supply[id] > 0),
                 Zone.SupplyEmpty => Model.Supply.Keys.Count(id => Model.Supply[id] == 0),
-                Zone.SupplyAll => Model.Supply.Keys.Count,
                 Zone.Trash => Model.Trash.Count,
                 Zone other => throw new CommandException($"Unknown card zone {other}")
             };

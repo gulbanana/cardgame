@@ -520,7 +520,7 @@ namespace Cardgame.Server
             }
         }
 
-        // this is a special case used by Masquerade, but may be generalised in future
+        // this is a special case used by Masquerade, but could be generalised
         void IActionHost.PassCard(string player, string card)
         {
             engine.Model.Hands[Player].Remove(card);
@@ -532,6 +532,47 @@ namespace Cardgame.Server
                 <run>a card to</run>
                 <player suffix='.'>{player}</player>
             </spans>");
+        }
+
+        // this is a special case used by Secret Passage
+        void IActionHost.InsertIntoDeck(string card, int position)
+        {
+            engine.Model.Hands[Player].Remove(card);
+            engine.Model.Decks[Player].Insert(position, card);
+            
+            if (position == 0)
+            {
+                engine.LogPartialEvent($@"<spans>
+                    <indent level='{level}' />
+                    {LogVerbInitial("put", "puts", "putting")}
+                    <card>{card}</card>
+                    <run>onto</run>
+                    <if you='your' them='their'>{Player}</if>
+                    <run>deck.</run>
+                </spans>");
+            }
+            else if (position == engine.Model.Decks[Player].Count - 1)
+            {
+                engine.LogPartialEvent($@"<spans>
+                    <indent level='{level}' />
+                    {LogVerbInitial("put", "puts", "putting")}
+                    <card>{card}</card>
+                    <run>on the bottom of</run>
+                    <if you='your' them='their'>{Player}</if>
+                    <run>deck.</run>                
+                </spans>");
+            }
+            else
+            {
+                engine.LogPartialEvent($@"<spans>
+                    <indent level='{level}' />
+                    {LogVerbInitial("put", "puts", "putting")}
+                    <card>{card}</card>
+                    <run>into</run>
+                    <if you='your' them='their'>{Player}</if>
+                    <run>deck, {position} cards down.</run>
+                </spans>");
+            }
         }
     }
 }

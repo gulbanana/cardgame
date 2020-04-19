@@ -53,6 +53,7 @@ namespace Cardgame.API
         void DiscardEntireDeck();
         void PreventAttack(bool enable);
         void PassCard(string player, string card);
+        void InsertIntoDeck(string card, int position);
     }
 
     public static class ActionHostExtensions

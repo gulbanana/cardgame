@@ -2,9 +2,7 @@ namespace Cardgame.API
 {
     public enum Zone
     {
-        SupplyAvailable,
-        SupplyEmpty,
-        SupplyAll,
+        CountableDeck,
         DeckTop1,
         DeckTop2,
         DeckTop3,
@@ -12,6 +10,9 @@ namespace Cardgame.API
         Hand,
         InPlay,  
         Discard,
+        SupplyAll,
+        SupplyAvailable,
+        SupplyEmpty,
         Trash,      
     }
 }
