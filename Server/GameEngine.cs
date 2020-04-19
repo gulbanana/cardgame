@@ -156,7 +156,21 @@ namespace Cardgame.Server
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
 
-                    foreach (var card in Model.Hands[username].Select(All.Cards.ByName).OfType<ITreasureCard>().ToList())
+                    var cards = Model.Hands[username].Select(All.Cards.ByName).OfType<ITreasureCard>().ToList();
+                    var cardList = string.Join(Environment.NewLine, cards.Select((card, ix) => 
+                    {
+                        var suffix = ix == cards.Count - 1 ? "."
+                            : ix < cards.Count - 2 ? ","
+                            : " and";
+                        return $"<card suffix='{suffix}'>{card.Name}</card>";
+                    }));
+                    LogEvent($@"<spans>
+                        <player>{username}</player>
+                        <if you='play' them='plays'>{username}</if>
+                        {cardList}
+                    </spans>");
+
+                    foreach (var card in cards)
                     {
                         BeginPlayCard(1, username, card.Name, Zone.Hand);
                     }
