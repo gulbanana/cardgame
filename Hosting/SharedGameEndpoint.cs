@@ -38,8 +38,6 @@ namespace Cardgame.Hosting
             {
                 engine.Execute(username, command);
                 
-                Notify();
-
                 if (command is JoinGameCommand || command is LeaveGameCommand || command is StartGameCommand)
                 {
                     UpdateSummary();

@@ -43,6 +43,8 @@ namespace Cardgame.Server
                     LogEvent($"<error>{username}: {e.Message}</error>");
                     Console.WriteLine(e.ToString());
                 }
+
+                Model.Seq++; ActionUpdated?.Invoke();
             }
         }
 
@@ -130,8 +132,10 @@ namespace Cardgame.Server
                     break;
 
                 case PlayCardCommand playCard:
+                    if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
+                    if (Model.ExecutingCards > 0) throw new CommandException("Another card is already being played.");
                     if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");
                     if (!All.Cards.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
 
@@ -153,8 +157,10 @@ namespace Cardgame.Server
                     break;
 
                 case PlayAllTreasuresCommand _:
+                    if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
+                    if (Model.ExecutingCards > 0) throw new CommandException("Another card is already being played.");
 
                     var cards = Model.Hands[username].Select(All.Cards.ByName).OfType<ITreasureCard>().ToList();
                     var cardList = string.Join(Environment.NewLine, cards.Select((card, ix) => 
@@ -187,10 +193,12 @@ namespace Cardgame.Server
                     break;
 
                 case BuyCardCommand buyCard:
+                    if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");
                     if (Model.Supply[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
+                    if (Model.ExecutingCards > 0) throw new CommandException("A card is currently being played.");
 
                     BuyCard(username, buyCard.Id);
                     
@@ -203,6 +211,7 @@ namespace Cardgame.Server
                     break;
 
                 case EnterChoiceCommand choice:
+                    if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ChoosingPlayers.Peek() != username) throw new CommandException("You are not the choosing player.");
 
@@ -211,8 +220,10 @@ namespace Cardgame.Server
                     break;
 
                 case EndTurnCommand _:
+                    if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
+                    if (Model.ExecutingCards > 0) throw new CommandException("A card is currently being played.");
 
                     EndTurn();
                     BeginTurn();
@@ -221,8 +232,6 @@ namespace Cardgame.Server
                 case var unknown:
                     throw new CommandException($"Unrecognised command {unknown}");
             }
-
-            Model.Seq++;
         }
 
         private void BuyCard(string player, string id)
@@ -274,11 +283,8 @@ namespace Cardgame.Server
 
         private void EndPlayCard(Task t, object id)
         {
-            lock (this)
-            {
-                CompletePlayCard(t, id as string);
-                ActionUpdated?.Invoke();
-            }
+            CompletePlayCard(t, id as string);
+            Model.Seq++; ActionUpdated?.Invoke();
         }
 
         private void CompletePlayCard(Task t, string id)
@@ -764,10 +770,10 @@ namespace Cardgame.Server
                 }
             }
 
-            Model.ChoosingPlayers.Push(player);
-            
-            inputTCS = new TaskCompletionSource<string>();
-            ActionUpdated?.Invoke();
+            Model.ChoosingPlayers.Push(player);           
+             
+            inputTCS = new TaskCompletionSource<string>();            
+            Model.Seq++; ActionUpdated?.Invoke();
             var output = await inputTCS.Task;
 
             Model.ChoosingPlayers.Pop();
