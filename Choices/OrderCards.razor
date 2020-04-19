@@ -27,8 +27,8 @@
     {                
         var ix = i;
         <div class="active-choice__order-option">
-            <ActiveButton Action="@(() => Decrement(ix))" Label="<" Enabled="@(Enabled && ix > 0)" /> 
-            <ActiveButton Action="@(() => Increment(ix))" Label=">" Enabled="@(Enabled && ix < Model.Count - 1)" />
+            <ActiveButton Action="@(() => Decrement(ix))" Label="<sym>left</sym>" Enabled="@(Enabled && ix > 0)" /> 
+            <ActiveButton Action="@(() => Increment(ix))" Label="<sym>right</sym>" Enabled="@(Enabled && ix < Model.Count - 1)" />
             <ActiveCard @key="Model[ix]" Id="@Model[ix]" Enabled="false" Half="true" />
         </div>
     }

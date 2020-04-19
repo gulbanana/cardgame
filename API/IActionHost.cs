@@ -8,6 +8,7 @@ namespace Cardgame.API
 {
     public interface IActionHost : IModifierSource
     {
+        int IndentLevel { get; set; }
         string Player { get; }
         bool IsActive { get; }
         int ShuffleCount { get; }
@@ -24,7 +25,7 @@ namespace Cardgame.API
         void Trash(string[] cards, Zone from);
         void Gain(string card, Zone to);
         void GainFrom(string[] cards, Zone from);
-        void PlaceOnDeck(string card, Zone from);
+        void PlaceOnDeck(string[] cards, Zone from);
         void PutIntoHand(string[] cards, Zone from); // not a draw!
         void Reveal(string[] cards, Zone from);
         void Name(string card);
@@ -178,12 +179,17 @@ namespace Cardgame.API
         #region Place
         public static void PlaceOnDeck(this IActionHost host, ICard card, Zone from)
         {
-            host.PlaceOnDeck(card.Name, from);
+            host.PlaceOnDeck(new[] { card.Name }, from);
+        }
+
+        public static void PlaceOnDeck(this IActionHost host, ICard[] cards)
+        {
+            host.PlaceOnDeck(cards.Select(card => card.Name).ToArray(), Zone.Hand);
         }
 
         public static void PlaceOnDeck(this IActionHost host, ICard card)
         {
-            host.PlaceOnDeck(card.Name, Zone.Hand);
+            host.PlaceOnDeck(new[] { card.Name }, Zone.Hand);
         }
         #endregion
 

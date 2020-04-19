@@ -27,6 +27,7 @@ namespace Cardgame.Cards.Dominion
                 await host.YesNo("Moat", $@"<run>Reveal</run><card>Moat</card><run>from your hand?</run>"))
             {
                 host.Reveal("Moat");
+                host.IndentLevel++;
                 return Reaction.BeforeAndAfter(
                     () => host.PreventAttack(true),
                     () => host.PreventAttack(false)

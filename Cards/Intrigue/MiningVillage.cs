@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Cardgame.API;
 
-namespace Cardgame.Cards.Dominion
+namespace Cardgame.Cards.Intrigue
 {
     public class MiningVillage : ActionCardBase
     {

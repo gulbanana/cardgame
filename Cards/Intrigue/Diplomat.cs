@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cardgame.API;
 
-namespace Cardgame.Cards.Dominion
+namespace Cardgame.Cards.Intrigue
 {
     public class Diplomat : ActionReactionCardBase
     {
@@ -38,6 +38,7 @@ namespace Cardgame.Cards.Dominion
                 await host.YesNo("Diplomat", $@"<run>Reveal</run><card>Diplomat</card><run>from your hand?</run>"))
             {
                 host.Reveal("Diplomat");
+                host.IndentLevel++;
                 return Reaction.Before(async () => 
                 {
                     host.DrawCards(2);

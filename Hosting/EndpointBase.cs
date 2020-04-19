@@ -30,9 +30,9 @@ namespace Cardgame.Hosting
         protected void Notify()
         {
             var model = GetModel();
+            var serialised = JsonSerializer.Serialize(model);
             foreach (var subscriber in subscriptions.ToList())
             {
-                var serialised = JsonSerializer.Serialize(model);
                 var clone = JsonSerializer.Deserialize<T>(serialised);
                 subscriber(clone);
             }
