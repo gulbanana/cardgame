@@ -172,6 +172,11 @@ namespace Cardgame.API
         {
             host.PlaceOnDeck(card.Name, from);
         }
+
+        public static void PlaceOnDeck(this IActionHost host, ICard card)
+        {
+            host.PlaceOnDeck(card.Name, Zone.Hand);
+        }
         #endregion
 
         #region Put

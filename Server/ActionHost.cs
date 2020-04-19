@@ -298,15 +298,29 @@ namespace Cardgame.Server
         {
             engine.MoveCard(Player, card, from, Zone.DeckTop1);
             
-            engine.LogPartialEvent($@"<spans>
-                <indent level='{level}' />
-                {LogVerbInitial("put", "puts", "putting")}
-                <card>{card}</card>
-                <run>onto</run>
-                <if you='your' them='their'>{Player}</if>
-                <run>deck from</run>
-                {LogSource(from)}
-            </spans>");
+            if (from == Zone.Hand)
+            {
+                engine.LogPartialEvent($@"<spans>
+                    <indent level='{level}' />
+                    {LogVerbInitial("put", "puts", "putting")}
+                    <card>{card}</card>
+                    <run>onto</run>
+                    <if you='your' them='their'>{Player}</if>
+                    <run>deck.</run>
+                </spans>");
+            }
+            else
+            {
+                engine.LogPartialEvent($@"<spans>
+                    <indent level='{level}' />
+                    {LogVerbInitial("put", "puts", "putting")}
+                    <card>{card}</card>
+                    <run>onto</run>
+                    <if you='your' them='their'>{Player}</if>
+                    <run>deck from</run>
+                    {LogSource(from)}
+                </spans>");
+            }
         }
 
         void IActionHost.PutIntoHand(string[] cards, Zone from)
