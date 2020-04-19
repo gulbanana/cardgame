@@ -94,7 +94,7 @@
             </Content>
             <Tooltip>
                 <Magnify>
-                    <KingdomCard Name="@card.Name" Types="@model.Types" Art="@model.Art" Cost="@cost" Text="@model.Text" SetIcon="@setIcon" Half="false" />
+                    <Cardgame.Views.KingdomCard Name="@card.Name" Types="@model.Types" Art="@model.Art" Cost="@cost" Text="@model.Text" SetIcon="@setIcon" Half="false" />
                 </Magnify>
             </Tooltip>
         </WithTooltip>   
@@ -107,7 +107,7 @@
         }
         else
         {
-            <PlayerLink Name="@player.Name" Prefix="@player.Prefix" Suffix="@player.Suffix" />
+            <Cardgame.Views.PlayerLink Name="@player.Name" Prefix="@player.Prefix" Suffix="@player.Suffix" />
         }
         break;
 

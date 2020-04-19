@@ -1,6 +1,6 @@
-namespace Cardgame.Shared
+namespace Cardgame.Choices
 {
-    public class SelectCards
+    public class SelectCardsInput
     {
         public string[] Choices { get; set; }
         public int? Min { get; set; }

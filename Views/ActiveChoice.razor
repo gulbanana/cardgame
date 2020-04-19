@@ -6,8 +6,7 @@
     [Parameter] public string Prompt { get; set; }
     [Parameter] public string Input { get; set; }
     private string yesNoMessage;
-    private string[] chooseOneInput;
-    private SelectCards selectCardsInput;
+    private SelectCardsInput selectCardsInput;
     private bool[] selectCardsChoices;
     private List<string> orderCardsChoices;
 
@@ -19,12 +18,8 @@
                 yesNoMessage = JsonSerializer.Deserialize<string>(Input);
                 break;
 
-            case ChoiceType.ChooseOne:
-                chooseOneInput = JsonSerializer.Deserialize<string[]>(Input);
-                break;
-
             case ChoiceType.SelectCards:
-                selectCardsInput = JsonSerializer.Deserialize<SelectCards>(Input);
+                selectCardsInput = JsonSerializer.Deserialize<SelectCardsInput>(Input);
                 selectCardsChoices = new bool[selectCardsInput.Choices.Length];
                 break;
 
@@ -37,11 +32,6 @@
     private void YesNoSubmit(bool yesOrNo)
     {
         Action(JsonSerializer.Serialize(yesOrNo));
-    }
-
-    private void ChooseOneSubmit(int ix)
-    {
-        Action(JsonSerializer.Serialize(ix));
     }
 
     private void SelectCardsToggle(int ix)
@@ -111,13 +101,11 @@
         break;
 
     case ChoiceType.ChooseOne:
-        <p class="active-choice__choose-one">
-            @for (var i = 0; i < chooseOneInput.Length; i++)
-            {
-                var ix = i;
-                <ActiveButton @key="ix" Label="@chooseOneInput[ix]" Enabled="@Enabled" Action="@(() => ChooseOneSubmit(ix))" />
-            }
-        </p>
+        <ChooseOne Enabled="@Enabled" Input="@Input" Output="@Action" />
+        break;
+
+    case ChoiceType.ChooseMultiple:
+        <ChooseMultiple Enabled="@Enabled" Input="@Input" Output="@Action" />
         break;
 
     case ChoiceType.SelectCards:

@@ -4,6 +4,7 @@ namespace Cardgame.Shared
     {
         YesNo,
         ChooseOne,
+        ChooseMultiple,
         SelectCards,        
         OrderCards,        
     }

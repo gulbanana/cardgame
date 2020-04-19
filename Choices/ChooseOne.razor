@@ -1,0 +1,24 @@
+@code {
+    [Parameter] public bool Enabled { get; set; }
+    [Parameter] public string Input { get; set; }
+    [Parameter] public Action<string> Output { get; set; }
+    private string[] input;
+
+    protected override void OnParametersSet()
+    {
+        input = JsonSerializer.Deserialize<string[]>(Input);
+    }
+
+    private void Submit(int x)
+    {
+        Output(JsonSerializer.Serialize(x));
+    }
+}
+
+<p class="choose-one">
+    @for (var i = 0; i < input.Length; i++)
+    {
+        var ix = i;
+        <ActiveButton @key="ix" Label="@input[ix]" Enabled="@Enabled" Action="@(() => Submit(ix))" />
+    }
+</p>

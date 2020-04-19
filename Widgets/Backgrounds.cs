@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cardgame.API;
 
-namespace Cardgame.Views
+namespace Cardgame.Widgets
 {
     internal static class Backgrounds
     {

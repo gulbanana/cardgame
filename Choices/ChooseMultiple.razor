@@ -1,0 +1,44 @@
+@code {
+    [Parameter] public bool Enabled { get; set; }
+    [Parameter] public string Input { get; set; }
+    [Parameter] public Action<string> Output { get; set; }
+    private ChooseMultipleInput input;
+    private bool[] choices;
+
+    protected override void OnParametersSet()
+    {
+        input = JsonSerializer.Deserialize<ChooseMultipleInput>(Input);
+        choices = new bool[input.Choices.Length];
+    }
+
+    private bool IsValid()
+    {
+        var selectedCount = choices.Where(b => b).Count();
+        return input.Number == selectedCount;
+    }
+
+    private void Submit()
+    {
+        var selected = Enumerable.Range(0, choices.Length)
+            .Where(i => choices[i])
+            .ToArray();
+
+        Output(JsonSerializer.Serialize(selected));
+    }
+}
+
+<p class="choose-multiple">    
+    @for (var i = 0; i < input.Choices.Length; i++)
+    {
+        var ix = i;
+        <label>
+            <input type="checkbox" @onchange="args => choices[ix] = (bool)args.Value">
+            <RichText Model="@input.Choices[ix]" />
+        </label>
+        <br />
+    }
+</p>
+
+<div>
+    <ActiveButton Label="@("Choose " + input.Number)" Enabled="@(Enabled && IsValid())" Action="@Submit" />
+</div>

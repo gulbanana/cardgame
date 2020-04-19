@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Cardgame.API;
+using Cardgame.Choices;
 using Cardgame.Shared;
 
 namespace Cardgame.Server
@@ -408,6 +409,21 @@ namespace Cardgame.Server
             await options[result].Execute();
         }
 
+        public async Task ChooseMultiple(string prompt, int number, params NamedOption[] options)
+        {
+            var results = await engine.Choose<ChooseMultipleInput, int[]>(
+                Player,
+                ChoiceType.ChooseMultiple,
+                prompt,
+                new ChooseMultipleInput { Number = number, Choices = options.Select(o => o.Text).ToArray() }
+            );
+
+            foreach (var result in results)
+            {
+                await options[result].Execute();
+            }
+        }
+
         async Task<T[]> IActionHost.SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max)
         {            
             var sourceCards = engine.GetCards(Player, source, NoteReshuffle);
@@ -418,11 +434,11 @@ namespace Cardgame.Server
                 return Array.Empty<T>();
             }
 
-            var ids = await engine.Choose<SelectCards, string[]>(
+            var ids = await engine.Choose<SelectCardsInput, string[]>(
                 Player,
                 ChoiceType.SelectCards, 
                 prompt,
-                new SelectCards
+                new SelectCardsInput
                 {
                     Choices = filteredCards.Select(card => card.Name).ToArray(),
                     Min = min,

@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Text.Json;
 using Cardgame.API;
+using Cardgame.Choices;
 using Cardgame.Shared;
 
 namespace Cardgame.Server
@@ -40,10 +41,15 @@ namespace Cardgame.Server
                 case ChoiceType.ChooseOne:
                     return JsonSerializer.Serialize(0);
 
+                case ChoiceType.ChooseMultiple:
+                    var cmInput = JsonSerializer.Deserialize<ChooseMultipleInput>(state.ChoiceInput);
+                    var cmOutput = Enumerable.Range(0, cmInput.Number).ToArray();
+                    return JsonSerializer.Serialize(cmOutput);
+
                 case ChoiceType.SelectCards:
-                    var input = JsonSerializer.Deserialize<SelectCards>(state.ChoiceInput);
-                    var output = input.Choices.Take(input.Max??1).ToArray();
-                    return JsonSerializer.Serialize<string[]>(output);
+                    var scInput = JsonSerializer.Deserialize<SelectCardsInput>(state.ChoiceInput);
+                    var scOutput = scInput.Choices.Take(scInput.Max??1).ToArray();
+                    return JsonSerializer.Serialize<string[]>(scOutput);
 
                 case ChoiceType.OrderCards:
                     return state.ChoiceInput;
