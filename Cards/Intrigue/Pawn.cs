@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cardgame.API;
@@ -26,12 +25,12 @@ namespace Cardgame.Cards.Intrigue
             bool draw, act, buy, money;
             draw = act = buy = money = false;
 
-            var options = new List<(string, Action)>
+            var options = new List<NamedOption>
             {
-                ("+1 Card", () => draw = true),
-                ("+1 Action", () => act = true),
-                ("+1 Buy", () => buy = true),
-                ("+1 Money", () => money = true)
+                new NamedOption("+1 Card", () => draw = true),
+                new NamedOption("+1 Action", () => act = true),
+                new NamedOption("+1 Buy", () => buy = true),
+                new NamedOption("<sym prefix='+'>coin1</sym>", () => money = true)
             };
 
             await host.ChooseOne("Pawn", options);

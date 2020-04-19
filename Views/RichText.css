@@ -11,19 +11,18 @@
 }
 
 .rich-text__small {
-    font-size: calc(var(--local-scale) * var(--card-body-small-font));
+    font-size: calc(var(--text-scale) * var(--card-body-small-font));
 }
 
 .rich-text__symbol {
-    vertical-align: bottom;
-    width: calc(var(--local-scale) * 8px);
-    height: calc(var(--local-scale) * 8px);
+    vertical-align: var(--text-image-align);
+    width: calc(var(--text-scale) * 8px);
+    height: calc(var(--text-scale) * 8px);
 }
 
 .rich-text__symbol--large {
-    vertical-align: bottom;
-    width: calc(var(--local-scale) * 16px);
-    height: calc(var(--local-scale) * 16px);
+    width: calc(var(--text-scale) * 16px);
+    height: calc(var(--text-scale) * 16px);
 }
 
 .rich-text__error {
@@ -35,7 +34,7 @@
 }
 
 .rich-text__no-break--large {
-    font-size: calc(var(--local-scale) * var(--card-body-font) * 2);
+    font-size: calc(var(--text-scale) * var(--card-body-font) * 2);
 }
 
 .rich-text__bar {

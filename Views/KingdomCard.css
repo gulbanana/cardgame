@@ -11,6 +11,8 @@
     --local-card-type-caps-font: calc(var(--local-scale) * var(--card-type-caps-font));
     --local-card-body-font: calc(var(--local-scale) * var(--card-body-font));
     --local-card-icon: calc(var(--local-scale) * var(--card-icon));
+    --text-scale: var(--local-scale);
+    --text-image-align: bottom;
     width: var(--local-card-width);
     border: solid var(--card-border-color);
     border-width: var(--local-card-border-width);

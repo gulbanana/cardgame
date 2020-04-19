@@ -233,7 +233,7 @@ namespace Cardgame.API
             host.PlayCard(card.Name, Zone.Hand);
         }
 
-        public static Task ChooseOne(this IActionHost host, string prompt, IEnumerable<(string label, Action action)> options)
+        public static Task ChooseOne(this IActionHost host, string prompt, IEnumerable<NamedOption> options)
         {
             return host.ChooseOne(prompt, options.ToArray());
         }

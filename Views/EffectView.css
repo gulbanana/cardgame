@@ -6,8 +6,10 @@
 
 .effect-view__tooltip {
     padding: 0.5em;
-    font-size: calc(var(--card-body-font) * var(--local-scale));
     background: var(--card-text-background);
     border: 2px solid var(--card-type-action);
     border-radius: 4px;
+    font-size: calc(var(--card-body-font) * var(--text-scale));
+    font-family: var(--card-body-family);
+    --text-image-align: bottom;
 }

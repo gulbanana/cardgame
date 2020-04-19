@@ -1,5 +1,5 @@
 .player-link {
-    color: rgb(145, 148, 175);
+    color: var(--player-link-color);
     font-weight: 600;
 }
 
@@ -13,8 +13,8 @@
 
 .player-link__tooltip {
     padding: 0.5em;
-    border: 2px solid rgb(145, 148, 175);
+    border: 2px solid var(--player-link-color);
     border-radius: 4px;
-    background: var(--card-type-victory);
-    font-size: calc(var(--card-body-font) * var(--local-scale));
+    background: white;
+    --text-image-align: bottom;
 }

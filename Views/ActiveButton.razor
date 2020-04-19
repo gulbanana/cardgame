@@ -1,0 +1,23 @@
+@code {
+    [Parameter] public string Label { get; set; }
+    [Parameter] public bool Enabled { get; set; } = true;
+    [Parameter] public Action Action { get; set; }
+}
+
+@if (Action == null)
+{
+    <input class="active-button @(Enabled ? "active-button--enabled" : "")" 
+        type="submit" 
+        value="@Label" 
+        @onclick="@Action"
+        disabled="@(!Enabled)">
+}
+else
+{
+    <button @key="Label" class="active-button @(Enabled ? "active-button--enabled" : "")" 
+        type="submit" 
+        @onclick="@Action"
+        disabled="@(!Enabled)">
+        <RichText Model="@Label" />
+    </button>
+}
