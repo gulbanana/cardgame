@@ -167,6 +167,11 @@ namespace Cardgame.API
         {
             host.GainFrom(cards.Select(card => card.Name).ToArray(), from);
         }
+
+        public static void GainFrom(this IActionHost host, ICard card, Zone from)
+        {
+            host.GainFrom(new[] { card.Name }, from);
+        }
         #endregion
 
         #region Place

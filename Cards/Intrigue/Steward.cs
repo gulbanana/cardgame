@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Cardgame.API;
 
@@ -38,7 +36,5 @@ namespace Cardgame.Cards.Intrigue
                 })
             );
         }
-
-        public int Score(string[] dominion) => 2;
     }
 }
