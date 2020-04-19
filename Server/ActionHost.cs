@@ -442,6 +442,14 @@ namespace Cardgame.Server
             }
         }
 
+        string IActionHost.GetPlayerToLeft()
+        {
+            var self = Array.FindIndex(engine.Model.Players, e => e == Player);
+            var left = self + 1; // clockwise
+            if (left >= engine.Model.Players.Length) left = 0;
+            return engine.Model.Players[left];
+        }
+
         IModifier[] IActionHost.GetModifiers() 
         {
             return engine.Model.GetModifiers();
@@ -492,21 +500,16 @@ namespace Cardgame.Server
         }
 
         // this is a special case used by Masquerade, but may be generalised in future
-        void IActionHost.PassCardLeft(string card)
+        void IActionHost.PassCard(string player, string card)
         {
-            var self = Array.FindIndex(engine.Model.Players, e => e == Player);
-            var left = self + 1; // clockwise
-            if (left >= engine.Model.Players.Length) left = 0;
-            var leftPlayer = engine.Model.Players[left];
-
             engine.Model.Hands[Player].Remove(card);
-            engine.Model.Hands[leftPlayer].Add(card);
+            engine.Model.Hands[player].Add(card);
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{level}' />
                 {LogVerbInitial("pass", "passes", "passing")}
                 <run>a card to</run>
-                <player suffix='.'>{leftPlayer}</player>
+                <player suffix='.'>{player}</player>
             </spans>");
         }
     }

@@ -32,9 +32,10 @@ namespace Cardgame.API
         ICard[] Examine(Zone @in);
         void Reorder(string[] cards, Zone @in);
 
-        // potentially-interactive actions
+        // interaction
         Task PlayCard(string card, Zone from);
         Task AllPlayers(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool isAttack = false);
+        string GetPlayerToLeft();
 
         // user inputs
         Task<bool> YesNo(string prompt, string message);
@@ -50,7 +51,7 @@ namespace Cardgame.API
         // special cases
         void DiscardEntireDeck();
         void PreventAttack(bool enable);
-        void PassCardLeft(string card);
+        void PassCard(string player, string card);
     }
 
     public static class ActionHostExtensions
@@ -339,6 +340,20 @@ namespace Cardgame.API
             return host.AllPlayers(target => target.Player != host.Player, host =>
             {
                 act(host);
+                return Task.CompletedTask;
+            }, isAttack);
+        }
+
+        public static Task OnePlayer(this IActionHost host, string player, Func<IActionHost, Task> act, bool isAttack = false)
+        {
+            return host.AllPlayers(target => target.Player == player, act, isAttack);
+        }
+
+        public static Task OnePlayer(this IActionHost host, string player, Action<IActionHost> act, bool isAttack = false)
+        {
+            return host.AllPlayers(target => target.Player == player, target =>
+            {
+                act(target);
                 return Task.CompletedTask;
             }, isAttack);
         }
