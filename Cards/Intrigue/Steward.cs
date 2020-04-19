@@ -26,8 +26,15 @@ namespace Cardgame.Cards.Intrigue
                 new NamedOption("Trash 2 cards", async () => 
                 {
                     var handSize = host.Examine(Zone.Hand).Count();
-                    var trashed = await host.SelectCards("Choose cards to trash.", Zone.Hand, Math.Min(handSize, 2), Math.Min(handSize, 2));
-                    host.Trash(trashed);
+                    if (handSize > 2)
+                    {
+                        var trashed = await host.SelectCards("Choose cards to trash.", Zone.Hand, Math.Min(handSize, 2), Math.Min(handSize, 2));
+                        host.Trash(trashed);
+                    }
+                    else
+                    {
+                        host.Trash(Zone.Hand);
+                    }
                 })
             );
         }

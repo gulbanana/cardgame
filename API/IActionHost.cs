@@ -86,6 +86,16 @@ namespace Cardgame.API
         {
             host.Trash(new[] { card.Name }, Zone.Hand);
         }
+
+        public static ICard[] Trash(this IActionHost host, Zone from)
+        {
+            var cards = host.Examine(from);
+            if (cards.Any())
+            {
+                host.Trash(cards, from);
+            }
+            return cards;
+        }
         #endregion
 
         #region Discard
