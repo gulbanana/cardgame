@@ -32,7 +32,7 @@ namespace Cardgame.Cards.Intrigue
                 host.Trash(trashed);
 
                 var value = trashed.GetCost(host) + 1;
-                var gained = await host.SelectCard("Choose a card to gain.", Zone.SupplyAvailable, cards => cards.Where(c => c.GetCost(host) == value));
+                var gained = await host.SelectCard("Choose a card to gain.", Zone.SupplyAvailable, card => card.GetCost(host) == value);
                 if (gained != null)
                 {
                     host.Gain(gained);

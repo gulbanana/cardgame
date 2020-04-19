@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Intrigue
                 var gained = await host.SelectCard(
                     $"Choose a card for {target.Player} to gain.", 
                     Zone.SupplyAvailable, 
-                    cards => cards.Where(card => card.GetCost(host) == topDeckCost)
+                    card => card.GetCost(host) == topDeckCost
                 );
                 target.Gain(gained);                
             });

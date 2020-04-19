@@ -274,6 +274,12 @@ namespace Cardgame.API
         }
 
         #region SelectCards
+        // simple predicate 
+        public static Task<ICard[]> SelectCards(this IActionHost host, string prompt, Zone source, Func<ICard, bool> filter, int? min, int? max)
+        {
+            return host.SelectCards<ICard>(prompt, source, cs => cs.Where(filter), min, max);
+        }
+
         // no numbers
         public static Task<T[]> SelectCards<T>(this IActionHost host, string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter) where T : ICard
         {
@@ -283,6 +289,12 @@ namespace Cardgame.API
         public static async Task<T> SelectCard<T>(this IActionHost host, string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter) where T : ICard
         {
             var cards = await host.SelectCards(prompt, source, filter, 1, 1);
+            return cards.SingleOrDefault();
+        }
+
+        public static async Task<ICard> SelectCard(this IActionHost host, string prompt, Zone source, Func<ICard, bool> filter)
+        {
+            var cards = await host.SelectCards<ICard>(prompt, source, cs => cs.Where(filter), 1, 1);
             return cards.SingleOrDefault();
         }
 

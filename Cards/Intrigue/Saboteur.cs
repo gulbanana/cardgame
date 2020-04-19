@@ -28,13 +28,7 @@ reveal:         var topDeck = target.Reveal(Zone.DeckTop1).SingleOrDefault();
                     if (topDeckCost >= 3)
                     {
                         target.Trash(topDeck, Zone.DeckTop1);
-                        var gained = await target.SelectCards(
-                            "Choose a card to gain, or none.", 
-                            Zone.SupplyAvailable, 
-                            cards => cards.Where(card => card.GetCost(host) <= topDeckCost-2),
-                            0,
-                            1
-                        );
+                        var gained = await target.SelectCards("Choose a card to gain, or none.", Zone.SupplyAvailable, card => card.GetCost(host) <= topDeckCost-2, 0, 1);
                         if (gained.Any())
                         {
                             target.Gain(gained.Single());
