@@ -9,9 +9,7 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-throne-room";
         public override int Cost => 4;
         
-        public override string Text => @"<run>
-            You may play an Action card from your hand twice.
-        </run>";
+        public override string Text => @"You may play an Action card from your hand twice.";
 
         protected override async Task ActAsync(IActionHost host)
         {

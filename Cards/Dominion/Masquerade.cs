@@ -11,9 +11,7 @@ namespace Cardgame.Cards.Intrigue
         public override int Cost => 3;
 
         public override string Text => @"<paras>
-            <block>
-                <run>+2 Cards</run>
-            </block>
+            <bold>+2 Cards</bold>
             <run>Each player with any cards in hand passes one to the next such player to their left, at once. Then you may trash a card fom your hand.</run>
         </paras>";
 

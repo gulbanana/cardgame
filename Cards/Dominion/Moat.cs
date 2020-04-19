@@ -11,9 +11,7 @@ namespace Cardgame.Cards.Dominion
         public override int Cost => 2;        
 
         public override string Text => @"<split>
-            <block>
-                <run>+2 Cards</run>
-            </block>
+            <bold>+2 Cards</bold>
             <run>When another player plays an Attack card, you may first reveal this from your hand, to be unaffected by it.</run>
         </split>";
 
@@ -24,11 +22,9 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task<Reaction> ReactAsync(IActionHost host, string trigger)
         {
-            if (!host.IsActive && All.Cards.ByName(trigger).Types.Contains(CardType.Attack) && await host.YesNo("Moat", $@"<spans>
-                <run>Reveal</run>
-                <card>Moat</card>
-                <run>from your hand?</run>
-            </spans>"))
+            if (!host.IsActive && 
+                All.Cards.ByName(trigger).Types.Contains(CardType.Attack) && 
+                await host.YesNo("Moat", $@"<run>Reveal</run><card>Moat</card><run>from your hand?</run>"))
             {
                 host.Reveal("Moat");
                 return Reaction.BeforeAndAfter(

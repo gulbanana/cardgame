@@ -12,13 +12,11 @@ namespace Cardgame.Cards.Intrigue
         public override string Text => @"<split>
             <spans>
                 <run>Choose one:</run>
-                <block><run>+3 Cards;</run></block>
+                <bold>+3 Cards;</bold>
                 <run>or</run>
-                <block><run>+2 Actions.</run></block>
+                <bold>+2 Actions.</bold>
             </spans>
-            <block>
-                <sym large='true' prefix='2'>vp</sym>
-            </block>
+            <bold><sym large='true' prefix='2'>vp</sym></bold>
         </split>";
 
         protected override async Task ActAsync(IActionHost host)

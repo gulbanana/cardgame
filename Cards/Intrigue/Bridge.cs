@@ -8,12 +8,12 @@ namespace Cardgame.Cards.Intrigue
         public override int Cost => 4;
         
         public override string Text => @"<paras>
-            <block>
+            <bold>
                 <lines>
                     <run>+1 Buy</run>
                     <sym prefix='+'>coin1</sym>
                 </lines>
-            </block>
+            </bold>
             <spans>
                 <run>This turn, cards (everywhere) cost</run>
                 <sym>coin1</sym>

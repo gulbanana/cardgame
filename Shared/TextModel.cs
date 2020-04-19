@@ -43,7 +43,7 @@ namespace Cardgame.Widgets
 
         public class Error : TextModel
         {
-            public string Text { get; set; }
+            public TextModel Child { get; set; }
         }
 
         public class Indent : TextModel
@@ -84,8 +84,9 @@ namespace Cardgame.Widgets
         {
             try
             {
-                var node = XDocument.Parse(xml);
-                return Parse(node.Root);
+                var rooted = $"<root>{xml}</root>";
+                var node = XDocument.Parse(rooted);
+                return ParseContents(node.Root);
             }
             catch (Exception e)
             {
@@ -94,33 +95,33 @@ namespace Cardgame.Widgets
             }
         }
 
-        public static TextModel Parse(XElement element)
+        private static TextModel ParseElement(XElement element)
         {
             switch (element.Name.LocalName)
             {
                 case "spans":
-                    return new Spans { Children = element.Elements().Select(Parse).ToArray() };
+                    return new Spans { Children = element.Elements().Select(ParseElement).ToArray() };
 
                 case "lines":
-                    return new Lines { Children = element.Elements().Select(Parse).ToArray() };
+                    return new Lines { Children = element.Elements().Select(ParseElement).ToArray() };
 
                 case "paras":
-                    return new Paras { Children = element.Elements().Select(Parse).ToArray() };
+                    return new Paras { Children = element.Elements().Select(ParseElement).ToArray() };
 
                 case "split":
-                    return new Split { Children = element.Elements().Select(Parse).ToArray() };
+                    return new Split { Children = element.Elements().Select(ParseElement).ToArray() };
 
-                case "block":
-                    return new Bold { Child = Parse(element.Elements().Single()) };
+                case "bold":
+                    return new Bold { Child = ParseContents(element) };
 
                 case "small":
-                    return new Small { Child = Parse(element.Elements().Single()) };
+                    return new Small { Child = ParseContents(element) };
+
+                case "error":
+                    return new Error { Child = ParseContents(element) };
 
                 case "run":
                     return new Run { Text = element.Value };
-
-                case "error":
-                    return new Error { Text = element.Value };
 
                 case "indent":
                     return new Indent { Level = int.Parse(element.Attribute("level").Value) } ;
@@ -160,6 +161,24 @@ namespace Cardgame.Widgets
 
                 default:
                     return new Run { Text = element.ToString() };
+            }
+        }
+
+        private static TextModel ParseContents(XElement element)
+        {
+            var children = element.Elements().Count();
+            if (children == 0)
+            {
+                return new Run { Text = element.Value };
+                
+            }
+            else if (children == 1)
+            {
+                return ParseElement(element.Elements().Single());
+            }
+            else
+            {
+                return new Spans { Children = element.Elements().Select(ParseElement).ToArray() };
             }
         }
     }

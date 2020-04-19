@@ -10,9 +10,7 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-library";
         public override int Cost => 5;
         
-        public override string Text => @"<run>
-            Draw until you have 7 cards in hand, skipping any Action cards you choose to; set those aside, discarding them afterwards.
-        </run>";
+        public override string Text => @"Draw until you have 7 cards in hand, skipping any Action cards you choose to; set those aside, discarding them afterwards.";
 
         protected override async Task ActAsync(IActionHost host)
         {

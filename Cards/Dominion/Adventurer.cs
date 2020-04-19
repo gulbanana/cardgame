@@ -8,8 +8,7 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-adventurer";
         public override int Cost => 6;
         
-        public override string Text => @"
-        <lines>
+        public override string Text => @"<lines>
             <run>Reveal cards from your deck until you reveal 2 Treasure cards.</run>
             <run>Put those Treasure cards into your hand and discard the other revealed cards.</run>
         </lines>";

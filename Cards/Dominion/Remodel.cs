@@ -9,8 +9,7 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-remodel";
         public override int Cost => 4;
         
-        public override string Text => @"
-        <lines>
+        public override string Text => @"<lines>
             <run>Trash a card from your hand.</run>
             <spans>
                 <run>Gain a card costing up to</run>

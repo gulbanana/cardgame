@@ -13,9 +13,9 @@ namespace Cardgame.Cards.Intrigue
         public override string Text => @"<lines>
             <spans>        
                 <run>Choose two:</run>
-                <block><run>+1 Card;</run></block>
-                <block><run>+1 Action;</run></block>
-                <block><run>+1 Buy;</run></block>
+                <bold><run>+1 Card;</run></bold>
+                <bold><run>+1 Action;</run></bold>
+                <bold><run>+1 Buy;</run></bold>
                 <sym prefix='+' suffix='.'>coin1</sym>
             </spans>
             <run>The choices must be different.</run>

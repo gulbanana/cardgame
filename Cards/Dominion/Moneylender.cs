@@ -18,7 +18,7 @@ namespace Cardgame.Cards.Dominion
         {
             if (host.Examine(Zone.Hand).Any(card => card is Base.Copper))
             {
-                if (await host.YesNo("Moneylender", $@"<run>Do you want to trash a Copper?</run>"))
+                if (await host.YesNo("Moneylender", $@"Do you want to trash a Copper?"))
                 {
                     host.Trash("Copper");
                     host.AddMoney(3);

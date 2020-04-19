@@ -10,12 +10,10 @@ namespace Cardgame.Cards.Intrigue
         public override int Cost => 5;
 
         public override string Text => @"<paras>
-            <block>
-                <lines>
-                    <run>+1 Card</run>
-                    <run>+1 Action</run>
-                </lines>
-            </block>
+            <lines>
+                <bold>+1 Card</bold>
+                <bold>+1 Action</bold>
+            </lines>
             <spans>
                 <run>Trash a card from your hand. Gain a card costing exactly</run>
                 <sym>coin1</sym>

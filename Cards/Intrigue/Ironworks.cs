@@ -20,15 +20,15 @@ namespace Cardgame.Cards.Intrigue
             <lines>
                 <spans>
                     <run>Action card,</run>
-                    <block><run>+1 Action</run></block>
+                    <bold>+1 Action</bold>
                 </spans>
                 <spans>
                     <run>Treasure card,</run>
-                    <sym prefix='+'>coin1</sym>
+                    <bold><sym prefix='+'>coin1</sym></bold>
                 </spans>
                 <spans>
                     <run>Victory card,</run>
-                    <block><run>+1 Card</run></block>
+                    <bold>+1 Card</bold>
                 </spans>
             </lines>
         </paras>";

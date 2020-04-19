@@ -10,12 +10,8 @@ namespace Cardgame.Cards
         public override int Cost => 5;
 
         public override string Text => @"<lines>
-            <block>
-                <run>+1 Card</run>
-            </block>
-            <block>
-                <run>+1 Action</run>
-            </block>
+            <bold>+1 Card</bold>
+            <bold>+1 Action</bold>
             <run>Look at the top 2 cards of your deck. Trash and/or discard any number of them. Put the rest back on top in any order.</run>
         </lines>";
 

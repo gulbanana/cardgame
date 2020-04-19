@@ -67,7 +67,9 @@
         break;
 
     case TextModel.Error error:
-        <span class="rich-text__error">@error.Text</span>
+        <span class="rich-text__error">
+            <RichText Parsed="@error.Child" />
+        </span>
         break;
 
     case TextModel.Indent indent:

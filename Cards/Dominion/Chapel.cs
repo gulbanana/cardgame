@@ -9,9 +9,7 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-chapel";
         public override int Cost => 2;
         
-        public override string Text => @"<run>
-            Trash up to 4 cards from your hand.
-        </run>";
+        public override string Text => @"Trash up to 4 cards from your hand.";
 
         protected override async Task ActAsync(IActionHost host)
         {

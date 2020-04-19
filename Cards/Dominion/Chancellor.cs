@@ -9,16 +9,14 @@ namespace Cardgame.Cards.Dominion
         public override int Cost => 3;
         
         public override string Text => @"<paras>
-            <block>
-                <sym prefix='+'>coin2</sym>
-            </block>
+            <bold><sym prefix='+'>coin2</sym></bold>
             <run>You may immediately put your deck into your discard pile.</run>
         </paras>";
 
         protected override async Task ActAsync(IActionHost host)
         {
             host.AddMoney(2);
-            if (await host.YesNo("Chancellor", $@"<run>Do you want to put your deck into your discard pile?</run>"))
+            if (await host.YesNo("Chancellor", "Do you want to put your deck into your discard pile?"))
             {
                 host.DiscardEntireDeck();
             }

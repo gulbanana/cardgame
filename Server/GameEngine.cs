@@ -396,13 +396,13 @@ namespace Cardgame.Server
                 .OfType<IActionCard>()
                 .Any();
 
-            LogEvent($@"<block>
+            LogEvent($@"<bold>
                 <spans>
                     <run>---</run>
                     <if you='Your' them=""{Model.ActivePlayer}'s"">{Model.ActivePlayer}</if>
                     <run>turn ---</run>
                 </spans>
-            </block>");
+            </bold>");
 
             if (!isDemo && bots.Contains(Model.ActivePlayer))
             {
@@ -485,11 +485,11 @@ namespace Cardgame.Server
         {
             Model.IsFinished = true;
 
-            LogEvent($@"<block>
+            LogEvent($@"<bold>
                 <spans>
                     <run>--- Game over ---</run>
                 </spans>
-            </block>");
+            </bold>");
             
             foreach (var score in Model.Players.Select(player => All.Score.Calculate(Model, player)))
             {

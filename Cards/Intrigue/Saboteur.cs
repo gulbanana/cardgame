@@ -11,13 +11,11 @@ namespace Cardgame.Cards.Intrigue
         public override int Cost => 5;
 
         public override string Text => @"<small>
-            <spans>
-                <run>Each other player reveals cards from the top of their deck until revealing one costing</run>
-                <sym>coin3</sym>
-                <run>or more. They trash that card and may gain a card costing at most</run>
-                <sym>coin2</sym>
-                <run>less than it. They discard the other revealed cards.</run>
-            </spans>
+            <run>Each other player reveals cards from the top of their deck until revealing one costing</run>
+            <sym>coin3</sym>
+            <run>or more. They trash that card and may gain a card costing at most</run>
+            <sym>coin2</sym>
+            <run>less than it. They discard the other revealed cards.</run>
         </small>";
 
         protected override async Task ActAsync(IActionHost host)

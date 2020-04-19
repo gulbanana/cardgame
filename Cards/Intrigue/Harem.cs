@@ -8,12 +8,12 @@ namespace Cardgame.Cards.Intrigue
         public override string Art => "int-harem";
         public override int Cost => 6;
 
-        public override string Text => @"<block>
+        public override string Text => @"<bold>
             <split>
                 <sym large='true'>coin2</sym>
                 <sym large='true' prefix='2'>vp</sym>
             </split>
-        </block>";
+        </bold>";
 
         public int Value => 2;
 

@@ -11,15 +11,11 @@ namespace Cardgame.Cards.Dominion
         public override int Cost => 4;
 
         public override string Text => @"<paras>
-            <block>
-                <lines>
-                    <run>+1 Card</run>
-                    <run>+1 Action</run>
-                </lines>
-            </block>
-            <small>
-                <run>Each player (including you) reveals the top card of their deck and either discards it or puts it back, your choice.</run>
-            </small>
+            <lines>
+                <bold>+1 Card</bold>
+                <bold>+1 Action</bold>
+            </lines>
+            <small>Each player (including you) reveals the top card of their deck and either discards it or puts it back, your choice.</small>
         </paras>";
 
         protected override async Task ActAsync(IActionHost host)
@@ -35,11 +31,9 @@ namespace Cardgame.Cards.Dominion
                     target.Reveal(revealed, Zone.DeckTop1);
                     
                     var subject = host == target ? "<run>Do you want</run>" : $"<run>Force</run><player>{target.Player}</player>";
-                    if (await host.YesNo("Spy", $@"<spans>
-                        {subject}
+                    if (await host.YesNo("Spy", $@"{subject}
                         <run>to discard</run>
-                        <card suffix='?'>{revealed.Name}</card>
-                    </spans>"))
+                        <card suffix='?'>{revealed.Name}</card>"))
                     {
                         target.Discard(revealed, Zone.DeckTop1);
                     }

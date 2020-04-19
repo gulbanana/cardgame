@@ -9,9 +9,7 @@ namespace Cardgame.Cards.Dominion
         public override int Cost => 2;
         
         public override string Text => @"<paras>
-            <block>
-                <run>+1 Action</run>
-            </block>
+            <bold>+1 Action</bold>
             <run>Discard any number of cards, then draw that many.</run>
         </paras>";
 

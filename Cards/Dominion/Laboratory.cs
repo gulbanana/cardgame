@@ -7,13 +7,10 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-laboratory";
         public override int Cost => 5;
         
-        public override string Text => @"
-        <block>
-            <lines>
-                <run>+2 Cards</run>
-                <run>+1 Action</run>
-            </lines>
-        </block>";
+        public override string Text => @"<lines>
+            <bold>+2 Cards</bold>
+            <bold>+1 Action</bold>
+        </lines>";
 
         protected override void Act(IActionHost host)
         {

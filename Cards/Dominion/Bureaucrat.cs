@@ -10,9 +10,7 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-bureaucrat";
         public override int Cost => 4;        
 
-        public override string Text => @"<run>
-            Gain a Silver onto your deck. Each other player reveals a Victory card from their hand and puts it onto their deck (or reveals a hand with no Victory cards).
-        </run>";
+        public override string Text => @"Gain a Silver onto your deck. Each other player reveals a Victory card from their hand and puts it onto their deck (or reveals a hand with no Victory cards).";
 
         protected override async Task ActAsync(IActionHost host)
         {

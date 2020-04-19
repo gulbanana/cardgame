@@ -10,9 +10,9 @@ namespace Cardgame.Cards.Dominion
         public override int Cost => 3;
         
         public override string Text => @"<paras>
-            <block>
+            <bold>
                 <sym prefix='+'>coin2</sym>
-            </block>
+            </bold>
             <run>Discard the top card of your deck. If it's an Action card, you may play it.</run>
         </paras>";
 

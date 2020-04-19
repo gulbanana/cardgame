@@ -10,13 +10,13 @@ namespace Cardgame.Cards.Dominion
         public override int Cost => 4;
 
         public override string Text => @"<paras>
-            <block>
+            <bold>
                 <lines>
                     <run>+1 Card</run>
                     <run>+1 Action</run>
                     <sym prefix='+'>coin1</sym>
                 </lines>
-            </block>
+            </bold>
             <run>Discard a card per empty Supply pile.</run>
         </paras>";
 

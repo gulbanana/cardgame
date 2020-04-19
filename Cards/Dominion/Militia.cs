@@ -11,9 +11,7 @@ namespace Cardgame.Cards.Dominion
 
         public override string Text => @"
         <paras>
-            <block>
-                <sym prefix='+'>coin2</sym>
-            </block>
+            <bold><sym prefix='+'>coin2</sym></bold>
             <run>Each other player discards down to 3 cards in hand.</run>
         </paras>";
 

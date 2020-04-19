@@ -8,7 +8,7 @@ namespace Cardgame.Cards.Intrigue
         public override string Art => "int-great-hall";
         public override int Cost => 3;
 
-        public override string Text => @"<block>
+        public override string Text => @"<bold>
             <split>
                 <lines>
                     <run>+1 Card</run>
@@ -16,7 +16,7 @@ namespace Cardgame.Cards.Intrigue
                 </lines>
                 <sym large='true' prefix='1'>vp</sym>
             </split>
-        </block>";
+        </bold>";
 
         protected override void Act(IActionHost host)
         {

@@ -10,12 +10,10 @@ namespace Cardgame.Cards.Dominion
         public override int Cost => 3;
         
         public override string Text => @"<paras>
-            <block>
-                <lines>
-                    <run>+1 Card</run>
-                    <run>+1 Action</run>
-                </lines>
-            </block>
+            <lines>
+                <bold>+1 Card</bold>
+                <bold>+1 Action</bold>
+            </lines>
             <run>Look through your discard pile. You may put a card from it onto your deck.</run>
         </paras>";
 

@@ -10,7 +10,7 @@ namespace Cardgame.Cards.Intrigue
         public override int Cost => 4;
 
         public override string Text => @"<paras>
-            <block><run>+1 Action</run></block>
+            <bold>+1 Action</bold>
             <run>Reveal the top 4 cards of your deck. Put the revealed Victory cards into your hand. Put the other cards on top of your deck in any order.</run>
         </paras>";
 
