@@ -2,11 +2,11 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class GreatHall : ActionCardBase, IVictoryCard
+    public class GreatHall : ActionVictoryCardBase
     {
-        public override CardType[] Types => new[] { CardType.Action, CardType.Victory };
         public override string Art => "int-great-hall";
         public override int Cost => 3;
+        protected override int Score => 1;
 
         public override string Text => @"<bold>
             <split>
@@ -23,7 +23,5 @@ namespace Cardgame.Cards.Intrigue
             host.DrawCards(1);
             host.AddActions(1);
         }
-
-        public int Score(string[] dominion) => 1;
     }
 }
