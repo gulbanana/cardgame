@@ -21,31 +21,32 @@ namespace Cardgame.Cards.Intrigue
         {
             await host.Attack(async target =>
             {
-reveal:         var topDeck = target.Examine(Zone.DeckTop1).Single();
-                target.Reveal(topDeck, Zone.DeckTop1);
-
-                var topDeckCost = topDeck.GetCost(host.GetModifiers());
-                if (topDeckCost >= 3)
+reveal:         var topDeck = target.Reveal(Zone.DeckTop1).SingleOrDefault();
+                if (topDeck != null)
                 {
-                    target.Trash(topDeck, Zone.DeckTop1);
-                    var gained = await target.SelectCards(
-                        "Choose a card to gain, or none.", 
-                        Zone.Supply, 
-                        cards => cards.Where(card => card.GetCost(host.GetModifiers()) <= topDeckCost-2),
-                        0,
-                        1
-                    );
-                    if (gained.Any())
+                    var topDeckCost = topDeck.GetCost(host.GetModifiers());                    
+                    if (topDeckCost >= 3)
                     {
-                        target.Gain(gained.Single());
+                        target.Trash(topDeck, Zone.DeckTop1);
+                        var gained = await target.SelectCards(
+                            "Choose a card to gain, or none.", 
+                            Zone.Supply, 
+                            cards => cards.Where(card => card.GetCost(host.GetModifiers()) <= topDeckCost-2),
+                            0,
+                            1
+                        );
+                        if (gained.Any())
+                        {
+                            target.Gain(gained.Single());
+                        }
                     }
-                }
-                else
-                {
-                    target.Discard(topDeck, Zone.DeckTop1);
-                    if (target.ShuffleCount < 2)
+                    else
                     {
-                        goto reveal;
+                        target.Discard(topDeck, Zone.DeckTop1);
+                        if (target.ShuffleCount < 2)
+                        {
+                            goto reveal;
+                        }
                     }
                 }
             });

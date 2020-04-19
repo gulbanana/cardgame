@@ -30,7 +30,7 @@ namespace Cardgame.Cards.Dominion
                 }
                 else
                 {
-                    player.Reveal(hand, Zone.Hand);
+                    player.Reveal(Zone.Hand);
                 }
             });
         }

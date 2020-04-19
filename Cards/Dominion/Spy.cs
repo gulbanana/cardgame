@@ -24,7 +24,7 @@ namespace Cardgame.Cards.Dominion
 
             await host.AllPlayers(async target =>
             {
-                var revealed = target.Examine(Zone.DeckTop1).SingleOrDefault();
+                var revealed = target.Reveal(Zone.DeckTop1).SingleOrDefault();
                 if (revealed != null)
                 {
                     target.Reveal(revealed, Zone.DeckTop1);

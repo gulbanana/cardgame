@@ -20,14 +20,13 @@ namespace Cardgame.Cards.Dominion
 
             while (foundTreasures < 2 && host.ShuffleCount - reshuffles < 2)
             {
-                var top1 = host.Examine(Zone.DeckTop1).SingleOrDefault();
+                var top1 = host.Reveal(Zone.DeckTop1).SingleOrDefault();
                 if (top1 != null)
                 {
-                    host.Reveal(top1, Zone.DeckTop1);
                     if (top1.Types.Contains(CardType.Treasure))
                     {
                         foundTreasures++;
-                        host.DrawCards(1);
+                        host.PutIntoHand(top1, Zone.DeckTop1);
                     }
                     else
                     {

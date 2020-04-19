@@ -158,6 +158,11 @@ namespace Cardgame.API
         {
             host.PutIntoHand(cards.Select(card => card.Name).ToArray(), from);
         }
+
+        public static void PutIntoHand(this IActionHost host, ICard card, Zone from)
+        {
+            host.PutIntoHand(new[] { card.Name }, from);
+        }
         #endregion
 
         #region Reveal
@@ -189,6 +194,16 @@ namespace Cardgame.API
         public static void Reveal(this IActionHost host, ICard card)
         {
             host.Reveal(new[] { card.Name }, Zone.Hand);
+        }
+
+        public static ICard[] Reveal(this IActionHost host, Zone from)
+        {
+            var cards = host.Examine(from);
+            if (cards.Any())
+            {
+                host.Reveal(cards, from);
+            }
+            return cards;
         }
         #endregion
 

@@ -21,8 +21,7 @@ namespace Cardgame.Cards.Dominion
             
             await host.Attack(async player => 
             {
-                var top2 = player.Examine(Zone.DeckTop2);
-                player.Reveal(top2, Zone.DeckTop2);
+                var top2 = player.Reveal(Zone.DeckTop2);
                 
                 var treasures = top2.OfType<ITreasureCard>();
                 if (treasures.Any())

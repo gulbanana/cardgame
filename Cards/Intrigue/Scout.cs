@@ -18,9 +18,7 @@ namespace Cardgame.Cards.Intrigue
         {
             host.AddActions(1);
 
-            var top4 = host.Examine(Zone.DeckTop4);
-            host.Reveal(top4, Zone.DeckTop4);
-
+            var top4 = host.Reveal(Zone.DeckTop4);
             var victoryCards = top4.Where(c => c.Types.Contains(CardType.Victory)).ToArray();
             var nonVictoryCards = top4.Where(c => !c.Types.Contains(CardType.Victory)).ToArray();
 
