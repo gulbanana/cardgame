@@ -23,9 +23,14 @@
             StateHasChanged();
         }
     }
+
+    private static bool IsNewer(GameModel newer, GameModel older)
+    {
+        return newer.Seq >= older.Seq; // why not >? because we have odd shared-instance problems
+    }
 }
 
-<Subscribed Endpoint="@game">
+<Subscribed Endpoint="@game" IsNewer="@IsNewer">
     <CascadingValue Value="@context">
         <CascadingValue Value="@(new Executor(c => OnExecute(context, c)))">
             <GameView />

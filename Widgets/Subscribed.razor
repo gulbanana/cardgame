@@ -4,6 +4,7 @@
 @code {
     [Parameter] public IEndpoint<T> Endpoint { get; set; }
     [Parameter] public RenderFragment<T> ChildContent { get; set; }
+    [Parameter] public Func<T, T, bool> IsNewer { get; set; }
     private ConcurrentQueue<T> updates;
     private T currentModel;
 
@@ -18,11 +19,16 @@
         updates.Enqueue(newModel);
         InvokeAsync(() =>
         {
+            var any = false;
             while (updates.TryDequeue(out var updatedModel))
             {
-                currentModel = updatedModel;
+                if (IsNewer == null || IsNewer(updatedModel, currentModel))
+                {
+                    any = true;
+                    currentModel = updatedModel;
+                }
             }
-            StateHasChanged();
+            if (any) StateHasChanged();
         });
     }
 
