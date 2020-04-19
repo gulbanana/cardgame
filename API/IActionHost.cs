@@ -27,6 +27,7 @@ namespace Cardgame.API
         void PlaceOnDeck(string card, Zone from);
         void PutIntoHand(string[] cards, Zone from); // not a draw!
         void Reveal(string[] cards, Zone from);
+        void Name(string card);
 
         // manipulate entire zones
         ICard[] Examine(Zone @in);
@@ -229,6 +230,13 @@ namespace Cardgame.API
                 host.Reveal(cards, from);
             }
             return cards;
+        }
+        #endregion
+
+        #region Name
+        public static void Name(this IActionHost host, ICard card)
+        {
+            host.Name(card.Name);
         }
         #endregion
 

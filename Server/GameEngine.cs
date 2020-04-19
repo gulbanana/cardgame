@@ -592,7 +592,7 @@ namespace Cardgame.Server
                     Model.Discards[player].Remove(id);
                     break;
                 
-                case Zone.Supply:
+                case Zone.SupplyAvailable:
                     if (Model.Supply[id] < 1) throw new CommandException($"No {id} cards remaining in stack.");
                     Model.Supply[id]--;
                     break;
@@ -628,7 +628,7 @@ namespace Cardgame.Server
                     Model.Discards[player].Insert(0, id);
                     break;
                 
-                case Zone.Supply:
+                case Zone.SupplyAvailable:
                     Model.Supply[id]++;
                     break;
 
@@ -689,8 +689,9 @@ namespace Cardgame.Server
                 Zone.Discard => Model.Discards[player].ToArray(),
                 Zone.Hand => Model.Hands[player].ToArray(),
                 Zone.InPlay => Model.PlayedCards.ToArray(),
-                Zone.Supply => Model.KingdomCards.Concat(All.Cards.Base()).Where(id => Model.Supply[id] > 0).ToArray(),
-                Zone.SupplyEmpty => Model.KingdomCards.Concat(All.Cards.Base()).Where(id => Model.Supply[id] == 0).ToArray(),
+                Zone.SupplyAvailable => Model.Supply.Keys.Where(id => Model.Supply[id] > 0).ToArray(),
+                Zone.SupplyEmpty => Model.Supply.Keys.Where(id => Model.Supply[id] == 0).ToArray(),
+                Zone.SupplyAll => Model.Supply.Keys.ToArray(),
                 Zone.Trash => Model.Trash.ToArray(),
                 Zone other => throw new CommandException($"Unknown card zone {other}")
             };

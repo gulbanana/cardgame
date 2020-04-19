@@ -33,7 +33,7 @@ namespace Cardgame.Cards.Dominion
             
                 var gainedCard = await host.SelectCard(
                     "Choose a Treasure to gain.", 
-                    Zone.Supply, 
+                    Zone.SupplyAvailable, 
                     cards => cards.OfType<ITreasureCard>().Where(card => card.GetCost(modifiers) <= trashedCard.GetCost(modifiers) + 3)
                 );
 

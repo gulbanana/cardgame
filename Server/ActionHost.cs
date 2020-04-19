@@ -249,7 +249,7 @@ namespace Cardgame.Server
                 return;
             }
 
-            engine.MoveCard(Player, id, Zone.Supply, to);
+            engine.MoveCard(Player, id, Zone.SupplyAvailable, to);
 
             if (to == Zone.Discard)
             {
@@ -341,6 +341,15 @@ namespace Cardgame.Server
                 {LogCardList(cards, terminal: false)}
                 <run>from</run>
                 {LogSource(from)}
+            </spans>");
+        }
+
+        void IActionHost.Name(string card)
+        {
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{level}' />
+                {LogVerbInitial("name", "names", "naming")}
+                <card suffix='.'>{card}</card>
             </spans>");
         }
 
