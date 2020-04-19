@@ -1,20 +1,27 @@
+@using System.Collections.Concurrent
 @typeparam T
 @implements IDisposable
 @code {
     [Parameter] public IEndpoint<T> Endpoint { get; set; }
     [Parameter] public RenderFragment<T> ChildContent { get; set; }
+    private ConcurrentQueue<T> updates;
     private T currentModel;
 
     protected override void OnInitialized()
     {        
+        updates = new ConcurrentQueue<T>();
         currentModel = Endpoint.Subscribe(OnUpdate);
     }
 
     private void OnUpdate(T newModel)
     {
+        updates.Enqueue(newModel);
         InvokeAsync(() =>
         {
-            currentModel = newModel;
+            while (updates.TryDequeue(out var updatedModel))
+            {
+                currentModel = updatedModel;
+            }
             StateHasChanged();
         });
     }
