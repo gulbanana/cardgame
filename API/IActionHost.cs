@@ -133,6 +133,16 @@ namespace Cardgame.API
         {
             host.Discard(new[]{ card.Name }, Zone.Hand);
         }
+
+        public static ICard[] Discard(this IActionHost host, Zone from)
+        {
+            var cards = host.Examine(from);
+            if (cards.Any())
+            {
+                host.Discard(cards, from);
+            }
+            return cards;
+        }
         #endregion Discard
 
         #region Gain

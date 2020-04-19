@@ -33,14 +33,20 @@ namespace Cardgame.Server
         public static string PlayChoice(GameModel state)
         {
             switch (state.ChoiceType)
-            {                    
+            {   
+                case ChoiceType.YesNo:
+                    return JsonSerializer.Serialize(true);
+
+                case ChoiceType.ChooseOne:
+                    return JsonSerializer.Serialize(0);
+
                 case ChoiceType.SelectCards:
                     var input = JsonSerializer.Deserialize<SelectCards>(state.ChoiceInput);
                     var output = input.Choices.Take(input.Max??1).ToArray();
                     return JsonSerializer.Serialize<string[]>(output);
 
-                case ChoiceType.YesNo:
-                    return JsonSerializer.Serialize(true);
+                case ChoiceType.OrderCards:
+                    return state.ChoiceInput;
 
                 default:
                     return null;
