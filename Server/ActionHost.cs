@@ -545,8 +545,7 @@ namespace Cardgame.Server
                 engine.LogPartialEvent($@"<spans>
                     <indent level='{level}' />
                     {LogVerbInitial("put", "puts", "putting")}
-                    <card>{card}</card>
-                    <run>onto</run>
+                    <run>a card onto</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>
                 </spans>");
@@ -556,8 +555,7 @@ namespace Cardgame.Server
                 engine.LogPartialEvent($@"<spans>
                     <indent level='{level}' />
                     {LogVerbInitial("put", "puts", "putting")}
-                    <card>{card}</card>
-                    <run>on the bottom of</run>
+                    <run>a card on the bottom of</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>                
                 </spans>");
@@ -567,8 +565,7 @@ namespace Cardgame.Server
                 engine.LogPartialEvent($@"<spans>
                     <indent level='{level}' />
                     {LogVerbInitial("put", "puts", "putting")}
-                    <card>{card}</card>
-                    <run>into</run>
+                    <run>a card into</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck, {position} cards down.</run>
                 </spans>");
