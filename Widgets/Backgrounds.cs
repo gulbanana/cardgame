@@ -26,7 +26,10 @@ namespace Cardgame.Widgets
                 }
                 else
                 {
-                    return $"linear-gradient(var(--card-type-{colours.First()}), var(--card-type-{colours.Last()}))";
+                    return $@"linear-gradient(var(--card-type-{colours.First()}) 0%, 
+                                              var(--card-type-{colours.First()}) 40%, 
+                                              var(--card-type-{colours.Last()}) 60%, 
+                                              var(--card-type-{colours.Last()}) 100%)";
                 }
             }
             else // give up
