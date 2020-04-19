@@ -416,6 +416,15 @@ namespace Cardgame.API
             return host.AllPlayers(target => filter(target) && target.Player != host.Player, act, true);
         }
 
+        public static Task Attack(this IActionHost host, Func<IActionHost, bool> filter, Action<IActionHost> act)
+        {
+            return host.AllPlayers(target => filter(target) && target.Player != host.Player, target =>
+            {
+                act(target);
+                return Task.CompletedTask;
+            }, true);
+        }
+
         public static Task Attack(this IActionHost host, Func<IActionHost, Task> act)
         {
             return host.AllPlayers(target => target.Player != host.Player, act, true);
@@ -423,9 +432,9 @@ namespace Cardgame.API
 
         public static Task Attack(this IActionHost host, Action<IActionHost> act)
         {
-            return host.AllPlayers(target => target.Player != host.Player, host =>
+            return host.AllPlayers(target => target.Player != host.Player, target =>
             {
-                act(host);
+                act(target);
                 return Task.CompletedTask;
             }, true);
         }
