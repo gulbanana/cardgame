@@ -164,16 +164,25 @@ namespace Cardgame.Server
                             : " and";
                         return $"<card suffix='{suffix}'>{card.Name}</card>";
                     }));
-                    LogEvent($@"<spans>
-                        <player>{username}</player>
-                        <if you='play' them='plays'>{username}</if>
-                        {cardList}
-                    </spans>");
 
                     foreach (var card in cards)
                     {
                         BeginPlayCard(1, username, card.Name, Zone.Hand);
                     }
+
+                    var sum = cards.Select(card => card.GetValue(Model)).Sum();
+                    LogEvent($@"<lines>
+                        <spans>
+                            <player>{username}</player>
+                            <if you='play' them='plays'>{username}</if>
+                            {cardList}
+                        </spans>
+                        <spans>
+                            <indent level='1' />
+                            {LogVerbInitial(username, "get", "gets", "getting")}
+                            <run>+${sum}.</run>
+                        </spans>
+                    </lines>");
 
                     break;
 
@@ -340,6 +349,18 @@ namespace Cardgame.Server
             finalXML.Add(eventXML);
             
             Model.EventLog[Model.EventLog.Count - 1] = finalXML.ToString();
+        }
+
+        internal string LogVerbInitial(string player, string secondPerson, string thirdPerson, string continuous)
+        {
+            if (player == Model.ActivePlayer)
+            {
+                return $"<if you='you {secondPerson}' them='{continuous}'>{player}</if>";
+            }
+            else
+            {
+                return $"<player>{player}</player><if you='{secondPerson}' them='{thirdPerson}'>{player}</if>";
+            }
         }
 
         private void BeginGame()

@@ -25,14 +25,7 @@ namespace Cardgame.Server
 
         private string LogVerbInitial(string secondPerson, string thirdPerson, string continuous)
         {
-            if (Player == engine.Model.ActivePlayer)
-            {
-                return $"<if you='you {secondPerson}' them='{continuous}'>{Player}</if>";
-            }
-            else
-            {
-                return $"<player>{Player}</player><if you='{secondPerson}' them='{thirdPerson}'>{Player}</if>";
-            }
+            return engine.LogVerbInitial(Player, secondPerson, thirdPerson, continuous);
         }
 
         private string LogVerb(string secondPerson, string thirdPerson, string continuous)
