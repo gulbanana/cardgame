@@ -2,6 +2,8 @@
 @code {
     [CascadingParameter] public GameModel Model { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; }
+    [Parameter] public CardSet Set { get; set; }
+    [Parameter] public string Preset { get; set; }
     CardSet configSet;
     CardSet ConfigSet 
     { 
@@ -33,6 +35,12 @@
         }
     }
 
+    protected override void OnParametersSet()
+    {
+        configSet = Model.KingdomSet;
+        configPreset = Model.KingdomPreset;
+    }
+
     private void OnStartGame()
     {
         Dispatch(new StartGameCommand
@@ -57,11 +65,11 @@
     <div>
         <h3>Game setup</h3>
         <div class="config-view__sets">
-            <span>Card sets:</span>
+            <span>Primary card set:</span>
             <select disabled="@(!Model.Players.Contains(Session.Username))" @bind="ConfigSet">
                 @foreach (var member in System.Enum.GetNames(typeof(CardSet)))
                 {
-                    var caption = Strings.TitleCase(member).Replace("1st", " (first edition)").Replace("2nd", " (second edition)");
+                    var caption = Strings.TitleCase(member).Replace("1st", " (1e)").Replace("2nd", "");
                     <option value="@member">@caption</option>
                 }
             </select>
