@@ -6,7 +6,7 @@ using Cardgame.Shared;
 
 namespace Cardgame.API
 {
-    public interface IActionHost
+    public interface IActionHost : IModifierSource
     {
         string Player { get; }
         bool IsActive { get; }
@@ -44,7 +44,6 @@ namespace Cardgame.API
         Task<ICard[]> OrderCards(string prompt, Zone source);
 
         // advanced
-        IModifier[] GetModifiers();
         void AddEffect(string effect);
         void RemoveEffect(string effect);
 

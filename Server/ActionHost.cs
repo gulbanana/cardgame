@@ -464,7 +464,7 @@ namespace Cardgame.Server
             return engine.Model.Players[left];
         }
 
-        IModifier[] IActionHost.GetModifiers() 
+        public IModifier[] GetModifiers() 
         {
             return engine.Model.GetModifiers();
         }

@@ -35,7 +35,7 @@ namespace Cardgame.Cards.Intrigue
 
         protected override async Task ActAsync(IActionHost host)
         {
-            var gained = await host.SelectCard("Choose a card to gain.", Zone.Supply, cards => cards.Where(c => c.GetCost(host.GetModifiers()) <= 4));
+            var gained = await host.SelectCard("Choose a card to gain.", Zone.Supply, cards => cards.Where(c => c.GetCost(host) <= 4));
             host.Gain(gained);
 
             if (gained is IActionCard) host.AddActions(1);

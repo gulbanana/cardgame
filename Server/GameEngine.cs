@@ -219,11 +219,11 @@ namespace Cardgame.Server
         private void BuyCard(string player, string id)
         {
             var boughtCard = All.Cards.ByName(id);
-            if (boughtCard.GetCost(Model.GetModifiers()) > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
+            if (boughtCard.GetCost(Model) > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
 
             Model.Supply[id]--;
             Model.Discards[player].Add(id);
-            Model.MoneyRemaining -= boughtCard.GetCost(Model.GetModifiers());
+            Model.MoneyRemaining -= boughtCard.GetCost(Model);
             Model.BuysRemaining -= 1;
 
             LogEvent($@"<spans>
@@ -314,7 +314,7 @@ namespace Cardgame.Server
                         Model.BuyPhase = true;
                     }
 
-                    Model.MoneyRemaining += treasure.Value;
+                    Model.MoneyRemaining += treasure.GetValue(Model);
                 }
                 else
                 {

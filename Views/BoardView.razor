@@ -11,7 +11,7 @@
     var potentialMoney = Model.Hands[Model.ActivePlayer]
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()
-        .Select(card => card.Value)
+        .Select(card => card.GetValue(Model))
         .Sum();
 }
 

@@ -1,8 +1,6 @@
-using Cardgame.Shared;
-
 namespace Cardgame.Cards.Intrigue
 {
-    public class BridgeEffect : EffectBase, IModifier
+    public class BridgeEffect : ModifierEffectBase
     {
         public override string Art => "int-bridge";
         public override string Text => @"
@@ -12,6 +10,6 @@ namespace Cardgame.Cards.Intrigue
             <sym suffix='.'>coin0</sym>
         ";
 
-        public int ReduceCardCost => 1;
+        public override int ReduceCardCost => 1;
     }
 }

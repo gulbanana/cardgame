@@ -2,7 +2,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class Harem : CardBase, ITreasureCard, IVictoryCard
+    public class Harem : TreasureCardBase, IVictoryCard
     {
         public override CardType[] Types => new[] { CardType.Treasure, CardType.Victory };
         public override string Art => "int-harem";
@@ -15,7 +15,7 @@ namespace Cardgame.Cards.Intrigue
             </split>
         </bold>";
 
-        public int Value => 2;
+        public override int Value => 2;
 
         public int Score(string[] dominion) => 2;
     }

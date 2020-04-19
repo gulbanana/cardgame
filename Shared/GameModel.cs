@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cardgame.Shared
 {
-    public class GameModel
+    public class GameModel : IModifierSource
     {
         // protection against weird command orderings
         public int Seq { get; set; }

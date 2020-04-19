@@ -25,7 +25,7 @@ namespace Cardgame.Cards.Dominion
             var gainedCard = await host.SelectCard(
                 "Choose a card to gain.", 
                 Zone.Supply, 
-                cards => cards.Where(card => card.GetCost(host.GetModifiers()) <= 5)
+                cards => cards.Where(card => card.GetCost(host) <= 5)
             );
 
             host.Gain(gainedCard);

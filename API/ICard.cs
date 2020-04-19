@@ -10,4 +10,9 @@ namespace Cardgame.API
         string Text { get; }
         int GetCost(IModifier[] modifiers);
     }
+
+    public static class CardExtensions
+    {
+        public static int GetCost(this ICard card, IModifierSource modifierSource) => card.GetCost(modifierSource.GetModifiers());
+    }
 }

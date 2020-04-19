@@ -24,14 +24,14 @@ namespace Cardgame.Cards.Intrigue
 reveal:         var topDeck = target.Reveal(Zone.DeckTop1).SingleOrDefault();
                 if (topDeck != null)
                 {
-                    var topDeckCost = topDeck.GetCost(host.GetModifiers());                    
+                    var topDeckCost = topDeck.GetCost(host);                    
                     if (topDeckCost >= 3)
                     {
                         target.Trash(topDeck, Zone.DeckTop1);
                         var gained = await target.SelectCards(
                             "Choose a card to gain, or none.", 
                             Zone.Supply, 
-                            cards => cards.Where(card => card.GetCost(host.GetModifiers()) <= topDeckCost-2),
+                            cards => cards.Where(card => card.GetCost(host) <= topDeckCost-2),
                             0,
                             1
                         );
