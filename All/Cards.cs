@@ -34,7 +34,7 @@ namespace Cardgame.All
                     "Cardgame.Cards.Dominion" when firstEditions.Contains(t.Name) => CardSet.Dominion1st,
                     "Cardgame.Cards.Dominion" => CardSet.Dominion2nd,
                     "Cardgame.Cards.Intrigue" when firstEditions.Contains(t.Name) => CardSet.Intrigue1st,
-                    "Cardgame.Cards.Intrigue" => CardSet.Intrigue1st,
+                    "Cardgame.Cards.Intrigue" => CardSet.Intrigue2nd,
                     _ => null
                 };
             }

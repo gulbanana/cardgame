@@ -29,11 +29,11 @@ namespace Cardgame.All
                 { "Secret Schemes", new[] { "Conspirator", "Harem", "Ironworks", "Pawn", "Saboteur", "ShantyTown", "Steward", "Swindler", "TradingPost", "Tribute" } },
                 { "Best Wishes", new[] { "Coppersmith", "Courtyard", "Masquerade", "Scout", "ShantyTown", "Steward", "Torturer", "TradingPost", "Upgrade", "WishingWell" } }
             } },
-            // { CardSet.Intrigue2nd, new Dictionary<string, string[]> {
-            //     { "Victory Dance", new[] { "Baron", "Courtier", "Duke", "Harem", "Ironworks", "Masquerade", "Mill", "Nobles", "Patrol", "Replace" } },
-            //     { "The Plot Thickens", new[] { "Conspirator", "Ironworks", "Lurker", "Pawn", "MiningVillage", "SecretPassage", "Steward", "Swindler", "Torturer", "TradingPost" } },
-            //     { "Best Wishes", new[] { "Baron", "Conspirator", "Courtyard", "Diplomat", "Duke", "SecretPassage", "ShantyTown", "Torturer", "Upgrade", "WishingWell" } },
-            // } }
+            { CardSet.Intrigue2nd, new Dictionary<string, string[]> {
+                // { "Victory Dance", new[] { "Baron", "Courtier", "Duke", "Harem", "Ironworks", "Masquerade", "Mill", "Nobles", "Patrol", "Replace" } },
+                // { "The Plot Thickens", new[] { "Conspirator", "Ironworks", "Lurker", "Pawn", "MiningVillage", "SecretPassage", "Steward", "Swindler", "Torturer", "TradingPost" } },
+                { "Best Wishes", new[] { "Baron", "Conspirator", "Courtyard", "Diplomat", "Duke", "SecretPassage", "ShantyTown", "Torturer", "Upgrade", "WishingWell" } },
+            } }
         };
 
         public static IReadOnlyDictionary<string, string[]> BySet(CardSet set)
