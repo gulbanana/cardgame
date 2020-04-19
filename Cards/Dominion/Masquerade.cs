@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Intrigue
 
             foreach (var kvp in selections)
             {
-                kvp.Key.PassCard(host.GetPlayerToLeft(), kvp.Value);
+                kvp.Key.PassCard(kvp.Key.GetPlayerToLeft(), kvp.Value);
             }
 
             var trashed = await host.SelectCards("Choose up to one card to trash.", Zone.Hand, 0, 1);
