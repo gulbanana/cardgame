@@ -187,13 +187,18 @@
                 @(Model.IsStarted ? "Game in progress." : "Waiting to start.") Current players:
                 @for (var i = 0; i < Model.Players.Length; i++)
                 {                    
+                    var score = All.Score.Calculate(Model, Model.Players[i]).Total;                    
                     if (i < Model.Players.Length - 1)
                     {
-                        <PlayerLink @key="@Model.Players[i]" Name="@Model.Players[i]" Suffix=", " />
+                        var text = $"<sym prefix='({score}' suffix='),'>vp</sym>";
+                        <PlayerLink @key="@Model.Players[i]" Name="@Model.Players[i]" />
+                        <RichText @key="Model.Players[i]+score" Model="@text" />
                     }
                     else
                     {
-                        <PlayerLink @key="@Model.Players[i]" Name="@Model.Players[i]" Suffix="." />
+                        var text = $"<sym prefix='({score}' suffix=').'>vp</sym>";
+                        <PlayerLink @key="@Model.Players[i]" Name="@Model.Players[i]" />
+                        <RichText @key="Model.Players[i]+score" Model="@text" />
                     }
                 }
             </span>

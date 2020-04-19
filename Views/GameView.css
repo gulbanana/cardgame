@@ -7,6 +7,7 @@
     grid-template-columns: minmax(350px, 1fr) 2px calc(var(--card-width) * 9 + (var(--std-gap) * 8)) 2px minmax(250px, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
     grid-column-gap: var(--std-gap);
+    --text-image-align: bottom;
 }
 
 .game-view__status {
