@@ -45,7 +45,7 @@
             <RichText Parsed="@split.Children[i]" />
             @if (i < split.Children.Length - 1)
             {
-                <hr class="rich-text__bar" />
+                <div class="rich-text__bar@(split.IsCompact ? " rich-text__bar--compact" : "")" />
             }
         }
         break;

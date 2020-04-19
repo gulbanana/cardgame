@@ -24,6 +24,7 @@ namespace Cardgame.Widgets
         public class Split : TextModel
         {
             public TextModel[] Children { get; set; }
+            public bool IsCompact { get; set; }
         }
         
         public class Bold : TextModel
@@ -109,7 +110,11 @@ namespace Cardgame.Widgets
                     return new Paras { Children = element.Elements().Select(ParseElement).ToArray() };
 
                 case "split":
-                    return new Split { Children = element.Elements().Select(ParseElement).ToArray() };
+                    return new Split 
+                    { 
+                        Children = element.Elements().Select(ParseElement).ToArray(),
+                        IsCompact = element.Attribute("compact")?.Value == "true"
+                    };
 
                 case "bold":
                     return new Bold { Child = ParseContents(element) };

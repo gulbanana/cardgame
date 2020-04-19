@@ -39,5 +39,11 @@
 
 .rich-text__bar {
     width: 70%;
-    border-color: black;
+    height: 2px;
+    margin: 0.5em auto;
+    background-color: black;
+}
+
+.rich-text__bar--compact {
+    margin: calc(var(--local-scale) * 1px) auto 0 auto;
 }

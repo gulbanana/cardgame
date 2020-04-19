@@ -10,7 +10,7 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "int-diplomat";
         public override int Cost => 4;        
 
-        public override string Text => @"<split>
+        public override string Text => @"<split compact='true'>
             <lines>
                 <bold>+2 Cards</bold>
                 <small>
