@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Intrigue
                     var handSize = host.Examine(Zone.Hand).Count();
                     if (handSize > 2)
                     {
-                        var trashed = await host.SelectCards("Choose cards to trash.", Zone.Hand, Math.Min(handSize, 2), Math.Min(handSize, 2));
+                        var trashed = await host.SelectCards("Choose cards to trash.", Zone.Hand, 2, 2);
                         host.Trash(trashed);
                     }
                     else
