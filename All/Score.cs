@@ -12,7 +12,11 @@ namespace Cardgame.All
         public static Score Calculate(GameModel game, string player)
         {            
             var dominion = game.IsStarted ? 
-                game.Decks[player].Concat(game.Hands[player]).Concat(game.Discards[player]).ToArray() : 
+                game.Decks[player]
+                    .Concat(game.Hands[player])
+                    .Concat(game.Discards[player])
+                    .Concat(game.ActivePlayer == player ? game.PlayedCards : new List<string>())
+                    .ToArray() : 
                 new[] { "Estate", "Estate", "Estate" } ;
 
             var victoryCards = dominion.Select(All.Cards.ByName).OfType<IVictoryCard>().GroupBy(card => card.Name);
