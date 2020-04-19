@@ -23,7 +23,7 @@ namespace Cardgame.Cards.Intrigue
                 await target.ChooseOne("Torturer",
                     new NamedOption("Discard 2 cards", async () => 
                     {
-                        var handSize = target.Examine(Zone.Hand).Count();
+                        var handSize = target.Count(Zone.Hand);
                         if (handSize > 2)
                         {
                             var discarded = await target.SelectCards("Choose cards to discard.", Zone.Hand, 2, 2);

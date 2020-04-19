@@ -25,7 +25,7 @@ namespace Cardgame.Cards.Intrigue
                 new NamedOption("<sym prefix='+'>coin2</sym>", () => host.AddMoney(2)),
                 new NamedOption("Trash 2 cards", async () => 
                 {
-                    var handSize = host.Examine(Zone.Hand).Count();
+                    var handSize = host.Count(Zone.Hand);
                     if (handSize > 2)
                     {
                         var trashed = await host.SelectCards("Choose cards to trash.", Zone.Hand, 2, 2);

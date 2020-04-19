@@ -31,6 +31,7 @@ namespace Cardgame.API
 
         // manipulate entire zones
         ICard[] Examine(Zone @in);
+        int Count(Zone @in);
         void Reorder(string[] cards, Zone @in);
 
         // interaction
@@ -243,11 +244,6 @@ namespace Cardgame.API
         public static void Reorder(this IActionHost host, ICard[] cards, Zone @in)
         {
             host.Reorder(cards.Select(card => card.Name).ToArray(), @in);
-        }
-
-        public static int Count(this IActionHost host, Zone @in)
-        {
-            return host.Examine(@in).Count();
         }
 
         public static void PlayCard(this IActionHost host, string card)

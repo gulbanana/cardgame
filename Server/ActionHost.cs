@@ -130,6 +130,11 @@ namespace Cardgame.Server
             return engine.GetCards(Player, @in, NoteReshuffle).Select(All.Cards.ByName).ToArray();
         }
 
+        int IActionHost.Count(Zone @in)
+        {
+            return engine.CountCards(Player, @in);
+        }
+
         void IActionHost.AddActions(int n)
         {
             engine.Model.ActionsRemaining += n;

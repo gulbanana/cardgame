@@ -13,7 +13,7 @@ namespace Cardgame.Cards.Intrigue
 
         protected override async Task ActAsync(IActionHost host)
         {
-            var handSize = host.Examine(Zone.Hand).Count();
+            var handSize = host.Count(Zone.Hand);
             var trashed = handSize <= 2 ? host.Examine(Zone.Hand) : await host.SelectCards("Choose cards to trash.", Zone.Hand, 2, 2);
 
             host.Trash(trashed);

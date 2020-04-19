@@ -24,7 +24,7 @@ namespace Cardgame.Cards.Dominion
         protected override void Act(IActionHost host)
         {
             host.DrawCards(2);
-            if (host.Examine(Zone.Hand).Count() <= 5)
+            if (host.Count(Zone.Hand) <= 5)
             {
                 host.AddActions(2);
             }
@@ -34,7 +34,7 @@ namespace Cardgame.Cards.Dominion
         {
             if (!host.IsActive && 
                 All.Cards.ByName(trigger).Types.Contains(CardType.Attack) && 
-                host.Examine(Zone.Hand).Count() >= 5 &&
+                host.Count(Zone.Hand) >= 5 &&
                 await host.YesNo("Diplomat", $@"<run>Reveal</run><card>Diplomat</card><run>from your hand?</run>"))
             {
                 host.Reveal("Diplomat");
