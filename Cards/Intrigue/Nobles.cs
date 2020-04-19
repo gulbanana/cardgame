@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Cardgame.API;
 
@@ -22,8 +23,8 @@ namespace Cardgame.Cards.Intrigue
         protected override async Task ActAsync(IActionHost host)
         {
             await host.ChooseOne("Nobles", 
-                ("+3 Cards", () => host.DrawCards(3)),
-                ("+2 Actions", () => host.AddActions(2))
+                new NamedOption("+3 Cards", () => host.DrawCards(3)),
+                new NamedOption("+2 Actions", () => host.AddActions(2))
             );
         }
 
