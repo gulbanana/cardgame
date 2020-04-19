@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Intrigue
     {
         public override string Art => "int-mill";
         public override int Cost => 4;
-        protected override int Score => 1;
+        public override int Score => 1;
 
         public override string Text => @"<split compact='true'>
             <lines>

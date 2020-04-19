@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
     {
         public override string Art => "int-great-hall";
         public override int Cost => 3;
-        protected override int Score => 1;
+        public override int Score => 1;
 
         public override string Text => @"<bold>
             <split>
