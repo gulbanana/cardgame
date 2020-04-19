@@ -790,14 +790,14 @@ namespace Cardgame.Server
 
             foreach (var reaction in reactions)
             {
-                reaction.ActBefore();
+                await reaction.ActBefore();
             }
             
             await f();
 
             foreach (var reaction in reactions)
             {
-                reaction.ActAfter();
+                await reaction.ActAfter();
             }
         }
     }
