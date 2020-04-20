@@ -180,7 +180,7 @@
         @if (Model.Players.Any())
         {
             <span>
-                @(Model.IsStarted ? "Game in progress." : "Waiting to start.") Current players:
+                @(Model.IsStarted ? (Model.IsFinished ? "Game finished." : "Game in progress.") : "Waiting to start.") Players:
                 @for (var i = 0; i < Model.Players.Length; i++)
                 {                    
                     var score = All.Score.Calculate(Model, Model.Players[i]).Total;                    
