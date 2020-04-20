@@ -44,27 +44,25 @@
                 <SupplyView Id="Duchy" />
                 <SupplyView Id="Province" />
 
-                <SupplyView Id="@Model.KingdomCards[0]" />
-                <SupplyView Id="@Model.KingdomCards[1]" />
-                <SupplyView Id="@Model.KingdomCards[2]" />
-                <SupplyView Id="@Model.KingdomCards[3]" />
-                <SupplyView Id="@Model.KingdomCards[4]" />
+                @for (var i = 0; i < 5; i++)
+                {
+                    <SupplyView Id="@Model.KingdomCards[i]" />
+                }
 
                 <SupplyView Id="Copper" />
                 <SupplyView Id="Silver" />
                 <SupplyView Id="Gold" />
 
-                <SupplyView Id="@Model.KingdomCards[5]" />  
-                <SupplyView Id="@Model.KingdomCards[6]" />
-                <SupplyView Id="@Model.KingdomCards[7]" />
-                <SupplyView Id="@Model.KingdomCards[8]" />
-                <SupplyView Id="@Model.KingdomCards[9]" />            
+                @for (var i = 5; i < 10; i++)
+                {
+                    <SupplyView Id="@Model.KingdomCards[i]" />
+                }
             }
             else
             {
-                <ActiveCard Enabled="false" Half="true" Stack="8" Id="Estate" />
-                <ActiveCard Enabled="false" Half="true" Stack="8" Id="Duchy" />
-                <ActiveCard Enabled="false" Half="true" Stack="8" Id="Province" />
+                <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Estate")" Id="Estate" />
+                <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Duchy")" Id="Duchy" />
+                <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Province")" Id="Province" />
 
                 @if (Model.KingdomPreset == null)
                 {
@@ -77,33 +75,31 @@
                 else
                 {
                     var preset = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
-                    <ActiveCard @key="preset[0]" Enabled="false" Half="true" Stack="10" Id="@preset[0]" />
-                    <ActiveCard @key="preset[1]" Enabled="false" Half="true" Stack="10" Id="@preset[1]" />
-                    <ActiveCard @key="preset[2]" Enabled="false" Half="true" Stack="10" Id="@preset[2]" />
-                    <ActiveCard @key="preset[3]" Enabled="false" Half="true" Stack="10" Id="@preset[3]" />
-                    <ActiveCard @key="preset[4]" Enabled="false" Half="true" Stack="10" Id="@preset[4]" />
+                    @for (var i = 0; i < 5; i++)
+                    {
+                        <ActiveCard @key="preset[i]" Enabled="false" Half="true" Stack="@Model.GetInitialSupply(preset[i])" Id="@preset[i]" />
+                    }
                 }
 
-                <ActiveCard Enabled="false" Half="true" Stack="60" Id="Copper" />
-                <ActiveCard Enabled="false" Half="true" Stack="40" Id="Silver" />
-                <ActiveCard Enabled="false" Half="true" Stack="30" Id="Gold" />
+                <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Copper")" Id="Copper" />
+                <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Silver")" Id="Silver" />
+                <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Gold")" Id="Gold" />
 
                 @if (Model.KingdomPreset == null)
                 {
-                    <SpecialCard Name="card-back" Half="true" Stack="3" />
-                    <SpecialCard Name="card-back" Half="true" Stack="3" />
-                    <SpecialCard Name="card-back" Half="true" Stack="3" />
-                    <SpecialCard Name="card-back" Half="true" Stack="3" />
-                    <SpecialCard Name="card-back" Half="true" Stack="3" />
+                    <SpecialCard Name="card-back" Half="true" Stack="10" />
+                    <SpecialCard Name="card-back" Half="true" Stack="10" />
+                    <SpecialCard Name="card-back" Half="true" Stack="10" />
+                    <SpecialCard Name="card-back" Half="true" Stack="10" />
+                    <SpecialCard Name="card-back" Half="true" Stack="10" />
                 }
                 else
                 {
                     var preset = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
-                    <ActiveCard @key="preset[5]" Enabled="false" Half="true" Stack="10" Id="@preset[5]" />
-                    <ActiveCard @key="preset[6]" Enabled="false" Half="true" Stack="10" Id="@preset[6]" />
-                    <ActiveCard @key="preset[7]" Enabled="false" Half="true" Stack="10" Id="@preset[7]" />
-                    <ActiveCard @key="preset[8]" Enabled="false" Half="true" Stack="10" Id="@preset[8]" />
-                    <ActiveCard @key="preset[9]" Enabled="false" Half="true" Stack="10" Id="@preset[9]" />
+                    @for (var i = 5; i < 10; i++)
+                    {
+                        <ActiveCard @key="preset[i]" Enabled="false" Half="true" Stack="@Model.GetInitialSupply(preset[i])" Id="@preset[i]" />
+                    }
                 }
             }
         </div>

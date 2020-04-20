@@ -374,7 +374,7 @@ namespace Cardgame.Server
             var rng = new Random();
 
             Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
-            Model.IsStarted = true;
+            Model.Supply = All.Cards.Base().Concat(Model.KingdomCards).ToDictionary(id => id, id => Model.GetInitialSupply(id));            
             Model.PlayedCards = new List<string>();
             Model.ActiveEffects = new List<string>();
             Model.Trash = new List<string>();
@@ -388,22 +388,7 @@ namespace Cardgame.Server
                 deck.Shuffle();
                 return deck;
             });
-
-            var victoryCount = Model.Players.Length == 2 ? 8 : 12;
-            Model.Supply = new Dictionary<string, int>
-            {
-                { "Estate", victoryCount },
-                { "Duchy", victoryCount },
-                { "Province", victoryCount },
-                { "Copper", 60 - (Model.Players.Length * 7) },
-                { "Silver", 40 },
-                { "Gold", 30 },
-                { "Curse", (Model.Players.Length - 1) * 10 },
-            };
-            foreach (var card in Model.KingdomCards.Select(All.Cards.ByName))
-            {
-                Model.Supply[card.Name] = card.Types.Contains(CardType.Victory) ? victoryCount : 10;
-            }
+            Model.IsStarted = true;
 
             foreach (var player in Model.Players)
             {
