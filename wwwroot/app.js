@@ -1,4 +1,11 @@
 "use strict";
+var ActiveCard;
+(function (ActiveCard) {
+    function scrollIntoView(content) {
+        content.scrollIntoView();
+    }
+    ActiveCard.scrollIntoView = scrollIntoView;
+})(ActiveCard || (ActiveCard = {}));
 var VerticalLog;
 (function (VerticalLog) {
     function scrollToBottom(content) {

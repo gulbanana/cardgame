@@ -40,7 +40,7 @@
                 <GappedRow>
                     @for (var i = 0; i < Model.PlayedCards.Count; i++)
                     {
-                        <ActiveCard Large="@(i == Model.PlayedCards.Count-1)" Id="@Model.PlayedCards[i]" />
+                        <ActiveCard Large="@(i == Model.PlayedCards.Count-1)" Id="@Model.PlayedCards[i]" KeepVisible="true" />
                     }
                 </GappedRow>
             </div>

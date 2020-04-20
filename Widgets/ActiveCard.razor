@@ -1,3 +1,4 @@
+@inject IJSRuntime JS
 @code {
     [CascadingParameter] public GameModel Game { get; set; }
     [Parameter] public string Id { get; set; }
@@ -8,8 +9,10 @@
     [Parameter] public bool Large { get; set; }
     [Parameter] public int Stack { get; set; }
     [Parameter] public string OverrideColour { get; set; }
+    [Parameter] public bool KeepVisible { get; set; }
     private int cost;
     private CardSet? setIcon;
+    ElementReference contentElement;
 
     protected override void OnParametersSet()
     {
@@ -26,6 +29,14 @@
         setIcon = All.Cards.SetIcon(Id);
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Large && KeepVisible)
+        {
+            await JS.InvokeVoidAsync("ActiveCard.scrollIntoView", contentElement);
+        }
+    }
+
     private void OnClick()
     {
         if (Enabled)
@@ -37,7 +48,7 @@
 
 @if (Large)
 {
-    <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
+    <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick" @ref="contentElement">
         <Magnify>        
             <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="@Half" Stack="@Stack" />
         </Magnify>
