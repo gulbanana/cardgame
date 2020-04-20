@@ -283,8 +283,11 @@ namespace Cardgame.Server
 
         private void EndPlayCard(Task t, object id)
         {
-            CompletePlayCard(t, id as string);
-            Model.Seq++; ActionUpdated?.Invoke();
+            lock (this)
+            {
+                CompletePlayCard(t, id as string);
+                Model.Seq++; ActionUpdated?.Invoke();
+            }
         }
 
         private void CompletePlayCard(Task t, string id)
