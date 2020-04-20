@@ -23,6 +23,7 @@ namespace Cardgame.Shared
 
         // player config
         public Dictionary<string, bool> SettingConfirmSkipActions { get; set; }
+        public Dictionary<string, bool> SettingKeepHandSorted { get; set; }
 
         // game state
         public string ActivePlayer { get; set; }

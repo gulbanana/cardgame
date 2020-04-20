@@ -540,16 +540,16 @@ namespace Cardgame.Server
         }
 
         // this is a special case used by Masquerade, but could be generalised
-        void IActionHost.PassCard(string player, string card)
+        void IActionHost.PassCard(string toPlayer, string card)
         {
-            engine.Model.Hands[Player].Remove(card);
-            engine.Model.Hands[player].Add(card);
+            engine.MoveCard(Player, card, Zone.Hand, Zone.Nowhere);
+            engine.MoveCard(toPlayer, card, Zone.Nowhere, Zone.Hand);
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
                 {LogVerbInitial("pass", "passes", "passing")}
                 <run>a card to</run>
-                <player suffix='.'>{player}</player>
+                <player suffix='.'>{toPlayer}</player>
             </spans>");
         }
 

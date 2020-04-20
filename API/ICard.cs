@@ -1,3 +1,4 @@
+using System.Linq;
 using Cardgame.Shared;
 
 namespace Cardgame.API
@@ -14,5 +15,24 @@ namespace Cardgame.API
     public static class CardExtensions
     {
         public static int GetCost(this ICard card, IModifierSource modifierSource) => card.GetCost(modifierSource.GetModifiers());
+        public static int SortByTypes(this ICard card)
+        {
+            return card.Types.Length switch
+            {
+                1 => card.Types[0] switch
+                {
+                    CardType.Action => 10,
+                    CardType.Treasure => 20,
+                    CardType.Victory => 30,
+                    CardType.Curse => 40
+                },
+                2 when card.Types.Contains(CardType.Action) && card.Types.Contains(CardType.Reaction) => 9,
+                2 when card.Types.Contains(CardType.Action) && card.Types.Contains(CardType.Attack) => 11,
+                2 when card.Types.Contains(CardType.Action) && card.Types.Contains(CardType.Treasure) => 15,
+                2 when card.Types.Contains(CardType.Action) && card.Types.Contains(CardType.Victory) => 16,
+                2 when card.Types.Contains(CardType.Treasure) && card.Types.Contains(CardType.Victory) => 25,
+                _ => 100
+            };
+        }
     }
 }

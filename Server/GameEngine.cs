@@ -464,6 +464,7 @@ namespace Cardgame.Server
                 return deck;
             });
             Model.SettingConfirmSkipActions = Model.Players.ToDictionary(k => k, _ => true);
+            Model.SettingKeepHandSorted = Model.Players.ToDictionary(k => k, _ => true);
             Model.IsStarted = true;
 
             foreach (var player in Model.Players)
@@ -640,6 +641,7 @@ namespace Cardgame.Server
             return id;
         }
 
+        private string nowhere;
         internal void MoveCard(string player, string id, Zone from, Zone to)
         {
             switch (from)
@@ -677,6 +679,11 @@ namespace Cardgame.Server
                     Model.PlayedCards.RemoveAt(last);
                     break;
 
+                case Zone.Nowhere:
+                    if (nowhere != id) throw new CommandException($"Card {id} not found.");
+                    nowhere = null;
+                    break;
+
                 default:
                     throw new CommandException($"Unknown zone {from}");
             }
@@ -708,6 +715,11 @@ namespace Cardgame.Server
 
                 case Zone.InPlay:
                     Model.PlayedCards.Add(id);
+                    break;
+
+                case Zone.Nowhere:
+                    if (nowhere != null) throw new CommandException($"Card {nowhere} has been lost.");
+                    nowhere = id;
                     break;
 
                 default:

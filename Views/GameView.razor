@@ -130,7 +130,12 @@
             <GappedRow>
                 @if (Model.IsStarted)
                 {
-                    foreach (var id in Model.Hands[PlayerOrSpectatee])
+                    var hand = Model.Hands[PlayerOrSpectatee].AsEnumerable();
+                    if (Model.SettingKeepHandSorted[PlayerOrSpectatee])
+                    {
+                        hand = hand.OrderBy(card => All.Cards.ByName(card).SortByTypes());
+                    }
+                    foreach (var id in hand)
                     {
                         var card = All.Cards.ByName(@id);
                         var isEnabled = IsActivePlayer &&
