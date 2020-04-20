@@ -19,7 +19,11 @@
 @if (Game != null && Game.Players.Contains(Name))
 {
     var score = All.Score.Calculate(Game, Name).Total;
-    var text = $"<sym prefix='Current score: {score}'>vp</sym>";
+    var hand = !Game.IsStarted ? 5 : Game.Hands[Name].Count;
+    var text = $@"<lines>
+        <sym prefix='Current score: {score}'>vp</sym>
+        <run>Hand size: {hand} cards</run>
+    </lines>";
     <Subscribed Endpoint="@UserEndpoint">
         <WithTooltip>
             <Content>
@@ -30,8 +34,8 @@
                 ">@Text</span>@Suffix
             </Content>
             <Tooltip>
-                <div @key="score" class="player-link__tooltip">
-                    <RichText Model="@text" />
+                <div class="player-link__tooltip">
+                    <RichText @key="text" Model="@text" />
                 </div>
             </Tooltip>
         </WithTooltip>
