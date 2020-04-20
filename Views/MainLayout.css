@@ -7,3 +7,9 @@ main {
 main > *:first-child {
     margin-top: 0;
 }
+
+@media (max-width: 1370px) {
+    main {
+        padding: 1em 0 1em 0;
+    }
+}

@@ -1,4 +1,5 @@
 .chat-view {
+    grid-area: chat-log;
     min-width: 350px;
     font-family: monospace;
     font-size: 16px;

@@ -16,21 +16,28 @@
 }
 
 <div class="board-view">
-    <p style="grid-area: safe-commands">
+    <p style="grid-area: safe-commands" class="game-view__responsive-bar">
         <ActiveButton Label="@($"+ ${PotentialMoney}")" Enabled="@(IsEnabled && PotentialMoney > 0)" Action="@(() => Dispatch(new PlayAllTreasuresCommand()))" />
     </p>
 
-    <p style="grid-area: stats" class="board-view__statbar">
-        <Bold If="@(!Model.BuyPhase && Model.ActionsRemaining > 0)">Actions: @Model.ActionsRemaining</Bold>
-        <Bold If="@(Model.BuysRemaining > 0)">Buys: @Model.BuysRemaining</Bold>
-        <Bold If="@(Model.MoneyRemaining > 0)">Money: $@Model.MoneyRemaining</Bold>
-        @foreach (var effect in Model.ActiveEffects)
+    <p style="grid-area: stats" class="game-view__responsive-bar board-view__statbar">
+        @if (AnyoneChoosing && !Model.ChoosingPlayers.Peek().Equals(Session.Username))
         {
-            <EffectView Id="@effect" />
+            <span>Waiting for <PlayerLink @key="Model.ChoosingPlayers.Peek()" Name="@Model.ChoosingPlayers.Peek()" /> to make a choice...</span>
+        }
+        else
+        {
+            <Bold If="@(!Model.BuyPhase && Model.ActionsRemaining > 0)">Actions: @Model.ActionsRemaining</Bold>
+            <Bold If="@(Model.BuysRemaining > 0)">Buys: @Model.BuysRemaining</Bold>
+            <Bold If="@(Model.MoneyRemaining > 0)">Money: $@Model.MoneyRemaining</Bold>
+            @foreach (var effect in Model.ActiveEffects)
+            {
+                <EffectView Id="@effect" />
+            }
         }
     </p>
 
-    <p style="grid-area: global-commands">
+    <p style="grid-area: global-commands" class="game-view__responsive-bar">
         <ActiveButton Label="End turn" Enabled="@IsEnabled" Action="@(() => Dispatch(new EndTurnCommand()))" />
     </p>
 
@@ -57,10 +64,6 @@
                                     Type="@Model.ChoiceType"
                                     Input="@Model.ChoiceInput" />
                     </div>
-                }
-                else
-                {
-                    <span class="board-view__other-player-choosing">Waiting for <PlayerLink @key="Model.ChoosingPlayers.Peek()" Name="@Model.ChoosingPlayers.Peek()" /> to make a choice...</span>
                 }
             }
         </div>

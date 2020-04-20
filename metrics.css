@@ -18,18 +18,6 @@
     --text-image-align: baseline;
 }
 
-@media (max-height: 760px) {
-    :root {
-        --zoom-scale: 1.5;
-    }
-}
-
-@media (max-height: 680px) {
-    :root {
-        --zoom-scale: 1.0;
-    }
-}
-
 input[type=text] {
     line-height: normal;
 }

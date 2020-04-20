@@ -2,27 +2,23 @@
     width: 100%;
     height: 100%;
     display: grid;
+    --board-width: calc(var(--card-width) * 9 + (var(--std-gap) * 8));
+    --board-height: 745px;
     grid-template-areas: 'nav       left-bar board right-bar status' 
                          'chat-log  left-bar board right-bar event-log';
-    grid-template-columns: minmax(350px, 1fr) 2px calc(var(--card-width) * 9 + (var(--std-gap) * 8)) 2px minmax(250px, 1fr);
+    grid-template-columns: minmax(350px, 1fr) 2px var(--board-width) 2px minmax(250px, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
     grid-column-gap: var(--std-gap);
     --text-image-align: bottom;
 }
 
-.game-view__status {
-    display: flex;
-    justify-content: flex-end;
-    align-items: baseline;
-}
-
-@media (max-width: 1640px) {
+@media (max-width: 1640px) and (min-width: 1371px) {
     .game-view {
         grid-template-areas: 'nav       left-bar  board' 
                              'status    left-bar  board' 
                              'event-log right-bar board'
                              'chat-log  right-bar board';
-        grid-template-columns: minmax(350px, 1fr) 2px calc(var(--card-width) * 9 + (var(--std-gap) * 8));
+        grid-template-columns: 350px 2px var(--board-width);
         grid-template-rows: auto auto minmax(0, 1fr) auto;
     }
 
@@ -33,6 +29,48 @@
     .chat-view {
         max-height: 50vh;
     }
+}
+
+@media (max-width: 1370px) {
+    .game-view {
+        grid-template-areas: 'event-log event-log event-log event-log' 
+                             'left-bar  board     board     right-bar' 
+                             'chat-log  chat-log  chat-log  chat-log'
+                             'nav       nav       status    status';
+        grid-template-columns: 1fr calc(var(--board-width)/2) calc(var(--board-width)/2) 1fr;
+        grid-template-rows: minmax(0, 1fr) var(--board-height) minmax(0, 1fr) auto;
+        grid-column-gap: 0;
+    }
+
+    .game-view__responsive-bar {
+        margin: 0.5em 0;
+    }
+
+    @media (max-height: 705px) {
+        .game-view__responsive-bar {
+            margin: 0.25em 0;
+        }
+    }
+}
+
+@media (max-height: 785px) {
+    .game-view {
+        --zoom-scale: 1.5;
+        --board-height: 665px;
+    }
+}
+
+@media (max-height: 705px) {
+    .game-view {
+        --zoom-scale: 1.0;
+        --board-height: 585px;
+    }
+}
+
+.game-view__status {
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
 }
 
 .game-view__board {
