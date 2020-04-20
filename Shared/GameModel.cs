@@ -19,7 +19,10 @@ namespace Cardgame.Shared
         // game config
         public CardSet KingdomSet { get; set; }
         public string KingdomPreset { get; set; }
-        public string[] KingdomCards { get; set; }         
+        public string[] KingdomCards { get; set; }
+
+        // player config
+        public Dictionary<string, bool> SettingConfirmSkipActions { get; set; }
 
         // game state
         public string ActivePlayer { get; set; }

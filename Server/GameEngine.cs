@@ -137,22 +137,58 @@ namespace Cardgame.Server
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("Another card is already being played.");
                     if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");
+                    
                     if (!All.Cards.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
+                    var card = All.Cards.ByName(playCard.Id);
 
-                    if (All.Cards.ByName(playCard.Id) is IActionCard)
+                    if (card.Types.Contains(CardType.Action))
                     {
                         if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
                         if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
                         Model.ActionsRemaining--;
                     }
+                    
+                    if (card.Types.Contains(CardType.Treasure) && 
+                        Model.SettingConfirmSkipActions[username] && 
+                        !Model.BuyPhase &&
+                        Model.ActionsRemaining > 0 &&
+                        Model.Hands[username].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Action)))
+                    {
+                        BeginBackgroundTask(playCard.Id, async id =>
+                        {
+                            MoveCard(username, id, Zone.Hand, Zone.InPlay);
+                            var skip = await Choose<string, bool>(
+                                username, 
+                                ChoiceType.YesNo, 
+                                "Skip Action phase?",
+                                "You have Action cards remaining. Do you really want to skip to the Treasure phase?"
+                            );
+                            MoveCard(username, id, Zone.InPlay, Zone.Hand);
 
-                    LogEvent($@"<spans>
-                        <player>{username}</player>
-                        <if you='play' them='plays'>{username}</if>
-                        <card suffix='.'>{playCard.Id}</card>
-                    </spans>");
+                            if (skip)
+                            {
+                                Model.SettingConfirmSkipActions[username] = false;
 
-                    BeginBackgroundTask(playCard.Id, id => PlayCardAsync(1, username, id, Zone.Hand));
+                                LogEvent($@"<spans>
+                                    <player>{username}</player>
+                                    <if you='play' them='plays'>{username}</if>
+                                    <card suffix='.'>{playCard.Id}</card>
+                                </spans>");
+
+                                await PlayCardAsync(1, username, id, Zone.Hand);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        LogEvent($@"<spans>
+                            <player>{username}</player>
+                            <if you='play' them='plays'>{username}</if>
+                            <card suffix='.'>{playCard.Id}</card>
+                        </spans>");
+
+                        BeginBackgroundTask(playCard.Id, id => PlayCardAsync(1, username, id, Zone.Hand));
+                    }
 
                     break;
 
@@ -171,13 +207,41 @@ namespace Cardgame.Server
                         return $"<card suffix='{suffix}'>{card.Name}</card>";
                     }));
 
-                    BeginBackgroundTask(username, async _ =>
+                    if (Model.SettingConfirmSkipActions[username] && 
+                        !Model.BuyPhase &&
+                        Model.ActionsRemaining > 0 &&
+                        Model.Hands[username].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Action)))
                     {
-                        foreach (var card in cards)
+                        BeginBackgroundTask(username, async _ =>
                         {
-                            await PlayCardAsync(1, username, card.Name, Zone.Hand);
-                        }
-                    });
+                            var skip = await Choose<string, bool>(
+                                username, 
+                                ChoiceType.YesNo, 
+                                "Skip Action phase?",
+                                "You have Action cards remaining. Do you really want to skip to the Treasure phase?"
+                            );
+
+                            if (skip)
+                            {
+                                Model.SettingConfirmSkipActions[username] = false;
+
+                                foreach (var card in cards)
+                                {
+                                    await PlayCardAsync(1, username, card.Name, Zone.Hand);
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        BeginBackgroundTask(username, async _ =>
+                        {
+                            foreach (var card in cards)
+                            {
+                                await PlayCardAsync(1, username, card.Name, Zone.Hand);
+                            }
+                        });
+                    }
 
                     var sum = cards.Select(card => card.GetValue(Model)).Sum();
                     LogEvent($@"<lines>
@@ -399,6 +463,7 @@ namespace Cardgame.Server
                 deck.Shuffle();
                 return deck;
             });
+            Model.SettingConfirmSkipActions = Model.Players.ToDictionary(k => k, _ => true);
             Model.IsStarted = true;
 
             foreach (var player in Model.Players)
