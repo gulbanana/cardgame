@@ -2,22 +2,22 @@
 @code {
     [CascadingParameter] public GameModel Model { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; } 
-    bool IsActivePlayer => Session.Username.Equals(Model.ActivePlayer);   
-}
-@{ 
-    var isEnabled = IsActivePlayer &&
+    bool IsActivePlayer => Session.Username.Equals(Model.ActivePlayer); 
+    bool IsEnabled => IsActivePlayer &&
         !Model.IsFinished &&
         Model.ExecutingCards == 0;
-    var potentialMoney = Model.Hands[Model.ActivePlayer]
+    int PotentialMoney => Model.Hands[Model.ActivePlayer]
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()
         .Select(card => card.GetValue(Model))
         .Sum();
+    bool AnyoneChoosing => Model.ChoosingPlayers.Any();
+    bool SomeoneVisibleChoosing => AnyoneChoosing && (Model.ChoosingPlayers.Peek().Equals(Session.Username) || !Model.Players.Contains(Session.Username));
 }
 
 <div class="board-view">
     <p style="grid-area: safe-commands">
-        <ActiveButton Label="@($"+ ${potentialMoney}")" Enabled="@(isEnabled && potentialMoney > 0)" Action="@(() => Dispatch(new PlayAllTreasuresCommand()))" />
+        <ActiveButton Label="@($"+ ${PotentialMoney}")" Enabled="@(IsEnabled && PotentialMoney > 0)" Action="@(() => Dispatch(new PlayAllTreasuresCommand()))" />
     </p>
 
     <p style="grid-area: stats" class="board-view__statbar">
@@ -31,36 +31,37 @@
     </p>
 
     <p style="grid-area: global-commands">
-        <ActiveButton Label="End turn" Enabled="@isEnabled" Action="@(() => Dispatch(new EndTurnCommand()))" />
+        <ActiveButton Label="End turn" Enabled="@IsEnabled" Action="@(() => Dispatch(new EndTurnCommand()))" />
     </p>
 
     <div style="grid-area: played-cards" class="board-view__played-cards">
         <div class="board-view__played-cards__centered-row">
-            <div class="board-view__played-cards__centered-row__actual-played-cards" style="grid-column: @(Model.ChoosingPlayers.Any() ? "1/2" : "1/3")">
+            <div class="board-view__played-cards__centered-row__actual-played-cards" 
+                 style="grid-column: @(SomeoneVisibleChoosing ? "1/2" : "1/3")">
                 <GappedRow>
                     @for (var i = 0; i < Model.PlayedCards.Count; i++)
                     {
-                        <ActiveCard Large="@(i == Model.PlayedCards.Count-1)" Id="@Model.PlayedCards[i]" KeepVisible="true" />
+                        <ActiveCard Large="@(i == Model.PlayedCards.Count-1)" Id="@Model.PlayedCards[i]" KeepVisible="@SomeoneVisibleChoosing" />
                     }
                 </GappedRow>
             </div>
 
-            @if (Model.ChoosingPlayers.Any())
+            @if (AnyoneChoosing)
             {
-                <div style="grid-column: 2/3" class="board-view__choice">
-                    @if (Model.ChoosingPlayers.Peek().Equals(Session.Username) || !Model.Players.Contains(Session.Username))
-                    {
+                @if (SomeoneVisibleChoosing)
+                {
+                    <div style="grid-column: 2/3" class="board-view__choice">
                         <ActiveChoice Enabled="@Model.ChoosingPlayers.Peek().Equals(Session.Username)"
-                                      Action="@(output => Dispatch(new EnterChoiceCommand { Output = output }))"
-                                      Prompt="@Model.ChoicePrompt"
-                                      Type="@Model.ChoiceType"
-                                      Input="@Model.ChoiceInput" />
-                    }
-                    else
-                    {
-                        <span>Waiting for <PlayerLink @key="Model.ChoosingPlayers.Peek()" Name="@Model.ChoosingPlayers.Peek()" /> to make a choice...</span>
-                    }
-                </div>
+                                    Action="@(output => Dispatch(new EnterChoiceCommand { Output = output }))"
+                                    Prompt="@Model.ChoicePrompt"
+                                    Type="@Model.ChoiceType"
+                                    Input="@Model.ChoiceInput" />
+                    </div>
+                }
+                else
+                {
+                    <span class="board-view__other-player-choosing">Waiting for <PlayerLink @key="Model.ChoosingPlayers.Peek()" Name="@Model.ChoosingPlayers.Peek()" /> to make a choice...</span>
+                }
             }
         </div>
     </div>
