@@ -135,7 +135,7 @@
                         var card = All.Cards.ByName(@id);
                         var isEnabled = IsActivePlayer &&
                             !Model.IsFinished &&
-                            Model.ExecutingCards == 0 &&
+                            !Model.ExecutingBackgroundTasks &&
                             (card.Types.Contains(CardType.Treasure) ||
                              (card.Types.Contains(CardType.Action) && !Model.BuyPhase));
                         <ActiveCard Model="@card" 

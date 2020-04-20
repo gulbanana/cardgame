@@ -135,7 +135,7 @@ namespace Cardgame.Server
                     if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
-                    if (Model.ExecutingCards > 0) throw new CommandException("Another card is already being played.");
+                    if (Model.ExecutingBackgroundTasks) throw new CommandException("Another card is already being played.");
                     if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");
                     if (!All.Cards.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
 
@@ -152,7 +152,7 @@ namespace Cardgame.Server
                         <card suffix='.'>{playCard.Id}</card>
                     </spans>");
 
-                    BeginPlayCard(1, username, playCard.Id, Zone.Hand);
+                    BeginBackgroundTask(playCard.Id, id => PlayCardAsync(1, username, id, Zone.Hand));
 
                     break;
 
@@ -160,7 +160,7 @@ namespace Cardgame.Server
                     if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
-                    if (Model.ExecutingCards > 0) throw new CommandException("Another card is already being played.");
+                    if (Model.ExecutingBackgroundTasks) throw new CommandException("Another card is already being played.");
 
                     var cards = Model.Hands[username].Select(All.Cards.ByName).OfType<ITreasureCard>().ToList();
                     var cardList = string.Join(Environment.NewLine, cards.Select((card, ix) => 
@@ -171,10 +171,13 @@ namespace Cardgame.Server
                         return $"<card suffix='{suffix}'>{card.Name}</card>";
                     }));
 
-                    foreach (var card in cards)
+                    BeginBackgroundTask(username, async _ =>
                     {
-                        BeginPlayCard(1, username, card.Name, Zone.Hand);
-                    }
+                        foreach (var card in cards)
+                        {
+                            await PlayCardAsync(1, username, card.Name, Zone.Hand);
+                        }
+                    });
 
                     var sum = cards.Select(card => card.GetValue(Model)).Sum();
                     LogEvent($@"<lines>
@@ -198,7 +201,7 @@ namespace Cardgame.Server
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");
                     if (Model.Supply[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
-                    if (Model.ExecutingCards > 0) throw new CommandException("A card is currently being played.");
+                    if (Model.ExecutingBackgroundTasks) throw new CommandException("A card is currently being played.");
 
                     BuyCard(username, buyCard.Id);
                     
@@ -223,7 +226,7 @@ namespace Cardgame.Server
                     if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
-                    if (Model.ExecutingCards > 0) throw new CommandException("A card is currently being played.");
+                    if (Model.ExecutingBackgroundTasks) throw new CommandException("A card is currently being played.");
 
                     EndTurn();
                     BeginTurn();
@@ -251,47 +254,54 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        private void BeginPlayCard(int indentLevel, string player, string id, Zone from)
+        private void BeginBackgroundTask(string id, Func<string, Task> f)
         {
-            Model.ExecutingCards++;
+            if (Model.ExecutingBackgroundTasks)
+            {
+                throw new CommandException("A background task is already running.");
+            }
+
+            Model.ExecutingBackgroundTasks = true;
             try
             {
-                var task = PlayCardAsync(indentLevel, player, id, from);
+                var task = f(id);
                 if (task.IsCompleted)
                 {
-                    CompletePlayCard(task, id);
+                    CompleteBackgroundTask(task, id);
                 }
                 else
                 {
-                    task.ContinueWith(EndPlayCard, id);
+                    task.ContinueWith(EndBackgroundTask, id);
                 }
             }
             catch (CommandException)
             {
-                Model.ExecutingCards--;
+                Model.ExecutingBackgroundTasks = false;
 
                 throw;
             }
             catch (Exception e)
             {
-                Model.ExecutingCards--;
+                Model.ExecutingBackgroundTasks = false;
 
                 LogEvent($"<error>{id}: {e.Message}</error>");
                 Console.WriteLine(e.ToString());
             }
         }
 
-        private void EndPlayCard(Task t, object id)
+        private void EndBackgroundTask(Task t, object id)
         {
             lock (this)
             {
-                CompletePlayCard(t, id as string);
+                CompleteBackgroundTask(t, id as string);
                 Model.Seq++; ActionUpdated?.Invoke();
             }
         }
 
-        private void CompletePlayCard(Task t, string id)
+        private void CompleteBackgroundTask(Task t, string id)
         {
+            Model.ExecutingBackgroundTasks = false;
+
             if (t.Status == TaskStatus.Faulted)
             {
                 var e = t.Exception.InnerException ?? t.Exception;
@@ -299,8 +309,6 @@ namespace Cardgame.Server
                 Console.WriteLine(e.ToString());
                 // rollback somehow?
             }
-
-            Model.ExecutingCards--;
         }
 
         internal async Task PlayCardAsync(int indentLevel, string player, string id, Zone from)

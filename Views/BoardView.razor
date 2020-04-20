@@ -5,7 +5,7 @@
     bool IsActivePlayer => Session.Username.Equals(Model.ActivePlayer); 
     bool IsEnabled => IsActivePlayer &&
         !Model.IsFinished &&
-        Model.ExecutingCards == 0;
+        !Model.ExecutingBackgroundTasks;
     int PotentialMoney => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()

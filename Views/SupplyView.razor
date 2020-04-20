@@ -9,7 +9,7 @@
 {
     var isEnabled = Session.Username.Equals(Game.ActivePlayer) &&
         !Game.IsFinished &&
-        Game.ExecutingCards == 0 &&
+        !Game.ExecutingBackgroundTasks &&
         Game.BuysRemaining > 0 &&
         All.Cards.Exists(Id) &&
         All.Cards.ByName(Id).GetCost(Game) <= Game.MoneyRemaining;

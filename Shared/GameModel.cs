@@ -32,7 +32,7 @@ namespace Cardgame.Shared
         // turn state
         public List<string> PlayedCards { get; set; }
         public List<string> ActiveEffects { get; set; }
-        public int ExecutingCards { get; set; }
+        public bool ExecutingBackgroundTasks { get; set; }
         public bool BuyPhase { get; set; }
         
         public int ActionsRemaining { get; set; }
