@@ -21,6 +21,8 @@ namespace Cardgame.Cards.Intrigue
             if (trashed != null)
             {
                 var cost = trashed.GetCost(host);
+                host.Trash(trashed);
+
                 var gained = await host.SelectCard("Choose a card to gain.", Zone.SupplyAvailable, card => card.GetCost(host) <= cost + 2);
                 if (gained != null)
                 {
