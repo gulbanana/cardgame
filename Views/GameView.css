@@ -18,7 +18,7 @@
                              'status    left-bar  board' 
                              'event-log right-bar board'
                              'chat-log  right-bar board';
-        grid-template-columns: 350px 2px var(--board-width);
+        grid-template-columns: minmax(350px, 1fr) 2px var(--board-width);
         grid-template-rows: auto auto minmax(0, 1fr) auto;
     }
 
