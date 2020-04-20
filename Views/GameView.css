@@ -75,11 +75,7 @@
 
 .game-view__board {
     display: grid;
-    grid-template-areas: 'kingdom kingdom kingdom'
-                         'actions actions actions'
-                         'deck    hand    discard';
     grid-template-rows: auto 1fr auto;
-    grid-template-columns: auto 1fr auto;
 }
 
 .game-view__kingdom {

@@ -30,21 +30,23 @@ namespace Cardgame.Server
             Model.Players = new string[0];
         }
 
-        public void Execute(string username, ClientCommand command)
+        public bool Execute(string username, ClientCommand command)
         {
             lock (this)
             {
                 try
                 {
                     ExecuteImpl(username, command);
+                    Notify();
+                    return true;
                 }
                 catch (CommandException e)
                 {
                     LogEvent($"<error>{username}: {e.Message}</error>");
                     Console.WriteLine(e.ToString());
+                    Notify();
+                    return false;
                 }
-
-                Model.Seq++; ActionUpdated?.Invoke();
             }
         }
 
@@ -306,8 +308,7 @@ namespace Cardgame.Server
             var boughtCard = All.Cards.ByName(id);
             if (boughtCard.GetCost(Model) > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
 
-            Model.Supply[id]--;
-            Model.Discards[player].Add(id);
+            MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
             Model.MoneyRemaining -= boughtCard.GetCost(Model);
             Model.BuysRemaining -= 1;
 
@@ -316,6 +317,12 @@ namespace Cardgame.Server
                 <if you='buy' them='buys'>{player}</if>
                 <card suffix='.'>{id}</card>
             </spans>");
+        }
+
+        private void Notify()
+        {
+            Model.Seq++;    
+            ActionUpdated?.Invoke();
         }
 
         private void BeginBackgroundTask(string id, Func<string, Task> f)
@@ -358,7 +365,7 @@ namespace Cardgame.Server
             lock (this)
             {
                 CompleteBackgroundTask(t, id as string);
-                Model.Seq++; ActionUpdated?.Invoke();
+                Notify();
             }
         }
 
@@ -450,16 +457,18 @@ namespace Cardgame.Server
 
             Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
             Model.Supply = All.Cards.Base().Concat(Model.KingdomCards).ToDictionary(id => id, id => Model.GetInitialSupply(id));            
-            Model.PlayedCards = new List<string>();
+            Model.PlayedCards = new List<Instance>();
             Model.ActiveEffects = new List<string>();
-            Model.Trash = new List<string>();
+            Model.Trash = new List<Instance>();
             Model.PreventedAttacks = new HashSet<string>();
             Model.ChoosingPlayers = new Stack<string>();
-            Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<string>());
-            Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<string>());
+            Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
+            Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.Decks = Model.Players.ToDictionary(k => k, _ => 
             {
-                var deck = new List<string>{ "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Estate", "Estate", "Estate" };
+                var deck = new []{ "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Estate", "Estate", "Estate" }
+                    .Select(Instance.Of)
+                    .ToList();
                 deck.Shuffle();
                 return deck;
             });
@@ -510,23 +519,19 @@ namespace Cardgame.Server
             if (!isDemo && bots.Contains(Model.ActivePlayer))
             {
                 var botPlayer = Model.ActivePlayer;
-                while (botPlayer == Model.ActivePlayer && !Model.IsFinished)
-                {                    
-                    try
-                    {
+                Task.Run(() =>
+                {
+                    var executed = true;
+                    while (botPlayer == Model.ActivePlayer && !Model.IsFinished && executed)
+                    {       
                         var command = AI.PlayTurn(Model);
-                        ExecuteImpl(botPlayer, command);
+                        executed = Execute(botPlayer, command);
                     }
-                    catch (Exception e)
+                    if (!executed)
                     {
-                        LogEvent($"<error>{Model.ActivePlayer}: {e.Message}</error>");
-                        Console.WriteLine(e.ToString());
-
-                        EndTurn();
-                        BeginTurn();
-                        break;
+                        LogEvent($"<error>{botPlayer}: Sorry! I'm just a bot.</error>");
                     }
-                }
+                });
             }
         }
 
@@ -634,53 +639,56 @@ namespace Cardgame.Server
             }
             else
             {
-                id = deck[0];
+                id = deck[0].Id;
                 MoveCard(player, id, Zone.DeckTop1, to);
             }
 
             return id;
         }
 
-        private string nowhere;
+        private Instance? nowhere;
         internal void MoveCard(string player, string id, Zone from, Zone to)
         {
+            Instance instance;
+
             switch (from)
             {
                 case Zone.Trash:
                     if (!Model.Trash.Contains(id)) throw new CommandException($"No {id} card in hand.");
-                    Model.Trash.Remove(id);
+                    instance = Model.Trash.Extract(id);
                     break;
 
                 case Zone.Hand:
                     if (!Model.Hands[player].Contains(id)) throw new CommandException($"No {id} card in hand.");
-                    Model.Hands[player].Remove(id);
+                    instance = Model.Hands[player].Extract(id);
                     break;
 
                 case Zone.Discard:
                     if (!Model.Discards[player].Contains(id)) throw new CommandException($"No {id} card in discard pile.");
-                    Model.Discards[player].Remove(id);
+                    instance = Model.Discards[player].Extract(id);
                     break;
                 
                 case Zone.SupplyAvailable:
                     if (Model.Supply[id] < 1) throw new CommandException($"No {id} cards remaining in stack.");
                     Model.Supply[id]--;
+                    instance = Instance.Of(id);
                     break;
 
                 case Zone.DeckTop1:
                 case Zone.DeckTop2:
                 case Zone.DeckTop3:
                 case Zone.DeckTop4:
-                    Model.Decks[player].Remove(id);
+                    instance = Model.Decks[player].Extract(id);
                     break;
 
                 case Zone.InPlay:
                     if (!Model.PlayedCards.Contains(id)) throw new CommandException($"No {id} card has been played.");
-                    var last = Model.PlayedCards.FindLastIndex(e => e.Equals(id));
-                    Model.PlayedCards.RemoveAt(last);
+                    instance = Model.PlayedCards.ExtractLast(id);
                     break;
 
                 case Zone.Nowhere:
-                    if (nowhere != id) throw new CommandException($"Card {id} not found.");
+                    if (!nowhere.HasValue || !nowhere.Value.Equals(id)) throw new CommandException($"Card {id} not found.");
+                    instance = nowhere.Value;
                     nowhere = null;
                     break;
 
@@ -691,40 +699,45 @@ namespace Cardgame.Server
             switch (to)
             {
                 case Zone.Trash:
-                    Model.Trash.Add(id);
+                    Model.Trash.Add(instance);
                     break;
 
                 case Zone.Hand:
-                    Model.Hands[player].Add(id);
+                    Model.Hands[player].Add(instance);
                     break;
 
                 case Zone.Discard:
-                    Model.Discards[player].Insert(0, id);
+                    Model.Discards[player].Insert(0, instance);
                     break;
                 
                 case Zone.SupplyAvailable:
-                    Model.Supply[id]++;
+                    Model.Supply[instance.Id]++; // actual card is lost
                     break;
 
                 case Zone.DeckTop1:
                 case Zone.DeckTop2:
                 case Zone.DeckTop3:
                 case Zone.DeckTop4:
-                    Model.Decks[player].Insert(0, id);
+                    Model.Decks[player].Insert(0, instance);
                     break;
 
                 case Zone.InPlay:
-                    Model.PlayedCards.Add(id);
+                    Model.PlayedCards.Add(instance);
                     break;
 
                 case Zone.Nowhere:
-                    if (nowhere != null) throw new CommandException($"Card {nowhere} has been lost.");
-                    nowhere = id;
+                    if (nowhere.HasValue) throw new CommandException($"Card {nowhere} has been lost.");
+                    nowhere = instance;
                     break;
 
                 default:
                     throw new Exception($"Unknown zone {to}");
             }
+        }
+
+        internal void MoveCard(string player, Instance instance, Zone from, Zone to)
+        {
+            MoveCard(player, instance.Id, from, to);
         }
 
         internal int CountCards(string player, Zone source)
@@ -781,46 +794,67 @@ namespace Cardgame.Server
 
             return source switch 
             {
-                Zone.DeckTop1 => Model.Decks[player].Take(1).ToArray(),
-                Zone.DeckTop2 => Model.Decks[player].Take(2).ToArray(),
-                Zone.DeckTop3 => Model.Decks[player].Take(3).ToArray(),
-                Zone.DeckTop4 => Model.Decks[player].Take(4).ToArray(),
-                Zone.Discard => Model.Discards[player].ToArray(),
-                Zone.Hand => Model.Hands[player].ToArray(),
-                Zone.InPlay => Model.PlayedCards.ToArray(),
+                Zone.DeckTop1 => Model.Decks[player].Take(1).Names(),
+                Zone.DeckTop2 => Model.Decks[player].Take(2).Names(),
+                Zone.DeckTop3 => Model.Decks[player].Take(3).Names(),
+                Zone.DeckTop4 => Model.Decks[player].Take(4).Names(),
+                Zone.Discard => Model.Discards[player].Names(),
+                Zone.Hand => Model.Hands[player].Names(),
+                Zone.InPlay => Model.PlayedCards.Names(),
                 Zone.SupplyAvailable => Model.Supply.Keys.Where(id => Model.Supply[id] > 0).ToArray(),
                 Zone.SupplyEmpty => Model.Supply.Keys.Where(id => Model.Supply[id] == 0).ToArray(),
                 Zone.SupplyAll => Model.Supply.Keys.ToArray(),
-                Zone.Trash => Model.Trash.ToArray(),
+                Zone.Trash => Model.Trash.Names(),
                 Zone other => throw new CommandException($"Unknown card zone {other}")
             };
         }
 
-        internal void SetCards(string player, string[] cards, Zone destination)
+        internal void SetCardOrder(string player, string[] cards, Zone destination)
         {
             switch (destination)
             {
                 case Zone.DeckTop1:
-                    Model.Decks[player][0] = cards[0];
                     break;
 
                 case Zone.DeckTop2:
-                    Model.Decks[player][0] = cards[0];
-                    Model.Decks[player][1] = cards[1];
+                    var found2 = new HashSet<Instance>();
+                    var instance20 = Model.Decks[player].Take(2).First(i => i.Id == cards[0] && !found2.Contains(i)); found2.Add(instance20);
+                    var instance21 = Model.Decks[player].Take(2).First(i => i.Id == cards[1] && !found2.Contains(i)); found2.Add(instance21);
+                    Model.Decks[player][0] = instance20;
+                    Model.Decks[player][1] = instance21;
                     break;
 
                 case Zone.DeckTop3:
-                    Model.Decks[player][0] = cards[0];
-                    Model.Decks[player][1] = cards[1];
+                    var found3 = new HashSet<Instance>();
+                    var instance30 = Model.Decks[player].Take(3).First(i => i.Id == cards[0] && !found3.Contains(i)); found3.Add(instance30);
+                    var instance31 = Model.Decks[player].Take(3).First(i => i.Id == cards[1] && !found3.Contains(i)); found3.Add(instance31);
+                    var instance32 = Model.Decks[player].Take(3).First(i => i.Id == cards[2] && !found3.Contains(i)); found3.Add(instance32);
+                    Model.Decks[player][0] = instance30;
+                    Model.Decks[player][1] = instance31;
+                    Model.Decks[player][2] = instance32;
                     break;
 
                 case Zone.DeckTop4:
-                    Model.Decks[player][0] = cards[0];
-                    Model.Decks[player][1] = cards[1];
+                    var found4 = new HashSet<Instance>();
+                    var instance40 = Model.Decks[player].Take(4).First(i => i.Id == cards[0] && !found4.Contains(i)); found4.Add(instance40);
+                    var instance41 = Model.Decks[player].Take(4).First(i => i.Id == cards[1] && !found4.Contains(i)); found4.Add(instance41);
+                    var instance42 = Model.Decks[player].Take(4).First(i => i.Id == cards[2] && !found4.Contains(i)); found4.Add(instance42);
+                    var instance43 = Model.Decks[player].Take(4).First(i => i.Id == cards[2] && !found4.Contains(i)); found4.Add(instance43);
+                    Model.Decks[player][0] = instance40;
+                    Model.Decks[player][1] = instance41;
+                    Model.Decks[player][2] = instance42;
+                    Model.Decks[player][3] = instance43;
                     break;
 
                 case Zone.Discard:
-                    Model.Discards[player] = cards.ToList();
+                    var temp = Model.Discards[player].ToList();
+                    Model.Discards[player].Clear();
+                    foreach (var card in cards)
+                    {
+                        var instance = temp.First(i => i.Id == card);
+                        temp.Remove(instance);
+                        Model.Discards[player].Add(instance);
+                    }
                     break;
 
                 default:
@@ -845,8 +879,8 @@ namespace Cardgame.Server
 
             Model.ChoosingPlayers.Push(player);           
              
-            inputTCS = new TaskCompletionSource<string>();            
-            Model.Seq++; ActionUpdated?.Invoke();
+            inputTCS = new TaskCompletionSource<string>();
+            Notify();
             var output = await inputTCS.Task;
 
             Model.ChoosingPlayers.Pop();

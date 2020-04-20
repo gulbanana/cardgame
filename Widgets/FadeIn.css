@@ -1,0 +1,7 @@
+.fade-in {
+    transition: opacity 1s;
+}
+.fade-in--new {
+    transition: initial;
+    opacity: 0.25;
+}

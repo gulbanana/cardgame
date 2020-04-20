@@ -1,9 +1,7 @@
 @inject IUserSession Session
 @code {
-    [CascadingParameter] public GameModel Model { get; set; }
+    [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; }
-    bool IsActivePlayer => Session.Username.Equals(Model.ActivePlayer);
-    string PlayerOrSpectatee => Model.Players.Contains(Session.Username) ? Session.Username : Model.ActivePlayer;
 }
 
 <div class="game-view">
@@ -33,7 +31,7 @@
     <GridSeparator Area="left-bar"/>
 
     <div style="grid-area: board" class="game-view__board">
-        <div style="grid-area: kingdom" class="game-view__kingdom">
+        <div class="game-view__kingdom">
             <div class="game-view__trash">
                 <SpecialCard Name="trash" Stack="@(!Model.IsStarted ? 1 : Model.Trash.Count + 1)" />
             </div>
@@ -104,7 +102,7 @@
             }
         </div>
 
-        <div style="grid-area: actions">
+        <div>
             @if (!Model.IsStarted)
             {   
                 <ConfigView Set="@Model.KingdomSet" Preset="@Model.KingdomPreset" />
@@ -115,68 +113,7 @@
             }
         </div>
 
-        <div style="grid-area: deck">
-            @if (Model.IsStarted && Model.Decks[PlayerOrSpectatee].Count == 0)
-            {
-                <SpecialCard Name="blank" Stack="1" />
-            }
-            else
-            {                
-                <SpecialCard Name="card-back" Stack="@(!Model.IsStarted ? 10 : Model.Decks[PlayerOrSpectatee].Count)" />
-            }            
-        </div>
-
-        <div style="grid-area: hand; overflow-x: auto;">
-            <GappedRow>
-                @if (Model.IsStarted)
-                {
-                    var hand = Model.Hands[PlayerOrSpectatee].AsEnumerable();
-                    if (Model.SettingKeepHandSorted[PlayerOrSpectatee])
-                    {
-                        hand = hand.OrderBy(card => All.Cards.ByName(card).SortByTypes());
-                    }
-                    foreach (var id in hand)
-                    {
-                        var card = All.Cards.ByName(@id);
-                        var isEnabled = IsActivePlayer &&
-                            !Model.IsFinished &&
-                            !Model.ExecutingBackgroundTasks &&
-                            (card.Types.Contains(CardType.Treasure) ||
-                             (card.Types.Contains(CardType.Action) && !Model.BuyPhase));
-                        <ActiveCard Model="@card" 
-                                    Enabled="@isEnabled" 
-                                    Action="@(() => Dispatch(new PlayCardCommand { Id = @id }))"/>
-                    }
-                }
-                else if (Model.Players.Contains(Session.Username)) // the hand you might someday have
-                {
-                    <SpecialCard Name="card-back" />
-                    <SpecialCard Name="card-back" />
-                    <SpecialCard Name="card-back" />
-                    <SpecialCard Name="card-back" />
-                    <SpecialCard Name="card-back" />
-                }
-            </GappedRow>
-        </div>
-            
-        <div style="grid-area: discard">
-            @if (Model.IsStarted)
-            {
-                var discard = Model.Discards[PlayerOrSpectatee];
-                if (discard.Any())
-                {
-                    <ActiveCard @key="discard.First()" Id="@discard.First()" Stack="@discard.Count" OverrideColour="special" />
-                }
-                else
-                {
-                    <SpecialCard Name="blank" />
-                }
-            }
-            else
-            {
-                <SpecialCard Name="blank" />
-            }
-        </div>
+        <DominionView />
     </div>
 
     <GridSeparator Area="right-bar"/>

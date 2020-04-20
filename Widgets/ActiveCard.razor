@@ -1,6 +1,6 @@
 @inject IJSRuntime JS
 @code {
-    [CascadingParameter] public GameModel Game { get; set; }
+    [CascadingParameter(Name = "Current")] public GameModel Game { get; set; }
     [Parameter] public string Id { get; set; }
     [Parameter] public bool Enabled { get; set; }
     [Parameter] public Action Action { get; set; }

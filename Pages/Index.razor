@@ -19,7 +19,7 @@
 
 <h3>Current games</h3>
 <Subscribed Endpoint="@Lobby">
-    @foreach (var game in context)
+    @foreach (var game in context.Current)
     {    
         <p @key="game.Name">
             <a href="/game/@game.Name">@game.Name</a> - @(game.Status).<br>

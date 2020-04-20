@@ -28,13 +28,13 @@ namespace Cardgame.Shared
         // game state
         public string ActivePlayer { get; set; }
         public Dictionary<string, int> Supply { get; set; }
-        public Dictionary<string, List<string>> Hands { get; set; }
-        public Dictionary<string, List<string>> Decks { get; set; }
-        public Dictionary<string, List<string>> Discards { get; set; }
-        public List<string> Trash { get; set; }
+        public Dictionary<string, List<Instance>> Hands { get; set; }
+        public Dictionary<string, List<Instance>> Decks { get; set; }
+        public Dictionary<string, List<Instance>> Discards { get; set; }
+        public List<Instance> Trash { get; set; }
 
-        // turn state
-        public List<string> PlayedCards { get; set; }
+        // turn state    
+        public List<Instance> PlayedCards { get; set; }
         public List<string> ActiveEffects { get; set; }
         public bool ExecutingBackgroundTasks { get; set; }
         public bool BuyPhase { get; set; }
@@ -45,7 +45,6 @@ namespace Cardgame.Shared
 
         // interrupt state
         public HashSet<string> PreventedAttacks { get; set; }
-
         public Stack<string> ChoosingPlayers { get; set; }
         public string ChoicePrompt { get; set; }
         public ChoiceType ChoiceType { get; set; }

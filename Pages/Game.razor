@@ -30,10 +30,12 @@
     }
 }
 
-<Subscribed Endpoint="@game" IsNewer="@IsNewer">
-    <CascadingValue Value="@context">
-        <CascadingValue Value="@(new Executor(c => OnExecute(context, c)))">
-            <GameView />
+<Subscribed Endpoint="@game" IsNewer="@IsNewer">    
+    <CascadingValue Name="Previous" Value="@context.Previous">
+        <CascadingValue Name="Current" Value="@context.Current">
+            <CascadingValue Value="@(new Executor(c => OnExecute(context.Current, c)))">
+                <GameView />
+            </CascadingValue>
         </CascadingValue>
     </CascadingValue>
 </Subscribed>

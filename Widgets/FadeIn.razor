@@ -1,0 +1,16 @@
+@inject IJSRuntime JS
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool IsNew { get; set; }
+    private ElementReference wrapper;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (IsNew)
+        {
+            await JS.InvokeVoidAsync("FadeIn.removeClass", wrapper);
+        }
+    }
+}
+
+<div @ref="wrapper" class="fade-in@(IsNew ? " fade-in--new" : "")">@ChildContent</div>

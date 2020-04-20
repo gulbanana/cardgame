@@ -3,15 +3,19 @@
 @implements IDisposable
 @code {
     [Parameter] public IEndpoint<T> Endpoint { get; set; }
-    [Parameter] public RenderFragment<T> ChildContent { get; set; }
+    [Parameter] public RenderFragment<(T Previous, T Current)> ChildContent { get; set; }
     [Parameter] public Func<T, T, bool> IsNewer { get; set; }
     private ConcurrentQueue<T> updates;
+    private T lastModel;
     private T currentModel;
+    private (T, T) updatePair;
 
     protected override void OnInitialized()
     {        
         updates = new ConcurrentQueue<T>();
-        currentModel = Endpoint.Subscribe(OnUpdate);
+        lastModel = Endpoint.Subscribe(OnUpdate);
+        currentModel = lastModel;
+        updatePair = (lastModel, currentModel);
     }
 
     private void OnUpdate(T newModel)
@@ -28,7 +32,12 @@
                     currentModel = updatedModel;
                 }
             }
-            if (any) StateHasChanged();
+            if (any) 
+            {
+                updatePair = (lastModel, currentModel);
+                StateHasChanged();
+                lastModel = currentModel;
+            }
         });
     }
 
@@ -38,4 +47,4 @@
     }
 }
 
-@ChildContent(currentModel)
+@ChildContent(updatePair)

@@ -52,6 +52,11 @@ namespace Cardgame.All
             }
         }
 
+        public static ICard ByName(Instance instance)
+        {
+            return ByName(instance.Id);
+        }
+
         public static string GetColor(CardType type)
         {
             switch (type)

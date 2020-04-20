@@ -1,0 +1,78 @@
+@inject IUserSession Session
+@code {
+    [CascadingParameter(Name = "Current")] public GameModel CurrentModel { get; set; }
+    [CascadingParameter(Name = "Previous")] public GameModel PreviousModel { get; set; }
+    [CascadingParameter] public Executor Dispatch { get; set; } 
+    bool IsActivePlayer => Session.Username.Equals(CurrentModel.ActivePlayer);
+    string PlayerOrSpectatee => CurrentModel.Players.Contains(Session.Username) ? Session.Username : CurrentModel.ActivePlayer;
+}
+
+<div class="dominion-view">
+    <div>
+        @if (CurrentModel.IsStarted && CurrentModel.Decks[PlayerOrSpectatee].Count == 0)
+        {
+            <SpecialCard Name="blank" Stack="1" />
+        }
+        else
+        {                
+            <SpecialCard Name="card-back" Stack="@(!CurrentModel.IsStarted ? 10 : CurrentModel.Decks[PlayerOrSpectatee].Count)" />
+        }            
+    </div>
+
+    <div style="overflow-x: auto;">
+        <GappedRow>
+            @if (CurrentModel.IsStarted)
+            {
+                var hand = CurrentModel.Hands[PlayerOrSpectatee].AsEnumerable();
+                if (CurrentModel.SettingKeepHandSorted[PlayerOrSpectatee])
+                {
+                    hand = hand.OrderBy(card => All.Cards.ByName(card).SortByTypes());
+                }
+
+                foreach (var instance in hand)
+                {                  
+                    var isNew = !PreviousModel.IsStarted || !PreviousModel.Hands[PlayerOrSpectatee].Contains(instance);                    
+                    var card = All.Cards.ByName(instance);
+                    var isEnabled = IsActivePlayer &&
+                        !CurrentModel.IsFinished &&
+                        !CurrentModel.ExecutingBackgroundTasks &&
+                        (card.Types.Contains(CardType.Treasure) ||
+                            (card.Types.Contains(CardType.Action) && !CurrentModel.BuyPhase));
+
+                    <FadeIn @key="instance.ToString()" IsNew="@isNew">
+                        <ActiveCard Model="@card" 
+                                    Enabled="@isEnabled" 
+                                    Action="@(() => Dispatch(new PlayCardCommand { Id = @instance.Id }))"/>
+                    </FadeIn>
+                }
+            }
+            else if (CurrentModel.Players.Contains(Session.Username)) // the hand you might someday have
+            {
+                <SpecialCard Name="card-back" />
+                <SpecialCard Name="card-back" />
+                <SpecialCard Name="card-back" />
+                <SpecialCard Name="card-back" />
+                <SpecialCard Name="card-back" />
+            }
+        </GappedRow>
+    </div>
+        
+    <div>
+        @if (CurrentModel.IsStarted)
+        {
+            var discard = CurrentModel.Discards[PlayerOrSpectatee];
+            if (discard.Any())
+            {
+                <ActiveCard @key="discard.First()" Id="@discard.First().Id" Stack="@discard.Count" OverrideColour="special" />
+            }
+            else
+            {
+                <SpecialCard Name="blank" />
+            }
+        }
+        else
+        {
+            <SpecialCard Name="blank" />
+        }
+    </div>
+</div>

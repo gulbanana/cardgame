@@ -29,7 +29,7 @@
             <Content>
                 @Prefix<span class="player-link 
                 @(Name.Equals(Session.Username) ? "player-link--you" : "")
-                @(!context.Contains(Name) ? "player-link--disconnected" : "")
+                @(!context.Current.Contains(Name) ? "player-link--disconnected" : "")
                 @(!Game.IsFinished && Game.ActivePlayer == Name ? "player-link--active" : "")
                 ">@Text</span>@Suffix
             </Content>
@@ -46,7 +46,7 @@ else
     <Subscribed Endpoint="@UserEndpoint">
         @Prefix<span class="player-link 
         @(Name.Equals(Session.Username) ? "player-link--you" : "")
-        @(!context.Contains(Name) ? "player-link--disconnected" : "")
+        @(!context.Current.Contains(Name) ? "player-link--disconnected" : "")
         ">@Text</span>@Suffix
     </Subscribed>
 }

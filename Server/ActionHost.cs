@@ -370,7 +370,7 @@ namespace Cardgame.Server
                 throw new Exception("reordered cards are not the correct set");
             }
 
-            engine.SetCards(Player, cards, @in);
+            engine.SetCardOrder(Player, cards, @in);
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
@@ -556,8 +556,8 @@ namespace Cardgame.Server
         // this is a special case used by Secret Passage
         void IActionHost.InsertIntoDeck(string card, int position)
         {
-            engine.Model.Hands[Player].Remove(card);
-            engine.Model.Decks[Player].Insert(position, card);
+            var instance = engine.Model.Hands[Player].Extract(card);
+            engine.Model.Decks[Player].Insert(position, instance);
             
             if (position == 0)
             {

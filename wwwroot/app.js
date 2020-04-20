@@ -6,6 +6,13 @@ var ActiveCard;
     }
     ActiveCard.scrollIntoView = scrollIntoView;
 })(ActiveCard || (ActiveCard = {}));
+var FadeIn;
+(function (FadeIn) {
+    function removeClass(element) {
+        element.classList.remove("fade-in--new");
+    }
+    FadeIn.removeClass = removeClass;
+})(FadeIn || (FadeIn = {}));
 var VerticalLog;
 (function (VerticalLog) {
     function scrollToBottom(content) {

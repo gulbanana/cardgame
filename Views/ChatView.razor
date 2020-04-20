@@ -1,6 +1,6 @@
 @inject IUserSession Session
 @code {
-    [CascadingParameter] public GameModel Model { get; set; }
+    [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; }
     string newMessage;
 
