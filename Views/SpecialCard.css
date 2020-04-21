@@ -1,6 +1,6 @@
 .special-card {
     width: calc(var(--local-scale) * var(--card-width));
-    border: solid var(--card-border-color);
+    border-style: solid;
     border-width: calc(var(--local-scale) * 2px);
     display: flex;
     flex-direction: column;

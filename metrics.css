@@ -1,6 +1,9 @@
 ﻿:root {
     --std-gap: 10px;
 
+    --slow-animation-duration: 0.8s;
+    --fast-animation-duration: 0.4s;
+
     --card-width: 100px;
     --card-height: 161px;
     --card-header: 17px;

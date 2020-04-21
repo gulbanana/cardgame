@@ -8,9 +8,7 @@
 
     --card-text-background: rgb(166, 170, 169);
 
-    --card-border-color: black;
-
-    --inactive-color: black;
+    --inactive-color: rgb(32, 32, 32);
     --active-color: rgb(0, 128, 255);
     --active-focus-color: blue;
 

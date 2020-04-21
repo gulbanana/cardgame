@@ -1,5 +1,5 @@
 .fade-in {
-    transition: opacity 1s;
+    transition: opacity var(--slow-animation-duration);
 }
 .fade-in--new {
     transition: initial;

@@ -10,7 +10,7 @@
     <WithTooltip>
         <Content>
             <Stacked Size="@Stack" Colour="special" Half="@Half">
-                <div class="special-card">
+                <div class="special-card active-border">
                     @if (Half)
                     {
                         <img class="special-card__1x" src="/@(Name)-half.jpg" />
@@ -25,7 +25,7 @@
         <Tooltip>
             <Magnify>
                 <StackHeader Size="@TrueCount">
-                    <div class="special-card">
+                    <div class="special-card active-border">
                         <img class="special-card__2x" src="/@(Name)-full.jpg" />
                     </div>
                 </StackHeader>
@@ -36,7 +36,7 @@
 else
 {
     <Stacked Size="@Stack" Colour="special">
-        <div class="special-card">
+        <div class="special-card active-border">
             <img class="special-card__2x" src="/@(Name)-full.jpg" />
         </div>
     </Stacked>

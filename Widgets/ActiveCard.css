@@ -1,14 +1,15 @@
 .active-card {
-    --card-border-color: var(--inactive-color);
     position: relative;
 }
 
 .active-card--enabled {
-    --card-border-color: var(--active-color);
     cursor: pointer;
 }
 
-.active-card--enabled:hover {
-    --card-border-color: var(--active-focus-color);
-    cursor: pointer;
+.active-card--enabled .active-border {
+    border-color: var(--active-color);
+}
+
+.active-card--enabled:hover .active-border {
+    border-color: var(--active-focus-color);
 }

@@ -1,4 +1,4 @@
-.card-view {
+.kingdom-card {
     --local-card-width: calc(var(--local-scale) * var(--card-width));
     --local-card-border-width: calc(var(--local-scale) * var(--card-border-width));
     --local-card-border-half: calc(var(--local-card-border-width) / 2);
@@ -14,7 +14,7 @@
     --text-scale: var(--local-scale);
     --text-image-align: bottom;
     width: var(--local-card-width);
-    border: solid var(--card-border-color);
+    border-style: solid;
     border-width: var(--local-card-border-width);
     display: flex;
     flex-direction: column;
@@ -22,7 +22,7 @@
     font-family: var(--card-body-family);
 }
 
-.card-view img {
+.kingdom-card img {
     max-width: calc(var(--local-card-width) - calc(var(--local-card-border-width) * 2));
 }
 

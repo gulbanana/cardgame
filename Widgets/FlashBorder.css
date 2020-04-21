@@ -1,6 +1,6 @@
 .flash-border {
     display: flex; /* tight wrapper */
-    transition: border-color, background-color 1s;
+    transition: border-color, background-color var(--slow-animation-duration);
     border: 4px solid transparent;
     border-radius: 4px;
     background: transparent;

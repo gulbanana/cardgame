@@ -6,7 +6,7 @@
 
 @if (Action == null)
 {
-    <input class="active-button @(Enabled ? "active-button--enabled" : "")" 
+    <input class="active-button active-border @(Enabled ? "active-button--enabled" : "")" 
         type="submit" 
         value="@Label" 
         @onclick="@Action"
@@ -14,7 +14,7 @@
 }
 else
 {
-    <button @key="Label" class="active-button @(Enabled ? "active-button--enabled" : "")" 
+    <button @key="Label" class="active-button active-border @(Enabled ? "active-button--enabled" : "")" 
         type="submit" 
         @onclick="@Action"
         disabled="@(!Enabled)">

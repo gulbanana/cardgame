@@ -1,0 +1,4 @@
+.active-border {
+    border-color: var(--inactive-color);
+    transition: border-color var(--fast-animation-duration);
+}
