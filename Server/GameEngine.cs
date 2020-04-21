@@ -231,6 +231,20 @@ namespace Cardgame.Server
                                 {
                                     await PlayCardAsync(1, username, card.Name, Zone.Hand);
                                 }
+
+                                var sum = cards.Select(card => card.GetValue(Model)).Sum();
+                                LogEvent($@"<lines>
+                                    <spans>
+                                        <player>{username}</player>
+                                        <if you='play' them='plays'>{username}</if>
+                                        {cardList}
+                                    </spans>
+                                    <spans>
+                                        <indent level='1' />
+                                        {LogVerbInitial(username, "get", "gets", "getting")}
+                                        <run>+${sum}.</run>
+                                    </spans>
+                                </lines>");
                             }
                         });
                     }
@@ -242,22 +256,22 @@ namespace Cardgame.Server
                             {
                                 await PlayCardAsync(1, username, card.Name, Zone.Hand);
                             }
+
+                            var sum = cards.Select(card => card.GetValue(Model)).Sum();
+                            LogEvent($@"<lines>
+                                <spans>
+                                    <player>{username}</player>
+                                    <if you='play' them='plays'>{username}</if>
+                                    {cardList}
+                                </spans>
+                                <spans>
+                                    <indent level='1' />
+                                    {LogVerbInitial(username, "get", "gets", "getting")}
+                                    <run>+${sum}.</run>
+                                </spans>
+                            </lines>");
                         });
                     }
-
-                    var sum = cards.Select(card => card.GetValue(Model)).Sum();
-                    LogEvent($@"<lines>
-                        <spans>
-                            <player>{username}</player>
-                            <if you='play' them='plays'>{username}</if>
-                            {cardList}
-                        </spans>
-                        <spans>
-                            <indent level='1' />
-                            {LogVerbInitial(username, "get", "gets", "getting")}
-                            <run>+${sum}.</run>
-                        </spans>
-                    </lines>");
 
                     break;
 
