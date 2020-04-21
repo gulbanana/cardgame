@@ -28,6 +28,7 @@
     display: grid;
     grid-template-columns: 50% 50%;
     grid-template-rows: auto auto;
+    grid-column-gap: var(--std-gap);
     width: 100%;
 }
 
