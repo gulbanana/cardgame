@@ -22,7 +22,7 @@
     @foreach (var game in context.Current)
     {    
         <p @key="game.Name">
-            <a href="/game/@game.Name">@game.Name</a> - @(game.Status).<br>
+            <ActiveLink Href="@("/game/" + game.Name)">@game.Name</ActiveLink> - @(game.Status).<br>
             @for (var i = 0; i < game.Players.Length; i++)
             {                
                 var player = game.Players[i];

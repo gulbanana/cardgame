@@ -6,7 +6,7 @@
 
 <div class="game-view">
     <div style="grid-area: nav">
-        <a href="/">&lt; games</a> 
+        <ActiveLink Href="/">&lt; games</ActiveLink> 
         @if (Model.Players.Contains(Session.Username))
         {
             <text>Playing as <PlayerLink Name="@Session.Username" Suffix="." /></text>
