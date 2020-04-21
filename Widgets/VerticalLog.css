@@ -1,6 +1,7 @@
 .vertical-log {
     height: 100%;
     overflow-y: auto;
+    scroll-behavior: smooth;
 }
 
 .vertical-log__content {
