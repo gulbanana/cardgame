@@ -1,0 +1,13 @@
+.flash-border {
+    display: flex; /* tight wrapper */
+    transition: border-color, background-color 1s;
+    border: 4px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+}
+
+.flash-border--new {
+    opacity: 0.25;
+    border-color: var(--active-color);
+    background-color: var(--active-color);
+}

@@ -13,6 +13,13 @@ var FadeIn;
     }
     FadeIn.removeClass = removeClass;
 })(FadeIn || (FadeIn = {}));
+var FlashBorder;
+(function (FlashBorder) {
+    function removeClass(element) {
+        element.classList.remove("flash-border--new");
+    }
+    FlashBorder.removeClass = removeClass;
+})(FlashBorder || (FlashBorder = {}));
 var VerticalLog;
 (function (VerticalLog) {
     function scrollToBottom(content) {

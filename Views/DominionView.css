@@ -1,4 +1,13 @@
 .dominion-view {
     display: grid;
     grid-template-columns: auto 1fr auto;
+    --std-gap: 4px; /* due to FlashBorder taking up space */
+}
+
+.dominion-view__hscroll {
+    overflow-x: auto;
+}
+
+.dominion-view__pushdown {
+    margin: 4px 0;
 }

@@ -8,7 +8,7 @@
 }
 
 <div class="dominion-view">
-    <div>
+    <div class="dominion-view__pushdown">
         @if (CurrentModel.IsStarted && CurrentModel.Decks[PlayerOrSpectatee].Count == 0)
         {
             <SpecialCard Name="blank" Stack="1" />
@@ -19,7 +19,7 @@
         }            
     </div>
 
-    <div style="overflow-x: auto;">
+    <div class="dominion-view__hscroll">
         <GappedRow>
             @if (CurrentModel.IsStarted)
             {
@@ -39,25 +39,26 @@
                         (card.Types.Contains(CardType.Treasure) ||
                             (card.Types.Contains(CardType.Action) && !CurrentModel.BuyPhase));
 
-                    <FadeIn @key="instance.ToString()" IsNew="@isNew">
+                    <FlashBorder @key="instance.ToString()" IsNew="@isNew">
                         <ActiveCard Model="@card" 
                                     Enabled="@isEnabled" 
                                     Action="@(() => Dispatch(new PlayCardCommand { Id = @instance.Id }))"/>
-                    </FadeIn>
+                    </FlashBorder>
                 }
             }
             else if (CurrentModel.Players.Contains(Session.Username)) // the hand you might someday have
             {
-                <SpecialCard Name="card-back" />
-                <SpecialCard Name="card-back" />
-                <SpecialCard Name="card-back" />
-                <SpecialCard Name="card-back" />
-                <SpecialCard Name="card-back" />
+                @for (var i = 0; i < 5; i++)
+                {
+                    <FlashBorder IsNew="false">
+                        <SpecialCard Name="card-back" />
+                    </FlashBorder>    
+                }
             }
         </GappedRow>
     </div>
         
-    <div>
+    <div class="dominion-view__pushdown">
         @if (CurrentModel.IsStarted)
         {
             var discard = CurrentModel.Discards[PlayerOrSpectatee];
