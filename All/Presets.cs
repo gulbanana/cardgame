@@ -57,5 +57,41 @@ namespace Cardgame.All
                 });
             }
         }
+
+        public static IReadOnlyDictionary<string, IReadOnlyDictionary<string, string[]>> GroupedBySet(CardSet set)
+        {
+            string FormatSet(CardSet s)
+            {
+                return s.ToString().Replace("1st", "").Replace("2nd", "");
+            }
+
+            string FormatSets(CardSet[] sets)
+            {
+                if (sets.Length == 1)
+                {
+                    return $"{FormatSet(sets[0])} only";
+                }
+                else
+                {
+                    return string.Join(" & ", sets.OrderBy(s => s != set).ThenBy(s => s).Select(FormatSet));
+                }
+            }
+
+            if (!all.Any(t => t.sets.Contains(set)))
+            {
+                return new Dictionary<string, IReadOnlyDictionary<string, string[]>>();
+            }
+            else
+            {
+                return all
+                    .Where(t => t.sets.Contains(set))
+                    .GroupBy(t => FormatSets(t.sets))
+                    .ToDictionary(g => g.Key, g => g.ToDictionary(t => t.name, t =>
+                    {
+                        var byCost = t.cards.Select(All.Cards.ByName).OrderBy(card => card.GetCost(Array.Empty<IModifier>())).Select(card => card.Name).ToArray();
+                        return new[] { byCost[0], byCost[2], byCost[4], byCost[6], byCost[8], byCost[1], byCost[3], byCost[5], byCost[7], byCost[9] };
+                    }) as IReadOnlyDictionary<string, string[]>);
+            }
+        }
     }
 }

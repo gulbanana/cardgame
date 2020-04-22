@@ -75,9 +75,14 @@
             </select>
             <span>Preset:</span>
             <select disabled="@(!Model.Players.Contains(Session.Username))" @bind="ConfigPreset">
-                @foreach (var preset in All.Presets.BySet(configSet).Keys)
+                @foreach (var presetGroup in All.Presets.GroupedBySet(configSet))
                 {
-                    <option @key="preset" value="@preset">@preset</option>
+                    <optgroup label="@presetGroup.Key">
+                        @foreach (var preset in presetGroup.Value.Keys)
+                        {
+                            <option @key="preset" value="@preset">@preset</option>
+                        }
+                    </optgroup>
                 }
             </select>
         </div>
