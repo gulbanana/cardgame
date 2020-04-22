@@ -26,4 +26,6 @@
     --active-focus-color: blue;
 
     --player-link-color: rgb(145, 148, 175);
+
+    --overlay-color: rgba(255, 255, 255, 0.75);
 }

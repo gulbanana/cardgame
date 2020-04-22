@@ -2,31 +2,35 @@
 @code {
     [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; }
+    [Parameter] public string Name { get; set; }
 }
 
-<div class="game-view">
-    <div style="grid-area: nav">
-        <ActiveLink Href="/">&lt; games</ActiveLink> 
-        @if (Model.Players.Contains(Session.Username))
+<div class="game-view">   
+    <div style="grid-area: stats" class="game-view__stats">
+        <span>
+            <ActiveLink Href="/">&lt; games</ActiveLink> |
+            <ActiveLink Href="@("/game/" + Name)">@Name</ActiveLink> |
+            @(Model.IsStarted ? (Model.IsFinished ? "Game finished." : "Game in progress.") : "Waiting to start.")
+        </span>
+        @if (Model.Players.Any())
         {
-            <text>Playing as <PlayerLink Name="@Session.Username" Suffix="." /></text>
+            @foreach (var player in Model.Players)
+            {       
+                var score = All.Score.Calculate(Model, player).Total;
+                var text = $"<sym prefix='({score}' suffix=')'>vp</sym>";           
+                <span>
+                        <PlayerLink @key="@player" Name="@player" />
+                        <RichText @key="player+score" Model="@text" />
+                </span>
+            }
         }
         else
         {
-            <text>Spectating as <PlayerLink Name="@Session.Username" Suffix="." /></text>
+            <span>@(Model.IsStarted ? "Game in progress." : "Waiting to start.") No players.</span>
         }
     </div>
 
-    <div style="grid-area: event-log" class="game-view__event-log">
-        <VerticalLog>
-            @foreach (var e in Model.EventLog)
-            {
-                <p>
-                    <RichText @key="e.GetHashCode()" Model="@e"/>
-                </p>
-            }
-        </VerticalLog>
-    </div>
+    <ChatView />
 
     <GridSeparator Area="left-bar"/>
 
@@ -49,34 +53,24 @@
 
     <GridSeparator Area="right-bar"/>
 
-    <div style="grid-area: status" class="game-view__status">
-        @if (Model.Players.Any())
+    <div style="grid-area: mats" class="game-view__mats">
+        <MatView Name="trash" Cards="@Model.Trash" />
+        @if (Model.KingdomHasSeasideMats)
         {
-            <span>
-                @(Model.IsStarted ? (Model.IsFinished ? "Game finished." : "Game in progress.") : "Waiting to start.") Players:
-                @for (var i = 0; i < Model.Players.Length; i++)
-                {                    
-                    var score = All.Score.Calculate(Model, Model.Players[i]).Total;                    
-                    if (i < Model.Players.Length - 1)
-                    {
-                        var text = $"<sym prefix='({score}' suffix='),'>vp</sym>";
-                        <PlayerLink @key="@Model.Players[i]" Name="@Model.Players[i]" />
-                        <RichText @key="Model.Players[i]+score" Model="@text" />
-                    }
-                    else
-                    {
-                        var text = $"<sym prefix='({score}' suffix=').'>vp</sym>";
-                        <PlayerLink @key="@Model.Players[i]" Name="@Model.Players[i]" />
-                        <RichText @key="Model.Players[i]+score" Model="@text" />
-                    }
-                }
-            </span>
-        }
-        else
-        {
-            <span>@(Model.IsStarted ? "Game in progress." : "Waiting to start.") No players.</span>
+            <MatView Name="island" />
+            <MatView Name="pirate-ship" />
+            <MatView Name="native-village" />
         }
     </div>
 
-    <ChatView />
+    <div style="grid-area: event-log" class="game-view__event-log">
+        <VerticalLog>
+            @foreach (var e in Model.EventLog)
+            {
+                <p>
+                    <RichText @key="e.GetHashCode()" Model="@e"/>
+                </p>
+            }
+        </VerticalLog>
+    </div>
 </div>

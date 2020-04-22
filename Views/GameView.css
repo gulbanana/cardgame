@@ -4,18 +4,14 @@
     display: grid;
     --board-width: calc(var(--card-width) * 7 + (var(--std-gap) * 6)); /* 760px */
     --board-height: 745px;
-    grid-template-areas: 'nav       left-bar board right-bar status' 
+    --mat-height: 205px;
+    grid-template-areas: 'stats     left-bar board right-bar mats' 
+                         'chat-log  left-bar board right-bar mats'
                          'chat-log  left-bar board right-bar event-log';
     grid-template-columns: minmax(350px, 1fr) 2px var(--board-width) 2px minmax(250px, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
     grid-column-gap: var(--std-gap);
     --text-image-align: bottom;
-}
-
-.game-view__status {
-    display: flex;
-    justify-content: flex-end;
-    align-items: baseline;
 }
 
 .game-view__board {
@@ -23,22 +19,32 @@
     grid-template-rows: auto 1fr auto;
 }
 
+.game-view__stats {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+}
+
+.game-view__mats {
+    display: flex;
+}
+
 .game-view__event-log p:last-child {
     margin-bottom: 4px;
 }
 
-@media (min-width: calc(760px + 391px)) and (max-width: calc(760px + 660px)) {
+@media (min-width: calc(760px + 391px)) and (max-width: calc(760px + 820px)) {
     .game-view {
-        grid-template-areas: 'nav       left-bar  board' 
-                             'status    left-bar  board' 
+        grid-template-areas: 'mats      left-bar  board' 
+                             'stats     left-bar  board' 
                              'event-log right-bar board'
                              'chat-log  right-bar board';
         grid-template-columns: minmax(350px, 1fr) 2px var(--board-width);
         grid-template-rows: auto auto minmax(0, 1fr) auto;
     }
 
-    .game-view__status {
-        justify-content: flex-start;
+    .game-view__mats {
+        justify-content: flex-end;
     }
 
     .chat-view {
@@ -52,14 +58,19 @@
 
 @media (max-width: calc(760px + 390px)) {
     .game-view {
-        grid-template-areas: 'nav       nav      status    status'
-                             'chat-log  chat-log event-log event-log'
-                             '.         .        .         .'
-                             'left-bar  board    board     right-bar' 
-                             ;
-        grid-template-columns: 1fr calc(var(--board-width)/2) calc(var(--board-width)/2) 1fr;
-        grid-template-rows: auto minmax(0, 1fr) var(--std-gap) var(--board-height);
+        grid-template-areas: 'stats     stats     .        event-log event-log'
+                             'chat-log  chat-log  .        event-log event-log'
+                             'mats      mats      mats     mats      mats'
+                             '.         .         .        .         .'
+                             'left-bar  board     board    board     right-bar';
+        grid-template-columns: 1fr calc(var(--board-width)/2 - var(--std-gap)/2) var(--std-gap) calc(var(--board-width)/2 - var(--std-gap)/2) 1fr;
+        grid-template-rows: auto minmax(0, 1fr) auto var(--std-gap) var(--board-height);
         grid-column-gap: 0;
+        --mat-height: 97.5px;
+    }
+
+    .game-view__mats {
+        justify-content: center;
     }
 
     .game-view__responsive-bar {
@@ -69,6 +80,16 @@
     @media (max-height: 705px) {
         .game-view__responsive-bar {
             margin: 0.25em 0;
+        }
+    }
+
+    @media (max-height: 978px) {
+        .game-view {
+            grid-template-rows: auto minmax(0, 1fr) 0 var(--std-gap) var(--board-height);
+        }
+
+        .game-view__mats {
+            overflow: hidden;
         }
     }
 }

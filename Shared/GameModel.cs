@@ -21,6 +21,7 @@ namespace Cardgame.Shared
         public string KingdomPreset { get; set; }
         public string[] KingdomCards { get; set; }
         public bool KingdomHasCurse { get; set; }
+        public bool KingdomHasSeasideMats { get; set; }
 
         // player config
         public Dictionary<string, bool> SettingConfirmSkipActions { get; set; }

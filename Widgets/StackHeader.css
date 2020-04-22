@@ -6,7 +6,7 @@
 .stack-header {
     margin: 0;
     text-align: center;
-    background: rgba(255, 255, 255, 0.75);
+    background: var(--overlay-color);
     border-radius: 4px;
     font-weight: normal;
     font-size: calc(var(--local-scale) * var(--stack-header-font));

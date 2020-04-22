@@ -1,0 +1,29 @@
+.mat-view {
+    height: var(--mat-height);
+    border: 2px solid black;
+    border-radius: 4px;
+    display: flex;
+    position: relative;
+}
+
+.mat-view__picture {
+    height: calc(var(--mat-height) - 4px);
+    border-radius: 2px;
+}
+
+.mat-view__overlay {
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+}
+
+.mat-view__contents {
+    padding: 0.5em;
+    background: var(--overlay-color);
+    border-radius: 4px;
+    text-align: center;
+}

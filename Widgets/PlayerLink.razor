@@ -1,7 +1,7 @@
 @inject IUserSession Session
 @inject IUserEndpoint UserEndpoint
 @code {
-    [CascadingParameter] GameModel Game { get; set; }
+    [CascadingParameter(Name = "Current")] GameModel Game { get; set; }
     [Parameter] public string Name { get; set; }
     [Parameter] public string Text { get; set; }
     [Parameter] public string Prefix { get; set; }

@@ -119,6 +119,7 @@ namespace Cardgame.Server
                     Model.KingdomPreset = configureGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
                     Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
                     Model.KingdomHasCurse = Model.KingdomCards.Any(All.Cards.UsesCurse);
+                    Model.KingdomHasSeasideMats = false;
 
                     break;
 
@@ -131,6 +132,7 @@ namespace Cardgame.Server
                     Model.KingdomPreset = startGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
                     Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
                     Model.KingdomHasCurse = Model.KingdomCards.Any(All.Cards.UsesCurse);
+                    Model.KingdomHasSeasideMats = false;
 
                     BeginGame();
                     BeginTurn();

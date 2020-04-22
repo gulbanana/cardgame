@@ -1,0 +1,34 @@
+@code {
+    [Parameter] public string Name { get; set; }
+    [Parameter] public IReadOnlyList<Instance> Cards { get; set; }
+    private TextModel contents;
+
+    protected override void OnParametersSet()
+    {
+        if (Cards?.Any() ?? false)
+        {
+            var groups = new List<TextModel>();
+            foreach (var name in Cards.Names().Distinct())
+            {
+                var number = Cards.Names().Count(id => id == name);
+                groups.Add(new TextModel.Card { Name = name, Suffix = $" x{number}" });
+            }
+            contents = new TextModel.Spans
+            {
+                Children = groups.ToArray()
+            };
+        }
+    }
+}
+
+<div class="mat-view">
+    <img class="mat-view__picture" src="/mats/@(Name).jpg">
+    <div class="mat-view__overlay">
+        @if (contents != null)
+        {
+            <div class="mat-view__contents">
+                <RichText Parsed="@contents" />
+            </div>
+        }
+    </div>
+</div>

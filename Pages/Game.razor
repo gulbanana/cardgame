@@ -34,7 +34,7 @@
     <CascadingValue Name="Previous" Value="@context.Previous">
         <CascadingValue Name="Current" Value="@context.Current">
             <CascadingValue Value="@(new Executor(c => OnExecute(context.Current, c)))">
-                <GameView />
+                <GameView Name="@GameName" />
             </CascadingValue>
         </CascadingValue>
     </CascadingValue>
