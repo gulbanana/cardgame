@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cardgame.API;
 
-namespace Cardgame.Cards
+namespace Cardgame.Cards.Dominion
 {
     public class Sentry : ActionCardBase
     {
