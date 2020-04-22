@@ -1,13 +1,25 @@
 :root {
+    /* original theme */
+    /*
+    --card-type-curse: rgb(178, 137, 209);
     --card-type-victory: rgb(117, 197, 85);
     --card-type-treasure: rgb(243, 212, 114);
     --card-type-action: rgb(240, 237, 222);
-    --card-type-reaction: rgb(119, 173, 222);
-    --card-type-curse: rgb(178, 137, 209);
+    --card-type-reaction: rgb(119, 173, 222);    
+    --card-text-background: rgb(166, 170, 169);
+    */
+
+    /* isotropic theme */
+    --card-type-curse: #d78adb;
+    --card-type-victory: #92c17d;
+    --card-type-treasure: #fde164;
+    --card-type-action: #f0f0f0;
+    --card-type-reaction: #40a8e3;
+    --card-type-duration: #fe8f4e;
+    --card-text-background: #b9baba;
+
     --card-type-special: rgb(140, 129, 85);
     --card-type-randomizer: rgb(55, 84, 144);
-
-    --card-text-background: rgb(166, 170, 169);
 
     --inactive-color: rgb(32, 32, 32);
     --active-color: rgb(0, 128, 255);
