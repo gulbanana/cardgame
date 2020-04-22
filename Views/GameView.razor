@@ -17,10 +17,10 @@
             @foreach (var player in Model.Players)
             {       
                 var score = All.Score.Calculate(Model, player).Total;
-                var text = $"<sym prefix='({score}' suffix=')'>vp</sym>";           
-                <span>
-                        <PlayerLink @key="@player" Name="@player" />
-                        <RichText @key="player+score" Model="@text" />
+                var text = $"<sym prefix='({score}' suffix=')'>vp</sym>";
+                <span class="game-view__player-stats">
+                    <PlayerLink @key="@player" Name="@player" />
+                    <RichText @key="player+score" Model="@text" />
                 </span>
             }
         }

@@ -35,16 +35,16 @@
 
 @media (min-width: calc(760px + 391px)) and (max-width: calc(760px + 820px)) {
     .game-view {
-        grid-template-areas: 'mats      left-bar  board' 
-                             'stats     left-bar  board' 
-                             'event-log right-bar board'
-                             'chat-log  right-bar board';
-        grid-template-columns: minmax(350px, 1fr) 2px var(--board-width);
+        grid-template-areas: 'board left-bar  mats     ' 
+                             'board left-bar  stats    ' 
+                             'board right-bar event-log'
+                             'board right-bar chat-log ';
+        grid-template-columns: var(--board-width) var(--std-gap) minmax(350px, 1fr);
         grid-template-rows: auto auto minmax(0, 1fr) auto;
     }
 
-    .game-view__mats {
-        justify-content: flex-end;
+    .game-view__player-stats {
+        display: none;
     }
 
     .chat-view {
@@ -73,6 +73,10 @@
         justify-content: center;
     }
 
+    .game-view__player-stats {
+        display: none;
+    }
+
     .game-view__responsive-bar {
         margin: 0.5em 0;
     }
@@ -94,14 +98,14 @@
     }
 }
 
-@media (max-height: 785px) {
+@media (max-height: 830px) {
     .game-view {
         --zoom-scale: 1.5;
         --board-height: 665px;
     }
 }
 
-@media (max-height: 705px) {
+@media (max-height: 750px) {
     .game-view {
         --zoom-scale: 1.0;
         --board-height: 585px;
