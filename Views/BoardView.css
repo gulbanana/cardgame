@@ -8,6 +8,12 @@
     grid-template-rows: auto 1fr;
 }
 
+.board-view--constrained {
+    grid-template-areas: '.            safe-commands stats        global-commands .'
+                         'played-cards played-cards  played-cards played-cards    played-cards';
+    grid-template-columns: 110px auto 1fr auto 110px ;
+}
+
 .board-view__statbar {
     text-align: center;
     display: grid;

@@ -1,12 +1,12 @@
 @code {
-    [Parameter] public int Size { get; set; }
+    [Parameter] public int Count { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
 }
 
-@if (Size > 1)
+@if (Count > 1)
 {
     <div class="stack-header__wrapper">
-        <h3 class="stack-header">@Size cards</h3>
+        <h3 class="stack-header">@Count cards</h3>
         @ChildContent
     </div>
 }

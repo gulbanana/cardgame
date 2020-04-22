@@ -15,7 +15,7 @@
     bool SomeoneVisibleChoosing => AnyoneChoosing && (Model.ChoosingPlayers.Peek().Equals(Session.Username) || !Model.Players.Contains(Session.Username));
 }
 
-<div class="board-view">
+<div class="board-view@(Model.KingdomHasCurse ? " board-view--constrained" : "")">
     <p style="grid-area: safe-commands" class="game-view__responsive-bar">
         <ActiveButton Label="@($"+ ${PotentialMoney}")" Enabled="@(IsEnabled && PotentialMoney > 0)" Action="@(() => Dispatch(new PlayAllTreasuresCommand()))" />
     </p>

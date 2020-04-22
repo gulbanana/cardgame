@@ -1,0 +1,36 @@
+.supply-view {
+    display: grid;
+    grid-template-areas: 'v . k . t' 
+                         'v . . . t';
+    grid-template-columns: auto var(--std-gap) auto var(--std-gap) auto;
+    grid-template-rows: auto auto;    
+}
+
+.supply-view__kingdom {
+    grid-area: k;
+    display: grid;
+    grid-gap: var(--std-gap);
+    grid-template-areas: '. . . . .' 
+                         '. . . . .';
+    grid-template-columns: repeat(5, auto);
+    grid-template-rows: repeat(2, auto);    
+}
+
+.supply-view__victory {
+    grid-area: v;
+}
+
+.supply-view__treasure {
+    grid-area: t;
+}
+
+.supply-view__sidebar {
+    height: 205px;
+    display: grid;
+    grid-row-gap: calc(var(--std-gap) / 2);
+    align-self: start;
+} 
+
+.supply-view__sidebar > * {
+    height: var(--card-third-height);;
+}

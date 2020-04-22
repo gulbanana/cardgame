@@ -1,9 +1,9 @@
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public int Size { get; set; }
+    [Parameter] public int Count { get; set; }
     [Parameter] public string Colour { get; set; }
     [Parameter] public string[] Colours { get; set; }
-    [Parameter] public bool Half { get; set; }
+    [Parameter] public Size Size { get; set; }
     private string background;
 
     protected override void OnParametersSet()
@@ -14,12 +14,12 @@
 
 <div class="stacked" style="--highlight: @background">
     @ChildContent
-    @if (Size > 1)
+    @if (Count > 1)
     {
-        if (Size > 2)
+        if (Count > 2)
         {
-            <div class="stacked__frame active-border@(Half ? " stacked__frame--half": "")" style="--offset: 8px"/>
+            <div class="active-border stacked__frame stacked__frame--@Size.ToString().ToLower()" style="--offset: 8px"/>
         }
-        <div class="stacked__frame active-border@(Half ? " stacked__frame--half": "")" style="--offset: 4px"/>
+        <div class="active-border stacked__frame stacked__frame--@Size.ToString().ToLower()" style="--offset: 4px"/>
     }
 </div>

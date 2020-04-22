@@ -5,7 +5,7 @@
     [Parameter] public bool Enabled { get; set; }
     [Parameter] public Action Action { get; set; }
     [Parameter] public ICard Model { get; set; }
-    [Parameter] public bool Half { get; set; }
+    [Parameter] public Size Size { get; set; }
     [Parameter] public bool Large { get; set; }
     [Parameter] public int Stack { get; set; }
     [Parameter] public string OverrideColour { get; set; }
@@ -50,7 +50,7 @@
 {
     <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick" @ref="contentElement">
         <Magnify>        
-            <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" Set="@set" Half="@Half" Stack="@Stack" />
+            <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" Set="@set" Size="@Size" Stack="@Stack" />
         </Magnify>
     </div>
 }
@@ -59,13 +59,13 @@ else
     <WithTooltip>
         <Content>
             <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
-                <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" Set="@set" Half="@Half" Stack="@Stack" />
+                <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" Set="@set" Size="@Size" Stack="@Stack" />
             </div>
         </Content>
         <Tooltip>
             <Magnify>
-                <StackHeader Size="@Stack">                
-                    <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" Set="@set" Half="false" />
+                <StackHeader Count="@Stack">                
+                    <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" Set="@set" />
                 </StackHeader>
             </Magnify>
         </Tooltip>

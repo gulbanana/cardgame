@@ -15,10 +15,15 @@
     border-radius: var(--local-border-radius);
 }
 
-.special-card__1x {
+.special-card__full {
+    height: calc(var(--local-scale) * (var(--card-body) + var(--card-header) + var(--card-footer)));
+}
+
+.special-card__half {
     height: calc(var(--local-scale) * (var(--card-body)/2 + var(--card-header) + var(--card-footer) -1px));
 }
 
-.special-card__2x {
-    height: calc(var(--local-scale) * (var(--card-body) + var(--card-header) + var(--card-footer)));
+.special-card__third {
+    height: calc(var(--local-scale) * var(--card-third-height));
 }
+

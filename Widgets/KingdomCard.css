@@ -53,6 +53,11 @@
     border-width: 0 var(--local-card-border-half);
 }
 
+.card__picture--borderless {
+    border: none;
+    border-radius: var(--card-border-width);
+}
+
 .card__header {
     height: var(--local-card-header);
     line-height: var(--local-card-header);

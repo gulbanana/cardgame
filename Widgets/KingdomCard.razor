@@ -4,7 +4,7 @@
     [Parameter] public string Art { get; set; } = "missing";
     [Parameter] public int Cost { get; set; }
     [Parameter] public string Text { get; set; }
-    [Parameter] public bool Half { get; set; }
+    [Parameter] public Size Size { get; set; }
     [Parameter] public int Stack { get; set; }
     [Parameter] public string OverrideColour { get; set; }
     [Parameter] public CardSet? Set { get; set; }
@@ -41,16 +41,19 @@
     }
 }
 
-<Stacked Size="@Stack" Colours="@colours" Half="@Half">
+<Stacked Count="@Stack" Colours="@colours" Size="@Size">
     <div class="kingdom-card active-border">
-        <div class="card__header card__title">
-            @foreach (var word in Strings.TitleCase(Name).Split(" "))
-            {
-                <span class="card__title__word">@word</span>
-            }
-        </div>
-        @if (Half) {
-            <div class="card__image card__picture">
+        @if (Size != Size.Third)
+        {
+            <div class="card__header card__title">
+                @foreach (var word in Strings.TitleCase(Name).Split(" "))
+                {
+                    <span class="card__title__word">@word</span>
+                }
+            </div>
+        }
+        @if (Size != Size.Full) {
+            <div class="card__image card__picture@(Size == Size.Third ? " card__picture--borderless" : "")">
                 <img src="@art" />
             </div>
         } else if (Text == null) {
@@ -68,19 +71,22 @@
                 </div>
             </div>
         }
-        <div class="card__footer card__title">
-            <div class="card__footer-cost">
-                <img class="card__icon" src="/symbols/coin@(Cost).png" />
-            </div>
-
-            <span class="card__type" style="--type-scale: @typeScale;">@type</span>
-
-            @if (Set != null)
-            {
-                <div class="card__footer-set">
-                    <img class="card__icon" src="/symbols/set-@(Set).png" />
+        @if (Size != Size.Third)
+        {
+            <div class="card__footer card__title">
+                <div class="card__footer-cost">
+                    <img class="card__icon" src="/symbols/coin@(Cost).png" />
                 </div>
-            }
-        </div>
+
+                <span class="card__type" style="--type-scale: @typeScale;">@type</span>
+
+                @if (Set != null)
+                {
+                    <div class="card__footer-set">
+                        <img class="card__icon" src="/symbols/set-@(Set).png" />
+                    </div>
+                }
+            </div>
+        }
     </div>
 </Stacked>

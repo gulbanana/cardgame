@@ -7,6 +7,10 @@
     grid-template-rows: auto auto;
 }
 
+.config-view--constrained {
+    margin: 0 110px;
+}
+
 .config-view__sets {
     display: grid;
     grid-template-columns: auto 1fr;

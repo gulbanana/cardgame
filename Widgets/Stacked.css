@@ -4,7 +4,6 @@
 
 .stacked__frame {
     width: var(--card-width);
-    height: var(--card-height);
     position: absolute;
     top: calc(var(--offset) * -1);
     left: calc(var(--offset) * -1);
@@ -14,6 +13,14 @@
     background: var(--highlight);
 }
 
+.stacked__frame--full {
+    height: var(--card-height);
+}
+
 .stacked__frame--half {
     height: var(--card-half-height);
+}
+
+.stacked__frame--third {
+    height: var(--card-third-height);
 }

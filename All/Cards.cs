@@ -9,6 +9,7 @@ namespace Cardgame.All
     {
         private static readonly Dictionary<string, ICard> byName;
         private static readonly Dictionary<string, CardSet?> bySet;
+        private static string[] _Cursers;
 
         static Cards()
         {
@@ -38,6 +39,9 @@ namespace Cardgame.All
                     _ => null
                 };
             }
+
+            // XXX build from models?
+            _Cursers = new[] { "Witch", "Torturer", "Replace" };
         }
 
         public static ICard ByName(string id)
@@ -100,6 +104,11 @@ namespace Cardgame.All
             {
                 return null;
             }
+        }
+
+        public static bool UsesCurse(string id)
+        {
+            return _Cursers.Contains(id);
         }
     }
 }

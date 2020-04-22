@@ -45,7 +45,7 @@
         {
             var ix = i;
             <div @key="ix" class="@(choices[ix] ? "" : "select-cards__deselected")">
-                <ActiveCard Id="@Model.Choices[ix]" Enabled="@Enabled" Half="true" Action="@(() => Toggle(ix))" />
+                <ActiveCard Id="@Model.Choices[ix]" Enabled="@Enabled" Size="Size.Half" Action="@(() => Toggle(ix))" />
             </div>
         }
     </p>
@@ -59,7 +59,7 @@ else
     <p @key="Input" class="select-cards">
         @foreach (var id in Model.Choices)
         {
-            <ActiveCard Id="@id" Enabled="@Enabled" Half="true" Action="@(() => SubmitOne(id))" />
+            <ActiveCard Id="@id" Enabled="@Enabled" Size="Size.Half" Action="@(() => SubmitOne(id))" />
         }
     </p>
 }
