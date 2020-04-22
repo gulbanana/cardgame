@@ -3,23 +3,26 @@
     [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
     [CascadingParameter] public Executor Dispatch { get; set; }
     [Parameter] public string Id { get; set; }
+    [Parameter] public int Row { get; set; } = 1;
 }
 
-@if (Model.Supply[Id] > 0)
-{
-    var isEnabled = Session.Username.Equals(Model.ActivePlayer) &&
-        !Model.IsFinished &&
-        !Model.ExecutingBackgroundTasks &&
-        Model.BuysRemaining > 0 &&
-        All.Cards.Exists(Id) &&
-        All.Cards.ByName(Id).GetCost(Model) <= Model.MoneyRemaining;
-    <ActiveCard Id="@Id" 
-                Enabled="isEnabled" 
-                Half="true" 
-                Stack="@Model.Supply[Id]"
-                Action="@(() => Dispatch(new BuyCardCommand { Id = Id }))" />
-}
-else
-{
-    <SpecialCard Name="randomizer" Half="true" Stack="1" />
-}
+<span style="display: flex; grid-row: @Row">
+    @if (Model.Supply[Id] > 0)
+    {
+        var isEnabled = Session.Username.Equals(Model.ActivePlayer) &&
+            !Model.IsFinished &&
+            !Model.ExecutingBackgroundTasks &&
+            Model.BuysRemaining > 0 &&
+            All.Cards.Exists(Id) &&
+            All.Cards.ByName(Id).GetCost(Model) <= Model.MoneyRemaining;
+        <ActiveCard Id="@Id" 
+                    Enabled="isEnabled" 
+                    Half="true" 
+                    Stack="@Model.Supply[Id]"
+                    Action="@(() => Dispatch(new BuyCardCommand { Id = Id }))" />
+    }
+    else
+    {
+        <SpecialCard Name="randomizer" Half="true" Stack="1" />
+    }
+</span>

@@ -5,74 +5,47 @@
 }
 
 <div class="kingdom-view">
-    <div class="kingdom-view__trash">
-        <SpecialCard Name="trash" Stack="@(!Model.IsStarted ? 1 : Model.Trash.Count + 1)" />
-    </div>
-
     @if (Model.IsStarted)
     {
         <SupplyView Id="Estate" />
         <SupplyView Id="Duchy" />
         <SupplyView Id="Province" />
-
-        <SupplyView Id="@Model.KingdomCards[0]" />
-        <SupplyView Id="@Model.KingdomCards[2]" />
-        <SupplyView Id="@Model.KingdomCards[4]" />
-        <SupplyView Id="@Model.KingdomCards[6]" />
-        <SupplyView Id="@Model.KingdomCards[8]" />
-
         <SupplyView Id="Copper" />
         <SupplyView Id="Silver" />
         <SupplyView Id="Gold" />
+        <SupplyView Id="Curse" />
 
-        <SupplyView Id="@Model.KingdomCards[1]" />
-        <SupplyView Id="@Model.KingdomCards[3]" />
-        <SupplyView Id="@Model.KingdomCards[5]" />
-        <SupplyView Id="@Model.KingdomCards[7]" />
-        <SupplyView Id="@Model.KingdomCards[9]" />
+        @for (var i = 0; i < 10; i++)
+        {
+            <SupplyView Row="2" Id="@Model.KingdomCards[i]" />
+        }
     }
     else
     {
         <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Estate")" Id="Estate" />
         <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Duchy")" Id="Duchy" />
         <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Province")" Id="Province" />
-
-        @if (Model.KingdomPreset == null)
-        {
-            <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
-            <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
-            <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
-            <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
-            <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
-        }
-        else
-        {
-            <ActiveCard @key="Model.KingdomCards[0]" Id="@Model.KingdomCards[0]" Stack="@Model.GetInitialSupply(Model.KingdomCards[0])" Enabled="false" Half="true" />
-            <ActiveCard @key="Model.KingdomCards[2]" Id="@Model.KingdomCards[2]" Stack="@Model.GetInitialSupply(Model.KingdomCards[2])" Enabled="false" Half="true" />
-            <ActiveCard @key="Model.KingdomCards[4]" Id="@Model.KingdomCards[4]" Stack="@Model.GetInitialSupply(Model.KingdomCards[4])" Enabled="false" Half="true" />
-            <ActiveCard @key="Model.KingdomCards[6]" Id="@Model.KingdomCards[6]" Stack="@Model.GetInitialSupply(Model.KingdomCards[6])" Enabled="false" Half="true" />
-            <ActiveCard @key="Model.KingdomCards[8]" Id="@Model.KingdomCards[8]" Stack="@Model.GetInitialSupply(Model.KingdomCards[8])" Enabled="false" Half="true" />
-        }
-
         <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Copper")" Id="Copper" />
         <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Silver")" Id="Silver" />
         <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Gold")" Id="Gold" />
+        <ActiveCard Enabled="false" Half="true" Stack="@Model.GetInitialSupply("Curse")" Id="Curse" />
 
-        @if (Model.KingdomPreset == null)
+        @for (var i = 0; i < 10; i++)
         {
-            <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
-            <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
-            <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
-            <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
-            <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
-        }
-        else
-        {
-            <ActiveCard @key="Model.KingdomCards[1]" Id="@Model.KingdomCards[1]" Stack="@Model.GetInitialSupply(Model.KingdomCards[1])" Enabled="false" Half="true" />
-            <ActiveCard @key="Model.KingdomCards[3]" Id="@Model.KingdomCards[3]" Stack="@Model.GetInitialSupply(Model.KingdomCards[3])" Enabled="false" Half="true" />
-            <ActiveCard @key="Model.KingdomCards[5]" Id="@Model.KingdomCards[5]" Stack="@Model.GetInitialSupply(Model.KingdomCards[5])" Enabled="false" Half="true" />
-            <ActiveCard @key="Model.KingdomCards[7]" Id="@Model.KingdomCards[7]" Stack="@Model.GetInitialSupply(Model.KingdomCards[7])" Enabled="false" Half="true" />
-            <ActiveCard @key="Model.KingdomCards[9]" Id="@Model.KingdomCards[9]" Stack="@Model.GetInitialSupply(Model.KingdomCards[9])" Enabled="false" Half="true" />
+            <div class="kingdom-view__row2">
+                @if (Model.KingdomCards == null)
+                {
+                    <SpecialCard Name="randomizer" Colour="randomizer" Half="true" Stack="10" />
+                }
+                else
+                {
+                    <ActiveCard @key="Model.KingdomCards[i]" Id="@Model.KingdomCards[i]" Stack="@Model.GetInitialSupply(Model.KingdomCards[i])" Enabled="false" Half="true" />
+                }                
+            </div>
         }
     }
+
+    <div class="kingdom-view__mat0">
+        <SpecialCard Name="trash" Stack="@(!Model.IsStarted ? 1 : Model.Trash.Count + 1)" Half="true" />
+    </div>
 </div>
