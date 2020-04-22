@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Dominion
 {
     public class MerchantEffect : EffectBase, IReactor
     {
-        public override string Art => "dom-merchant";
+        public override string Art => "Dominion2nd/dom-merchant";
         public override string Text => @"
             <run>The first time you play a Silver this turn,</run>
             <sym prefix='+' suffix='.'>coin1</sym>

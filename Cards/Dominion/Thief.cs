@@ -7,7 +7,6 @@ namespace Cardgame.Cards.Dominion
 {
     public class Thief : ActionAttackCardBase
     {
-        public override string Art => "dom-thief";
         public override int Cost => 4;
 
         public override string Text => @"<lines>

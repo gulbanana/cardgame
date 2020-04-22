@@ -7,7 +7,6 @@ namespace Cardgame.Cards.Intrigue
     public class SecretChamber : ActionReactionCardBase
     {
         public override Trigger ReactionTrigger => Trigger.PlayCard;
-        public override string Art => "int-secret-chamber";
         public override int Cost => 2;        
 
         public override string Text => @"<small>

@@ -7,10 +7,11 @@
     [Parameter] public bool Half { get; set; }
     [Parameter] public int Stack { get; set; }
     [Parameter] public string OverrideColour { get; set; }
-    [Parameter] public CardSet? SetIcon { get; set; }
+    [Parameter] public CardSet? Set { get; set; }
     private string[] colours;
     private MarkupString type;
     private double typeScale;
+    private string art;
 
     protected override void OnParametersSet()
     {
@@ -35,6 +36,8 @@
             Types.Length == 1 ? 1.0 :
             Types.Length == 2 ? 0.75 :
             0.5;
+
+        art = Set == null ? $"/cards/Base/{Art}.jpg" : $"/cards/{Set}/{Art}.jpg";
     }
 }
 
@@ -48,15 +51,15 @@
         </div>
         @if (Half) {
             <div class="card__image card__picture">
-                <img src="/cards/@(Art).jpg" />
+                <img src="@art" />
             </div>
         } else if (Text == null) {
             <div class="card__image-2x card__picture">
-                <img src="/cards/@(Art).jpg" />
+                <img src="@art" />
             </div>
         } else {
             <div class="card__image card__picture">
-                <img src="/cards/@(Art).jpg" />
+                <img src="@art" />
             </div>
             <div class="card__text-separator" />
             <div class="card__text">
@@ -72,10 +75,10 @@
 
             <span class="card__type" style="--type-scale: @typeScale;">@type</span>
 
-            @if (SetIcon != null)
+            @if (Set != null)
             {
                 <div class="card__footer-set">
-                    <img class="card__icon" src="/symbols/set-@(SetIcon).png" />
+                    <img class="card__icon" src="/symbols/set-@(Set).png" />
                 </div>
             }
         </div>

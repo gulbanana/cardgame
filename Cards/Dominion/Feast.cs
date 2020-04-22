@@ -6,7 +6,6 @@ namespace Cardgame.Cards.Dominion
 {
     public class Feast : ActionCardBase
     {
-        public override string Art => "dom-feast";
         public override int Cost => 4;
 
         public override string Text => @"

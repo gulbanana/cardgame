@@ -5,7 +5,6 @@ namespace Cardgame.Cards.Dominion
 {
     public class Chancellor : ActionCardBase
     {
-        public override string Art => "dom-chancellor";
         public override int Cost => 3;
         
         public override string Text => @"<paras>

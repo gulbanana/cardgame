@@ -2,6 +2,7 @@
     [Parameter] public string Name { get; set; }
     [Parameter] public bool Half { get; set; }
     [Parameter] public int Stack { get; set; }
+    [Parameter] public string Colour { get; set; } = "special";
     private int TrueCount => Name == "trash" ? Stack - 1 : Stack;
 }
 
@@ -9,15 +10,15 @@
 {
     <WithTooltip>
         <Content>
-            <Stacked Size="@Stack" Colour="special" Half="@Half">
+            <Stacked Size="@Stack" Colour="@Colour" Half="@Half">
                 <div class="special-card active-border">
                     @if (Half)
                     {
-                        <img class="special-card__1x" src="/@(Name)-half.jpg" />
+                        <img class="special-card__1x" src="/cards/@(Name)-half.jpg" />
                     }
                     else
                     {
-                        <img class="special-card__2x" src="/@(Name)-full.jpg" />
+                        <img class="special-card__2x" src="/cards/@(Name)-full.jpg" />
                     }
                 </div>
             </Stacked>
@@ -26,7 +27,7 @@
             <Magnify>
                 <StackHeader Size="@TrueCount">
                     <div class="special-card active-border">
-                        <img class="special-card__2x" src="/@(Name)-full.jpg" />
+                        <img class="special-card__2x" src="/cards/@(Name)-full.jpg" />
                     </div>
                 </StackHeader>
             </Magnify>
@@ -35,9 +36,9 @@
 }
 else
 {
-    <Stacked Size="@Stack" Colour="special">
+    <Stacked Size="@Stack" Colour="@Colour">
         <div class="special-card active-border">
-            <img class="special-card__2x" src="/@(Name)-full.jpg" />
+            <img class="special-card__2x" src="/cards/@(Name)-full.jpg" />
         </div>
     </Stacked>
 }

@@ -2,7 +2,7 @@ namespace Cardgame.Cards.Intrigue
 {
     public class CoppersmithEffect : ModifierEffectBase
     {
-        public override string Art => "int-coppersmith";
+        public override string Art => "Intrigue1st/Coppersmith";
         public override string Text => @"<spans>
             <run>Copper produces an extra</run>
             <sym>coin1</sym>

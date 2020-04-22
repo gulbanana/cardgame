@@ -11,7 +11,7 @@
     <div class="dominion-view__pushdown">
         @if (CurrentModel.IsStarted && CurrentModel.Decks[PlayerOrSpectatee].Count == 0)
         {
-            <SpecialCard Name="blank" Stack="1" />
+            <SpecialCard Name="deck" Stack="1" />
         }
         else
         {                
@@ -68,12 +68,12 @@
             }
             else
             {
-                <SpecialCard Name="blank" />
+                <SpecialCard Name="discard" />
             }
         }
         else
         {
-            <SpecialCard Name="blank" />
+            <SpecialCard Name="discard" />
         }
     </div>
 </div>

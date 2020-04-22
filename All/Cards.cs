@@ -90,7 +90,7 @@ namespace Cardgame.All
             return new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold", "Curse"};
         }
 
-        public static CardSet? SetIcon(string id)
+        public static CardSet? GetSet(string id)
         {
             if (bySet.ContainsKey(id))
             {

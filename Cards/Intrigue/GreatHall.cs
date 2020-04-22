@@ -4,7 +4,6 @@ namespace Cardgame.Cards.Intrigue
 {
     public class GreatHall : ActionVictoryCardBase
     {
-        public override string Art => "int-great-hall";
         public override int Cost => 3;
         public override int Score => 1;
 

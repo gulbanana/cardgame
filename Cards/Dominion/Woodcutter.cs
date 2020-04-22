@@ -4,7 +4,6 @@ namespace Cardgame.Cards.Dominion
 {
     public class Woodcutter : ActionCardBase
     {
-        public override string Art => "dom-woodcutter";
         public override int Cost => 3;
 
         public override string Text => @"<bold>

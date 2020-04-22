@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
 {
     public class Swindler : ActionAttackCardBase
     {
-        public override string Art => "int-saboteur";
+        public override string Art => "int-swindler";
         public override int Cost => 3;
 
         public override string Text => @"<paras>

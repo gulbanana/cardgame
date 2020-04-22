@@ -4,7 +4,6 @@ namespace Cardgame.Cards.Intrigue
 {
     public class Coppersmith : ActionCardBase
     {
-        public override string Art => "int-coppersmith";
         public override int Cost => 4;
         
         public override string Text => @"<spans>

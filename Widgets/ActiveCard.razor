@@ -11,7 +11,7 @@
     [Parameter] public string OverrideColour { get; set; }
     [Parameter] public bool KeepVisible { get; set; }
     private int cost;
-    private CardSet? setIcon;
+    private CardSet? set;
     ElementReference contentElement;
 
     protected override void OnParametersSet()
@@ -26,7 +26,7 @@
         }
 
         cost = Model.GetCost(Game);
-        setIcon = All.Cards.SetIcon(Id);
+        set = All.Cards.GetSet(Id);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -50,7 +50,7 @@
 {
     <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick" @ref="contentElement">
         <Magnify>        
-            <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="@Half" Stack="@Stack" />
+            <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" Set="@set" Half="@Half" Stack="@Stack" />
         </Magnify>
     </div>
 }
@@ -59,13 +59,13 @@ else
     <WithTooltip>
         <Content>
             <div class="active-card @(Enabled ? "active-card--enabled" : "")" @onclick="@OnClick">
-                <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="@Half" Stack="@Stack" />
+                <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" Set="@set" Half="@Half" Stack="@Stack" />
             </div>
         </Content>
         <Tooltip>
             <Magnify>
                 <StackHeader Size="@Stack">                
-                    <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" SetIcon="@setIcon" Half="false" />
+                    <KingdomCard Name="@Id" Types="@Model.Types" OverrideColour="@OverrideColour" Art="@Model.Art" Cost="@cost" Text="@Model.Text" Set="@set" Half="false" />
                 </StackHeader>
             </Magnify>
         </Tooltip>
