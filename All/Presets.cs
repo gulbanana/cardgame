@@ -50,11 +50,15 @@ namespace Cardgame.All
             }
             else
             {
-                return all.Where(t => t.sets.Contains(set)).ToDictionary(t => t.name, t =>
-                {
-                    var byCost = t.cards.Select(All.Cards.ByName).OrderBy(card => card.GetCost(Array.Empty<IModifier>())).Select(card => card.Name).ToArray();
-                    return new[] { byCost[0], byCost[2], byCost[4], byCost[6], byCost[8], byCost[1], byCost[3], byCost[5], byCost[7], byCost[9] };
-                });
+                return all
+                    .Where(t => t.sets.Contains(set))
+                    .ToDictionary(t => t.name, t =>
+                    {
+                        return t.cards
+                            .Select(All.Cards.ByName)
+                            .OrderBy(card => card.GetCost(Array.Empty<IModifier>()))
+                            .Select(card => card.Name).ToArray();
+                    });
             }
         }
 
@@ -88,8 +92,11 @@ namespace Cardgame.All
                     .GroupBy(t => FormatSets(t.sets))
                     .ToDictionary(g => g.Key, g => g.ToDictionary(t => t.name, t =>
                     {
-                        var byCost = t.cards.Select(All.Cards.ByName).OrderBy(card => card.GetCost(Array.Empty<IModifier>())).Select(card => card.Name).ToArray();
-                        return new[] { byCost[0], byCost[2], byCost[4], byCost[6], byCost[8], byCost[1], byCost[3], byCost[5], byCost[7], byCost[9] };
+                        return t.cards
+                            .Select(All.Cards.ByName)
+                            .OrderBy(card => card.GetCost(Array.Empty<IModifier>()))
+                            .Select(card => card.Name)
+                            .ToArray();
                     }) as IReadOnlyDictionary<string, string[]>);
             }
         }

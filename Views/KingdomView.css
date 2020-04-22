@@ -1,0 +1,14 @@
+.kingdom-view {
+    display: grid;
+    grid-template-areas: 'trash . . . . . . . .'
+                         'trash . . . . . . . .';
+    grid-template-columns: auto auto auto auto auto auto auto auto auto;
+    grid-gap: var(--std-gap);
+}
+
+.kingdom-view__trash {
+    grid-area: trash;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

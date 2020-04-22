@@ -117,6 +117,7 @@ namespace Cardgame.Server
 
                     Model.KingdomSet = configureGame.KingdomSet;
                     Model.KingdomPreset = configureGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
+                    Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
 
                     break;
 
@@ -127,6 +128,7 @@ namespace Cardgame.Server
 
                     Model.KingdomSet = startGame.KingdomSet;
                     Model.KingdomPreset = startGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
+                    Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
 
                     BeginGame();
                     BeginTurn();
@@ -469,7 +471,6 @@ namespace Cardgame.Server
         {
             var rng = new Random();
 
-            Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
             Model.Supply = All.Cards.Base().Concat(Model.KingdomCards).ToDictionary(id => id, id => Model.GetInitialSupply(id));            
             Model.PlayedCards = new List<Instance>();
             Model.ActiveEffects = new List<string>();

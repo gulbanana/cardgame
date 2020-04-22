@@ -77,18 +77,3 @@
     display: grid;
     grid-template-rows: auto 1fr auto;
 }
-
-.game-view__kingdom {
-    display: grid;
-    grid-template-areas: 'trash . . . . . . . .'
-                         'trash . . . . . . . .';
-    grid-template-columns: auto auto auto auto auto auto auto auto auto;
-    grid-gap: var(--std-gap);
-}
-
-.game-view__trash {
-    grid-area: trash;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
