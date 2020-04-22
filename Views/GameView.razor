@@ -54,7 +54,10 @@
     <GridSeparator Area="right-bar"/>
 
     <div style="grid-area: mats" class="game-view__mats">
-        <MatView Name="trash" Cards="@Model.Trash" />
+        @if (Model.Trash != null && Model.Trash.Any())
+        {
+            <MatView Name="trash" Cards="@Model.Trash" />
+        }
         @if (Model.KingdomHasSeasideMats)
         {
             <MatView Name="island" />
