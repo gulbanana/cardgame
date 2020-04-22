@@ -25,7 +25,7 @@ namespace Cardgame.Cards.Intrigue
                 new NamedOption("<bold>+1 Card</bold>", () => host.DrawCards(1)),
                 new NamedOption("<bold>+1 Action</bold>", () => host.AddActions(1)),
                 new NamedOption("<bold>+1 Buy</bold>", () => host.AddBuys(1)),
-                new NamedOption("<bold><sym prefix='+'>coin1</sym></bold>", () => host.AddMoney(1))
+                new NamedOption("<bold><sym prefix='+'>coin1</sym></bold>", () => host.AddCoins(1))
             );
         }
     }

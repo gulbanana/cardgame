@@ -18,7 +18,7 @@ namespace Cardgame.API
         ICard[] DrawCards(int n);
         void AddActions(int n);
         void AddBuys(int n);
-        void AddMoney(int n);
+        void AddCoins(int n);
         
         // move cards around
         void Discard(string[] cards, Zone from);

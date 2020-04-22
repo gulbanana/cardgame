@@ -19,7 +19,7 @@ namespace Cardgame.Cards.Dominion
         {
             host.AddActions(2);
             host.AddBuys(1);
-            host.AddMoney(2);
+            host.AddCoins(2);
         }
     }
 }

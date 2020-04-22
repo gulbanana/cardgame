@@ -24,7 +24,7 @@ namespace Cardgame.Cards.Intrigue
             host.AddActions(1);
 
             await host.ChooseOne("Minion",
-                new NamedOption("<sym prefix='+'>coin2</sym>", () => host.AddMoney(2)),
+                new NamedOption("<sym prefix='+'>coin2</sym>", () => host.AddCoins(2)),
                 new NamedOption("<run>More</run><card suffix='s!'>Minion</card>", async () => 
                 {
                     host.Discard(Zone.Hand);

@@ -39,7 +39,7 @@ namespace Cardgame.Cards.Intrigue
                 {
                     target.Discard(card, Zone.DeckTop2);
                     if (card.Types.Contains(CardType.Action)) host.AddActions(2);
-                    if (card.Types.Contains(CardType.Treasure)) host.AddMoney(2);
+                    if (card.Types.Contains(CardType.Treasure)) host.AddCoins(2);
                     if (card.Types.Contains(CardType.Victory)) host.DrawCards(2);
                 }
             });

@@ -21,7 +21,7 @@ namespace Cardgame.Cards.Intrigue
             if (await host.YesNo("Mining Village", "<run>Trash</run><card>MiningVillage</card><run>for</run><sym prefix='+' suffix='?'>coin2</sym>"))
             {
                 host.Trash("MiningVillage", Zone.InPlay);
-                host.AddMoney(2);
+                host.AddCoins(2);
             }
         }
     }

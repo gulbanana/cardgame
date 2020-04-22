@@ -158,9 +158,9 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        void IActionHost.AddMoney(int n)
+        void IActionHost.AddCoins(int n)
         {
-            engine.Model.MoneyRemaining += n;
+            engine.Model.CoinsRemaining += n;
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />

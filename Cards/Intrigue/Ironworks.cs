@@ -39,7 +39,7 @@ namespace Cardgame.Cards.Intrigue
             host.Gain(gained);
 
             if (gained is IActionCard) host.AddActions(1);
-            if (gained is ITreasureCard) host.AddMoney(1);
+            if (gained is ITreasureCard) host.AddCoins(1);
             if (gained is IVictoryCard) host.DrawCards(1);
         }
     }

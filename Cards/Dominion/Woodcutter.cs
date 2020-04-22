@@ -16,7 +16,7 @@ namespace Cardgame.Cards.Dominion
         protected override void Act(IActionHost host)
         {
             host.AddBuys(1);
-            host.AddMoney(2);
+            host.AddCoins(2);
         }
     }
 }

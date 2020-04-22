@@ -21,7 +21,7 @@ namespace Cardgame.Cards.Dominion
                 if (await host.YesNo("Moneylender", $@"Do you want to trash a Copper?"))
                 {
                     host.Trash("Copper");
-                    host.AddMoney(3);
+                    host.AddCoins(3);
                 }
             }
         }

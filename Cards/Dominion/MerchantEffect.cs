@@ -17,7 +17,7 @@ namespace Cardgame.Cards.Dominion
             {
                 return Reaction.After(() =>
                 {
-                    host.AddMoney(1);
+                    host.AddCoins(1);
                     host.RemoveEffect(Name);
                 });
             }

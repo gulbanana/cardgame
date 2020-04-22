@@ -25,7 +25,7 @@ namespace Cardgame.Cards.Intrigue
         protected override void Act(IActionHost host)
         {
             host.AddBuys(1);
-            host.AddMoney(1);
+            host.AddCoins(1);
             host.AddEffect(nameof(BridgeEffect));
         }
     }

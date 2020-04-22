@@ -31,7 +31,7 @@ namespace Cardgame.Cards.Intrigue
                                                 <sym prefix='+' suffix='?'>coin4</sym>"))
                 {
                     host.Discard("Estate");
-                    host.AddMoney(4);
+                    host.AddCoins(4);
                     return;
                 }
             }

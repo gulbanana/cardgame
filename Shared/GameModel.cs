@@ -41,7 +41,7 @@ namespace Cardgame.Shared
         
         public int ActionsRemaining { get; set; }
         public int BuysRemaining { get; set; }
-        public int MoneyRemaining { get; set; }
+        public int CoinsRemaining { get; set; }
 
         // interrupt state
         public HashSet<string> PreventedAttacks { get; set; }

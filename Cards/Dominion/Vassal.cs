@@ -18,7 +18,7 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
-            host.AddMoney(2);
+            host.AddCoins(2);
 
             var discarded = host.Examine(Zone.DeckTop1).SingleOrDefault();
             if (discarded != null && discarded.Types.Contains(CardType.Action))

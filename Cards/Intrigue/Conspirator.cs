@@ -19,7 +19,7 @@ namespace Cardgame.Cards.Intrigue
 
         protected override void Act(IActionHost host)
         {
-            host.AddMoney(2);
+            host.AddCoins(2);
 
             if (host.ActionCount >= 3)
             {

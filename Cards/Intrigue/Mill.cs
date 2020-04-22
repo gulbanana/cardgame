@@ -41,7 +41,7 @@ namespace Cardgame.Cards.Intrigue
 
                 if (handSize > 1)
                 {
-                    host.AddMoney(2);
+                    host.AddCoins(2);
                 }
             }            
         }

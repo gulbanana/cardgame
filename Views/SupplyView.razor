@@ -14,7 +14,7 @@
             !Model.ExecutingBackgroundTasks &&
             Model.BuysRemaining > 0 &&
             All.Cards.Exists(Id) &&
-            All.Cards.ByName(Id).GetCost(Model) <= Model.MoneyRemaining;
+            All.Cards.ByName(Id).GetCost(Model) <= Model.CoinsRemaining;
         <ActiveCard Id="@Id" 
                     Enabled="isEnabled" 
                     Half="true" 

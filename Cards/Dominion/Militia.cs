@@ -16,7 +16,7 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
-            host.AddMoney(2);
+            host.AddCoins(2);
 
             await host.Attack(player => player.Count(Zone.Hand) > 3, async player =>
             {

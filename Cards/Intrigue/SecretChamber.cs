@@ -23,7 +23,7 @@ namespace Cardgame.Cards.Intrigue
         {
             var discarded = await host.SelectCards("Choose cards to discard.");
             host.Discard(discarded);
-            host.AddMoney(discarded.Length);
+            host.AddCoins(discarded.Length);
         }
 
         protected override async Task<Reaction> ReactAsync(IActionHost host, string trigger)

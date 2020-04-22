@@ -29,7 +29,7 @@
         {
             <Bold If="@(!Model.BuyPhase && Model.ActionsRemaining > 0)">Actions: @Model.ActionsRemaining</Bold>
             <Bold If="@(Model.BuysRemaining > 0)">Buys: @Model.BuysRemaining</Bold>
-            <Bold If="@(Model.MoneyRemaining > 0)">Money: $@Model.MoneyRemaining</Bold>
+            <Bold If="@(Model.CoinsRemaining > 0)">Coins: $@Model.CoinsRemaining</Bold>
             @foreach (var effect in Model.ActiveEffects)
             {
                 <EffectView Id="@effect" />

@@ -20,7 +20,7 @@ namespace Cardgame.Cards.Intrigue
         {
             await host.ChooseOne("Steward", 
                 new NamedOption("+2 Cards", () => host.DrawCards(2)),
-                new NamedOption("<sym prefix='+'>coin2</sym>", () => host.AddMoney(2)),
+                new NamedOption("<sym prefix='+'>coin2</sym>", () => host.AddCoins(2)),
                 new NamedOption("Trash 2 cards", async () => 
                 {
                     var handSize = host.Count(Zone.Hand);

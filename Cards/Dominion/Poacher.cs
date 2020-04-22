@@ -24,7 +24,7 @@ namespace Cardgame.Cards.Dominion
         {
             host.DrawCards(1);
             host.AddActions(1);
-            host.AddMoney(1);
+            host.AddCoins(1);
 
             var emptyPiles = host.Count(Zone.SupplyEmpty);
             var handSize = host.Count(Zone.Hand);

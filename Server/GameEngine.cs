@@ -322,10 +322,10 @@ namespace Cardgame.Server
         private void BuyCard(string player, string id)
         {
             var boughtCard = All.Cards.ByName(id);
-            if (boughtCard.GetCost(Model) > Model.MoneyRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
+            if (boughtCard.GetCost(Model) > Model.CoinsRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
 
             MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
-            Model.MoneyRemaining -= boughtCard.GetCost(Model);
+            Model.CoinsRemaining -= boughtCard.GetCost(Model);
             Model.BuysRemaining -= 1;
 
             LogEvent($@"<spans>
@@ -427,7 +427,7 @@ namespace Cardgame.Server
                         Model.BuyPhase = true;
                     }
 
-                    Model.MoneyRemaining += treasure.GetValue(Model);
+                    Model.CoinsRemaining += treasure.GetValue(Model);
                 }
                 else
                 {
@@ -516,7 +516,7 @@ namespace Cardgame.Server
             ActionsThisTurn = 0;
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
-            Model.MoneyRemaining = isDemo ? 10 : 0;
+            Model.CoinsRemaining = isDemo ? 10 : 0;
 
             Model.BuyPhase = !Model.Hands[Model.ActivePlayer]
                 .Select(All.Cards.ByName)

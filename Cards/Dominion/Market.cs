@@ -21,7 +21,7 @@ namespace Cardgame.Cards.Dominion
             host.DrawCards(1);
             host.AddActions(1);
             host.AddBuys(1);
-            host.AddMoney(1);
+            host.AddCoins(1);
         }
     }
 }

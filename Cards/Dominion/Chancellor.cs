@@ -14,7 +14,7 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
-            host.AddMoney(2);
+            host.AddCoins(2);
             if (await host.YesNo("Chancellor", "Do you want to put your deck into your discard pile?"))
             {
                 host.DiscardEntireDeck();
