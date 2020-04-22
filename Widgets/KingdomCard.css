@@ -11,6 +11,7 @@
     --local-card-type-caps-font: calc(var(--local-scale) * var(--card-type-caps-font));
     --local-card-body-font: calc(var(--local-scale) * var(--card-body-font));
     --local-card-icon: calc(var(--local-scale) * var(--card-icon));
+    --local-border-radius: calc(var(--local-card-border-width) * 2);
     --text-scale: var(--local-scale);
     --text-image-align: bottom;
     width: var(--local-card-width);
@@ -18,8 +19,9 @@
     border-width: var(--local-card-border-width);
     display: flex;
     flex-direction: column;
-    border-radius: calc(var(--local-card-border-width) * 2);
+    border-radius: var(--local-border-radius);
     font-family: var(--card-body-family);
+    background: var(--highlight);
 }
 
 .kingdom-card img {
@@ -28,7 +30,6 @@
 
 .card__title {
     text-align: center;
-    background: var(--highlight);
     font-family: var(--card-title-family);
     white-space: nowrap;
     letter-spacing: -0.01em;
@@ -56,6 +57,7 @@
     height: var(--local-card-header);
     line-height: var(--local-card-header);
     font-size: var(--local-card-title-font);
+    border-radius: var(--local-border-radius) var(--local-border-radius) 0 0;
 }
 
 .card__image {
@@ -99,6 +101,7 @@
     font-size: var(--local-card-type-font);
     display: grid;
     grid-template-columns: calc(var(--local-card-footer) - 1px) 1fr calc(var(--local-card-footer) - 1px);
+    border-radius: 0 0 var(--local-border-radius) var(--local-border-radius);
 }
 
 .card__footer-cost, .card__footer-set {

@@ -1,15 +1,18 @@
 .special-card {
+    --local-card-border-width: calc(var(--local-scale) * var(--card-border-width));
+    --local-border-radius: calc(var(--local-card-border-width) * 2);
     width: calc(var(--local-scale) * var(--card-width));
     border-style: solid;
-    border-width: calc(var(--local-scale) * 2px);
+    border-width: var(--local-card-border-width);
     display: flex;
     flex-direction: column;
-    border-radius: 4px;
+    border-radius: var(--local-border-radius);
 }
 
 .special-card img {
-    max-width: calc(var(--local-scale) * (var(--card-width) - 4px));
+    max-width: calc(var(--local-scale) * (var(--card-width) - var(--local-card-border-width)));
     object-fit: cover;
+    border-radius: var(--local-border-radius);
 }
 
 .special-card__1x {
