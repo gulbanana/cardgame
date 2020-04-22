@@ -40,6 +40,8 @@ namespace Cardgame.All
             preset2("Deconstruction", CardSet.Intrigue2nd, CardSet.Dominion2nd, "Diplomat", "Harem", "Lurker", "Replace", "Swindler", "Bandit", "Mine", "Remodel", "ThroneRoom", "Village");
             preset2("Grand Scheme", CardSet.Intrigue2nd, CardSet.Dominion2nd, "Bridge", "Mill", "MiningVillage", "Patrol", "ShantyTown", "Artisan", "CouncilRoom", "Market", "Militia", "Workshop");
             preset2("Underlings", CardSet.Intrigue2nd, CardSet.Dominion2nd, "Courtier", "Diplomat", "Minion", "Nobles", "Pawn", "Cellar", "Festival", "Library", "Sentry", "Vassal");
+
+            preset1("High Seas", CardSet.Seaside, "Bazaar", "Caravan", "Embargo", "Explorer", "Haven", "Island", "Lookout", "PirateShip", "Smugglers", "Wharf");
         }
 
         public static IReadOnlyDictionary<string, string[]> BySet(CardSet set)

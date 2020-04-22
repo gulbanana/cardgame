@@ -4,6 +4,7 @@ namespace Cardgame.Shared
     {
         Dominion2nd,        
         Intrigue2nd,
+        Seaside,
         Dominion1st,
         Intrigue1st,
     }
