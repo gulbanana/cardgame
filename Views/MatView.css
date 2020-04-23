@@ -17,7 +17,7 @@
     right: 0;
     z-index: 2;
     text-align: center;
-    font-size: calc(var(--local-scale) * var(--card-title-font));
+    font-size: calc(var(--local-scale) * var(--card-type-font));
 }
 
 .mat-view__label {
