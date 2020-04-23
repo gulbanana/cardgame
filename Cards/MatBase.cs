@@ -17,7 +17,7 @@ namespace Cardgame.Cards
             Name = this.GetType().Name;
         }
 
-        public virtual string GetContents(IReadOnlyList<Instance> cards)
+        public virtual string GetContents(IReadOnlyList<Instance> cards, bool isOwnerOrSpectator)
         {
             if (cards == null || !cards.Any()) return null;
             

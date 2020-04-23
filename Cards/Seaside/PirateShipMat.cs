@@ -10,7 +10,7 @@ namespace Cardgame.Cards.Seaside
         public override string Art => "pirate-ship";
         public override string Label => "Pirate Ship";
 
-        public override string GetContents(IReadOnlyList<Instance> cards)
+        public override string GetContents(IReadOnlyList<Instance> cards, bool isOwner)
         {
             if (cards == null || !cards.Any()) return null;
             

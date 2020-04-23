@@ -1,3 +1,4 @@
+@inject IUserSession Session
 @code {
     [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
     [Parameter] public string Id { get; set; }
@@ -14,12 +15,12 @@
             if (Owner == null)
             {
                 var cards = Model.MatCards[Id];
-                contents = mat.GetContents(cards);
+                contents = mat.GetContents(cards, false);
             }
             else
             {
                 var cards = Model.PlayerMatCards[Owner][Id];
-                contents = mat.GetContents(cards);
+                contents = mat.GetContents(cards, Session.Username == Owner || !Model.Players.Contains(Session.Username));
             }
         }
     }

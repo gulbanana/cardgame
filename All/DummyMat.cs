@@ -15,7 +15,7 @@ namespace Cardgame.All
             Name = name;
         }
 
-        public string GetContents(IReadOnlyList<Instance> cards)
+        public string GetContents(IReadOnlyList<Instance> cards, bool isOwner)
         {
             return $"<run>{Name}: Mat not found.</run>";
         }

@@ -8,6 +8,6 @@ namespace Cardgame.API
         string Name { get; }
         string Label { get; }
         string Art { get; }
-        string GetContents(IReadOnlyList<Instance> cards);
+        string GetContents(IReadOnlyList<Instance> cards, bool isOwnerOrSpectator);
     }
 }
