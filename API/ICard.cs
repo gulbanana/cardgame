@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Cardgame.Shared;
 
@@ -15,6 +16,7 @@ namespace Cardgame.API
     public static class CardExtensions
     {
         public static int GetCost(this ICard card, IModifierSource modifierSource) => card.GetCost(modifierSource.GetModifiers());
+
         public static int SortByTypes(this ICard card)
         {
             return card.Types.Length switch
@@ -33,6 +35,11 @@ namespace Cardgame.API
                 2 when card.Types.Contains(CardType.Treasure) && card.Types.Contains(CardType.Victory) => 25,
                 _ => 100
             };
+        }
+
+        public static string[] Names(this IEnumerable<ICard> source)
+        {
+            return source.Select(card => card.Name).ToArray();
         }
     }
 }
