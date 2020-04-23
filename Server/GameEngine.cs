@@ -703,29 +703,13 @@ namespace Cardgame.Server
             return id;
         }
 
-        internal Instance MoveCard(string player, string id, Zone from, Zone to, string toParameter = null)
+        internal Instance MoveCard(string player, string id, Zone from, Zone to, string toParameter = null, string fromParameter = null)
         {
             Instance instance;
 
             switch (from)
             {
                 case Zone.Create:
-                    instance = Instance.Of(id);
-                    break;
-
-                case Zone.Hand:
-                    if (!Model.Hands[player].Contains(id)) throw new CommandException($"No {id} card in hand.");
-                    instance = Model.Hands[player].Extract(id);
-                    break;
-
-                case Zone.Discard:
-                    if (!Model.Discards[player].Contains(id)) throw new CommandException($"No {id} card in discard pile.");
-                    instance = Model.Discards[player].Extract(id);
-                    break;
-                
-                case Zone.SupplyAvailable:
-                    if (Model.Supply[id] < 1) throw new CommandException($"No {id} cards remaining in stack.");
-                    Model.Supply[id]--;
                     instance = Instance.Of(id);
                     break;
 
@@ -736,15 +720,36 @@ namespace Cardgame.Server
                     instance = Model.Decks[player].Extract(id);
                     break;
 
+                case Zone.Discard:
+                    if (!Model.Discards[player].Contains(id)) throw new CommandException($"No {id} card in discard pile.");
+                    instance = Model.Discards[player].Extract(id);
+                    break;
+
+                case Zone.Hand:
+                    if (!Model.Hands[player].Contains(id)) throw new CommandException($"No {id} card in hand.");
+                    instance = Model.Hands[player].Extract(id);
+                    break;
+
                 case Zone.InPlay:
                     if (!Model.PlayedCards[player].Contains(id)) throw new CommandException($"No {id} card is in play.");
                     instance = Model.PlayedCards[player].ExtractLast(id);
+                    break;
+
+                case Zone.PlayerMat:
+                    if (!Model.PlayerMatCards[player][fromParameter].Contains(id)) throw new CommandException($"No {id} card on mat {fromParameter}.");
+                    instance = Model.PlayerMatCards[player][fromParameter].ExtractLast(id);
                     break;
 
                 case Zone.Stash:
                     if (!stash.HasValue || stash.Value.Id != id) throw new CommandException($"Stashed {id} not found.");
                     instance = stash.Value;
                     stash = null;
+                    break;
+
+                case Zone.SupplyAvailable:
+                    if (Model.Supply[id] < 1) throw new CommandException($"No {id} cards remaining in stack.");
+                    Model.Supply[id]--;
+                    instance = Instance.Of(id);
                     break;
 
                 case Zone.Trash:
@@ -870,6 +875,7 @@ namespace Cardgame.Server
                 Zone.Discard => Model.Discards[player].ToArray(),
                 Zone.Hand => Model.Hands[player].ToArray(),
                 Zone.InPlay => Model.PlayedCards[player].ToArray(),
+                Zone.PlayerMat => Model.PlayerMatCards[player][parameter].ToArray(),
                 Zone.RecentGains => lastTurn[parameter ?? player].Gains.ToArray(),
                 Zone.Trash => Model.MatCards["TrashMat"].ToArray(),
                 Zone other => throw new CommandException($"Unsupported instance zone {other}")

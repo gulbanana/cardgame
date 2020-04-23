@@ -329,11 +329,11 @@ namespace Cardgame.Server
             }
         }
 
-        void IActionHost.PutIntoHand(string[] cards, Zone from)
+        void IActionHost.PutIntoHand(string[] cards, Zone from, string zoneParam)
         {
             foreach (var card in cards)
             {
-                engine.MoveCard(Player, card, from, Zone.Hand);
+                engine.MoveCard(Player, card, from, Zone.Hand, fromParameter: zoneParam);
             }
             
             engine.LogPartialEvent($@"<spans>

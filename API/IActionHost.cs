@@ -26,7 +26,7 @@ namespace Cardgame.API
         void Gain(string card, Zone to);        
         void GainFrom(string[] cards, Zone from);
         void PutOnDeck(string[] cards, Zone from);
-        void PutIntoHand(string[] cards, Zone from); // not a draw!
+        void PutIntoHand(string[] cards, Zone from, string zoneParam = null);
         void PutOnMat(string mat, string card, Zone from);
         void Reveal(string[] cards, Zone from);
         void Name(string card);
@@ -205,14 +205,20 @@ namespace Cardgame.API
             host.PutIntoHand(new[] { card }, from);
         }
 
-        public static void PutIntoHand(this IActionHost host, ICard[] cards, Zone from)
+        public static void PutIntoHand(this IActionHost host, ICard[] cards, Zone from, string zoneParam = null)
         {
-            host.PutIntoHand(cards.Select(card => card.Name).ToArray(), from);
+            host.PutIntoHand(cards.Select(card => card.Name).ToArray(), from, zoneParam);
         }
 
         public static void PutIntoHand(this IActionHost host, ICard card, Zone from)
         {
             host.PutIntoHand(new[] { card.Name }, from);
+        }
+
+        public static void PutIntoHand(this IActionHost host, Zone from, string zoneParam = null)
+        {
+            var cards = host.Examine(from, zoneParam);
+            host.PutIntoHand(cards, from, zoneParam);
         }
         #endregion
 
