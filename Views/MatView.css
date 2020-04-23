@@ -24,6 +24,7 @@
     font-family: var(--card-title-family);
     top: 0;
     margin-top: 0.5em;
+    background: var(--overlay-color);
 }
 
 .mat-view__owner {
