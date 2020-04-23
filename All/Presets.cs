@@ -42,6 +42,14 @@ namespace Cardgame.All
             preset2("Underlings", CardSet.Intrigue2nd, CardSet.Dominion2nd, "Courtier", "Diplomat", "Minion", "Nobles", "Pawn", "Cellar", "Festival", "Library", "Sentry", "Vassal");
 
             preset1("High Seas", CardSet.Seaside, "Bazaar", "Caravan", "Embargo", "Explorer", "Haven", "Island", "Lookout", "PirateShip", "Smugglers", "Wharf");
+            preset1("Buried Treasure", CardSet.Seaside, "Ambassador", "Cutpurse", "FishingVillage", "Lighthouse", "Outpost", "PearlDiver", "Tactician", "TreasureMap", "Warehouse", "Wharf");
+            preset1("Shipwrecks", CardSet.Seaside, "GhostShip", "MerchantShip", "NativeVillage", "Navigator", "PearlDiver", "Salvager", "SeaHag", "Smugglers", "Treasury", "Warehouse");
+            preset2("Reach for Tomorrow", CardSet.Seaside, CardSet.Dominion2nd, "Artisan", "Cellar", "CouncilRoom", "Vassal", "Village", "Cutpurse", "GhostShip", "Lookout", "SeaHag", "TreasureMap");
+            preset2("Repetition", CardSet.Seaside, CardSet.Dominion2nd, "Festival", "Harbinger", "Militia", "Workshop", "Caravan", "Explorer", "Outpost", "PearlDiver", "PirateShip", "Treasury");
+            preset2("Give and Take", CardSet.Seaside, CardSet.Dominion2nd, "Library", "Market", "Moneylender", "Witch", "Ambassador", "FishingVillage", "Haven", "Island", "Salvager", "Smugglers");
+            preset2("A Star to Steer By", CardSet.Seaside, CardSet.Intrigue2nd, "SecretPassage", "Diplomat", "Swindler", "WishingWell", "Courtier", "Lookout", "TreasureMap", "GhostShip", "Haven", "Outpost");
+            preset2("Shore Patrol", CardSet.Seaside, CardSet.Intrigue2nd, "Patrol", "Replace", "ShantyTown", "TradingPost", "Pawn", "Island", "Wharf", "Cutpurse", "Lighthouse", "Warehouse");
+            preset2("Bridge Crossing", CardSet.Seaside, CardSet.Intrigue2nd, "Lurker", "Nobles", "Duke", "Conspirator", "Bridge", "Salvager", "Embargo", "Smugglers", "NativeVillage", "Treasury");
         }
 
         public static IReadOnlyDictionary<string, string[]> BySet(CardSet set)
