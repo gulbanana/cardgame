@@ -6,7 +6,7 @@
     [Parameter] public Size Size { get; set; }
 }
 
-<span style="display: flex;">
+<span class="supply-pile">
     @if (Model.Supply[Id] > 0)
     {
         var isEnabled = Session.Username.Equals(Model.ActivePlayer) &&
@@ -20,6 +20,12 @@
                     Size="@Size" 
                     Stack="@Model.Supply[Id]"
                     Action="@(() => Dispatch(new BuyCardCommand { Id = Id }))" />
+        <div class="supply-pile__tokens">
+            @foreach (var effect in Model.SupplyTokens[Id])
+            {
+                <EffectView Id="@effect" />
+            }
+        </div>
     }
     else
     {

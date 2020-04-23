@@ -7,7 +7,7 @@ namespace Cardgame.All
     {
         public string Name { get; }
         public CardType[] Types => new[] { CardType.Curse };
-        public string Art => "dom-village";
+        public string Art => "curse-2x";
         public string Text => $"<run>{Name}: Card not found.</run>";
 
         public DummyCard(string name)

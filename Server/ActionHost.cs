@@ -504,6 +504,21 @@ namespace Cardgame.Server
         {
             engine.Model.ActiveEffects.Remove(effect);
         }
+
+        void IActionHost.AddToken(string pile, string effect)
+        {
+            engine.Model.SupplyTokens[pile] = engine.Model.SupplyTokens[pile].Append("EmbargoToken").ToArray();
+            
+            var token = All.Effects.ByName(effect);
+            var description = (token as IToken)?.Description ?? token.Name;
+            
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{IndentLevel}' />
+                {LogVerbInitial("put", "puts", "putting")}
+                <run>{description} on</run>
+                <card suffix='.'>{pile}</card>.
+            </spans>");
+        }
      
         // this is a special case used by Chancellor: it does not count as 'discarding' each card, 
         // and you may not see what cards were discarded

@@ -291,13 +291,15 @@ namespace Cardgame.Server
                     if (Model.Supply[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("A card is currently being played.");
 
-                    BuyCard(username, buyCard.Id);
-                    
-                    if (Model.BuysRemaining == 0)
+                    BeginBackgroundTask(buyCard.Id, async id =>
                     {
-                        EndTurn();
-                        BeginBackgroundTask(Model.ActivePlayer, BeginTurnAsync);
-                    }
+                        await BuyCardAsync(username, id);
+                        if (Model.BuysRemaining == 0)
+                        {
+                            EndTurn();
+                            await BeginTurnAsync(Model.ActivePlayer);
+                        }
+                    });
 
                     break;
 
@@ -323,22 +325,6 @@ namespace Cardgame.Server
                 case var unknown:
                     throw new CommandException($"Unrecognised command {unknown}");
             }
-        }
-
-        private void BuyCard(string player, string id)
-        {
-            var boughtCard = All.Cards.ByName(id);
-            if (boughtCard.GetCost(Model) > Model.CoinsRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
-
-            MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
-            Model.CoinsRemaining -= boughtCard.GetCost(Model);
-            Model.BuysRemaining -= 1;
-
-            LogEvent($@"<spans>
-                <player>{player}</player>
-                <if you='buy' them='buys'>{player}</if>
-                <card suffix='.'>{id}</card>
-            </spans>");
         }
 
         private void Notify()
@@ -404,6 +390,27 @@ namespace Cardgame.Server
             }
         }
 
+        private async Task BuyCardAsync(string player, string id)
+        {
+            var boughtCard = All.Cards.ByName(id);
+            if (boughtCard.GetCost(Model) > Model.CoinsRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
+
+            await Act(1, player, Trigger.BuyCard, id, () => 
+            {
+                MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
+                Model.CoinsRemaining -= boughtCard.GetCost(Model);
+                Model.BuysRemaining -= 1;
+
+                LogEvent($@"<spans>
+                    <player>{player}</player>
+                    <if you='buy' them='buys'>{player}</if>
+                    <card suffix='.'>{id}</card>
+                </spans>");
+
+                return Task.CompletedTask;
+            }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
+        }
+
         internal async Task PlayCardAsync(int indentLevel, string player, string id, Zone from)
         {       
             var played = MoveCard(player, id, from, Zone.InPlay);
@@ -444,7 +451,7 @@ namespace Cardgame.Server
                 {
                     throw new CommandException($"Only Actions and Treasures can be played.");
                 }
-            });
+            }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
         }
 
         private void LogEvent(string eventText)
@@ -482,7 +489,8 @@ namespace Cardgame.Server
         {
             var rng = new Random();
 
-            Model.Supply = All.Cards.Base().Concat(Model.KingdomCards).ToDictionary(id => id, id => Model.GetInitialSupply(id));            
+            Model.Supply = All.Cards.Base().Concat(Model.KingdomCards).ToDictionary(id => id, id => Model.GetInitialSupply(id));
+            Model.SupplyTokens = Model.Supply.Keys.ToDictionary(k => k, _ => new string[0]);
             Model.ActiveEffects = new List<string>();
             Model.Trash = new List<Instance>();
             Model.PreventedAttacks = new HashSet<string>();
@@ -932,13 +940,14 @@ namespace Cardgame.Server
             return JsonSerializer.Deserialize<TOutput>(output);
         }
 
-        internal async Task Act(int indentLevel, string player, Trigger trigger, string parameter, Func<Task> f)
+        internal async Task Act(int indentLevel, string player, Trigger trigger, string parameter, Func<Task> f, IEnumerable<IReactor> extraReactors = null)
         {
             var reactions = new List<Reaction>();
 
             var globalReactors = Model.ActiveEffects
                 .Select(All.Effects.ByName)
                 .OfType<IReactor>()
+                .Concat(extraReactors ?? Array.Empty<IReactor>())
                 .ToList();
 
             while (globalReactors.Any())

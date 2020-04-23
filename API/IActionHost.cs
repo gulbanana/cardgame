@@ -50,6 +50,7 @@ namespace Cardgame.API
         // advanced
         void AddEffect(string effect);
         void RemoveEffect(string effect);
+        void AddToken(string pile, string effect);
 
         // special cases
         void DiscardEntireDeck();

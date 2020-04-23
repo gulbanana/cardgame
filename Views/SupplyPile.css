@@ -1,0 +1,12 @@
+.supply-pile {
+    display: flex;
+    position: relative;
+}
+
+.supply-pile__tokens {
+    position: absolute;
+    top: var(--card-header);
+    left: var(--card-border-width);
+    display: flex;
+    flex-wrap: wrap;
+}

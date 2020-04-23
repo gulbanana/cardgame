@@ -30,6 +30,7 @@ namespace Cardgame.Shared
         // game state
         public string ActivePlayer { get; set; }
         public Dictionary<string, int> Supply { get; set; }
+        public Dictionary<string, string[]> SupplyTokens { get; set; }
         public Dictionary<string, List<Instance>> Hands { get; set; }
         public Dictionary<string, List<Instance>> Decks { get; set; }
         public Dictionary<string, List<Instance>> Discards { get; set; }
