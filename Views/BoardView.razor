@@ -59,7 +59,7 @@
                     }
                     @for (var i = 0; i < thisTurnCards.Count(); i++)
                     {
-                        <ActiveCard Large="@(i == Model.PlayedCards[Model.ActivePlayer].Count-1)" Id="@thisTurnCards.ElementAt(i).Id" KeepVisible="@SomeoneVisibleChoosing" />
+                        <ActiveCard Large="@(i == thisTurnCards.Count()-1)" Id="@thisTurnCards.ElementAt(i).Id" KeepVisible="@SomeoneVisibleChoosing" />
                     }
                 </GappedRow>
             </div>
