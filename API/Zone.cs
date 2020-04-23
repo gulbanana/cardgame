@@ -7,13 +7,14 @@ namespace Cardgame.API
         DeckTop2,
         DeckTop3,
         DeckTop4,
-        Hand,
-        InPlay,  
         Discard,
+        Hand,
+        InPlay,
+        PlayerMat,
+        Stash,
         SupplyAll,
         SupplyAvailable,
         SupplyEmpty,
-        Trash,      
-        Stash
+        Trash,        
     }
 }

@@ -1,34 +1,29 @@
 @code {
-    [Parameter] public string Name { get; set; }
-    [Parameter] public IReadOnlyList<Instance> Cards { get; set; }
-    private TextModel contents;
+    [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
+    [Parameter] public string Id { get; set; }
+    private IMat mat;
+    private string contents;
 
     protected override void OnParametersSet()
     {
-        if (Cards?.Any() ?? false)
-        {
-            var groups = new List<TextModel>();
-            foreach (var name in Cards.Names().Distinct())
-            {
-                var number = Cards.Names().Count(id => id == name);
-                groups.Add(new TextModel.Card { Name = name, Suffix = $" x{number}" });
-            }
-            contents = new TextModel.Spans
-            {
-                Children = groups.ToArray()
-            };
-        }
+        mat = All.Mats.ByName(Id);
+        var cards = (Model.MatCards?.ContainsKey(Id)??false) ? Model.MatCards[Id] : new List<Instance>();
+        contents = mat.GetContents(cards);
     }
 }
 
 <div class="mat-view">
-    <img class="mat-view__picture" src="/mats/@(Name).jpg">
+    <img class="mat-view__picture" src="/mats/@(mat.Art).jpg">
     <div class="mat-view__overlay">
         @if (contents != null)
         {
             <div class="mat-view__contents">
-                <RichText Parsed="@contents" />
+                <RichText Model="@contents" />
             </div>
         }
     </div>
+    @if (mat.Label != null)
+    {
+        <h3 class="mat-view__label">@mat.Label</h3>
+    }
 </div>

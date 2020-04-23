@@ -26,7 +26,7 @@ namespace Cardgame.Cards.Dominion
                         cards => cards.OfType<IVictoryCard>()
                     );
                     player.Reveal(onTop, Zone.Hand);
-                    player.PlaceOnDeck(onTop, Zone.Hand);
+                    player.PutOnDeck(onTop, Zone.Hand);
                 }
                 else
                 {

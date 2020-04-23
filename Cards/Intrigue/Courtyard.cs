@@ -18,7 +18,7 @@ namespace Cardgame.Cards.Intrigue
             host.DrawCards(3);
 
             var put = await host.SelectCard("Choose a card to put onto your deck.");
-            host.PlaceOnDeck(put);
+            host.PutOnDeck(put);
         }
     }
 }

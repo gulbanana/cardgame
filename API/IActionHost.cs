@@ -23,10 +23,11 @@ namespace Cardgame.API
         // move cards around
         void Discard(string[] cards, Zone from);
         void Trash(string[] cards, Zone from);
-        void Gain(string card, Zone to);
+        void Gain(string card, Zone to);        
         void GainFrom(string[] cards, Zone from);
-        void PlaceOnDeck(string[] cards, Zone from);
+        void PutOnDeck(string[] cards, Zone from);
         void PutIntoHand(string[] cards, Zone from); // not a draw!
+        void PutOnMat(string mat, string card, Zone from);
         void Reveal(string[] cards, Zone from);
         void Name(string card);
 
@@ -181,24 +182,24 @@ namespace Cardgame.API
         }
         #endregion
 
-        #region Place
-        public static void PlaceOnDeck(this IActionHost host, ICard card, Zone from)
+        #region PutOnDeck
+        public static void PutOnDeck(this IActionHost host, ICard card, Zone from)
         {
-            host.PlaceOnDeck(new[] { card.Name }, from);
+            host.PutOnDeck(new[] { card.Name }, from);
         }
 
-        public static void PlaceOnDeck(this IActionHost host, ICard[] cards)
+        public static void PutOnDeck(this IActionHost host, ICard[] cards)
         {
-            host.PlaceOnDeck(cards.Select(card => card.Name).ToArray(), Zone.Hand);
+            host.PutOnDeck(cards.Select(card => card.Name).ToArray(), Zone.Hand);
         }
 
-        public static void PlaceOnDeck(this IActionHost host, ICard card)
+        public static void PutOnDeck(this IActionHost host, ICard card)
         {
-            host.PlaceOnDeck(new[] { card.Name }, Zone.Hand);
+            host.PutOnDeck(new[] { card.Name }, Zone.Hand);
         }
         #endregion
 
-        #region Put
+        #region PutIntoHand
         public static void PutIntoHand(this IActionHost host, string card, Zone from)
         {
             host.PutIntoHand(new[] { card }, from);
@@ -212,6 +213,13 @@ namespace Cardgame.API
         public static void PutIntoHand(this IActionHost host, ICard card, Zone from)
         {
             host.PutIntoHand(new[] { card.Name }, from);
+        }
+        #endregion
+
+        #region PutOnMat
+        public static void PutOnMat(this IActionHost host, string mat, ICard card, Zone from)
+        {
+            host.PutOnMat(mat, card.Name, from);
         }
         #endregion
 

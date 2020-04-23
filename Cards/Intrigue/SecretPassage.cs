@@ -26,7 +26,7 @@ namespace Cardgame.Cards.Intrigue
 
             if (host.Count(Zone.DeckTop1) == 0)
             {
-                host.PlaceOnDeck(inserted);
+                host.PutOnDeck(inserted);
             }
             else
             {

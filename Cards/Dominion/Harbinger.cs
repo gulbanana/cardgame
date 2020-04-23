@@ -25,7 +25,7 @@ namespace Cardgame.Cards.Dominion
             var selected = await host.SelectCards("Choose up to one card from your discard pile.", Zone.Discard, 0, 1);
             if (selected.Any())
             {
-                host.PlaceOnDeck(selected.Single(), Zone.Discard);
+                host.PutOnDeck(selected.Single(), Zone.Discard);
             }
         }
     }

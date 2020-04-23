@@ -123,7 +123,7 @@ namespace Cardgame.Server
                     Model.KingdomPreset = configureGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
                     Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
                     Model.KingdomHasCurse = Model.KingdomCards.Any(All.Cards.UsesCurse);
-                    Model.KingdomHasSeasideMats = false;
+                    Model.KingdomMats = Model.KingdomCards.Contains("Island") ? new[] { "TrashMat", "IslandMat" } : new[] { "TrashMat" };
 
                     break;
 
@@ -136,7 +136,7 @@ namespace Cardgame.Server
                     Model.KingdomPreset = startGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
                     Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
                     Model.KingdomHasCurse = Model.KingdomCards.Any(All.Cards.UsesCurse);
-                    Model.KingdomHasSeasideMats = false;
+                    Model.KingdomMats = Model.KingdomCards.Contains("Island") ? new[] { "TrashMat", "IslandMat" } : new[] { "TrashMat" };
 
                     BeginGame();
                     BeginBackgroundTask(Model.ActivePlayer, BeginTurnAsync);
@@ -494,12 +494,12 @@ namespace Cardgame.Server
             Model.Supply = All.Cards.Base().Concat(Model.KingdomCards).ToDictionary(id => id, id => Model.GetInitialSupply(id));
             Model.SupplyTokens = Model.Supply.Keys.ToDictionary(k => k, _ => new string[0]);
             Model.ActiveEffects = new List<string>();
-            Model.Trash = new List<Instance>();
             Model.PreventedAttacks = new HashSet<string>();
             Model.ChoosingPlayers = new Stack<string>();
             Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.PlayedCards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
+            Model.MatCards = Model.KingdomMats.ToDictionary(k => k, _ => new List<Instance>());
             Model.Attachments = new Dictionary<Instance, Instance>();
             Model.Decks = Model.Players.ToDictionary(k => k, _ => 
             {
@@ -695,15 +695,15 @@ namespace Cardgame.Server
             return id;
         }
 
-        internal Instance MoveCard(string player, string id, Zone from, Zone to)
+        internal Instance MoveCard(string player, string id, Zone from, Zone to, string toParameter = null)
         {
             Instance instance;
 
             switch (from)
             {
                 case Zone.Trash:
-                    if (!Model.Trash.Contains(id)) throw new CommandException($"No {id} card in hand.");
-                    instance = Model.Trash.Extract(id);
+                    if (!Model.MatCards["TrashMat"].Contains(id)) throw new CommandException($"No {id} card in hand.");
+                    instance = Model.MatCards["TrashMat"].Extract(id);
                     break;
 
                 case Zone.Hand:
@@ -746,22 +746,6 @@ namespace Cardgame.Server
 
             switch (to)
             {
-                case Zone.Trash:
-                    Model.Trash.Add(instance);
-                    break;
-
-                case Zone.Hand:
-                    Model.Hands[player].Add(instance);
-                    break;
-
-                case Zone.Discard:
-                    Model.Discards[player].Insert(0, instance);
-                    break;
-                
-                case Zone.SupplyAvailable:
-                    Model.Supply[instance.Id]++; // actual card is lost
-                    break;
-
                 case Zone.DeckTop1:
                 case Zone.DeckTop2:
                 case Zone.DeckTop3:
@@ -769,13 +753,33 @@ namespace Cardgame.Server
                     Model.Decks[player].Insert(0, instance);
                     break;
 
+                case Zone.Discard:
+                    Model.Discards[player].Insert(0, instance);
+                    break;
+
+                case Zone.Hand:
+                    Model.Hands[player].Add(instance);
+                    break;
+
                 case Zone.InPlay:
                     Model.PlayedCards[player].Add(instance);
+                    break;
+
+                case Zone.PlayerMat:
+                    Model.MatCards[toParameter].Add(instance);
                     break;
 
                 case Zone.Stash:
                     if (stash.HasValue) throw new CommandException($"Card {stash} has been lost.");
                     stash = instance;
+                    break;
+
+                case Zone.SupplyAvailable:
+                    Model.Supply[instance.Id]++; // actual card is lost
+                    break;
+
+                case Zone.Trash:
+                    Model.MatCards["TrashMat"].Add(instance);
                     break;
 
                 default:
@@ -785,12 +789,12 @@ namespace Cardgame.Server
             return instance;
         }
 
-        internal void MoveCard(string player, Instance instance, Zone from, Zone to)
+        internal void MoveCard(string player, Instance instance, Zone from, Zone to, string toParameter = null)
         {
-            MoveCard(player, instance.Id, from, to);
+            MoveCard(player, instance.Id, from, to, toParameter);
         }
 
-        internal int CountCards(string player, Zone source)
+        internal int CountCards(string player, Zone source, string parameter = null)
         {
             return source switch 
             {
@@ -805,12 +809,12 @@ namespace Cardgame.Server
                 Zone.SupplyAll => Model.Supply.Keys.Count,
                 Zone.SupplyAvailable => Model.Supply.Keys.Count(id => Model.Supply[id] > 0),
                 Zone.SupplyEmpty => Model.Supply.Keys.Count(id => Model.Supply[id] == 0),
-                Zone.Trash => Model.Trash.Count,
+                Zone.Trash => Model.MatCards["TrashMat"].Count,
                 Zone other => throw new CommandException($"Unknown card zone {other}")
             };
         }
 
-        internal Instance[] GetInstances(string player, Zone source, Action onShuffle = null)
+        internal Instance[] GetInstances(string player, Zone source, Action onShuffle = null, string parameter = null)
         {
             onShuffle = onShuffle ?? new Action(() => {;});
 
@@ -853,12 +857,12 @@ namespace Cardgame.Server
                 Zone.Discard => Model.Discards[player].ToArray(),
                 Zone.Hand => Model.Hands[player].ToArray(),
                 Zone.InPlay => Model.PlayedCards[player].ToArray(),
-                Zone.Trash => Model.Trash.ToArray(),
+                Zone.Trash => Model.MatCards["TrashMat"].ToArray(),
                 Zone other => throw new CommandException($"Unsupported instance zone {other}")
             };
         }
 
-        internal string[] GetCards(string player, Zone source, Action onShuffle = null)
+        internal string[] GetCards(string player, Zone source, Action onShuffle = null, string parameter = null)
         {
             return source switch 
             {
@@ -869,7 +873,7 @@ namespace Cardgame.Server
             };
         }
 
-        internal void SetCardOrder(string player, string[] cards, Zone destination)
+        internal void SetCardOrder(string player, string[] cards, Zone destination, string parameter = null)
         {
             switch (destination)
             {

@@ -30,7 +30,7 @@ namespace Cardgame.Cards.Dominion
                 "Choose a card to put onto your deck.", 
                 Zone.Hand
             );
-            host.PlaceOnDeck(placedCard, Zone.Hand);            
+            host.PutOnDeck(placedCard, Zone.Hand);            
         }
     }
 }

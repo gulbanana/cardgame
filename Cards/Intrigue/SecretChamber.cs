@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Intrigue
         {
             host.DrawCards(2);
             var put = await host.SelectCards("Choose cards to put back.", Zone.Hand, 2, 2);
-            host.PlaceOnDeck(put);
+            host.PutOnDeck(put);
             var ordered = await host.OrderCards("Choose the order of the cards put back.", Zone.DeckTop2);
             host.Reorder(ordered, Zone.DeckTop2);
         }

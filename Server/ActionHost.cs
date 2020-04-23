@@ -295,7 +295,7 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        void IActionHost.PlaceOnDeck(string[] cards, Zone from)
+        void IActionHost.PutOnDeck(string[] cards, Zone from)
         {
             foreach (var card in cards)
             {
@@ -341,6 +341,20 @@ namespace Cardgame.Server
                 <run>into</run>
                 <if you='your' them='their'>{Player}</if>
                 <run>hand.</run>
+            </spans>");
+        }
+
+        void IActionHost.PutOnMat(string mat, string card, Zone from)
+        {
+            engine.MoveCard(Player, card, from, Zone.PlayerMat, mat);
+
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{IndentLevel}' />
+                {LogVerbInitial("put", "puts", "putting")}
+                <card>{card}</card>
+                <run>onto</run>
+                <if you='your' them='their'>{Player}</if>
+                <run>{All.Mats.ByName(mat).Label} mat.</run>
             </spans>");
         }
 
