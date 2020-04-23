@@ -6,9 +6,9 @@
 }
 
 .gapped-row > * {
-    margin-right: var(--std-gap);
+    margin-left: var(--std-gap);
 }
 
-.gapped-row > *:last-of-type {
-    margin-right: 0;
+.gapped-row > *:first-child {
+    margin-left: 0;
 }

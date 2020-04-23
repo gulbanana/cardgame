@@ -13,6 +13,9 @@
         .Sum();
     bool AnyoneChoosing => Model.ChoosingPlayers.Any();
     bool SomeoneVisibleChoosing => AnyoneChoosing && (Model.ChoosingPlayers.Peek().Equals(Session.Username) || !Model.Players.Contains(Session.Username));
+
+    IEnumerable<Instance> lastTurnCards => Model.PlayedCards[Model.ActivePlayer].Where(Model.PreviouslyPlayedCards.Contains);
+    IEnumerable<Instance> thisTurnCards => Model.PlayedCards[Model.ActivePlayer].Except(Model.PreviouslyPlayedCards);
 }
 
 <div class="board-view@(Model.KingdomHasCurse ? " board-view--constrained" : "")">
@@ -46,9 +49,17 @@
             <div class="board-view__played-cards__centered-row__actual-played-cards" 
                  style="grid-column: @(SomeoneVisibleChoosing ? "1/2" : "1/3")">
                 <GappedRow>
-                    @for (var i = 0; i < Model.PlayedCards[Model.ActivePlayer].Count; i++)
+                    @foreach (var instance in lastTurnCards)
                     {
-                        <ActiveCard Large="@(i == Model.PlayedCards[Model.ActivePlayer].Count-1)" Id="@Model.PlayedCards[Model.ActivePlayer][i].Id" KeepVisible="@SomeoneVisibleChoosing" />
+                        <ActiveCard Id="@instance.Id" />
+                    }
+                    @if (lastTurnCards.Any() && thisTurnCards.Any())
+                    {
+                        <div style="border-left: 1px; border-right: 1px; border-style: dashed; border-color: black; width: 2px; height: var(--card-height);" />
+                    }
+                    @for (var i = 0; i < thisTurnCards.Count(); i++)
+                    {
+                        <ActiveCard Large="@(i == Model.PlayedCards[Model.ActivePlayer].Count-1)" Id="@thisTurnCards.ElementAt(i).Id" KeepVisible="@SomeoneVisibleChoosing" />
                     }
                 </GappedRow>
             </div>

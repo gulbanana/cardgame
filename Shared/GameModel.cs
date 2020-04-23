@@ -37,6 +37,7 @@ namespace Cardgame.Shared
         public List<Instance> Trash { get; set; }
 
         // turn state    
+        public HashSet<Instance> PreviouslyPlayedCards { get; set; }
         public List<string> ActiveEffects { get; set; }
         public bool ExecutingBackgroundTasks { get; set; }
         public bool BuyPhase { get; set; }

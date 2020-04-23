@@ -529,6 +529,7 @@ namespace Cardgame.Server
             Model.BuysRemaining = 1;
             Model.CoinsRemaining = isDemo ? 10 : 0;
             Model.BuyPhase = false;
+            Model.PreviouslyPlayedCards = new HashSet<Instance>(Model.PlayedCards[player]);
 
             LogEvent($@"<bold>
                 <spans>
