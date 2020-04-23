@@ -14,7 +14,11 @@ namespace Cardgame.Widgets
 
         public static string FromColours(IEnumerable<string> colours)
         {
-            if (colours.Distinct().Count() == 1)
+            if (!colours.Any())
+            {
+                return "var(--card-type-special)";
+            }
+            else if (colours.Distinct().Count() == 1)
             {
                 return $"var(--card-type-{colours.First()})";
             }

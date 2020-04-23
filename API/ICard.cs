@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cardgame.Shared;
@@ -16,7 +17,7 @@ namespace Cardgame.API
 
     public static class CardExtensions
     {
-        public static int GetCost(this ICard card, IModifierSource modifierSource) => card.GetCost(modifierSource.GetModifiers());
+        public static int GetCost(this ICard card, IModifierSource modifierSource) => card.GetCost(modifierSource?.GetModifiers() ?? Array.Empty<IModifier>());
 
         public static int SortByTypes(this ICard card)
         {

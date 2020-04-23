@@ -114,5 +114,14 @@ namespace Cardgame.All
         {
             return _Cursers.Contains(id);
         }
+
+        public static IEnumerable<IGrouping<CardSet, string>> BySet()
+        {
+            return from exemplar in byName.Values
+                   let set = GetSet(exemplar.Name)
+                   where set.HasValue
+                   group exemplar.Name by set.Value into g
+                   select g;
+        }
     }
 }
