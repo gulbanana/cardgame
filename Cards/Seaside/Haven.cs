@@ -31,7 +31,7 @@ namespace Cardgame.Cards.Seaside
             }
         }
 
-        protected override void NextTurn(IActionHost host)
+        protected override void OnBeginTurn(IActionHost host)
         {
             host.Detach(Zone.Hand);
         }

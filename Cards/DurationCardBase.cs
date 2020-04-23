@@ -9,13 +9,31 @@ namespace Cardgame.Cards
 
         public Task<Reaction> ExecuteReactionAsync(IActionHost host, Zone reactFrom, Trigger triggerType, string triggerParameter)
         {
-            if (reactFrom == Zone.InPlay && triggerType == Trigger.BeginTurn && triggerParameter == host.Player)
+            if (reactFrom == Zone.InPlay)
             {
-                return Task.FromResult(Reaction.Before(() => 
+                if (triggerType == Trigger.BeginTurn && triggerParameter == host.Player)
                 {
-                    NextTurn(host);
-                    host.CompleteDuration();
-                }));
+                    return Task.FromResult(Reaction.Before(() => 
+                    {
+                        OnBeginTurn(host);
+                        host.CompleteDuration();
+                    }));
+                }
+                else if (triggerType == Trigger.PlayCard)
+                {
+                    var card = All.Cards.ByName(triggerParameter);
+                    return Task.FromResult(Reaction.BeforeAndAfter(() =>
+                    {
+                        OnBeforePlayCard(host, card);
+                    }, () =>
+                    {
+                        OnAfterPlayCard(host, card);
+                    }));
+                }
+                else
+                {
+                    return Task.FromResult(Reaction.None());
+                }
             }
             else
             {
@@ -23,6 +41,9 @@ namespace Cardgame.Cards
             }
         }
 
-        protected abstract void NextTurn(IActionHost host);
+        protected abstract void OnBeginTurn(IActionHost host);
+
+        protected virtual void OnBeforePlayCard(IActionHost host, ICard card) { }
+        protected virtual void OnAfterPlayCard(IActionHost host, ICard card) { }
     }
 }

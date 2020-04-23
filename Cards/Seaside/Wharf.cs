@@ -21,7 +21,7 @@ namespace Cardgame.Cards.Seaside
             host.AddBuys(1);
         }
 
-        protected override void NextTurn(IActionHost host)
+        protected override void OnBeginTurn(IActionHost host)
         {
             host.DrawCards(2);
             host.AddBuys(1);
