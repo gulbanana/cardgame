@@ -12,6 +12,7 @@ namespace Cardgame.Server
     internal class GameEngine
     {
         private readonly HashSet<string> bots;
+        private readonly HashSet<Instance> incompleteDurations;
         private TaskCompletionSource<string> inputTCS;
         private bool isDemo;
         private string demoNextActive;
@@ -23,6 +24,7 @@ namespace Cardgame.Server
         public GameEngine()
         {
             bots = new HashSet<string>();
+            incompleteDurations = new HashSet<Instance>();
 
             Model = new GameModel();
             Model.EventLog = new List<string>();
@@ -404,11 +406,16 @@ namespace Cardgame.Server
 
         internal async Task PlayCardAsync(int indentLevel, string player, string id, Zone from)
         {       
-            MoveCard(player, id, from, Zone.InPlay);
+            var played = MoveCard(player, id, from, Zone.InPlay);
 
             await Act(indentLevel, player, Trigger.PlayCard, id, async () =>
             {
                 var card = All.Cards.ByName(id);
+                if (card.Types.Contains(CardType.Duration))
+                {
+                    incompleteDurations.Add(played);
+                }
+
                 if (card is IActionCard action)
                 {
                     if (player == Model.ActivePlayer)
@@ -568,9 +575,9 @@ namespace Cardgame.Server
             var toDiscard = new List<Instance>();
             foreach (var instance in inPlay.ToList())
             {
-                if (All.Cards.ByName(instance).Types.Contains(CardType.Duration) && !instance.DurationComplete)
+                if (All.Cards.ByName(instance).Types.Contains(CardType.Duration) && incompleteDurations.Contains(instance))
                 {
-                    instance.DurationComplete = true;
+                    incompleteDurations.Remove(instance);
                 }
                 else
                 {
@@ -680,8 +687,8 @@ namespace Cardgame.Server
             return id;
         }
 
-        private Instance nowhere;
-        internal void MoveCard(string player, string id, Zone from, Zone to)
+        private Instance? nowhere;
+        internal Instance MoveCard(string player, string id, Zone from, Zone to)
         {
             Instance instance;
 
@@ -721,8 +728,8 @@ namespace Cardgame.Server
                     break;
 
                 case Zone.Nowhere:
-                    if (nowhere == null || nowhere.Id != id) throw new CommandException($"Card {id} not found.");
-                    instance = nowhere;
+                    if (!nowhere.HasValue || nowhere.Value.Id != id) throw new CommandException($"Card {id} not found.");
+                    instance = nowhere.Value;
                     nowhere = null;
                     break;
 
@@ -760,13 +767,15 @@ namespace Cardgame.Server
                     break;
 
                 case Zone.Nowhere:
-                    if (nowhere != null) throw new CommandException($"Card {nowhere} has been lost.");
+                    if (nowhere.HasValue) throw new CommandException($"Card {nowhere} has been lost.");
                     nowhere = instance;
                     break;
 
                 default:
                     throw new Exception($"Unknown zone {to}");
             }
+
+            return instance;
         }
 
         internal void MoveCard(string player, Instance instance, Zone from, Zone to)
