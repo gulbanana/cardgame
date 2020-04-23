@@ -16,12 +16,14 @@
     }
 }
 
-<h3>Please enter a username.</h3>
-<form @onsubmit="OnSubmit">    
-    <input type="text" @bind="username">
-    <ActiveButton Label="Login" />
-    @if (error != null)
-    {
-        <br><span style="color: red">@error</span>
-    }
-</form>
+<Padded>
+    <h3>Please enter a username.</h3>
+    <form @onsubmit="OnSubmit">    
+        <input type="text" @bind="username">
+        <ActiveButton Label="Login" />
+        @if (error != null)
+        {
+            <br><span style="color: red">@error</span>
+        }
+    </form>
+</Padded>

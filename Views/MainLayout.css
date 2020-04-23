@@ -1,15 +1,8 @@
 main {
-    padding: 1em;
     width: 100vw;
     height: 100vh;
 }
 
 main > *:first-child {
     margin-top: 0;
-}
-
-@media (max-width: calc(760px + 390px)) {
-    main {
-        padding: 1em 0 1em 0;
-    }
 }

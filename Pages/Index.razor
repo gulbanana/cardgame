@@ -11,30 +11,32 @@
     }
 }
 
-<h3>New game</h3>
-<form @onsubmit="OnSubmit">    
-    <input type="text" @bind="newGameName">
-    <ActiveButton Label="Create" />
-</form>
+<Padded>
+    <h3>New game</h3>
+    <form @onsubmit="OnSubmit">    
+        <input type="text" @bind="newGameName">
+        <ActiveButton Label="Create" />
+    </form>
 
-<h3>Current games</h3>
-<Subscribed Endpoint="@Lobby">
-    @foreach (var game in context.Current)
-    {    
-        <p @key="game.Name">
-            <ActiveLink Href="@("/game/" + game.Name)">@game.Name</ActiveLink> - @(game.Status).<br>
-            @for (var i = 0; i < game.Players.Length; i++)
-            {                
-                var player = game.Players[i];
-                if (i < game.Players.Length - 1)
-                {
-                    <PlayerLink @key="@player" Name="@player" Suffix=", " />
+    <h3>Current games</h3>
+    <Subscribed Endpoint="@Lobby">
+        @foreach (var game in context.Current)
+        {    
+            <p @key="game.Name">
+                <ActiveLink Href="@("/game/" + game.Name)">@game.Name</ActiveLink> - @(game.Status).<br>
+                @for (var i = 0; i < game.Players.Length; i++)
+                {                
+                    var player = game.Players[i];
+                    if (i < game.Players.Length - 1)
+                    {
+                        <PlayerLink @key="@player" Name="@player" Suffix=", " />
+                    }
+                    else
+                    {
+                        <PlayerLink @key="@player" Name="@player" Suffix="." />
+                    }
                 }
-                else
-                {
-                    <PlayerLink @key="@player" Name="@player" Suffix="." />
-                }
-            }
-        </p>
-    }
-</Subscribed>
+            </p>
+        }
+    </Subscribed>
+</Padded>
