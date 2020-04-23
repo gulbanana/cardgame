@@ -33,7 +33,7 @@ namespace Cardgame.API
 
         // manipulate entire zones
         ICard[] Examine(Zone @in);
-        int Count(Zone @in);
+        int Count(Zone @in, string zoneParam = null);
         void Reorder(string[] cards, Zone @in);
 
         // interaction

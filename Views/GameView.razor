@@ -62,10 +62,12 @@
             }
             @foreach (var player in Model.Players)
             {
-                foreach (var id in Model.KingdomPlayerMats)
-                {
-                    <MatView Id="@id" Owner="@player" />
-                }
+                <div class="game-view__player-mats">
+                    @foreach (var id in Model.KingdomPlayerMats)
+                    {
+                        <MatView Id="@id" Owner="@player" />
+                    }
+                </div>
             }
         }        
     </div>

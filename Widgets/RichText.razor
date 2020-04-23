@@ -85,19 +85,35 @@
 
     case TextModel.Card card:
         var model = All.Cards.ByName(card.Name);
-        var background = Backgrounds.FromTypes(model.Types);
-        var cost = model.GetCost(Array.Empty<IModifier>());
-        var set = All.Cards.GetSet(card.Name);
-        <WithTooltip>
-            <Content>
-                @card.Prefix<span style="background: @background">@Strings.TitleCase(card.Name)</span>@card.Suffix
-            </Content>
-            <Tooltip>
-                <Magnify>
-                    <KingdomCard Name="@card.Name" Types="@model.Types" Art="@model.Art" Cost="@cost" Text="@model.Text" Set="@set" />
-                </Magnify>
-            </Tooltip>
-        </WithTooltip>   
+        if (model.Types.Any())
+        {
+            var background = Backgrounds.FromTypes(model.Types);
+            var cost = model.GetCost(Array.Empty<IModifier>());
+            var set = All.Cards.GetSet(card.Name);
+            <WithTooltip>
+                <Content>
+                    @card.Prefix<span style="background: @background">@Strings.TitleCase(card.Name)</span>@card.Suffix
+                </Content>
+                <Tooltip>
+                    <Magnify>
+                        <KingdomCard Name="@card.Name" Types="@model.Types" Art="@model.Art" Cost="@cost" Text="@model.Text" Set="@set" />
+                    </Magnify>
+                </Tooltip>
+            </WithTooltip>   
+        }
+        else
+        {
+            <WithTooltip>
+                <Content>
+                    @(card.Prefix)a @Strings.TitleCase(card.Name) token@(card.Suffix)
+                </Content>
+                <Tooltip>
+                    <Magnify>
+                        <RichText Model="@model.Text" />
+                    </Magnify>
+                </Tooltip>
+            </WithTooltip>   
+        }
         break;
 
     case TextModel.Player player:

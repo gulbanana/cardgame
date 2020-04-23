@@ -2,6 +2,7 @@ namespace Cardgame.API
 {
     public enum Zone
     {
+        Create,
         CountableDeck,
         DeckTop1,
         DeckTop2,

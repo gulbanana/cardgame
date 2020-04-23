@@ -704,9 +704,8 @@ namespace Cardgame.Server
 
             switch (from)
             {
-                case Zone.Trash:
-                    if (!Model.MatCards["TrashMat"].Contains(id)) throw new CommandException($"No {id} card in hand.");
-                    instance = Model.MatCards["TrashMat"].Extract(id);
+                case Zone.Create:
+                    instance = Instance.Of(id);
                     break;
 
                 case Zone.Hand:
@@ -741,6 +740,11 @@ namespace Cardgame.Server
                     if (!stash.HasValue || stash.Value.Id != id) throw new CommandException($"Stashed {id} not found.");
                     instance = stash.Value;
                     stash = null;
+                    break;
+
+                case Zone.Trash:
+                    if (!Model.MatCards["TrashMat"].Contains(id)) throw new CommandException($"No {id} card in hand.");
+                    instance = Model.MatCards["TrashMat"].Extract(id);
                     break;
 
                 default:
@@ -809,6 +813,7 @@ namespace Cardgame.Server
                 Zone.Discard => Model.Discards[player].Count(),
                 Zone.Hand => Model.Hands[player].Count,
                 Zone.InPlay => Model.PlayedCards.Count,
+                Zone.PlayerMat => Model.PlayerMatCards[player][parameter].Count,
                 Zone.SupplyAll => Model.Supply.Keys.Count,
                 Zone.SupplyAvailable => Model.Supply.Keys.Count(id => Model.Supply[id] > 0),
                 Zone.SupplyEmpty => Model.Supply.Keys.Count(id => Model.Supply[id] == 0),

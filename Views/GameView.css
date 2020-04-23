@@ -4,7 +4,6 @@
     display: grid;
     --board-width: calc(var(--card-width) * 7 + (var(--std-gap) * 6)); /* 760px */
     --board-height: 745px;
-    --mat-height: 205px;
     grid-template-areas: 'stats     left-bar board right-bar mats' 
                          'chat-log  left-bar board right-bar mats'
                          'chat-log  left-bar board right-bar event-log';
@@ -26,15 +25,25 @@
 }
 
 .game-view__mats {
+    --mat-height: 205px;
+    --local-scale: 2.0;
+    --text-scale: 2.0;
     display: flex;
+    flex-wrap: wrap;
+    margin-top: calc(-1 * var(--std-gap));
 }
 
 .game-view__mats > * {
-    margin-left: var(--std-gap);
+    margin-top: var(--std-gap);
+    margin-right: var(--std-gap);
 }
 
-.game-view__mats > *:first-child {
-    margin-left: 0;
+.game-view__mats > *:last-child {
+    margin-right: 0;
+}
+
+.game-view__player-mats {
+    display: flex;
 }
 
 .game-view__event-log p:last-child {
@@ -73,11 +82,13 @@
                              'left-bar  board     board    board     right-bar';
         grid-template-columns: 1fr calc(var(--board-width)/2 - var(--std-gap)/2) var(--std-gap) calc(var(--board-width)/2 - var(--std-gap)/2) 1fr;
         grid-template-rows: auto minmax(0, 1fr) auto var(--std-gap) var(--board-height);
-        grid-column-gap: 0;
-        --mat-height: 97.5px;
+        grid-column-gap: 0;        
     }
 
     .game-view__mats {
+        --mat-height: 97.5px;
+        --local-scale: 1.0;
+        --text-scale: 1.0;
         justify-content: center;
     }
 
