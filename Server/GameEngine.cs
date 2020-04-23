@@ -498,6 +498,7 @@ namespace Cardgame.Server
             Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.PlayedCards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
+            Model.Attachments = new Dictionary<Instance, Instance>();
             Model.Decks = Model.Players.ToDictionary(k => k, _ => 
             {
                 var deck = new []{ "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Estate", "Estate", "Estate" }
@@ -912,6 +913,20 @@ namespace Cardgame.Server
                 default:
                     throw new CommandException($"Unsupported Zone {destination} for reorder");
             }
+        }
+        
+        internal void AttachCard(string player, string targetId)
+        {
+            var targetInstance = Model.PlayedCards[player].First(i => !Model.Attachments.ContainsKey(i) && i.Id == targetId);
+            Model.Attachments[targetInstance] = nowhere.Value;
+        }
+        
+        internal string DetachCard(string player, string targetId)
+        {
+            var targetInstance = Model.PlayedCards[player].First(i => Model.Attachments.ContainsKey(i) && i.Id == targetId);
+            nowhere = Model.Attachments[targetInstance];
+            Model.Attachments.Remove(nowhere.Value);
+            return nowhere.Value.Id;
         }
 
         internal async Task<TOutput> Choose<TInput, TOutput>(string player, ChoiceType type, string prompt, TInput input)

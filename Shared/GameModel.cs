@@ -35,6 +35,7 @@ namespace Cardgame.Shared
         public Dictionary<string, List<Instance>> Decks { get; set; }
         public Dictionary<string, List<Instance>> Discards { get; set; }
         public Dictionary<string, List<Instance>> PlayedCards { get; set; }
+        public Dictionary<Instance, Instance> Attachments { get; set; }
         public List<Instance> Trash { get; set; }
 
         // turn state    

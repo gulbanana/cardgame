@@ -50,7 +50,9 @@ namespace Cardgame.API
         // advanced
         void AddEffect(string effect);
         void RemoveEffect(string effect);
-        void AddToken(string pile, string effect);
+        void AddToken(string effect, string pile);
+        void Attach(string card, string target);
+        void Detach(string target, Zone to);
 
         // special cases
         void DiscardEntireDeck();
@@ -195,6 +197,11 @@ namespace Cardgame.API
         #endregion
 
         #region Put
+        public static void PutIntoHand(this IActionHost host, string card, Zone from)
+        {
+            host.PutIntoHand(new[] { card }, from);
+        }
+
         public static void PutIntoHand(this IActionHost host, ICard[] cards, Zone from)
         {
             host.PutIntoHand(cards.Select(card => card.Name).ToArray(), from);
@@ -440,5 +447,10 @@ namespace Cardgame.API
             }, true);
         }
         #endregion
+
+        public static void Attach(this IActionHost host, ICard card, string target)
+        {
+            host.Attach(card.Name, target);
+        }
     }
 }

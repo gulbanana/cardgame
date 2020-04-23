@@ -18,7 +18,7 @@ namespace Cardgame.Cards.Seaside
             host.Trash("Embargo", Zone.InPlay);
 
             var pile = await host.SelectCard("Choose a Supply pile to embargo.", Zone.SupplyAvailable);
-            host.AddToken(pile.Name, "EmbargoToken");
+            host.AddToken("EmbargoToken", pile.Name);
         }
     }
 }

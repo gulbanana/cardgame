@@ -505,7 +505,7 @@ namespace Cardgame.Server
             engine.Model.ActiveEffects.Remove(effect);
         }
 
-        void IActionHost.AddToken(string pile, string effect)
+        void IActionHost.AddToken(string effect, string pile)
         {
             engine.Model.SupplyTokens[pile] = engine.Model.SupplyTokens[pile].Append("EmbargoToken").ToArray();
             
@@ -517,6 +517,34 @@ namespace Cardgame.Server
                 {LogVerbInitial("put", "puts", "putting")}
                 <run>{description} on</run>
                 <card suffix='.'>{pile}</card>.
+            </spans>");
+        }
+        
+        public void Attach(string card, string target)
+        {
+            engine.MoveCard(Player, card, Zone.Hand, Zone.Nowhere);
+            engine.AttachCard(Player, target);
+
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{IndentLevel}' />
+                {LogVerbInitial("put", "puts", "putting")}
+                <run>a card under</run>
+                <card suffix='.'>{target}</card>.
+            </spans>");
+        }
+
+        public void Detach(string target, Zone to)
+        {
+            var card = engine.DetachCard(Player, target);
+            engine.MoveCard(Player, card, Zone.Nowhere, Zone.Hand);
+
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{IndentLevel}' />
+                {LogVerbInitial("remove", "removes", "removing")}
+                <run>a card from under</run>
+                <card>{target}</card>
+                <run>and</run>
+                {LogDestination(to)}
             </spans>");
         }
      
