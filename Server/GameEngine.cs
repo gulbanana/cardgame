@@ -12,6 +12,7 @@ namespace Cardgame.Server
     internal class GameEngine
     {
         private readonly HashSet<string> bots;
+        private readonly Dictionary<string, TurnRecord> lastTurn;
         private TaskCompletionSource<string> inputTCS;
         private Instance? stash; // a temporary Zone used as cards move around during an action
         private bool isDemo;
@@ -26,6 +27,7 @@ namespace Cardgame.Server
         public GameEngine()
         {
             bots = new HashSet<string>();
+            lastTurn = new Dictionary<string, TurnRecord>();
             IncompleteDurations = new HashSet<Instance>();
 
             Model = new GameModel();
@@ -401,9 +403,10 @@ namespace Cardgame.Server
 
             await Act(1, player, Trigger.BuyCard, id, () => 
             {
-                MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
                 Model.CoinsRemaining -= boughtCard.GetCost(Model);
                 Model.BuysRemaining -= 1;
+                var instance = MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
+                NoteGain(player, instance);
 
                 LogEvent($@"<spans>
                     <player>{player}</player>
@@ -537,6 +540,8 @@ namespace Cardgame.Server
         private async Task BeginTurnAsync(string player)
         {
             if (Model.IsFinished) return; // XXX what case does this cover?
+
+            lastTurn[player] = new TurnRecord();
 
             ActionsThisTurn = 0;
             Model.ActionsRemaining = 1;
@@ -865,6 +870,7 @@ namespace Cardgame.Server
                 Zone.Discard => Model.Discards[player].ToArray(),
                 Zone.Hand => Model.Hands[player].ToArray(),
                 Zone.InPlay => Model.PlayedCards[player].ToArray(),
+                Zone.RecentGains => lastTurn[parameter ?? player].Gains.ToArray(),
                 Zone.Trash => Model.MatCards["TrashMat"].ToArray(),
                 Zone other => throw new CommandException($"Unsupported instance zone {other}")
             };
@@ -877,7 +883,7 @@ namespace Cardgame.Server
                 Zone.SupplyAvailable => Model.Supply.Keys.Where(id => Model.Supply[id] > 0).ToArray(),
                 Zone.SupplyEmpty => Model.Supply.Keys.Where(id => Model.Supply[id] == 0).ToArray(),
                 Zone.SupplyAll => Model.Supply.Keys.ToArray(),
-                Zone other => GetInstances(player, source, onShuffle).Names()
+                Zone other => GetInstances(player, source, onShuffle, parameter).Names()
             };
         }
 
@@ -1022,6 +1028,14 @@ namespace Cardgame.Server
             foreach (var reaction in reactions)
             {
                 await reaction.ActAfter();
+            }
+        }
+
+        internal void NoteGain(string player, Instance instance)
+        {
+            if (player == Model.ActivePlayer)
+            {
+                lastTurn[player].Gains.Add(instance);
             }
         }
     }

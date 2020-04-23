@@ -32,7 +32,7 @@ namespace Cardgame.API
         void Name(string card);
 
         // manipulate entire zones
-        ICard[] Examine(Zone @in);
+        ICard[] Examine(Zone @in, string zoneParam = null);
         int Count(Zone @in, string zoneParam = null);
         void Reorder(string[] cards, Zone @in);
 

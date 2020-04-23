@@ -12,6 +12,7 @@ namespace Cardgame.API
         Hand,
         InPlay,
         PlayerMat,
+        RecentGains,
         Stash,
         SupplyAll,
         SupplyAvailable,

@@ -128,9 +128,9 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        ICard[] IActionHost.Examine(Zone @in)
+        ICard[] IActionHost.Examine(Zone @in, string zoneParam)
         {
-            return engine.GetCards(Player, @in, NoteReshuffle).Select(All.Cards.ByName).ToArray();
+            return engine.GetCards(Player, @in, NoteReshuffle, zoneParam).Select(All.Cards.ByName).ToArray();
         }
 
         int IActionHost.Count(Zone @in, string zoneParam)
@@ -257,7 +257,8 @@ namespace Cardgame.Server
                 return;
             }
 
-            engine.MoveCard(Player, id, Zone.SupplyAvailable, to);
+            var instance = engine.MoveCard(Player, id, Zone.SupplyAvailable, to);
+            engine.NoteGain(Player, instance);
 
             if (to == Zone.Discard)
             {
@@ -283,7 +284,8 @@ namespace Cardgame.Server
         {
             foreach (var id in cards)
             {
-                engine.MoveCard(Player, id, from, Zone.Discard);
+                var instance = engine.MoveCard(Player, id, from, Zone.Discard);
+                engine.NoteGain(Player, instance);
             }
             
             engine.LogPartialEvent($@"<spans>
