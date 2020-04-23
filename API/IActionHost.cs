@@ -28,6 +28,7 @@ namespace Cardgame.API
         void PutOnDeck(string[] cards, Zone from);
         void PutIntoHand(string[] cards, Zone from, string zoneParam = null);
         void PutOnMat(string mat, string card, Zone from);
+        void ReturnToSupply(string[] cards);
         void Reveal(string[] cards, Zone from);
         void Name(string card);
 
@@ -226,6 +227,13 @@ namespace Cardgame.API
         public static void PutOnMat(this IActionHost host, string mat, ICard card, Zone from)
         {
             host.PutOnMat(mat, card.Name, from);
+        }
+        #endregion
+
+        #region ReturnToSupply
+        public static void ReturnToSupply(this IActionHost host, ICard[] cards)
+        {
+            host.ReturnToSupply(cards.Select(card => card.Name).ToArray());
         }
         #endregion
 

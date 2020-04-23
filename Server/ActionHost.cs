@@ -396,6 +396,21 @@ namespace Cardgame.Server
             </spans>");
         }
 
+        void IActionHost.ReturnToSupply(string[] cards)
+        {
+            foreach (var card in cards)
+            {
+                engine.MoveCard(Player, card, Zone.Hand, Zone.SupplyAvailable);
+            }
+
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{IndentLevel}' />
+                {LogVerbInitial("return", "returns", "returning")}
+                {LogSecurely(cards, Zone.Hand, Zone.SupplyAvailable)}
+                <run>to the supply.</run>
+            </spans>");
+        }
+
         void IActionHost.Reveal(string[] cards, Zone from)
         {
             engine.LogPartialEvent($@"<spans>
