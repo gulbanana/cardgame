@@ -5,7 +5,6 @@ namespace Cardgame.Cards.Seaside
 {
     public class Haven : DurationCardBase
     {
-        private static int counter;
         public override int Cost => 2;
 
         public override string Text => @"<paras>
@@ -18,16 +17,23 @@ namespace Cardgame.Cards.Seaside
 
         protected override async Task ActAsync(IActionHost host)
         {
+            host.DrawCards(1);
+            host.AddActions(1);
+
             var setAside = await host.SelectCard("Choose a card to set aside.");
             if (setAside != null)
             {
-                host.Attach(setAside, "Haven");
+                host.Attach(setAside, Zone.Hand);
+            }
+            else
+            {
+                host.CompleteDuration();
             }
         }
 
         protected override void NextTurn(IActionHost host)
         {
-            host.Detach("Haven", Zone.Hand);
+            host.Detach(Zone.Hand);
         }
     }
 }

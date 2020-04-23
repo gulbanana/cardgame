@@ -11,7 +11,11 @@ namespace Cardgame.Cards
         {
             if (reactFrom == Zone.InPlay && triggerType == Trigger.BeginTurn && triggerParameter == host.Player)
             {
-                return Task.FromResult(Reaction.After(() => NextTurn(host)));
+                return Task.FromResult(Reaction.Before(() => 
+                {
+                    NextTurn(host);
+                    host.CompleteDuration();
+                }));
             }
             else
             {

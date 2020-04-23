@@ -8,23 +8,25 @@ using Cardgame.Shared;
 
 namespace Cardgame.Server
 {
-    internal class ActionHost : IActionHost
-    {        
+    internal abstract class ActionHost : IActionHost
+    {   
+        protected readonly GameEngine engine;     
         public int IndentLevel { get; set; }
-        private readonly GameEngine engine;
         public string Player { get; }
         public bool IsActive => engine.Model.ActivePlayer == Player;
         public int ShuffleCount { get; private set; }
         public int ActionCount => engine.ActionsThisTurn;
 
-        public ActionHost(int level, GameEngine engine, string player)
+        public ActionHost(GameEngine engine, int indentLevel, string owningPlayer)
         {
-            this.IndentLevel = level;
             this.engine = engine;
-            this.Player = player;
+            this.IndentLevel = indentLevel;
+            this.Player = owningPlayer;
         }
 
-        private string LogVerbInitial(string secondPerson, string thirdPerson, string continuous)
+        protected abstract IActionHost CloneHost(string owningPlayer);
+
+        protected string LogVerbInitial(string secondPerson, string thirdPerson, string continuous)
         {
             return engine.LogVerbInitial(Player, secondPerson, thirdPerson, continuous);
         }
@@ -85,7 +87,7 @@ namespace Cardgame.Server
             }
         }
 
-        private string LogDestination(Zone to)
+        protected string LogDestination(Zone to)
         {
             switch (to)
             {
@@ -469,7 +471,7 @@ namespace Cardgame.Server
         async Task IActionHost.AllPlayers(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool isAttack)
         {
             var targetPlayers = engine.Model.Players
-                .Select(player => new ActionHost(IndentLevel, engine, player))
+                .Select(player => CloneHost(player))
                 .Where(filter)
                 .ToList();
             
@@ -488,6 +490,14 @@ namespace Cardgame.Server
             var left = self + 1; // clockwise
             if (left >= engine.Model.Players.Length) left = 0;
             return engine.Model.Players[left];
+        }
+
+        string IActionHost.GetPlayerToRight()
+        {
+            var self = Array.FindIndex(engine.Model.Players, e => e == Player);
+            var right = self - 1; // clockwise
+            if (right < 0) right = engine.Model.Players.Length - 1;
+            return engine.Model.Players[right];
         }
 
         public IModifier[] GetModifiers() 
@@ -520,32 +530,19 @@ namespace Cardgame.Server
             </spans>");
         }
         
-        public void Attach(string card, string target)
+        public virtual void Attach(string card, Zone from)
         {
-            engine.MoveCard(Player, card, Zone.Hand, Zone.Nowhere);
-            engine.AttachCard(Player, target);
-
-            engine.LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
-                {LogVerbInitial("put", "puts", "putting")}
-                <run>a card under</run>
-                <card suffix='.'>{target}</card>.
-            </spans>");
+            throw new NotSupportedException("Current ActionHost is not a card.");
         }
 
-        public void Detach(string target, Zone to)
+        public virtual void Detach(Zone to)
         {
-            var card = engine.DetachCard(Player, target);
-            engine.MoveCard(Player, card, Zone.Nowhere, Zone.Hand);
+            throw new NotSupportedException("Current ActionHost is not a card.");
+        }
 
-            engine.LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
-                {LogVerbInitial("remove", "removes", "removing")}
-                <run>a card from under</run>
-                <card>{target}</card>
-                <run>and</run>
-                {LogDestination(to)}
-            </spans>");
+        public virtual void CompleteDuration()
+        {
+            throw new NotSupportedException("Current ActionHost is not a Duration card.");
         }
      
         // this is a special case used by Chancellor: it does not count as 'discarding' each card, 
@@ -585,8 +582,8 @@ namespace Cardgame.Server
         // this is a special case used by Masquerade, but could be generalised
         void IActionHost.PassCard(string toPlayer, string card)
         {
-            engine.MoveCard(Player, card, Zone.Hand, Zone.Nowhere);
-            engine.MoveCard(toPlayer, card, Zone.Nowhere, Zone.Hand);
+            engine.MoveCard(Player, card, Zone.Hand, Zone.Stash);
+            engine.MoveCard(toPlayer, card, Zone.Stash, Zone.Hand);
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />

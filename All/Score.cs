@@ -16,6 +16,7 @@ namespace Cardgame.All
                     .Concat(game.Hands[player])
                     .Concat(game.Discards[player])
                     .Concat(game.PlayedCards[player])
+                    .Concat(game.PlayedCards[player].Where(card => game.Attachments.ContainsKey(card)).Select(card => game.Attachments[card]))
                     .Names()
                     .ToArray() : 
                 new[] { "Estate", "Estate", "Estate" } ;

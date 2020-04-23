@@ -14,6 +14,6 @@ namespace Cardgame.API
         SupplyAvailable,
         SupplyEmpty,
         Trash,      
-        Nowhere
+        Stash
     }
 }

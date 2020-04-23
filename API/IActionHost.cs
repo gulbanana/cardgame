@@ -14,7 +14,7 @@ namespace Cardgame.API
         int ShuffleCount { get; }
         int ActionCount { get; }
 
-        // the four basic operations
+        // the four vanilla operations
         ICard[] DrawCards(int n);
         void AddActions(int n);
         void AddBuys(int n);
@@ -39,6 +39,7 @@ namespace Cardgame.API
         Task PlayCard(string card, Zone from);
         Task AllPlayers(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool isAttack = false);
         string GetPlayerToLeft();
+        string GetPlayerToRight();
 
         // user inputs
         Task<bool> YesNo(string prompt, string message);
@@ -51,8 +52,9 @@ namespace Cardgame.API
         void AddEffect(string effect);
         void RemoveEffect(string effect);
         void AddToken(string effect, string pile);
-        void Attach(string card, string target);
-        void Detach(string target, Zone to);
+        void Attach(string card, Zone from);
+        void Detach(Zone to);
+        void CompleteDuration();
 
         // special cases
         void DiscardEntireDeck();
@@ -448,9 +450,9 @@ namespace Cardgame.API
         }
         #endregion
 
-        public static void Attach(this IActionHost host, ICard card, string target)
+        public static void Attach(this IActionHost host, ICard card, Zone from)
         {
-            host.Attach(card.Name, target);
+            host.Attach(card.Name, from);
         }
     }
 }

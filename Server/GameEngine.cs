@@ -12,10 +12,12 @@ namespace Cardgame.Server
     internal class GameEngine
     {
         private readonly HashSet<string> bots;
-        private readonly HashSet<Instance> incompleteDurations;
         private TaskCompletionSource<string> inputTCS;
+        private Instance? stash; // a temporary Zone used as cards move around during an action
         private bool isDemo;
         private string demoNextActive;
+
+        internal readonly HashSet<Instance> IncompleteDurations;
         internal int ActionsThisTurn { get; private set; }
 
         public readonly GameModel Model;
@@ -24,7 +26,7 @@ namespace Cardgame.Server
         public GameEngine()
         {
             bots = new HashSet<string>();
-            incompleteDurations = new HashSet<Instance>();
+            IncompleteDurations = new HashSet<Instance>();
 
             Model = new GameModel();
             Model.EventLog = new List<string>();
@@ -420,7 +422,7 @@ namespace Cardgame.Server
                 var card = All.Cards.ByName(id);
                 if (card.Types.Contains(CardType.Duration))
                 {
-                    incompleteDurations.Add(played);
+                    IncompleteDurations.Add(played);
                 }
 
                 if (card is IActionCard action)
@@ -430,7 +432,7 @@ namespace Cardgame.Server
                         ActionsThisTurn++;
                     }
 
-                    var host = new ActionHost(indentLevel, this, player);
+                    var host = new CardHost(this, indentLevel, player, played);
                     await action.ExecuteActionAsync(host);
 
                     if (Model.ActionsRemaining == 0)
@@ -585,11 +587,7 @@ namespace Cardgame.Server
             var toDiscard = new List<Instance>();
             foreach (var instance in inPlay.ToList())
             {
-                if (All.Cards.ByName(instance).Types.Contains(CardType.Duration) && incompleteDurations.Contains(instance))
-                {
-                    incompleteDurations.Remove(instance);
-                }
-                else
+                if (!All.Cards.ByName(instance).Types.Contains(CardType.Duration) || !IncompleteDurations.Contains(instance))
                 {
                     inPlay.Remove(instance);
                     discard.Add(instance);
@@ -697,7 +695,6 @@ namespace Cardgame.Server
             return id;
         }
 
-        private Instance? nowhere;
         internal Instance MoveCard(string player, string id, Zone from, Zone to)
         {
             Instance instance;
@@ -737,10 +734,10 @@ namespace Cardgame.Server
                     instance = Model.PlayedCards[player].ExtractLast(id);
                     break;
 
-                case Zone.Nowhere:
-                    if (!nowhere.HasValue || nowhere.Value.Id != id) throw new CommandException($"Card {id} not found.");
-                    instance = nowhere.Value;
-                    nowhere = null;
+                case Zone.Stash:
+                    if (!stash.HasValue || stash.Value.Id != id) throw new CommandException($"Stashed {id} not found.");
+                    instance = stash.Value;
+                    stash = null;
                     break;
 
                 default:
@@ -776,9 +773,9 @@ namespace Cardgame.Server
                     Model.PlayedCards[player].Add(instance);
                     break;
 
-                case Zone.Nowhere:
-                    if (nowhere.HasValue) throw new CommandException($"Card {nowhere} has been lost.");
-                    nowhere = instance;
+                case Zone.Stash:
+                    if (stash.HasValue) throw new CommandException($"Card {stash} has been lost.");
+                    stash = instance;
                     break;
 
                 default:
@@ -813,8 +810,10 @@ namespace Cardgame.Server
             };
         }
 
-        internal string[] GetCards(string player, Zone source, Action onShuffle)
+        internal Instance[] GetInstances(string player, Zone source, Action onShuffle = null)
         {
+            onShuffle = onShuffle ?? new Action(() => {;});
+
             if (source == Zone.DeckTop1 && Model.Decks[player].Count < 1)
             {
                 ReshuffleIfEmpty(player);
@@ -847,18 +846,26 @@ namespace Cardgame.Server
 
             return source switch 
             {
-                Zone.DeckTop1 => Model.Decks[player].Take(1).Names(),
-                Zone.DeckTop2 => Model.Decks[player].Take(2).Names(),
-                Zone.DeckTop3 => Model.Decks[player].Take(3).Names(),
-                Zone.DeckTop4 => Model.Decks[player].Take(4).Names(),
-                Zone.Discard => Model.Discards[player].Names(),
-                Zone.Hand => Model.Hands[player].Names(),
-                Zone.InPlay => Model.PlayedCards[player].Names(),
+                Zone.DeckTop1 => Model.Decks[player].Take(1).ToArray(),
+                Zone.DeckTop2 => Model.Decks[player].Take(2).ToArray(),
+                Zone.DeckTop3 => Model.Decks[player].Take(3).ToArray(),
+                Zone.DeckTop4 => Model.Decks[player].Take(4).ToArray(),
+                Zone.Discard => Model.Discards[player].ToArray(),
+                Zone.Hand => Model.Hands[player].ToArray(),
+                Zone.InPlay => Model.PlayedCards[player].ToArray(),
+                Zone.Trash => Model.Trash.ToArray(),
+                Zone other => throw new CommandException($"Unsupported instance zone {other}")
+            };
+        }
+
+        internal string[] GetCards(string player, Zone source, Action onShuffle = null)
+        {
+            return source switch 
+            {
                 Zone.SupplyAvailable => Model.Supply.Keys.Where(id => Model.Supply[id] > 0).ToArray(),
                 Zone.SupplyEmpty => Model.Supply.Keys.Where(id => Model.Supply[id] == 0).ToArray(),
                 Zone.SupplyAll => Model.Supply.Keys.ToArray(),
-                Zone.Trash => Model.Trash.Names(),
-                Zone other => throw new CommandException($"Unknown card zone {other}")
+                Zone other => GetInstances(player, source, onShuffle).Names()
             };
         }
 
@@ -915,18 +922,17 @@ namespace Cardgame.Server
             }
         }
         
-        internal void AttachCard(string player, string targetId)
+        internal void AttachStash(string player, Instance target)
         {
-            var targetInstance = Model.PlayedCards[player].First(i => !Model.Attachments.ContainsKey(i) && i.Id == targetId);
-            Model.Attachments[targetInstance] = nowhere.Value;
+            Model.Attachments[target] = stash.Value;
+            stash = null;
         }
         
-        internal string DetachCard(string player, string targetId)
+        internal Instance DetachStash(string player, Instance target)
         {
-            var targetInstance = Model.PlayedCards[player].First(i => Model.Attachments.ContainsKey(i) && i.Id == targetId);
-            nowhere = Model.Attachments[targetInstance];
-            Model.Attachments.Remove(targetInstance);
-            return nowhere.Value.Id;
+            stash = Model.Attachments[target];
+            Model.Attachments.Remove(target);
+            return stash.Value;
         }
 
         internal async Task<TOutput> Choose<TInput, TOutput>(string player, ChoiceType type, string prompt, TInput input)
@@ -959,46 +965,38 @@ namespace Cardgame.Server
         {
             var reactions = new List<Reaction>();
 
+            var globalHost = new TriggerHost(this, indentLevel, player, trigger, parameter);
             var globalReactors = Model.ActiveEffects
                 .Select(All.Effects.ByName)
                 .OfType<IReactor>()
                 .Concat(extraReactors ?? Array.Empty<IReactor>())
-                .ToList();
+                .ToList();            
 
             while (globalReactors.Any())
             {
                 var reactor = globalReactors.First();
-                globalReactors.Remove(reactor);
-                var host = new ActionHost(indentLevel, this, player);
-                reactions.Add(await reactor.ExecuteReactionAsync(host, Zone.InPlay, trigger, parameter));
+                globalReactors.Remove(reactor);                
+                reactions.Add(await reactor.ExecuteReactionAsync(globalHost, Zone.InPlay, trigger, parameter));
             }
 
-            foreach (var local in Model.Players)
+            foreach (var owningPlayer in Model.Players)
             {
-                var handReactors = GetCards(local, Zone.Hand, () => {;})
-                    .Select(All.Cards.ByName) 
-                    .OfType<IReactor>()
-                    .ToList();
+                var reacted = new HashSet<Instance>();
+                var handCards = from instance in GetInstances(owningPlayer, Zone.Hand) select (instance: instance, zone: Zone.Hand);
+                var playCards = from instance in GetInstances(owningPlayer, Zone.InPlay) select (instance: instance, zone: Zone.InPlay);
+                var ownedReactors = handCards
+                    .Concat(playCards)
+                    .Where(t => !reacted.Contains(t.instance))
+                    .Select(t => (t.instance, t.zone, card: All.Cards.ByName(t.instance)))
+                    .Where(t => t.card is IReactor)
+                    .Select(t => (t.instance, t.zone, reactor: (IReactor)t.card));
 
-                while (handReactors.Any())
+                while (ownedReactors.Any())
                 {
-                    var reactor = handReactors.First();
-                    handReactors.Remove(reactor);
-                    var host = new ActionHost(indentLevel, this, local);
-                    reactions.Add(await reactor.ExecuteReactionAsync(host, Zone.Hand, trigger, parameter));
-                }
-
-                var playReactors = GetCards(local, Zone.InPlay, () => {;})
-                    .Select(All.Cards.ByName) 
-                    .OfType<IReactor>()
-                    .ToList();
-
-                while (playReactors.Any())
-                {
-                    var reactor = playReactors.First();
-                    playReactors.Remove(reactor);
-                    var host = new ActionHost(indentLevel, this, local);
-                    reactions.Add(await reactor.ExecuteReactionAsync(host, Zone.InPlay, trigger, parameter));
+                    var ownedReactor = ownedReactors.First();
+                    reacted.Add(ownedReactor.instance);
+                    var ownedHost = new CardHost(this, indentLevel, owningPlayer, ownedReactor.instance);
+                    reactions.Add(await ownedReactor.reactor.ExecuteReactionAsync(ownedHost, ownedReactor.zone, trigger, parameter));
                 }
             }
 
