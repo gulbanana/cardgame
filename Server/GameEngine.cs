@@ -713,6 +713,11 @@ namespace Cardgame.Server
                     instance = Instance.Of(id);
                     break;
 
+                case Zone.DeckBottom:
+                    if (Model.Decks[player].Last().Id != id) throw new CommandException($"No {id} card on bottom of deck.");
+                    instance = Model.Decks[player].Last();
+                    break;
+
                 case Zone.DeckTop1:
                 case Zone.DeckTop2:
                 case Zone.DeckTop3:
@@ -836,7 +841,7 @@ namespace Cardgame.Server
         {
             onShuffle = onShuffle ?? new Action(() => {;});
 
-            if (source == Zone.DeckTop1 && Model.Decks[player].Count < 1)
+            if ((source == Zone.DeckTop1 || source == Zone.DeckBottom) && Model.Decks[player].Count < 1)
             {
                 ReshuffleIfEmpty(player);
                 onShuffle();
@@ -868,6 +873,7 @@ namespace Cardgame.Server
 
             return source switch 
             {
+                Zone.DeckBottom => new[] { Model.Decks[player].Last() },
                 Zone.DeckTop1 => Model.Decks[player].Take(1).ToArray(),
                 Zone.DeckTop2 => Model.Decks[player].Take(2).ToArray(),
                 Zone.DeckTop3 => Model.Decks[player].Take(3).ToArray(),

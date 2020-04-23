@@ -6,6 +6,7 @@ namespace Cardgame.API
     {
         Create,
         CountableDeck,
+        DeckBottom,
         DeckTop1,
         DeckTop2,
         DeckTop3,
@@ -30,6 +31,7 @@ namespace Cardgame.API
             {
                 Zone.CountableDeck => true,
                 Zone.Create => true,
+                Zone.DeckBottom => true,
                 Zone.DeckTop1 => true,
                 Zone.DeckTop2 => true,
                 Zone.DeckTop3 => true,

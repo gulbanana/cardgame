@@ -63,6 +63,11 @@ namespace Cardgame.Server
         {
             switch (from)
             {
+                case Zone.DeckBottom:
+                    return $@"<run>the bottom of</run>
+                    <if you='your' them='their'>{Player}</if>
+                    <run>deck.</run>";
+
                 case Zone.DeckTop1:
                 case Zone.DeckTop2:
                 case Zone.DeckTop3:
