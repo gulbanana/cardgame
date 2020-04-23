@@ -925,7 +925,7 @@ namespace Cardgame.Server
         {
             var targetInstance = Model.PlayedCards[player].First(i => Model.Attachments.ContainsKey(i) && i.Id == targetId);
             nowhere = Model.Attachments[targetInstance];
-            Model.Attachments.Remove(nowhere.Value);
+            Model.Attachments.Remove(targetInstance);
             return nowhere.Value.Id;
         }
 

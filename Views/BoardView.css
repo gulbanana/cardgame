@@ -41,6 +41,8 @@
 .board-view__played-cards__centered-row__actual-played-cards {
     overflow-x: auto;
     scroll-behavior: smooth;
+    padding-top: 8px;
+    margin-top: -8px;
 }
 
 .board-view__choice {

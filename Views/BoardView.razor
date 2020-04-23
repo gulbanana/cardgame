@@ -51,7 +51,8 @@
                 <GappedRow>
                     @foreach (var instance in lastTurnCards)
                     {
-                        <ActiveCard Id="@instance.Id" />
+                        var stack = Model.Attachments.ContainsKey(instance) ? 2 : 1;
+                        <ActiveCard Id="@instance.Id" Stack="stack" />
                     }
                     @if (lastTurnCards.Any() && thisTurnCards.Any())
                     {
@@ -59,7 +60,9 @@
                     }
                     @for (var i = 0; i < thisTurnCards.Count(); i++)
                     {
-                        <ActiveCard Large="@(i == thisTurnCards.Count()-1)" Id="@thisTurnCards.ElementAt(i).Id" KeepVisible="@SomeoneVisibleChoosing" />
+                        var instance = thisTurnCards.ElementAt(i);
+                        var stack = Model.Attachments.ContainsKey(instance) ? 2 : 1;
+                        <ActiveCard Stack="stack" Large="@(i == thisTurnCards.Count()-1)" Id="@instance.Id" KeepVisible="@SomeoneVisibleChoosing" />
                     }
                 </GappedRow>
             </div>

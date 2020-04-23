@@ -3,18 +3,19 @@
 }
 
 .stacked__frame {
-    width: var(--card-width);
+    width: calc(var(--local-scale) * var(--card-width));
     position: absolute;
-    top: calc(var(--offset) * -1);
-    left: calc(var(--offset) * -1);
-    border: 2px solid;
-    border-radius: 4px;
+    top: calc(var(--offset) * -1 * var(--local-scale));
+    left: calc(var(--offset) * -1 * var(--local-scale));
+    border-style: solid;
+    border-width: calc(var(--local-scale) * 2px);
+    border-radius: calc(var(--local-scale) * 4px);
     z-index: -1;
     background: var(--highlight);
 }
 
 .stacked__frame--full {
-    height: var(--card-height);
+    height: calc(var(--local-scale) * var(--card-height));
 }
 
 .stacked__frame--half {
