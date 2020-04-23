@@ -9,6 +9,6 @@
     margin-right: var(--std-gap);
 }
 
-.gapped-row > *:last-child {
+.gapped-row > *:last-of-type {
     margin-right: 0;
 }

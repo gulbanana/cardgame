@@ -1,11 +1,21 @@
 .dominion-view {
     display: grid;
+    grid-template-areas: 'deck hand discard';
     grid-template-columns: auto 1fr auto;
     --std-gap: 4px; /* due to FlashBorder taking up space */
 }
 
 .dominion-view__hscroll {
     overflow-x: auto;
+    display: flex;
+    justify-content: safe center;
+    align-items: center;
+}
+
+.dominion-view__hand {
+    position: relative;
+    height: calc(var(--card-height) + 8px); 
+    width: calc(var(--cards) * 94px);
 }
 
 .dominion-view__pushdown {

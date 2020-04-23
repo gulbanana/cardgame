@@ -8,7 +8,7 @@
 }
 
 <div class="dominion-view">
-    <div class="dominion-view__pushdown">
+    <div style="grid-area: deck" class="dominion-view__pushdown">
         @if (CurrentModel.IsStarted && CurrentModel.Decks[PlayerOrSpectatee].Count == 0)
         {
             <SpecialCard Name="deck" Stack="1" />
@@ -19,19 +19,43 @@
         }            
     </div>
 
-    <div class="dominion-view__hscroll">
-        <GappedRow>
-            @if (CurrentModel.IsStarted)
+    <div style="grid-area: hand" class="dominion-view__hscroll">
+        
+        @if (CurrentModel.IsStarted)
+        {
+            var hand = CurrentModel.Hands[PlayerOrSpectatee].AsEnumerable();
+            if (CurrentModel.SettingKeepHandSorted[PlayerOrSpectatee])
             {
-                var hand = CurrentModel.Hands[PlayerOrSpectatee].AsEnumerable();
-                if (CurrentModel.SettingKeepHandSorted[PlayerOrSpectatee])
-                {
-                    hand = hand.OrderBy(card => All.Cards.ByName(card).SortByTypes());
-                }
+                hand = hand.OrderBy(card => All.Cards.ByName(card).SortByTypes()).ThenBy(card => card.Id);
+            }
 
-                foreach (var instance in hand)
+            var offset = 0;
+            var last = default(string);
+            foreach (var instance in hand)
+            {
+                if (last != null)
+                {
+                    if (last == instance.Id)
+                    {
+                        offset += 20;
+                    }
+                    else
+                    {
+                        offset += 110;
+                    }
+                }
+                last = instance.Id;
+            }
+
+            var total = offset + 108; // one card, one flash border
+            offset = 0;
+            last = default(string);
+            var i = 0;
+            <div class="dominion-view__hand" style="width: @(total)px">
+                @foreach (var instance in hand)
                 {                  
                     var isNew = !PreviousModel.IsStarted || !PreviousModel.Hands[PlayerOrSpectatee].Contains(instance);                    
+
                     var card = All.Cards.ByName(instance);
                     var isEnabled = IsActivePlayer &&
                         !CurrentModel.IsFinished &&
@@ -39,26 +63,45 @@
                         (card.Types.Contains(CardType.Treasure) ||
                             (card.Types.Contains(CardType.Action) && !CurrentModel.BuyPhase));
 
-                    <FlashBorder @key="instance.ToString()" IsNew="@isNew">
-                        <ActiveCard Model="@card" 
-                                    Enabled="@isEnabled" 
-                                    Action="@(() => Dispatch(new PlayCardCommand { Id = @instance.Id }))"/>
-                    </FlashBorder>
+                    if (last != null)
+                    {
+                        if (last == instance.Id)
+                        {
+                            offset += 20;
+                        }
+                        else
+                        {
+                            offset += 110;
+                        }
+                    }
+                    last = instance.Id;
+
+                    <Overlap X="@offset" Z="@(++i)">
+                        <FlashBorder @key="instance.ToString()" IsNew="@isNew">
+                            <ActiveCard Model="@card" 
+                                        Enabled="@isEnabled" 
+                                        Action="@(() => Dispatch(new PlayCardCommand { Id = @instance.Id }))"/>
+                        </FlashBorder>
+                    </Overlap>
                 }
-            }
-            else if (CurrentModel.Players.Contains(Session.Username)) // the hand you might someday have
-            {
+            </div>
+        }
+        else if (CurrentModel.Players.Contains(Session.Username)) // the hand you might someday have
+        {
+            <div class="dominion-view__hand" style="--cards: 5">
                 @for (var i = 0; i < 5; i++)
                 {
-                    <FlashBorder IsNew="false">
-                        <SpecialCard Name="card-back" />
-                    </FlashBorder>    
+                    <Overlap X="@(i * 90)" Z="@(i + 1)">
+                        <FlashBorder IsNew="false">
+                            <SpecialCard Name="card-back" />
+                        </FlashBorder>    
+                    </Overlap>
                 }
-            }
-        </GappedRow>
+            </div>
+        }
     </div>
         
-    <div class="dominion-view__pushdown">
+    <div style="grid-area: discard" class="dominion-view__pushdown">
         @if (CurrentModel.IsStarted)
         {
             var discard = CurrentModel.Discards[PlayerOrSpectatee];

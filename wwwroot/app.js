@@ -33,10 +33,11 @@ var WithTooltip;
         content.onmouseenter = (ev) => reposition(tooltip, ev.clientX, ev.clientY);
         content.onmousemove = (ev) => reposition(tooltip, ev.clientX, ev.clientY);
         content.onmouseleave = (ev) => deposition(tooltip);
+        content.onclick = (ev) => deposition(tooltip);
     }
     WithTooltip.register = register;
     function reposition(element, x, y) {
-        element.classList.add("with-tooltip__tooltip--visible");
+        element.style.display = "inherit";
         if (window.innerWidth - x < 120) {
             element.style.left = null;
             element.style.right = (window.innerWidth - x) + 2 + "px";
@@ -53,8 +54,13 @@ var WithTooltip;
             element.style.top = y + 2 + "px";
             element.style.bottom = null;
         }
+        if (element.parentElement.tagName != "BODY") {
+            element.oldParent = element.parentElement;
+            document.querySelector("body").appendChild(element);
+        }
     }
     function deposition(element) {
-        element.classList.remove("with-tooltip__tooltip--visible");
+        element.style.display = "none";
+        element.oldParent.appendChild(element);
     }
 })(WithTooltip || (WithTooltip = {}));

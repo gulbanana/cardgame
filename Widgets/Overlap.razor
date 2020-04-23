@@ -1,0 +1,9 @@
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public int X { get; set; }
+    [Parameter] public int Z { get; set; }
+}
+
+<div style="position: absolute; left: @(X)px; z-index: @Z;">
+    @ChildContent
+</div>
