@@ -119,6 +119,37 @@ namespace Cardgame.Server
             }
         }
 
+        private string LogSecurely(string card, Zone source, Zone destination)
+        {
+            if (source.IsPrivate() && destination.IsPrivate())
+            {
+                return $"<run>a card</run>";
+            }
+            else
+            {
+                return $"<card>{card}</card>";
+            }
+        }
+
+        private string LogSecurely(string[] cards, Zone source, Zone destination)
+        {
+            if (source.IsPrivate() && destination.IsPrivate())
+            {
+                if (cards.Length == 1)
+                {
+                    return $"<run>a card</run>";
+                }
+                else
+                {
+                    return $"<run>{cards.Length} cards</run>";
+                }
+            }
+            else
+            {
+                return LogCardList(cards, terminal: false);
+            }
+        }
+
         private void NoteReshuffle()
         {
             ShuffleCount++;
@@ -339,7 +370,7 @@ namespace Cardgame.Server
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
                 {LogVerbInitial("put", "puts", "putting")}
-                {LogCardList(cards, terminal: false)}
+                {LogSecurely(cards, from, Zone.Hand)}
                 <run>into</run>
                 <if you='your' them='their'>{Player}</if>
                 <run>hand.</run>
@@ -348,12 +379,12 @@ namespace Cardgame.Server
 
         void IActionHost.PutOnMat(string mat, string card, Zone from)
         {
-            engine.MoveCard(Player, card, from, Zone.PlayerMat, mat);
+            engine.MoveCard(Player, card, from, Zone.PlayerMat, mat);            
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
                 {LogVerbInitial("put", "puts", "putting")}
-                <card>{card}</card>
+                {LogSecurely(card, from, Zone.PlayerMat)}
                 <run>onto</run>
                 <if you='your' them='their'>{Player}</if>
                 <run>{All.Mats.ByName(mat).Label} mat.</run>
