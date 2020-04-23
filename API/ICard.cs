@@ -10,6 +10,7 @@ namespace Cardgame.API
         CardType[] Types { get; }
         string Art { get; }
         string Text { get; }
+        string HasMat { get; }
         int GetCost(IModifier[] modifiers);
     }
 

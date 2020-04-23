@@ -29,6 +29,14 @@
     display: flex;
 }
 
+.game-view__mats > * {
+    margin-left: var(--std-gap);
+}
+
+.game-view__mats > *:first-child {
+    margin-left: 0;
+}
+
 .game-view__event-log p:last-child {
     margin-bottom: 4px;
 }

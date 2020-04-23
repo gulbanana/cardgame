@@ -123,7 +123,8 @@ namespace Cardgame.Server
                     Model.KingdomPreset = configureGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
                     Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
                     Model.KingdomHasCurse = Model.KingdomCards.Any(All.Cards.UsesCurse);
-                    Model.KingdomMats = Model.KingdomCards.Contains("Island") ? new[] { "TrashMat", "IslandMat" } : new[] { "TrashMat" };
+                    Model.KingdomGlobalMats = new[] { "TrashMat" };
+                    Model.KingdomPlayerMats = Model.KingdomCards.Select(All.Cards.ByName).SelectMany(card => card.HasMat != null ? new[] { card.HasMat } : new string[0]).ToArray();
 
                     break;
 
@@ -136,7 +137,8 @@ namespace Cardgame.Server
                     Model.KingdomPreset = startGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
                     Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
                     Model.KingdomHasCurse = Model.KingdomCards.Any(All.Cards.UsesCurse);
-                    Model.KingdomMats = Model.KingdomCards.Contains("Island") ? new[] { "TrashMat", "IslandMat" } : new[] { "TrashMat" };
+                    Model.KingdomGlobalMats = new[] { "TrashMat" };
+                    Model.KingdomPlayerMats = Model.KingdomCards.Select(All.Cards.ByName).SelectMany(card => card.HasMat != null ? new[] { card.HasMat } : new string[0]).ToArray();
 
                     BeginGame();
                     BeginBackgroundTask(Model.ActivePlayer, BeginTurnAsync);
@@ -499,7 +501,8 @@ namespace Cardgame.Server
             Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.PlayedCards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
-            Model.MatCards = Model.KingdomMats.ToDictionary(k => k, _ => new List<Instance>());
+            Model.MatCards = Model.KingdomGlobalMats.ToDictionary(k => k, _ => new List<Instance>());
+            Model.PlayerMatCards = Model.Players.ToDictionary(k => k, k => Model.KingdomPlayerMats.ToDictionary(k2 => k2, _ => new List<Instance>()));
             Model.Attachments = new Dictionary<Instance, Instance>();
             Model.Decks = Model.Players.ToDictionary(k => k, _ => 
             {
@@ -766,7 +769,7 @@ namespace Cardgame.Server
                     break;
 
                 case Zone.PlayerMat:
-                    Model.MatCards[toParameter].Add(instance);
+                    Model.PlayerMatCards[player][toParameter].Add(instance);
                     break;
 
                 case Zone.Stash:

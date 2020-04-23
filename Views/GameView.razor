@@ -53,11 +53,21 @@
 
     <GridSeparator Area="right-bar"/>
 
-    <div style="grid-area: mats" class="game-view__mats">
-        @foreach (var id in Model.KingdomMats ?? new string[0])
+    <div style="grid-area: mats" class="game-view__mats">        
+        @if (Model.KingdomCards != null)
         {
-            <MatView Id="@id" />
-        }
+            @foreach (var id in Model.KingdomGlobalMats)
+            {
+                <MatView Id="@id" />
+            }
+            @foreach (var player in Model.Players)
+            {
+                foreach (var id in Model.KingdomPlayerMats)
+                {
+                    <MatView Id="@id" Owner="@player" />
+                }
+            }
+        }        
     </div>
 
     <div style="grid-area: event-log" class="game-view__event-log">

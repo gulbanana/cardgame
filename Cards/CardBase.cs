@@ -11,6 +11,7 @@ namespace Cardgame.Cards
         public virtual string Art => Name;
         public abstract CardType[] Types { get; }
         public abstract string Text { get; }
+        public virtual string HasMat => null;
         public abstract int Cost { get; }
 
         public CardBase()

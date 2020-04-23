@@ -1,14 +1,27 @@
 @code {
     [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
     [Parameter] public string Id { get; set; }
+    [Parameter] public string Owner { get; set; }
     private IMat mat;
     private string contents;
 
     protected override void OnParametersSet()
     {
         mat = All.Mats.ByName(Id);
-        var cards = (Model.MatCards?.ContainsKey(Id)??false) ? Model.MatCards[Id] : new List<Instance>();
-        contents = mat.GetContents(cards);
+
+        if (Model.IsStarted)
+        {
+            if (Owner == null)
+            {
+                var cards = Model.MatCards[Id];
+                contents = mat.GetContents(cards);
+            }
+            else
+            {
+                var cards = Model.PlayerMatCards[Owner][Id];
+                contents = mat.GetContents(cards);
+            }
+        }
     }
 }
 
@@ -18,12 +31,16 @@
         @if (contents != null)
         {
             <div class="mat-view__contents">
-                <RichText Model="@contents" />
+                <RichText @key="contents" Model="@contents" />
             </div>
         }
     </div>
     @if (mat.Label != null)
     {
         <h3 class="mat-view__label">@mat.Label</h3>
+    }
+    @if (Owner != null)
+    {
+        <h3 class="mat-view__owner"><PlayerLink Name="@Owner" /></h3>
     }
 </div>

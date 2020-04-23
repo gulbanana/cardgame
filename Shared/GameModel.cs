@@ -20,7 +20,8 @@ namespace Cardgame.Shared
         public CardSet KingdomSet { get; set; }
         public string KingdomPreset { get; set; }
         public string[] KingdomCards { get; set; }
-        public string[] KingdomMats { get; set; }
+        public string[] KingdomGlobalMats { get; set; }
+        public string[] KingdomPlayerMats { get; set; }
         public bool KingdomHasCurse { get; set; }
 
         // player config
@@ -36,6 +37,7 @@ namespace Cardgame.Shared
         public Dictionary<string, List<Instance>> Discards { get; set; }
         public Dictionary<string, List<Instance>> PlayedCards { get; set; }
         public Dictionary<string, List<Instance>> MatCards { get; set; }
+        public Dictionary<string, Dictionary<string, List<Instance>>> PlayerMatCards { get; set; }
         public Dictionary<Instance, Instance> Attachments { get; set; }
 
         // turn state    

@@ -7,6 +7,7 @@ namespace Cardgame.Cards.Seaside
     {
         public override int Cost => 4;
         public override int Score => 2;
+        public override string HasMat => "IslandMat";
 
         public override string Text => @"<split>
             <run>Put this and a card from your hand onto your Island mat.</run>
