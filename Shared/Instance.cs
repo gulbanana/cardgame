@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Cardgame.Shared
 {
-    public struct Instance
+    public class Instance
     {
         private static readonly Dictionary<string, int> counts = new Dictionary<string, int>();
 
@@ -15,6 +15,7 @@ namespace Cardgame.Shared
 
         public string Id { get; set; }
         public int Counter { get; set; }
+        public bool DurationComplete { get; set; }
 
         public override string ToString()
         {

@@ -2,7 +2,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class GreatHall : ActionVictoryCardBase
+    public class GreatHall : VictoryActionCardBase
     {
         public override int Cost => 3;
         public override int Score => 1;

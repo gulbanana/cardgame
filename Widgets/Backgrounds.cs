@@ -24,6 +24,10 @@ namespace Cardgame.Widgets
                 {
                     return $"var(--card-type-reaction)";
                 }
+                else if (colours.Contains("action") && colours.Contains("duration"))
+                {
+                    return $"var(--card-type-duration)";
+                }
                 else
                 {
                     return $@"linear-gradient(var(--card-type-{colours.First()}) 0%, 

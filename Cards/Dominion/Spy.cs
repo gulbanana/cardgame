@@ -4,7 +4,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Spy : ActionAttackCardBase
+    public class Spy : AttackCardBase
     {
         public override int Cost => 4;
 

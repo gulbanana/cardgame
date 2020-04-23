@@ -33,10 +33,10 @@ namespace Cardgame.Shared
         public Dictionary<string, List<Instance>> Hands { get; set; }
         public Dictionary<string, List<Instance>> Decks { get; set; }
         public Dictionary<string, List<Instance>> Discards { get; set; }
+        public Dictionary<string, List<Instance>> PlayedCards { get; set; }
         public List<Instance> Trash { get; set; }
 
         // turn state    
-        public List<Instance> PlayedCards { get; set; }
         public List<string> ActiveEffects { get; set; }
         public bool ExecutingBackgroundTasks { get; set; }
         public bool BuyPhase { get; set; }

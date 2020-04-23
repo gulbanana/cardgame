@@ -15,7 +15,7 @@ namespace Cardgame.All
                 game.Decks[player]
                     .Concat(game.Hands[player])
                     .Concat(game.Discards[player])
-                    .Concat(game.ActivePlayer == player ? game.PlayedCards : new List<Instance>())
+                    .Concat(game.PlayedCards[player])
                     .Names()
                     .ToArray() : 
                 new[] { "Estate", "Estate", "Estate" } ;

@@ -3,7 +3,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class Minion : ActionAttackCardBase
+    public class Minion : AttackCardBase
     {
         public override string Art => "int-minion";
         public override int Cost => 5;

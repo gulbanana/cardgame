@@ -1,12 +1,10 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class SecretChamber : ActionReactionCardBase
+    public class SecretChamber : AttackReactionCardBase
     {
-        public override Trigger ReactionTrigger => Trigger.PlayCard;
         public override int Cost => 2;        
 
         public override string Text => @"<small>
@@ -26,28 +24,13 @@ namespace Cardgame.Cards.Intrigue
             host.AddCoins(discarded.Length);
         }
 
-        protected override async Task<Reaction> ReactAsync(IActionHost host, string trigger)
+        protected override async Task BeforeAttackAsync(IActionHost host)
         {
-            if (!host.IsActive && 
-                All.Cards.ByName(trigger).Types.Contains(CardType.Attack) && 
-                host.Count(Zone.Hand) >= 5 &&
-                await host.YesNo("Secret Chamber", $@"<run>Reveal</run><card>SecretChamber</card><run>from your hand?</run>"))
-            {
-                host.Reveal("SecretChamber");
-                host.IndentLevel++;
-                return Reaction.Before(async () => 
-                {
-                    host.DrawCards(2);
-                    var put = await host.SelectCards("Choose cards to put back.", Zone.Hand, 2, 2);
-                    host.PlaceOnDeck(put);
-                    var ordered = await host.OrderCards("Choose the order of the cards put back.", Zone.DeckTop2);
-                    host.Reorder(ordered, Zone.DeckTop2);
-                });
-            }
-            else
-            {
-                return Reaction.None();
-            }
+            host.DrawCards(2);
+            var put = await host.SelectCards("Choose cards to put back.", Zone.Hand, 2, 2);
+            host.PlaceOnDeck(put);
+            var ordered = await host.OrderCards("Choose the order of the cards put back.", Zone.DeckTop2);
+            host.Reorder(ordered, Zone.DeckTop2);
         }
     }
 }

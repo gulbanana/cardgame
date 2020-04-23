@@ -4,7 +4,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class Torturer : ActionAttackCardBase
+    public class Torturer : AttackCardBase
     {
         public override string Art => "int-torturer";
         public override int Cost => 5;

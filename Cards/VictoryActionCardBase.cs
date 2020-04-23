@@ -2,7 +2,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards
 {
-    public abstract class ActionVictoryCardBase : ActionCardBase, IVictoryCard
+    public abstract class VictoryActionCardBase : ActionCardBase, IVictoryCard
     {
         public override CardType[] Types => new[] { CardType.Action, CardType.Victory };
         public abstract int Score { get; }

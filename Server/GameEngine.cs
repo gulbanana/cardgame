@@ -135,7 +135,7 @@ namespace Cardgame.Server
                     Model.KingdomHasSeasideMats = false;
 
                     BeginGame();
-                    BeginTurn();
+                    BeginBackgroundTask(Model.ActivePlayer, BeginTurnAsync);
 
                     break;
 
@@ -294,7 +294,7 @@ namespace Cardgame.Server
                     if (Model.BuysRemaining == 0)
                     {
                         EndTurn();
-                        BeginTurn();
+                        BeginBackgroundTask(Model.ActivePlayer, BeginTurnAsync);
                     }
 
                     break;
@@ -315,7 +315,7 @@ namespace Cardgame.Server
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("A card is currently being played.");
 
                     EndTurn();
-                    BeginTurn();
+                    BeginBackgroundTask(Model.ActivePlayer, BeginTurnAsync);
                     break;
 
                 case var unknown:
@@ -476,13 +476,13 @@ namespace Cardgame.Server
             var rng = new Random();
 
             Model.Supply = All.Cards.Base().Concat(Model.KingdomCards).ToDictionary(id => id, id => Model.GetInitialSupply(id));            
-            Model.PlayedCards = new List<Instance>();
             Model.ActiveEffects = new List<string>();
             Model.Trash = new List<Instance>();
             Model.PreventedAttacks = new HashSet<string>();
             Model.ChoosingPlayers = new Stack<string>();
             Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
+            Model.PlayedCards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.Decks = Model.Players.ToDictionary(k => k, _ => 
             {
                 var deck = new []{ "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Copper", "Estate", "Estate", "Estate" }
@@ -513,32 +513,38 @@ namespace Cardgame.Server
             Model.ActivePlayer = isDemo ? demoNextActive : Model.Players[rng.Next(Model.Players.Length)];
         }
 
-        private void BeginTurn()
+        private async Task BeginTurnAsync(string player)
         {
-            if (Model.IsFinished) return;
+            if (Model.IsFinished) return; // XXX what case does this cover?
 
             ActionsThisTurn = 0;
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
             Model.CoinsRemaining = isDemo ? 10 : 0;
-
-            Model.BuyPhase = !Model.Hands[Model.ActivePlayer]
-                .Select(All.Cards.ByName)
-                .OfType<IActionCard>()
-                .Any();
+            Model.BuyPhase = false;
 
             LogEvent($@"<bold>
                 <spans>
                     <run>---</run>
-                    <if you='Your' them=""{Model.ActivePlayer}'s"">{Model.ActivePlayer}</if>
+                    <if you='Your' them=""{player}'s"">{player}</if>
                     <run>turn ---</run>
                 </spans>
             </bold>");
 
-            if (!isDemo && bots.Contains(Model.ActivePlayer))
+            await Act(1, player, Trigger.BeginTurn, player, () => 
             {
-                var botPlayer = Model.ActivePlayer;
-                Task.Run(() =>
+                Model.BuyPhase = !Model.Hands[player]
+                    .Select(All.Cards.ByName)
+                    .OfType<IActionCard>()
+                    .Any();
+
+                return Task.CompletedTask;
+            });
+
+            if (!isDemo && bots.Contains(player))
+            {
+                var botPlayer = player;
+                _ = Task.Run(() =>
                 {
                     var executed = true;
                     while (botPlayer == Model.ActivePlayer && !Model.IsFinished && executed)
@@ -557,11 +563,20 @@ namespace Cardgame.Server
         private void EndTurn()
         {
             var discard = Model.Discards[Model.ActivePlayer];
-            while (Model.PlayedCards.Any())
+            var inPlay = Model.PlayedCards[Model.ActivePlayer];
+
+            var toDiscard = new List<Instance>();
+            foreach (var instance in inPlay.ToList())
             {
-                var first = Model.PlayedCards[0];
-                Model.PlayedCards.RemoveAt(0);
-                discard.Add(first);
+                if (All.Cards.ByName(instance).Types.Contains(CardType.Duration) && !instance.DurationComplete)
+                {
+                    instance.DurationComplete = true;
+                }
+                else
+                {
+                    inPlay.Remove(instance);
+                    discard.Add(instance);
+                }
             }
 
             Model.ActiveEffects.Clear();
@@ -665,7 +680,7 @@ namespace Cardgame.Server
             return id;
         }
 
-        private Instance? nowhere;
+        private Instance nowhere;
         internal void MoveCard(string player, string id, Zone from, Zone to)
         {
             Instance instance;
@@ -701,13 +716,13 @@ namespace Cardgame.Server
                     break;
 
                 case Zone.InPlay:
-                    if (!Model.PlayedCards.Contains(id)) throw new CommandException($"No {id} card has been played.");
-                    instance = Model.PlayedCards.ExtractLast(id);
+                    if (!Model.PlayedCards[player].Contains(id)) throw new CommandException($"No {id} card is in play.");
+                    instance = Model.PlayedCards[player].ExtractLast(id);
                     break;
 
                 case Zone.Nowhere:
-                    if (!nowhere.HasValue || !nowhere.Value.Equals(id)) throw new CommandException($"Card {id} not found.");
-                    instance = nowhere.Value;
+                    if (nowhere == null || nowhere.Id != id) throw new CommandException($"Card {id} not found.");
+                    instance = nowhere;
                     nowhere = null;
                     break;
 
@@ -741,11 +756,11 @@ namespace Cardgame.Server
                     break;
 
                 case Zone.InPlay:
-                    Model.PlayedCards.Add(instance);
+                    Model.PlayedCards[player].Add(instance);
                     break;
 
                 case Zone.Nowhere:
-                    if (nowhere.HasValue) throw new CommandException($"Card {nowhere} has been lost.");
+                    if (nowhere != null) throw new CommandException($"Card {nowhere} has been lost.");
                     nowhere = instance;
                     break;
 
@@ -819,7 +834,7 @@ namespace Cardgame.Server
                 Zone.DeckTop4 => Model.Decks[player].Take(4).Names(),
                 Zone.Discard => Model.Discards[player].Names(),
                 Zone.Hand => Model.Hands[player].Names(),
-                Zone.InPlay => Model.PlayedCards.Names(),
+                Zone.InPlay => Model.PlayedCards[player].Names(),
                 Zone.SupplyAvailable => Model.Supply.Keys.Where(id => Model.Supply[id] > 0).ToArray(),
                 Zone.SupplyEmpty => Model.Supply.Keys.Where(id => Model.Supply[id] == 0).ToArray(),
                 Zone.SupplyAll => Model.Supply.Keys.ToArray(),
@@ -921,22 +936,35 @@ namespace Cardgame.Server
                 var reactor = globalReactors.First();
                 globalReactors.Remove(reactor);
                 var host = new ActionHost(indentLevel, this, player);
-                reactions.Add(await reactor.ExecuteReactionAsync(host, trigger, parameter));
+                reactions.Add(await reactor.ExecuteReactionAsync(host, Zone.InPlay, trigger, parameter));
             }
 
-            foreach (var target in Model.Players)
+            foreach (var local in Model.Players)
             {
-                var targetReactors = GetCards(target, Zone.Hand, () => {;})
+                var handReactors = GetCards(local, Zone.Hand, () => {;})
                     .Select(All.Cards.ByName) 
                     .OfType<IReactor>()
                     .ToList();
 
-                while (targetReactors.Any())
+                while (handReactors.Any())
                 {
-                    var reactor = targetReactors.First();
-                    targetReactors.Remove(reactor);
-                    var host = new ActionHost(indentLevel, this, target);
-                    reactions.Add(await reactor.ExecuteReactionAsync(host, trigger, parameter));
+                    var reactor = handReactors.First();
+                    handReactors.Remove(reactor);
+                    var host = new ActionHost(indentLevel, this, local);
+                    reactions.Add(await reactor.ExecuteReactionAsync(host, Zone.Hand, trigger, parameter));
+                }
+
+                var playReactors = GetCards(local, Zone.InPlay, () => {;})
+                    .Select(All.Cards.ByName) 
+                    .OfType<IReactor>()
+                    .ToList();
+
+                while (playReactors.Any())
+                {
+                    var reactor = playReactors.First();
+                    playReactors.Remove(reactor);
+                    var host = new ActionHost(indentLevel, this, local);
+                    reactions.Add(await reactor.ExecuteReactionAsync(host, Zone.InPlay, trigger, parameter));
                 }
             }
 

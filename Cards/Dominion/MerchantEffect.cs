@@ -11,9 +11,9 @@ namespace Cardgame.Cards.Dominion
             <sym prefix='+' suffix='.'>coin1</sym>
         ";
 
-        public async Task<Reaction> ExecuteReactionAsync(IActionHost host, Trigger trigger, string parameter)
+        public async Task<Reaction> ExecuteReactionAsync(IActionHost host, Zone reactFrom, Trigger triggerType, string triggerParameter)
         {
-            if (trigger == Trigger.PlayCard && parameter == nameof(Base.Silver))
+            if (triggerType == Trigger.PlayCard && triggerParameter == nameof(Base.Silver))
             {
                 return Reaction.After(() =>
                 {

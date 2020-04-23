@@ -4,7 +4,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Bureaucrat : ActionAttackCardBase
+    public class Bureaucrat : AttackCardBase
     {
         public override string Art => "dom-bureaucrat";
         public override int Cost => 4;        

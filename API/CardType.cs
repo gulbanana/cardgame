@@ -7,6 +7,7 @@ namespace Cardgame.API
         Curse,
         Action,
         Attack,
-        Reaction
+        Reaction,
+        Duration
     }
 }

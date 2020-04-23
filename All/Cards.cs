@@ -70,6 +70,9 @@ namespace Cardgame.All
                 case CardType.Attack:
                     return "action";
 
+                case CardType.Duration:
+                    return "duration";
+
                 case CardType.Reaction:
                     return "reaction";
 

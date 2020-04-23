@@ -51,6 +51,11 @@ namespace Cardgame.API
             });
         }
 
+        public static Reaction BeforeAndAfter(Func<Task> actBefore, Func<Task> actAfter)
+        {
+            return new Reaction(actBefore, actAfter);
+        }
+
         public readonly Func<Task> ActBefore;
         public readonly Func<Task> ActAfter;
 

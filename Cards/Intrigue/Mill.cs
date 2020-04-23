@@ -3,7 +3,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class Mill : ActionVictoryCardBase
+    public class Mill : VictoryActionCardBase
     {
         public override string Art => "int-mill";
         public override int Cost => 4;

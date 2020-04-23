@@ -1,12 +1,10 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class Diplomat : ActionReactionCardBase
+    public class Diplomat : AttackReactionCardBase
     {
-        public override Trigger ReactionTrigger => Trigger.PlayCard;
         public override string Art => "int-diplomat";
         public override int Cost => 4;        
 
@@ -30,26 +28,11 @@ namespace Cardgame.Cards.Intrigue
             }
         }
 
-        protected override async Task<Reaction> ReactAsync(IActionHost host, string trigger)
+        protected override async Task BeforeAttackAsync(IActionHost host)
         {
-            if (!host.IsActive && 
-                All.Cards.ByName(trigger).Types.Contains(CardType.Attack) && 
-                host.Count(Zone.Hand) >= 5 &&
-                await host.YesNo("Diplomat", $@"<run>Reveal</run><card>Diplomat</card><run>from your hand?</run>"))
-            {
-                host.Reveal("Diplomat");
-                host.IndentLevel++;
-                return Reaction.Before(async () => 
-                {
-                    host.DrawCards(2);
-                    var discarded = await host.SelectCards("Choose cards to discard.", Zone.Hand, 3, 3);
-                    host.Discard(discarded);
-                });
-            }
-            else
-            {
-                return Reaction.None();
-            }
+            host.DrawCards(2);
+            var discarded = await host.SelectCards("Choose cards to discard.", Zone.Hand, 3, 3);
+            host.Discard(discarded);
         }
     }
 }

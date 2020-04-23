@@ -3,11 +3,11 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class Nobles : ActionCardBase, IVictoryCard
+    public class Nobles : VictoryActionCardBase
     {
-        public override CardType[] Types => new[] { CardType.Action, CardType.Victory };
         public override string Art => "int-nobles";
         public override int Cost => 6;
+        public override int Score => 2;
 
         public override string Text => @"<split>
             <spans>
@@ -26,7 +26,5 @@ namespace Cardgame.Cards.Intrigue
                 new NamedOption("+2 Actions", () => host.AddActions(2))
             );
         }
-
-        public int Score(string[] dominion) => 2;
     }
 }

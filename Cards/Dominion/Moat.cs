@@ -1,12 +1,9 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Cardgame.API;
 
 namespace Cardgame.Cards.Dominion
 {
-    public class Moat : ActionReactionCardBase
+    public class Moat : AttackReactionCardBase
     {
-        public override Trigger ReactionTrigger => Trigger.PlayCard;
         public override string Art => "dom-moat";
         public override int Cost => 2;        
 
@@ -20,23 +17,14 @@ namespace Cardgame.Cards.Dominion
             host.DrawCards(2);
         }
 
-        protected override async Task<Reaction> ReactAsync(IActionHost host, string trigger)
+        protected override void BeforeAttack(IActionHost host)
         {
-            if (!host.IsActive && 
-                All.Cards.ByName(trigger).Types.Contains(CardType.Attack) && 
-                await host.YesNo("Moat", $@"<run>Reveal</run><card>Moat</card><run>from your hand?</run>"))
-            {
-                host.Reveal("Moat");
-                host.IndentLevel++;
-                return Reaction.BeforeAndAfter(
-                    () => host.PreventAttack(true),
-                    () => host.PreventAttack(false)
-                );
-            }
-            else
-            {
-                return Reaction.None();
-            }
+            host.PreventAttack(true);
+        }
+
+        protected override void AfterAttack(IActionHost host)
+        {
+            host.PreventAttack(false);
         }
     }
 }

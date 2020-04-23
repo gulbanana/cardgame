@@ -4,7 +4,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Intrigue
 {
-    public class Replace : ActionAttackCardBase
+    public class Replace : AttackCardBase
     {
         public override string Art => "int-replace";
         public override int Cost => 5;
