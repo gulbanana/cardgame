@@ -16,7 +16,7 @@ namespace Cardgame.Server
 
         protected override IActionHost CloneHost(string owningPlayer)
         {
-            return new TriggerHost(engine, IndentLevel, Player, TriggerType, TriggerParameter);
+            return new TriggerHost(engine, IndentLevel, owningPlayer, TriggerType, TriggerParameter);
         }
     }
 }

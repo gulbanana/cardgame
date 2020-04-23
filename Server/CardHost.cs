@@ -15,7 +15,7 @@ namespace Cardgame.Server
 
         protected override IActionHost CloneHost(string owningPlayer)
         {
-            return new CardHost(engine, IndentLevel, Player, Card);
+            return new CardHost(engine, IndentLevel, owningPlayer, Card);
         }
 
         public override void CompleteDuration()
