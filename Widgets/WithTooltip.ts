@@ -3,10 +3,11 @@ namespace WithTooltip {
         content.onmouseenter = (ev) => reposition(tooltip, ev.clientX, ev.clientY);
         content.onmousemove = (ev) => reposition(tooltip, ev.clientX, ev.clientY);
         content.onmouseleave = (ev) => deposition(tooltip);
+        content.onclick = (ev) => deposition(tooltip);
     }
 
     function reposition(element: HTMLElement, x: number, y: number) {
-        element.classList.add("with-tooltip__tooltip--visible");
+        element.style.display = "inherit";
 
         if (window.innerWidth - x < 120) {
             element.style.left = null;
@@ -23,9 +24,15 @@ namespace WithTooltip {
             element.style.top = y + 2 + "px";
             element.style.bottom = null;
         }
+        
+        if (element.parentElement.tagName != "BODY") {
+            (element as any).oldParent = element.parentElement;
+            document.querySelector("body").appendChild(element);
+        }
     }
 
     function deposition(element: HTMLElement) {
-        element.classList.remove("with-tooltip__tooltip--visible");
+        element.style.display = "none";
+        (element as any).oldParent.appendChild(element);
     }
 }

@@ -10,10 +10,3 @@
     position: fixed;
     z-index: 10;
 }
-
-.with-tooltip:hover + .with-tooltip__tooltip {
-}
-
-.with-tooltip:hover + .with-tooltip__tooltip--visible {
-    display: inherit;
-}
