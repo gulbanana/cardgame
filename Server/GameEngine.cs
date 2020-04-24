@@ -302,7 +302,7 @@ namespace Cardgame.Server
                         await BuyCardAsync(username, id);
                         if (Model.BuysRemaining == 0)
                         {
-                            EndTurn();
+                            await EndTurnAsync(Model.ActivePlayer);
                             await BeginTurnAsync(Model.ActivePlayer);
                         }
                     });
@@ -324,8 +324,11 @@ namespace Cardgame.Server
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("A card is currently being played.");
 
-                    EndTurn();
-                    BeginBackgroundTask(Model.ActivePlayer, BeginTurnAsync);
+                    BeginBackgroundTask(Model.ActivePlayer, async _ =>
+                    {
+                        await EndTurnAsync(Model.ActivePlayer);
+                        await BeginTurnAsync(Model.ActivePlayer);
+                    });
                     break;
 
                 case var unknown:
@@ -405,7 +408,10 @@ namespace Cardgame.Server
             {
                 Model.CoinsRemaining -= boughtCard.GetCost(Model);
                 Model.BuysRemaining -= 1;
+                
                 var instance = MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
+                
+                NoteBuy(player, instance);
                 NoteGain(player, instance);
 
                 LogEvent($@"<spans>
@@ -573,6 +579,7 @@ namespace Cardgame.Server
                 var botPlayer = player;
                 _ = Task.Run(() =>
                 {
+                    while (Model.ExecutingBackgroundTasks) {;}
                     var executed = true;
                     while (botPlayer == Model.ActivePlayer && !Model.IsFinished && executed)
                     {       
@@ -587,40 +594,46 @@ namespace Cardgame.Server
             }
         }
 
-        private void EndTurn()
+        private async Task EndTurnAsync(string player)
         {
-            var discard = Model.Discards[Model.ActivePlayer];
-            var inPlay = Model.PlayedCards[Model.ActivePlayer];
+            var discard = Model.Discards[player];
+            var inPlay = Model.PlayedCards[player];
 
             var toDiscard = new List<Instance>();
             foreach (var instance in inPlay.ToList())
             {
-                if (!All.Cards.ByName(instance).Types.Contains(CardType.Duration) || !IncompleteDurations.Contains(instance))
+                var card = All.Cards.ByName(instance);
+                if (!card.Types.Contains(CardType.Duration) || !IncompleteDurations.Contains(instance))
                 {
-                    inPlay.Remove(instance);
-                    discard.Add(instance);
+                    var reactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
+                    await Act(1, player, Trigger.DiscardCard, instance.Id, () =>
+                    {
+                        inPlay.Remove(instance);
+                        discard.Add(instance);
+                        return Task.CompletedTask;
+                    }, reactors);
                 }
             }
 
             Model.ActiveEffects.Clear();
 
-            var hand = Model.Hands[Model.ActivePlayer];
+            var hand = Model.Hands[player];
             while (hand.Any())
             {
-                MoveCard(Model.ActivePlayer, hand[0], Zone.Hand, Zone.Discard);
+                MoveCard(player, hand[0], Zone.Hand, Zone.Discard);
             }
 
             var reshuffled = false;
             for (var i = 0; i < 5; i++)
             {
-                reshuffled = reshuffled | ReshuffleIfEmpty(Model.ActivePlayer);
-                DrawCardIfAny(Model.ActivePlayer);
+                reshuffled = reshuffled | ReshuffleIfEmpty(player);
+                DrawCardIfAny(player);
             }
             if (reshuffled)
             {
                 LogEvent($@"<spans>
-                    <player prefix='('>{Model.ActivePlayer}</player>
-                    <if you='reshuffle.)' them='reshuffles.)'>{Model.ActivePlayer}</if>
+                    <player prefix='('>{player}</player>
+                    <if you='reshuffle.)' them='reshuffles.)'>{player}</if>
                 </spans>");
             }
 
@@ -882,6 +895,7 @@ namespace Cardgame.Server
                 Zone.Hand => Model.Hands[player].ToArray(),
                 Zone.InPlay => Model.PlayedCards[player].ToArray(),
                 Zone.PlayerMat => Model.PlayerMatCards[player][parameter].ToArray(),
+                Zone.RecentBuys => lastTurn[parameter ?? player].Buys.ToArray(),
                 Zone.RecentGains => lastTurn[parameter ?? player].Gains.ToArray(),
                 Zone.Trash => Model.MatCards["TrashMat"].ToArray(),
                 Zone other => throw new CommandException($"Unsupported instance zone {other}")
@@ -996,10 +1010,10 @@ namespace Cardgame.Server
             var reactions = new List<Reaction>();
 
             var globalHost = new TriggerHost(this, indentLevel, player, trigger, parameter);
+
             var globalReactors = Model.ActiveEffects
                 .Select(All.Effects.ByName)
                 .OfType<IReactor>()
-                .Concat(extraReactors ?? Array.Empty<IReactor>())
                 .ToList();            
 
             while (globalReactors.Any())
@@ -1007,6 +1021,14 @@ namespace Cardgame.Server
                 var reactor = globalReactors.First();
                 globalReactors.Remove(reactor);                
                 reactions.Add(await reactor.ExecuteReactionAsync(globalHost, Zone.InPlay, trigger, parameter));
+            }
+
+            var localReactors = extraReactors?.ToList();
+            while (localReactors?.Any()??false)
+            {
+                var reactor = localReactors.First();
+                localReactors.Remove(reactor);
+                reactions.Add(await reactor.ExecuteReactionAsync(globalHost, Zone.This, trigger, parameter));
             }
 
             foreach (var owningPlayer in Model.Players)
@@ -1040,6 +1062,14 @@ namespace Cardgame.Server
             foreach (var reaction in reactions)
             {
                 await reaction.ActAfter();
+            }
+        }
+
+        internal void NoteBuy(string player, Instance instance)
+        {
+            if (player == Model.ActivePlayer)
+            {
+                lastTurn[player].Buys.Add(instance);
             }
         }
 

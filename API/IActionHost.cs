@@ -184,6 +184,11 @@ namespace Cardgame.API
         #endregion
 
         #region PutOnDeck
+        public static void PutOnDeck(this IActionHost host, string card, Zone from)
+        {
+            host.PutOnDeck(new[] { card }, from);
+        }
+
         public static void PutOnDeck(this IActionHost host, ICard card, Zone from)
         {
             host.PutOnDeck(new[] { card.Name }, from);
