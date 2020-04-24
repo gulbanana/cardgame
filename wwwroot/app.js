@@ -22,10 +22,14 @@ var FlashBorder;
 })(FlashBorder || (FlashBorder = {}));
 var VerticalLog;
 (function (VerticalLog) {
-    function scrollToBottom(content) {
-        content.scrollIntoView(false);
+    function observeAdditions(container) {
+        let config = { childList: true, subtree: true };
+        let observer = new MutationObserver((muts, o) => {
+            container.scrollIntoView(false);
+        });
+        observer.observe(container, config);
     }
-    VerticalLog.scrollToBottom = scrollToBottom;
+    VerticalLog.observeAdditions = observeAdditions;
 })(VerticalLog || (VerticalLog = {}));
 var WithTooltip;
 (function (WithTooltip) {

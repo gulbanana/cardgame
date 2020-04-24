@@ -1,5 +1,9 @@
 namespace VerticalLog {
-    export function scrollToBottom(content: HTMLElement) {
-        content.scrollIntoView(false);
+    export function observeAdditions(container: HTMLElement) {
+        let config = { childList: true, subtree: true };
+        let observer = new MutationObserver((muts, o) => {
+            container.scrollIntoView(false);
+        });
+        observer.observe(container, config);
     }
 }

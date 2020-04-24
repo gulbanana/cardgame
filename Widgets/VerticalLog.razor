@@ -6,7 +6,10 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await JS.InvokeVoidAsync("VerticalLog.scrollToBottom", contentElement);
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("VerticalLog.observeAdditions", contentElement);
+        }
     }
 }
 
