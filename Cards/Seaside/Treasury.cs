@@ -34,7 +34,7 @@ namespace Cardgame.Cards.Seaside
         {
             if (reactFrom == Zone.This && triggerType == Trigger.DiscardCard)
             {
-                var bought = host.Examine(Zone.RecentBuys);
+                var bought = host.Examine(Zone.RecentBuys(host.Player));
                 var boughtVictories = bought.Any(card => card.Types.Contains(CardType.Victory));
                 if (!boughtVictories && await host.YesNo("Treasury", "<run>Put</run><card>Treasury</card><run>back onto your deck?</run>"))
                 {

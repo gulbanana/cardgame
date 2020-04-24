@@ -61,30 +61,30 @@ namespace Cardgame.Server
 
         private string LogSource(Zone from)
         {
-            switch (from)
+            switch (from.Name)
             {
-                case Zone.DeckBottom:
+                case nameof(Zone.DeckBottom):
                     return $@"<run>the bottom of</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>";
 
-                case Zone.DeckTop1:
-                case Zone.DeckTop2:
-                case Zone.DeckTop3:
-                case Zone.DeckTop4:
+                case nameof(Zone.DeckTop1):
+                case nameof(Zone.DeckTop2):
+                case nameof(Zone.DeckTop3):
+                case nameof(Zone.DeckTop4):
                     return $@"<run>the top of</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>";
 
-                case Zone.Hand:
+                case nameof(Zone.Hand):
                     return $@"<if you='your' them='their'>{Player}</if>
                     <run>hand.</run>";
 
-                case Zone.Discard:
+                case nameof(Zone.Discard):
                     return $@"<if you='your' them='their'>{Player}</if>
                     <run>discard pile.</run>";
 
-                case Zone.Trash:
+                case nameof(Zone.Trash):
                     return $@"<run>the trash.</run>";
 
                 default:
@@ -94,28 +94,28 @@ namespace Cardgame.Server
 
         protected string LogDestination(Zone to)
         {
-            switch (to)
+            switch (to.Name)
             {
-                case Zone.DeckTop1:
-                case Zone.DeckTop2:
-                case Zone.DeckTop3:
-                case Zone.DeckTop4:
+                case nameof(Zone.DeckTop1):
+                case nameof(Zone.DeckTop2):
+                case nameof(Zone.DeckTop3):
+                case nameof(Zone.DeckTop4):
                     return $@"{LogVerb("put", "puts", "putting")}
                               <run>it onto</run>
                               <if you='your' them='their'>{Player}</if>
                               <run>deck.</run>";
 
-                case Zone.Hand:
+                case nameof(Zone.Hand):
                     return $@"{LogVerb("put", "puts", "putting")}
                               <run>it into</run>
                               <if you='your' them='their'>{Player}</if>
                               <run>hand.</run>";
 
-                case Zone.Discard:
+                case nameof(Zone.Discard):
                     return $@"{LogVerb("discard", "discards", "discarding")}
                               <run>it.</run>";
 
-                case Zone.Trash:
+                case nameof(Zone.Trash):
                     return $@"{LogVerb("trash", "trashes", "trashing")}
                               <run>it.</run>";
 
@@ -164,14 +164,14 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        ICard[] IActionHost.Examine(Zone @in, string zoneParam)
+        ICard[] IActionHost.Examine(Zone @in)
         {
-            return engine.GetCards(Player, @in, NoteReshuffle, zoneParam).Select(All.Cards.ByName).ToArray();
+            return engine.GetCards(Player, @in, NoteReshuffle).Select(All.Cards.ByName).ToArray();
         }
 
-        int IActionHost.Count(Zone @in, string zoneParam)
+        int IActionHost.Count(Zone @in)
         {
-            return engine.CountCards(Player, @in, zoneParam);
+            return engine.CountCards(Player, @in);
         }
 
         void IActionHost.AddActions(int n)
@@ -365,11 +365,11 @@ namespace Cardgame.Server
             }
         }
 
-        void IActionHost.PutIntoHand(string[] cards, Zone from, string zoneParam)
+        void IActionHost.PutIntoHand(string[] cards, Zone from)
         {
             foreach (var card in cards)
             {
-                engine.MoveCard(Player, card, from, Zone.Hand, fromParameter: zoneParam);
+                engine.MoveCard(Player, card, from, Zone.Hand);
             }
             
             engine.LogPartialEvent($@"<spans>
@@ -384,12 +384,12 @@ namespace Cardgame.Server
 
         void IActionHost.PutOnMat(string mat, string card, Zone from)
         {
-            engine.MoveCard(Player, card, from, Zone.PlayerMat, mat);            
+            engine.MoveCard(Player, card, from, Zone.PlayerMat(mat));            
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
                 {LogVerbInitial("put", "puts", "putting")}
-                {LogSecurely(card, from, Zone.PlayerMat)}
+                {LogSecurely(card, from, Zone.PlayerMat(mat))}
                 <run>onto</run>
                 <if you='your' them='their'>{Player}</if>
                 <run>{All.Mats.ByName(mat).Label} mat.</run>

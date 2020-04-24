@@ -18,7 +18,7 @@ namespace Cardgame.Cards.Seaside
         {
             host.AddActions(2);
 
-            var cards = host.Examine(Zone.PlayerMat, "NativeVillageMat");
+            var cards = host.Examine(Zone.PlayerMat("NativeVillageMat"));
 
             await host.ChooseOne("Native Village",
                 new NamedOption("Add card to mat.", () =>
@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Seaside
                 }),
                 new NamedOption($"Retrieve all cards ({(cards.Any() ? cards.Length.ToString() : "none")}).", () =>
                 {
-                    host.PutIntoHand(Zone.PlayerMat, "NativeVillageMat");
+                    host.PutIntoHand(Zone.PlayerMat("NativeVillageMat"));
                 })
             );
         }

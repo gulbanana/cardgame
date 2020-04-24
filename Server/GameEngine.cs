@@ -666,7 +666,7 @@ namespace Cardgame.Server
             }
         }
 
-        internal string DrawCardIfAny(string player, string id = null, Zone to = Zone.Hand)
+        internal string DrawCardIfAny(string player, string id = null, Zone? to = default)
         {
             var deck = Model.Decks[player];        
             var hand = Model.Hands[player];
@@ -678,72 +678,73 @@ namespace Cardgame.Server
 
             if (id != null)
             {
-                MoveCard(player, id, Zone.DeckTop1, to);
+                MoveCard(player, id, Zone.DeckTop1, to ?? Zone.Hand);
             }
             else
             {
                 id = deck[0].Id;
-                MoveCard(player, id, Zone.DeckTop1, to);
+                MoveCard(player, id, Zone.DeckTop1, to ?? Zone.Hand);
             }
 
             return id;
         }
 
-        internal Instance MoveCard(string player, string id, Zone from, Zone to, string toParameter = null, string fromParameter = null)
+        internal Instance MoveCard(string player, string id, Zone from, Zone to)
         {
             Instance instance;
 
-            switch (from)
+            switch (from.Name)
             {
-                case Zone.Create:
+                case nameof(Zone.Create):
                     instance = Instance.Of(id);
                     break;
 
-                case Zone.DeckBottom:
+                case nameof(Zone.DeckBottom):
                     if (Model.Decks[player].Last().Id != id) throw new CommandException($"No {id} card on bottom of deck.");
                     instance = Model.Decks[player].Last();
                     break;
 
-                case Zone.DeckTop1:
-                case Zone.DeckTop2:
-                case Zone.DeckTop3:
-                case Zone.DeckTop4:
+                case nameof(Zone.DeckTop1):
+                case nameof(Zone.DeckTop2):
+                case nameof(Zone.DeckTop3):
+                case nameof(Zone.DeckTop4):
                     instance = Model.Decks[player].Extract(id);
                     break;
 
-                case Zone.Discard:
+                case nameof(Zone.Discard):
                     if (!Model.Discards[player].Contains(id)) throw new CommandException($"No {id} card in discard pile.");
                     instance = Model.Discards[player].Extract(id);
                     break;
 
-                case Zone.Hand:
+                case nameof(Zone.Hand):
                     if (!Model.Hands[player].Contains(id)) throw new CommandException($"No {id} card in hand.");
                     instance = Model.Hands[player].Extract(id);
                     break;
 
-                case Zone.InPlay:
+                case nameof(Zone.InPlay):
                     if (!Model.PlayedCards[player].Contains(id)) throw new CommandException($"No {id} card is in play.");
                     instance = Model.PlayedCards[player].ExtractLast(id);
                     break;
 
-                case Zone.PlayerMat:
-                    if (!Model.PlayerMatCards[player][fromParameter].Contains(id)) throw new CommandException($"No {id} card on mat {fromParameter}.");
-                    instance = Model.PlayerMatCards[player][fromParameter].ExtractLast(id);
+                case nameof(Zone.PlayerMat):
+                    var fromMat = (string)from.Param;
+                    if (!Model.PlayerMatCards[player][fromMat].Contains(id)) throw new CommandException($"No {id} card on mat {fromMat}.");
+                    instance = Model.PlayerMatCards[player][fromMat].ExtractLast(id);
                     break;
 
-                case Zone.Stash:
+                case nameof(Zone.Stash):
                     if (!stash.HasValue || stash.Value.Id != id) throw new CommandException($"Stashed {id} not found.");
                     instance = stash.Value;
                     stash = null;
                     break;
 
-                case Zone.SupplyAvailable:
+                case nameof(Zone.SupplyAvailable):
                     if (Model.Supply[id] < 1) throw new CommandException($"No {id} cards remaining in stack.");
                     Model.Supply[id]--;
                     instance = Instance.Of(id);
                     break;
 
-                case Zone.Trash:
+                case nameof(Zone.Trash):
                     if (!Model.MatCards["TrashMat"].Contains(id)) throw new CommandException($"No {id} card in hand.");
                     instance = Model.MatCards["TrashMat"].Extract(id);
                     break;
@@ -752,41 +753,42 @@ namespace Cardgame.Server
                     throw new CommandException($"Unknown zone {from}");
             }
 
-            switch (to)
+            switch (to.Name)
             {
-                case Zone.DeckTop1:
-                case Zone.DeckTop2:
-                case Zone.DeckTop3:
-                case Zone.DeckTop4:
+                case nameof(Zone.DeckTop1):
+                case nameof(Zone.DeckTop2):
+                case nameof(Zone.DeckTop3):
+                case nameof(Zone.DeckTop4):
                     Model.Decks[player].Insert(0, instance);
                     break;
 
-                case Zone.Discard:
+                case nameof(Zone.Discard):
                     Model.Discards[player].Insert(0, instance);
                     break;
 
-                case Zone.Hand:
+                case nameof(Zone.Hand):
                     Model.Hands[player].Add(instance);
                     break;
 
-                case Zone.InPlay:
+                case nameof(Zone.InPlay):
                     Model.PlayedCards[player].Add(instance);
                     break;
 
-                case Zone.PlayerMat:
-                    Model.PlayerMatCards[player][toParameter].Add(instance);
+                case nameof(Zone.PlayerMat):
+                    var toMat = (string)to.Param;
+                    Model.PlayerMatCards[player][toMat].Add(instance);
                     break;
 
-                case Zone.Stash:
+                case nameof(Zone.Stash):
                     if (stash.HasValue) throw new CommandException($"Card {stash} has been lost.");
                     stash = instance;
                     break;
 
-                case Zone.SupplyAvailable:
+                case nameof(Zone.SupplyAvailable):
                     Model.Supply[instance.Id]++; // actual card is lost
                     break;
 
-                case Zone.Trash:
+                case nameof(Zone.Trash):
                     Model.MatCards["TrashMat"].Add(instance);
                     break;
 
@@ -797,33 +799,33 @@ namespace Cardgame.Server
             return instance;
         }
 
-        internal void MoveCard(string player, Instance instance, Zone from, Zone to, string toParameter = null)
+        internal void MoveCard(string player, Instance instance, Zone from, Zone to)
         {
-            MoveCard(player, instance.Id, from, to, toParameter);
+            MoveCard(player, instance.Id, from, to);
         }
 
-        internal int CountCards(string player, Zone source, string parameter = null)
+        internal int CountCards(string player, Zone source)
         {
-            return source switch 
+            return source.Name switch 
             {
-                Zone.CountableDeck => Model.Decks[player].Count(),
-                Zone.DeckTop1 => Model.Decks[player].Take(1).Count(),
-                Zone.DeckTop2 => Model.Decks[player].Take(2).Count(),
-                Zone.DeckTop3 => Model.Decks[player].Take(3).Count(),
-                Zone.DeckTop4 => Model.Decks[player].Take(4).Count(),
-                Zone.Discard => Model.Discards[player].Count(),
-                Zone.Hand => Model.Hands[player].Count,
-                Zone.InPlay => Model.PlayedCards.Count,
-                Zone.PlayerMat => Model.PlayerMatCards[player][parameter].Count,
-                Zone.SupplyAll => Model.Supply.Keys.Count,
-                Zone.SupplyAvailable => Model.Supply.Keys.Count(id => Model.Supply[id] > 0),
-                Zone.SupplyEmpty => Model.Supply.Keys.Count(id => Model.Supply[id] == 0),
-                Zone.Trash => Model.MatCards["TrashMat"].Count,
-                Zone other => throw new CommandException($"Unknown card zone {other}")
+                nameof(Zone.CountableDeck) => Model.Decks[player].Count(),
+                nameof(Zone.DeckTop1) => Model.Decks[player].Take(1).Count(),
+                nameof(Zone.DeckTop2) => Model.Decks[player].Take(2).Count(),
+                nameof(Zone.DeckTop3) => Model.Decks[player].Take(3).Count(),
+                nameof(Zone.DeckTop4) => Model.Decks[player].Take(4).Count(),
+                nameof(Zone.Discard) => Model.Discards[player].Count(),
+                nameof(Zone.Hand) => Model.Hands[player].Count,
+                nameof(Zone.InPlay) => Model.PlayedCards.Count,
+                nameof(Zone.PlayerMat) => Model.PlayerMatCards[player][(string)source.Param].Count,
+                nameof(Zone.SupplyAll) => Model.Supply.Keys.Count,
+                nameof(Zone.SupplyAvailable) => Model.Supply.Keys.Count(id => Model.Supply[id] > 0),
+                nameof(Zone.SupplyEmpty) => Model.Supply.Keys.Count(id => Model.Supply[id] == 0),
+                nameof(Zone.Trash) => Model.MatCards["TrashMat"].Count,
+                string unknown => throw new CommandException($"Unknown counting zone {unknown}")
             };
         }
 
-        internal Instance[] GetInstances(string player, Zone source, Action onShuffle = null, string parameter = null)
+        internal Instance[] GetInstances(string player, Zone source, Action onShuffle = null)
         {
             onShuffle = onShuffle ?? new Action(() => {;});
 
@@ -857,43 +859,43 @@ namespace Cardgame.Server
                 onShuffle();
             }
 
-            return source switch 
+            return source.Name switch 
             {
-                Zone.DeckBottom => new[] { Model.Decks[player].Last() },
-                Zone.DeckTop1 => Model.Decks[player].Take(1).ToArray(),
-                Zone.DeckTop2 => Model.Decks[player].Take(2).ToArray(),
-                Zone.DeckTop3 => Model.Decks[player].Take(3).ToArray(),
-                Zone.DeckTop4 => Model.Decks[player].Take(4).ToArray(),
-                Zone.Discard => Model.Discards[player].ToArray(),
-                Zone.Hand => Model.Hands[player].ToArray(),
-                Zone.InPlay => Model.PlayedCards[player].ToArray(),
-                Zone.PlayerMat => Model.PlayerMatCards[player][parameter].ToArray(),
-                Zone.RecentBuys => lastTurn[parameter ?? player].Buys.ToArray(),
-                Zone.RecentGains => lastTurn[parameter ?? player].Gains.ToArray(),
-                Zone.Trash => Model.MatCards["TrashMat"].ToArray(),
-                Zone other => throw new CommandException($"Unsupported instance zone {other}")
+                nameof(Zone.DeckBottom) => new[] { Model.Decks[player].Last() },
+                nameof(Zone.DeckTop1) => Model.Decks[player].Take(1).ToArray(),
+                nameof(Zone.DeckTop2) => Model.Decks[player].Take(2).ToArray(),
+                nameof(Zone.DeckTop3) => Model.Decks[player].Take(3).ToArray(),
+                nameof(Zone.DeckTop4) => Model.Decks[player].Take(4).ToArray(),
+                nameof(Zone.Discard) => Model.Discards[player].ToArray(),
+                nameof(Zone.Hand) => Model.Hands[player].ToArray(),
+                nameof(Zone.InPlay) => Model.PlayedCards[player].ToArray(),
+                nameof(Zone.PlayerMat) => Model.PlayerMatCards[player][(string)source.Param].ToArray(),
+                nameof(Zone.RecentBuys) => lastTurn[(string)source.Param].Buys.ToArray(),
+                nameof(Zone.RecentGains) => lastTurn[(string)source.Param].Gains.ToArray(),
+                nameof(Zone.Trash) => Model.MatCards["TrashMat"].ToArray(),
+                string unknown => throw new CommandException($"Unknown instance zone {unknown}")
             };
         }
 
-        internal string[] GetCards(string player, Zone source, Action onShuffle = null, string parameter = null)
+        internal string[] GetCards(string player, Zone source, Action onShuffle = null)
         {
-            return source switch 
+            return source.Name switch 
             {
-                Zone.SupplyAvailable => Model.Supply.Keys.Where(id => Model.Supply[id] > 0).ToArray(),
-                Zone.SupplyEmpty => Model.Supply.Keys.Where(id => Model.Supply[id] == 0).ToArray(),
-                Zone.SupplyAll => Model.Supply.Keys.ToArray(),
-                Zone other => GetInstances(player, source, onShuffle, parameter).Names()
+                nameof(Zone.SupplyAvailable) => Model.Supply.Keys.Where(id => Model.Supply[id] > 0).ToArray(),
+                nameof(Zone.SupplyEmpty) => Model.Supply.Keys.Where(id => Model.Supply[id] == 0).ToArray(),
+                nameof(Zone.SupplyAll) => Model.Supply.Keys.ToArray(),
+                string other => GetInstances(player, source, onShuffle).Names()
             };
         }
 
-        internal void SetCardOrder(string player, string[] cards, Zone destination, string parameter = null)
+        internal void SetCardOrder(string player, string[] cards, Zone destination)
         {
-            switch (destination)
+            switch (destination.Name)
             {
-                case Zone.DeckTop1:
+                case nameof(Zone.DeckTop1):
                     break;
 
-                case Zone.DeckTop2:
+                case nameof(Zone.DeckTop2):
                     var found2 = new HashSet<Instance>();
                     var instance20 = Model.Decks[player].Take(2).First(i => i.Id == cards[0] && !found2.Contains(i)); found2.Add(instance20);
                     var instance21 = Model.Decks[player].Take(2).First(i => i.Id == cards[1] && !found2.Contains(i)); found2.Add(instance21);
@@ -901,7 +903,7 @@ namespace Cardgame.Server
                     Model.Decks[player][1] = instance21;
                     break;
 
-                case Zone.DeckTop3:
+                case nameof(Zone.DeckTop3):
                     var found3 = new HashSet<Instance>();
                     var instance30 = Model.Decks[player].Take(3).First(i => i.Id == cards[0] && !found3.Contains(i)); found3.Add(instance30);
                     var instance31 = Model.Decks[player].Take(3).First(i => i.Id == cards[1] && !found3.Contains(i)); found3.Add(instance31);
@@ -911,7 +913,7 @@ namespace Cardgame.Server
                     Model.Decks[player][2] = instance32;
                     break;
 
-                case Zone.DeckTop4:
+                case nameof(Zone.DeckTop4):
                     var found4 = new HashSet<Instance>();
                     var instance40 = Model.Decks[player].Take(4).First(i => i.Id == cards[0] && !found4.Contains(i)); found4.Add(instance40);
                     var instance41 = Model.Decks[player].Take(4).First(i => i.Id == cards[1] && !found4.Contains(i)); found4.Add(instance41);
@@ -923,7 +925,7 @@ namespace Cardgame.Server
                     Model.Decks[player][3] = instance43;
                     break;
 
-                case Zone.Discard:
+                case nameof(Zone.Discard):
                     var temp = Model.Discards[player].ToList();
                     Model.Discards[player].Clear();
                     foreach (var card in cards)

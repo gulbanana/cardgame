@@ -17,7 +17,7 @@ namespace Cardgame.Cards.Seaside
 
         protected override async Task ActAsync(IActionHost host)
         {
-            var tokens = host.Count(Zone.PlayerMat, "PirateShipMat");
+            var tokens = host.Count(Zone.PlayerMat("PirateShipMat"));
 
             await host.ChooseOne("Pirate Ship",
                 new NamedOption($"<sym prefix='+'>coin1</sym><run>per Coin token (+${tokens}).</run>", () =>
