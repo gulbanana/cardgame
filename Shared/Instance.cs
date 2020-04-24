@@ -22,8 +22,8 @@ namespace Cardgame.Shared
             return new Instance(parts[0], int.Parse(parts[1]));
         }
 
-        public string Id { get; }
-        public int Counter { get; }
+        public string Id { get; set; }
+        public int Counter { get; set; }
 
         private Instance(string id, int counter)
         {
@@ -88,5 +88,10 @@ namespace Cardgame.Shared
             var proxyValue = value.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value);
             JsonSerializer.Serialize<Dictionary<string, T>>(writer, proxyValue, options);
         }
+    }
+
+    public class InstanceBox
+    {
+        public Instance Value { get; set; }
     }
 }
