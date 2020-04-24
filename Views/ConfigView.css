@@ -5,10 +5,7 @@
                          'pcmds   scmds';
     grid-template-columns: auto auto;
     grid-template-rows: auto auto;
-}
-
-.config-view--constrained {
-    margin: 0 110px;
+    margin: 0 calc(var(--card-width) + var(--std-gap));
 }
 
 .config-view__sets {
