@@ -16,9 +16,7 @@ namespace Cardgame.API
         RecentBuys,
         RecentGains,
         Stash,
-        SupplyAll,
-        SupplyAvailable,
-        SupplyEmpty,
+        Supply,
         This,
         Trash,
     }

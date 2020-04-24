@@ -738,7 +738,7 @@ namespace Cardgame.Server
                     stash = null;
                     break;
 
-                case ZoneName.SupplyAvailable:
+                case ZoneName.Supply:
                     if (Model.Supply[id] < 1) throw new CommandException($"No {id} cards remaining in stack.");
                     Model.Supply[id]--;
                     instance = Instance.Of(id);
@@ -784,7 +784,7 @@ namespace Cardgame.Server
                     stash = instance;
                     break;
 
-                case ZoneName.SupplyAvailable:
+                case ZoneName.Supply:
                     Model.Supply[instance.Id]++; // actual card is lost
                     break;
 
@@ -817,9 +817,19 @@ namespace Cardgame.Server
                 ZoneName.Hand => Model.Hands[player].Count,
                 ZoneName.InPlay => Model.PlayedCards.Count,
                 ZoneName.PlayerMat => Model.PlayerMatCards[player][(string)source.Param].Count,
-                ZoneName.SupplyAll => Model.Supply.Keys.Count,
-                ZoneName.SupplyAvailable => Model.Supply.Keys.Count(id => Model.Supply[id] > 0),
-                ZoneName.SupplyEmpty => Model.Supply.Keys.Count(id => Model.Supply[id] == 0),
+                ZoneName.Supply => Model.Supply.Keys.Count(id =>
+                {
+                    var supplyParam = (ValueTuple<bool, bool>)source.Param;
+                    if (Model.Supply[id] > 0) 
+                    {
+                        return supplyParam.Item1;
+                    }
+                    else
+                    {
+                        return supplyParam.Item2;
+                    }
+                }),
+                ZoneName.Stash => stash.HasValue ? 1 : 0,
                 ZoneName.Trash => Model.MatCards["TrashMat"].Count,
                 _ => throw new CommandException($"Unknown counting zone {source}")
             };
@@ -881,9 +891,18 @@ namespace Cardgame.Server
         {
             return source.Name switch 
             {
-                ZoneName.SupplyAvailable => Model.Supply.Keys.Where(id => Model.Supply[id] > 0).ToArray(),
-                ZoneName.SupplyEmpty => Model.Supply.Keys.Where(id => Model.Supply[id] == 0).ToArray(),
-                ZoneName.SupplyAll => Model.Supply.Keys.ToArray(),
+                ZoneName.Supply => Model.Supply.Keys.Where(id => 
+                {
+                    var supplyParam = (ValueTuple<bool, bool>)source.Param;
+                    if (Model.Supply[id] > 0) 
+                    {
+                        return supplyParam.Item1;
+                    }
+                    else
+                    {
+                        return supplyParam.Item2;
+                    }
+                }).ToArray(),
                 _ => GetInstances(player, source, onShuffle).Names()
             };
         }

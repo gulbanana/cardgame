@@ -18,9 +18,9 @@ namespace Cardgame.API
         public static Zone RecentBuys(string player) => new Zone(ZoneName.RecentBuys, player);
         public static Zone RecentGains(string player) => new Zone(ZoneName.RecentGains, player);
         public static Zone Stash = new Zone(ZoneName.Stash);
-        public static Zone SupplyAll = new Zone(ZoneName.SupplyAll);
-        public static Zone SupplyAvailable = new Zone(ZoneName.SupplyAvailable);
-        public static Zone SupplyEmpty = new Zone(ZoneName.SupplyEmpty);
+        public static Zone SupplyAll = new Zone(ZoneName.Supply, (includeAvailable: true, includeEmpty: true));
+        public static Zone SupplyAvailable = new Zone(ZoneName.Supply, (includeAvailable: true, includeEmpty: false));
+        public static Zone SupplyEmpty = new Zone(ZoneName.Supply, (includeAvailable: false, includeEmpty: true));
         public static Zone This = new Zone(ZoneName.This);
         public static Zone Trash = new Zone(ZoneName.Trash);
 
@@ -81,9 +81,7 @@ namespace Cardgame.API
                 ZoneName.RecentBuys => false,
                 ZoneName.RecentGains => false,
                 ZoneName.Stash => true,
-                ZoneName.SupplyAll => false,
-                ZoneName.SupplyAvailable => false,
-                ZoneName.SupplyEmpty => false,
+                ZoneName.Supply => false,
                 ZoneName.Trash => false,
                 ZoneName unknown => throw new NotSupportedException($"Unknown privacy zone {unknown}")
             };
