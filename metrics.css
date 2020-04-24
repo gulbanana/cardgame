@@ -8,7 +8,8 @@
     --card-height: 161px;
     --card-header: 17px;
     --card-footer: 15px;
-    --card-icon: 13px;
+    --card-cost-icon: 14px;
+    --card-set-icon: 8px;
     --card-body: calc(var(--card-height) - var(--card-header) - var(--card-footer) - 4px);
     --card-half-height: calc(var(--card-height) - var(--card-body)/2);
     --card-third-height: 65px; /* xxx calculate this - currently it's really 65.5 so fix that */
