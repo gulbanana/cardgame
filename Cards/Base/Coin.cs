@@ -1,4 +1,4 @@
-namespace Cardgame.Cards.Seaside
+namespace Cardgame.Cards.Base
 {
     public class Coin : TokenBase
     {
