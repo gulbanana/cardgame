@@ -63,28 +63,28 @@ namespace Cardgame.Server
         {
             switch (from.Name)
             {
-                case nameof(Zone.DeckBottom):
+                case ZoneName.DeckBottom:
                     return $@"<run>the bottom of</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>";
 
-                case nameof(Zone.DeckTop1):
-                case nameof(Zone.DeckTop2):
-                case nameof(Zone.DeckTop3):
-                case nameof(Zone.DeckTop4):
+                case ZoneName.DeckTop1:
+                case ZoneName.DeckTop2:
+                case ZoneName.DeckTop3:
+                case ZoneName.DeckTop4:
                     return $@"<run>the top of</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>";
 
-                case nameof(Zone.Hand):
+                case ZoneName.Hand:
                     return $@"<if you='your' them='their'>{Player}</if>
                     <run>hand.</run>";
 
-                case nameof(Zone.Discard):
+                case ZoneName.Discard:
                     return $@"<if you='your' them='their'>{Player}</if>
                     <run>discard pile.</run>";
 
-                case nameof(Zone.Trash):
+                case ZoneName.Trash:
                     return $@"<run>the trash.</run>";
 
                 default:
@@ -96,26 +96,26 @@ namespace Cardgame.Server
         {
             switch (to.Name)
             {
-                case nameof(Zone.DeckTop1):
-                case nameof(Zone.DeckTop2):
-                case nameof(Zone.DeckTop3):
-                case nameof(Zone.DeckTop4):
+                case ZoneName.DeckTop1:
+                case ZoneName.DeckTop2:
+                case ZoneName.DeckTop3:
+                case ZoneName.DeckTop4:
                     return $@"{LogVerb("put", "puts", "putting")}
                               <run>it onto</run>
                               <if you='your' them='their'>{Player}</if>
                               <run>deck.</run>";
 
-                case nameof(Zone.Hand):
+                case ZoneName.Hand:
                     return $@"{LogVerb("put", "puts", "putting")}
                               <run>it into</run>
                               <if you='your' them='their'>{Player}</if>
                               <run>hand.</run>";
 
-                case nameof(Zone.Discard):
+                case ZoneName.Discard:
                     return $@"{LogVerb("discard", "discards", "discarding")}
                               <run>it.</run>";
 
-                case nameof(Zone.Trash):
+                case ZoneName.Trash:
                     return $@"{LogVerb("trash", "trashes", "trashing")}
                               <run>it.</run>";
 
