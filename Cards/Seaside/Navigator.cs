@@ -18,7 +18,7 @@ namespace Cardgame.Cards.Seaside
         {
             host.AddCoins(2);
             
-            var top5 = host.Examine(Zone.DeckTop5);
+            var top5 = host.Examine(Zone.DeckTop(5));
             
             var namesBuilder = new StringBuilder();
             {
@@ -34,11 +34,11 @@ namespace Cardgame.Cards.Seaside
             var names = namesBuilder.ToString();
 
             await host.ChooseOne("Navigator",
-                 new NamedOption($"<run>Discard cards:</run>{names}.", () => host.Discard(top5, Zone.DeckTop5)),
+                 new NamedOption($"<run>Discard cards:</run>{names}.", () => host.Discard(top5, Zone.Deck)),
                  new NamedOption("<run>Put cards back on deck.</run>", async () => 
                  {
-                     var reordered = await host.OrderCards("Navigator", Zone.DeckTop5);
-                     host.Reorder(reordered, Zone.DeckTop5);
+                     var reordered = await host.OrderCards("Navigator", Zone.DeckTop(5));
+                     host.Reorder(reordered, Zone.Deck);
                  })
             );
         }

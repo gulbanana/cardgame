@@ -29,20 +29,20 @@ namespace Cardgame.Cards.Seaside
                     var anyTrashes = false;
                     await host.Attack(async target =>
                     {
-                        var top2 = target.Reveal(Zone.DeckTop2);
+                        var top2 = target.Reveal(Zone.DeckTop(2));
                         var top2Treasures = top2.OfType<ITreasureCard>();
                         if (top2Treasures.Count() == 1)
                         {
-                            target.Trash(top2Treasures.Single(), Zone.DeckTop2);
+                            target.Trash(top2Treasures.Single(), Zone.Deck);
                             anyTrashes = true;
                         }
                         else if (top2Treasures.Count() == 2)
                         {
                             var trashed = await host.SelectCard($"Choose a Treasure for {target.Player} to trash.", top2Treasures);
-                            target.Trash(trashed, Zone.DeckTop2);
+                            target.Trash(trashed, Zone.Deck);
                             anyTrashes = true;
                         }
-                        target.Discard(top2.Except(top2Treasures).ToArray(), Zone.DeckTop2);
+                        target.Discard(top2.Except(top2Treasures).ToArray(), Zone.Deck);
                     });
 
                     if (anyTrashes)

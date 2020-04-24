@@ -7,11 +7,7 @@ namespace Cardgame.API
         public static Zone Create = new Zone(ZoneName.Create);
         public static Zone Deck = new Zone(ZoneName.Deck);
         public static Zone DeckBottom = new Zone(ZoneName.DeckBottom);
-        public static Zone DeckTop1 = new Zone(ZoneName.DeckTop, 1);
-        public static Zone DeckTop2 = new Zone(ZoneName.DeckTop, 2);
-        public static Zone DeckTop3 = new Zone(ZoneName.DeckTop, 3);
-        public static Zone DeckTop4 = new Zone(ZoneName.DeckTop, 4);
-        public static Zone DeckTop5 = new Zone(ZoneName.DeckTop, 5);
+        public static Zone DeckTop(int n) => new Zone(ZoneName.DeckTop, n);
         public static Zone Discard = new Zone(ZoneName.Discard);
         public static Zone Hand = new Zone(ZoneName.Hand);
         public static Zone InPlay = new Zone(ZoneName.InPlay);

@@ -678,12 +678,12 @@ namespace Cardgame.Server
 
             if (id != null)
             {
-                MoveCard(player, id, Zone.DeckTop1, to ?? Zone.Hand);
+                MoveCard(player, id, Zone.Deck, to ?? Zone.Hand);
             }
             else
             {
                 id = deck[0].Id;
-                MoveCard(player, id, Zone.DeckTop1, to ?? Zone.Hand);
+                MoveCard(player, id, Zone.Deck, to ?? Zone.Hand);
             }
 
             return id;
@@ -834,7 +834,7 @@ namespace Cardgame.Server
         {
             onShuffle = onShuffle ?? new Action(() => {;});
 
-            if (source is Zone { Name: ZoneName.DeckTop, Param: int n } && Model.Decks[player].Count < n)
+            if (source is Zone { Name: ZoneName.DeckTop, Param: int topN } && Model.Decks[player].Count < topN)
             {
                 var setAside = Model.Decks[player].ToArray();
                 Model.Decks[player].Clear();                
@@ -880,19 +880,28 @@ namespace Cardgame.Server
 
         internal void SetCardOrder(string player, string[] cards, Zone destination)
         {
+            void reorderDeckTop(int n)
+            {
+                var newOrder = new List<Instance>();
+                for (var i = 0; i < n; i++)
+                {
+                    var instance = Model.Decks[player].Take(n).First(inst => inst.Id == cards[i] && !newOrder.Contains(inst)); 
+                    newOrder.Add(instance);
+                }
+                for (var i = 0; i < n; i++)
+                {
+                    Model.Decks[player][i] = newOrder[i];
+                }
+            }
+
             switch (destination.Name)
             {
+                case ZoneName.Deck:
+                    reorderDeckTop(cards.Length);
+                    break;
+
                 case ZoneName.DeckTop when destination.Param is int n:
-                    var newOrder = new List<Instance>();
-                    for (var i = 0; i < n; i++)
-                    {
-                        var instance = Model.Decks[player].Take(n).First(inst => inst.Id == cards[i] && !newOrder.Contains(inst)); 
-                        newOrder.Add(instance);
-                    }
-                    for (var i = 0; i < n; i++)
-                    {
-                        Model.Decks[player][i] = newOrder[i];
-                    }
+                    reorderDeckTop(n);
                     break;
 
                 case ZoneName.Discard:

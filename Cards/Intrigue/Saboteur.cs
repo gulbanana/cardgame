@@ -20,13 +20,13 @@ namespace Cardgame.Cards.Intrigue
         {
             await host.Attack(async target =>
             {
-reveal:         var topDeck = target.Reveal(Zone.DeckTop1).SingleOrDefault();
+reveal:         var topDeck = target.Reveal(Zone.DeckTop(1)).SingleOrDefault();
                 if (topDeck != null)
                 {
                     var topDeckCost = topDeck.GetCost(host);                    
                     if (topDeckCost >= 3)
                     {
-                        target.Trash(topDeck, Zone.DeckTop1);
+                        target.Trash(topDeck, Zone.Deck);
                         var gained = await target.SelectCards("Choose a card to gain, or none.", Zone.SupplyAvailable, card => card.GetCost(host) <= topDeckCost-2, 0, 1);
                         if (gained.Any())
                         {
@@ -35,7 +35,7 @@ reveal:         var topDeck = target.Reveal(Zone.DeckTop1).SingleOrDefault();
                     }
                     else
                     {
-                        target.Discard(topDeck, Zone.DeckTop1);
+                        target.Discard(topDeck, Zone.Deck);
                         if (target.ShuffleCount < 2)
                         {
                             goto reveal;

@@ -19,7 +19,7 @@ namespace Cardgame.Cards.Dominion
             
             await host.Attack(async player => 
             {
-                var top2 = player.Reveal(Zone.DeckTop2);
+                var top2 = player.Reveal(Zone.DeckTop(2));
                 
                 var trashed = false;
                 foreach (var card in top2)
@@ -27,11 +27,11 @@ namespace Cardgame.Cards.Dominion
                     if (!trashed && card.Types.Contains(CardType.Treasure) && card.Name != "Copper")
                     {
                         trashed = true;
-                        player.Trash(card, Zone.DeckTop2);
+                        player.Trash(card, Zone.Deck);
                     }
                     else
                     {
-                        player.Discard(card, Zone.DeckTop2);
+                        player.Discard(card, Zone.Deck);
                     }
                 }
             });

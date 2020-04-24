@@ -23,17 +23,17 @@ namespace Cardgame.Cards.Dominion
 
             await host.AllPlayers(async target =>
             {
-                var revealed = target.Reveal(Zone.DeckTop1).SingleOrDefault();
+                var revealed = target.Reveal(Zone.DeckTop(1)).SingleOrDefault();
                 if (revealed != null)
                 {
-                    target.Reveal(revealed, Zone.DeckTop1);
+                    target.Reveal(revealed, Zone.Deck);
                     
                     var subject = host == target ? "<run>Do you want</run>" : $"<run>Force</run><player>{target.Player}</player>";
                     if (await host.YesNo("Spy", $@"{subject}
                         <run>to discard</run>
                         <card suffix='?'>{revealed.Name}</card>"))
                     {
-                        target.Discard(revealed, Zone.DeckTop1);
+                        target.Discard(revealed, Zone.Deck);
                     }
                 }
             }, isAttack: true);

@@ -17,23 +17,23 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
-            var trashes = await host.SelectCards("Choose cards to trash.", Zone.DeckTop2);
+            var trashes = await host.SelectCards("Choose cards to trash.", Zone.DeckTop(2));
             if (trashes.Any())
             {
-                host.Trash(trashes, Zone.DeckTop2);
+                host.Trash(trashes, Zone.Deck);
             }
 
             if (trashes.Length < 2)
             {
-                var discards = await host.SelectCards("Choose cards to discard.", trashes.Length == 1 ? Zone.DeckTop1 : Zone.DeckTop2);
+                var discards = await host.SelectCards("Choose cards to discard.", Zone.DeckTop(trashes.Length == 1 ? 1 : 2));
                 if (discards.Any())
                 {
-                    host.Discard(discards, Zone.DeckTop2);
+                    host.Discard(discards, Zone.Deck);
                 }
                 else if (!trashes.Any())
                 {
-                    var orderedCards = await host.OrderCards("Put these cards back in any order.", Zone.DeckTop2);
-                    host.Reorder(orderedCards, Zone.DeckTop2);    
+                    var orderedCards = await host.OrderCards("Put these cards back in any order.", Zone.DeckTop(2));
+                    host.Reorder(orderedCards, Zone.Deck);
                 }   
             }
         }

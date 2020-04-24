@@ -16,15 +16,15 @@ namespace Cardgame.Cards.Seaside
         {
             host.AddActions(1);
 
-            var trashed = await host.SelectCard("Choose a card to trash.", Zone.DeckTop3);
+            var trashed = await host.SelectCard("Choose a card to trash.", Zone.DeckTop(3));
             if (trashed != null)
             {
-                host.Trash(trashed, Zone.DeckTop3);
+                host.Trash(trashed, Zone.Deck);
 
-                var discarded = await host.SelectCard("Choose a card to discard.", Zone.DeckTop2);
+                var discarded = await host.SelectCard("Choose a card to discard.", Zone.DeckTop(2));
                 if (discarded != null)
                 {
-                    host.Discard(discarded, Zone.DeckTop2);
+                    host.Discard(discarded, Zone.Deck);
                 }
             }
         }

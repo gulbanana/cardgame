@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Intrigue
                 {
                     if (gained.Types.Contains(CardType.Action) || gained.Types.Contains(CardType.Treasure))
                     {
-                        host.Gain(gained, Zone.DeckTop1);
+                        host.Gain(gained, Zone.Deck);
                     }
                     else
                     {

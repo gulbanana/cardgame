@@ -20,7 +20,7 @@ namespace Cardgame.Cards.Dominion
             
             await host.Attack(async player => 
             {
-                var top2 = player.Reveal(Zone.DeckTop2);
+                var top2 = player.Reveal(Zone.DeckTop(2));
                 
                 var treasures = top2.OfType<ITreasureCard>();
                 if (treasures.Any())
@@ -28,13 +28,13 @@ namespace Cardgame.Cards.Dominion
                     if (treasures.Count() == 1 || treasures.First().Equals(treasures.Last()))
                     {
                         var soleTreasure = treasures.First();                        
-                        player.Trash(soleTreasure, Zone.DeckTop2);
+                        player.Trash(soleTreasure, Zone.Deck);
                         trashed.Add(soleTreasure);
                     }
                     else
                     {
                         var chosenTreasure = await host.SelectCard("Choose a Treasure to trash.", treasures);
-                        player.Trash(chosenTreasure, Zone.DeckTop2);
+                        player.Trash(chosenTreasure, Zone.Deck);
                         trashed.Add(chosenTreasure);
                     }
                 }

@@ -23,14 +23,14 @@ namespace Cardgame.Cards.Intrigue
             host.AddActions(1);
 
             var inserted = await host.SelectCard("Choose a card to put in your deck.", Zone.Hand);
-
-            if (host.Count(Zone.DeckTop1) == 0)
+            
+            var deckSize = host.Count(Zone.Deck);
+            if (deckSize == 0)
             {
                 host.PutOnDeck(inserted);
             }
             else
             {
-                var deckSize = host.Count(Zone.Deck);
                 var options = Enumerable.Range(0, deckSize+1).Select(i =>
                 {
                     var label = 

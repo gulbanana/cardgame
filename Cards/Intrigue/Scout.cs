@@ -17,23 +17,18 @@ namespace Cardgame.Cards.Intrigue
         {
             host.AddActions(1);
 
-            var top4 = host.Reveal(Zone.DeckTop4);
+            var top4 = host.Reveal(Zone.DeckTop(4));
             var victoryCards = top4.Where(c => c.Types.Contains(CardType.Victory)).ToArray();
             var nonVictoryCards = top4.Where(c => !c.Types.Contains(CardType.Victory)).ToArray();
 
             if (victoryCards.Any())
             {
-                host.PutIntoHand(victoryCards, Zone.DeckTop4);
+                host.PutIntoHand(victoryCards, Zone.Deck);
             }
 
             if (nonVictoryCards.Count() > 1)
             {
-                var zone = nonVictoryCards.Count() switch {
-                    2 => Zone.DeckTop2,
-                    3 => Zone.DeckTop3,
-                    4 => Zone.DeckTop4
-                };
-
+                var zone = Zone.DeckTop(nonVictoryCards.Count());
                 var reorderedCards = await host.OrderCards("Put these cards back in any order.", zone);
                 host.Reorder(reorderedCards, zone);
             }

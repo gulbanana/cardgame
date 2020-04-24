@@ -35,9 +35,9 @@ namespace Cardgame.Cards.Intrigue
         {
             await host.OnePlayer(host.GetPlayerToLeft(), target =>
             {
-                foreach (var card in target.Examine(Zone.DeckTop2))
+                foreach (var card in target.Examine(Zone.DeckTop(2)))
                 {
-                    target.Discard(card, Zone.DeckTop2);
+                    target.Discard(card, Zone.Deck);
                     if (card.Types.Contains(CardType.Action)) host.AddActions(2);
                     if (card.Types.Contains(CardType.Treasure)) host.AddCoins(2);
                     if (card.Types.Contains(CardType.Victory)) host.DrawCards(2);

@@ -13,7 +13,7 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
-            host.Gain("Silver", Zone.DeckTop1);
+            host.Gain("Silver", Zone.Deck);
 
             await host.Attack(async player =>
             {

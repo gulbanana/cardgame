@@ -23,8 +23,8 @@ namespace Cardgame.Cards.Seaside
             await host.ChooseOne("Native Village",
                 new NamedOption("Add card to mat.", () =>
                 {                    
-                    var topDeck = host.Examine(Zone.DeckTop1).Single();
-                    host.PutOnMat("NativeVillageMat", topDeck, Zone.DeckTop1);
+                    var topDeck = host.Examine(Zone.DeckTop(1));
+                    host.PutOnMat("NativeVillageMat", topDeck, Zone.Deck);
                 }),
                 new NamedOption($"Retrieve all cards ({(cards.Any() ? cards.Length.ToString() : "none")}).", () =>
                 {

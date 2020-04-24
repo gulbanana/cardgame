@@ -20,17 +20,20 @@ namespace Cardgame.Cards.Intrigue
 
             await host.Attack(async target =>
             {
-                var topDeck = target.Examine(Zone.DeckTop1).Single();
-                var topDeckCost = topDeck.GetCost(host);
+                var topDeck = target.Examine(Zone.DeckTop(1)).SingleOrDefault();
+                if (topDeck != null)
+                {
+                    var topDeckCost = topDeck.GetCost(host);
 
-                target.Trash(topDeck, Zone.DeckTop1);
+                    target.Trash(topDeck, Zone.Deck);
 
-                var gained = await host.SelectCard(
-                    $"Choose a card for {target.Player} to gain.", 
-                    Zone.SupplyAvailable, 
-                    card => card.GetCost(host) == topDeckCost
-                );
-                target.Gain(gained);                
+                    var gained = await host.SelectCard(
+                        $"Choose a card for {target.Player} to gain.", 
+                        Zone.SupplyAvailable, 
+                        card => card.GetCost(host) == topDeckCost
+                    );
+                    target.Gain(gained);
+                }
             });
         }
     }

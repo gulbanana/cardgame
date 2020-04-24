@@ -97,7 +97,7 @@ namespace Cardgame.Server
                 case ZoneName.Deck:
                 case ZoneName.DeckTop when to.Param is int n:
                     return $@"{LogVerb("put", "puts", "putting")}
-                              <run>{(n > 1 ? "them" : "it")} onto</run>
+                              <run>it onto</run>
                               <if you='your' them='their'>{Player}</if>
                               <run>deck.</run>";
 
@@ -237,6 +237,8 @@ namespace Cardgame.Server
 
         void IActionHost.Discard(string[] cards, Zone from)
         {
+            if (!cards.Any()) return;
+
             foreach (var card in cards)
             {
                 engine.MoveCard(Player, card, from, Zone.Discard);
@@ -264,6 +266,8 @@ namespace Cardgame.Server
 
         void IActionHost.Trash(string[] cards, Zone from)
         {
+            if (!cards.Any()) return;
+
             foreach (var card in cards)
             {
                 engine.MoveCard(Player, card, from, Zone.Trash);
@@ -314,6 +318,8 @@ namespace Cardgame.Server
 
         void IActionHost.GainFrom(string[] cards, Zone from)
         {
+            if (!cards.Any()) return;
+
             foreach (var id in cards)
             {
                 var instance = engine.MoveCard(Player, id, from, Zone.Discard);
@@ -331,9 +337,11 @@ namespace Cardgame.Server
 
         void IActionHost.PutOnDeck(string[] cards, Zone from)
         {
+            if (!cards.Any()) return;
+
             foreach (var card in cards)
             {
-                engine.MoveCard(Player, card, from, Zone.DeckTop1);
+                engine.MoveCard(Player, card, from, Zone.Deck);
             }
             
             if (from == Zone.Hand)
@@ -363,6 +371,8 @@ namespace Cardgame.Server
 
         void IActionHost.PutIntoHand(string[] cards, Zone from)
         {
+            if (!cards.Any()) return;
+
             foreach (var card in cards)
             {
                 engine.MoveCard(Player, card, from, Zone.Hand);
@@ -378,14 +388,19 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        void IActionHost.PutOnMat(string mat, string card, Zone from)
+        void IActionHost.PutOnMat(string mat, string[] cards, Zone from)
         {
-            engine.MoveCard(Player, card, from, Zone.PlayerMat(mat));            
+            if (!cards.Any()) return;
+
+            foreach (var card in cards)
+            {
+                engine.MoveCard(Player, card, from, Zone.PlayerMat(mat));
+            }
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
                 {LogVerbInitial("put", "puts", "putting")}
-                {LogSecurely(card, from, Zone.PlayerMat(mat))}
+                {LogSecurely(cards, from, Zone.PlayerMat(mat))}
                 <run>onto</run>
                 <if you='your' them='their'>{Player}</if>
                 <run>{All.Mats.ByName(mat).Label} mat.</run>
@@ -394,6 +409,8 @@ namespace Cardgame.Server
 
         void IActionHost.ReturnToSupply(string[] cards)
         {
+            if (!cards.Any()) return;
+            
             foreach (var card in cards)
             {
                 engine.MoveCard(Player, card, Zone.Hand, Zone.SupplyAvailable);
@@ -615,7 +632,7 @@ namespace Cardgame.Server
             var deck = engine.Model.Decks[Player];
             while (deck.Any())
             {
-                engine.MoveCard(Player, deck[0], Zone.DeckTop1, Zone.Discard);
+                engine.MoveCard(Player, deck[0], Zone.Deck, Zone.Discard);
             }
 
             engine.LogPartialEvent($@"<spans>

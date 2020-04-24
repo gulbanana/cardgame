@@ -20,10 +20,10 @@ namespace Cardgame.Cards.Dominion
         {
             host.AddCoins(2);
 
-            var discarded = host.Examine(Zone.DeckTop1).SingleOrDefault();
+            var discarded = host.Examine(Zone.DeckTop(1)).SingleOrDefault();
             if (discarded != null && discarded.Types.Contains(CardType.Action))
             {
-                host.Discard(discarded, Zone.DeckTop1);
+                host.Discard(discarded, Zone.Deck);
                 if (await host.YesNo("Vassal", $"<card prefix='Play ' suffix='?'>{discarded.Name}</card>"))
                 {
                     await host.PlayCard(discarded.Name, Zone.Discard);

@@ -25,10 +25,10 @@ namespace Cardgame.Cards.Intrigue
             var named = await host.SelectCard("Name a card.", Zone.SupplyAll);
             host.Name(named);
 
-            var top1 = host.Reveal(Zone.DeckTop1);
+            var top1 = host.Reveal(Zone.DeckTop(1));
             if (named.Equals(top1.SingleOrDefault()))
             {
-                host.PutIntoHand(named, Zone.DeckTop1);
+                host.PutIntoHand(named, Zone.Deck);
             }
         }
     }

@@ -18,20 +18,16 @@ namespace Cardgame.Cards.Intrigue
         {
             host.DrawCards(3);
 
-            var top4 = host.Reveal(Zone.DeckTop4);
+            var top4 = host.Reveal(Zone.DeckTop(4));
             var victoryOrCurseCards = top4.Where(card => card.Types.Contains(CardType.Victory) || card.Name == "Curse").ToArray();
 
             if (victoryOrCurseCards.Length > 0)
             {
-                host.PutIntoHand(victoryOrCurseCards, Zone.DeckTop4);
+                host.PutIntoHand(victoryOrCurseCards, Zone.Deck);
 
                 if (victoryOrCurseCards.Length < 3)
                 {
-                    var zone = victoryOrCurseCards.Length switch {
-                        2 => Zone.DeckTop2,
-                        1 => Zone.DeckTop3,
-                    };
-
+                    var zone = Zone.DeckTop(4 - victoryOrCurseCards.Length);
                     var reorderedCards = await host.OrderCards("Put these cards back in any order.", zone);
                     host.Reorder(reorderedCards, zone);
                 }
