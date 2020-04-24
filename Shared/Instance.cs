@@ -13,11 +13,23 @@ namespace Cardgame.Shared
         public static Instance Of(string id)
         {
             if (!counts.ContainsKey(id)) counts[id] = 0;
-            return new Instance { Id = id, Counter = counts[id]++ };
+            return new Instance(id, counts[id]++);
         }
 
-        public string Id { get; set; }
-        public int Counter { get; set; }
+        public static Instance Parse(string serialised)
+        {
+            var parts = serialised.Split(':');
+            return new Instance(parts[0], int.Parse(parts[1]));
+        }
+
+        public string Id { get; }
+        public int Counter { get; }
+
+        private Instance(string id, int counter)
+        {
+            Id = id;
+            Counter = counter;
+        }
 
         public override string ToString()
         {
@@ -68,11 +80,7 @@ namespace Cardgame.Shared
         public override Dictionary<Instance, T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var value = JsonSerializer.Deserialize<Dictionary<string, T>>(ref reader, options);
-            return value.ToDictionary(kvp => 
-            {
-                var parts = kvp.Key.Split(':');
-                return new Instance { Id = parts[0], Counter = int.Parse(parts[1]) };
-            }, kvp => kvp.Value);
+            return value.ToDictionary(kvp => Instance.Parse(kvp.Key), kvp => kvp.Value);
         }
 
         public override void Write(Utf8JsonWriter writer, Dictionary<Instance, T> value, JsonSerializerOptions options)
