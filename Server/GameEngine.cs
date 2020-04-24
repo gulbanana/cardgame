@@ -13,8 +13,8 @@ namespace Cardgame.Server
     {
         private readonly HashSet<string> bots;
         private readonly Dictionary<string, TurnRecord> lastTurn;
+        private readonly Dictionary<string, int> turnNumbers;
         private TaskCompletionSource<string> inputTCS;
-        private int turn;
 
         internal readonly HashSet<Instance> IncompleteDurations;
         internal int ActionsThisTurn { get; private set; }
@@ -26,6 +26,7 @@ namespace Cardgame.Server
         {
             bots = new HashSet<string>();
             lastTurn = new Dictionary<string, TurnRecord>();
+            turnNumbers = new Dictionary<string, int>();
             IncompleteDurations = new HashSet<Instance>();
 
             Model = new GameModel();
@@ -411,6 +412,7 @@ namespace Cardgame.Server
         internal async Task PlayCardAsync(int indentLevel, string player, string id, Zone from)
         {       
             var played = MoveCard(player, id, from, Zone.InPlay);
+            NotePlay(player, played);
 
             await Act(indentLevel, player, Trigger.PlayCard, id, async () =>
             {
@@ -511,6 +513,7 @@ namespace Cardgame.Server
 
             foreach (var player in Model.Players)
             {
+                turnNumbers[player] = 0;
                 for (var i = 0; i < 5; i++)
                 {
                     DrawCardIfAny(player);
@@ -524,8 +527,8 @@ namespace Cardgame.Server
         {
             if (Model.IsFinished) return; // XXX what case does this cover?
 
-            var turnNumber = (turn/Model.Players.Length)+1;
-            lastTurn[player] = new TurnRecord(turnNumber);
+            var turnNumber = ++turnNumbers[player];
+            lastTurn[player] = new TurnRecord();
 
             ActionsThisTurn = 0;
             Model.ActionsRemaining = 1;
@@ -627,7 +630,6 @@ namespace Cardgame.Server
                     nextPlayer = 0;
                 }
                 Model.ActivePlayer = Model.Players[nextPlayer];
-                turn++;
             }
         }
 
@@ -641,7 +643,7 @@ namespace Cardgame.Server
                 </spans>
             </bold>");
             
-            foreach (var scoreText in Model.Players.Select(player => All.Score.Calculate(Model, player).Text(lastTurn[player].TurnNumber)))
+            foreach (var scoreText in Model.Players.Select(player => All.Score.Calculate(Model, player).Text(turnNumbers[player])))
             {
                 LogEvent(scoreText);
             }
@@ -855,9 +857,10 @@ namespace Cardgame.Server
                 ZoneName.Discard => Model.Discards[player].ToArray(),
                 ZoneName.Hand => Model.Hands[player].ToArray(),
                 ZoneName.InPlay => Model.PlayedCards[player].ToArray(),
-                ZoneName.PlayerMat => Model.PlayerMatCards[player][(string)source.Param].ToArray(),
-                ZoneName.RecentBuys => lastTurn[(string)source.Param].Buys.ToArray(),
-                ZoneName.RecentGains => lastTurn[(string)source.Param].Gains.ToArray(),
+                ZoneName.PlayerMat when source.Param is string mat => Model.PlayerMatCards[player][mat].ToArray(),
+                ZoneName.RecentBuys => lastTurn[player].Buys.ToArray(),
+                ZoneName.RecentGains => lastTurn[player].Gains.ToArray(),
+                ZoneName.RecentPlays => lastTurn[player].Plays.ToArray(),
                 ZoneName.Trash => Model.MatCards["TrashMat"].ToArray(),
                 _ => throw new CommandException($"Unknown instance zone {source}")
             };
@@ -1031,6 +1034,14 @@ namespace Cardgame.Server
             if (player == Model.ActivePlayer)
             {
                 lastTurn[player].Gains.Add(instance);
+            }
+        }
+
+        internal void NotePlay(string player, Instance instance)
+        {
+            if (player == Model.ActivePlayer)
+            {
+                lastTurn[player].Plays.Add(instance);
             }
         }
     }

@@ -14,8 +14,9 @@ namespace Cardgame.API
         public static Zone Hand = new Zone(ZoneName.Hand);
         public static Zone InPlay = new Zone(ZoneName.InPlay);
         public static Zone PlayerMat(string mat) => new Zone(ZoneName.PlayerMat, mat);
-        public static Zone RecentBuys(string player) => new Zone(ZoneName.RecentBuys, player);
-        public static Zone RecentGains(string player) => new Zone(ZoneName.RecentGains, player);
+        public static Zone RecentBuys => new Zone(ZoneName.RecentBuys);
+        public static Zone RecentGains => new Zone(ZoneName.RecentGains);
+        public static Zone RecentPlays => new Zone(ZoneName.RecentPlays);
         public static Zone Stash() => new Zone(ZoneName.Stash, new InstanceBox());
         public static Zone SupplyAll = new Zone(ZoneName.Supply, (includeAvailable: true, includeEmpty: true));
         public static Zone SupplyAvailable = new Zone(ZoneName.Supply, (includeAvailable: true, includeEmpty: false));
@@ -76,6 +77,7 @@ namespace Cardgame.API
                 ZoneName.PlayerMat => true,
                 ZoneName.RecentBuys => false,
                 ZoneName.RecentGains => false,
+                ZoneName.RecentPlays => false,
                 ZoneName.Stash => true,
                 ZoneName.Supply => false,
                 ZoneName.Trash => false,

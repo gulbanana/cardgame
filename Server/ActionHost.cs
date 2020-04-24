@@ -160,9 +160,9 @@ namespace Cardgame.Server
             </spans>");
         }
 
-        ICard[] IActionHost.Examine(Zone @in)
+        ICard[] IActionHost.Examine(Zone @in, string player)
         {
-            return engine.GetCards(Player, @in, NoteReshuffle).Select(All.Cards.ByName).ToArray();
+            return engine.GetCards(player ?? Player, @in, NoteReshuffle).Select(All.Cards.ByName).ToArray();
         }
 
         int IActionHost.Count(Zone @in)

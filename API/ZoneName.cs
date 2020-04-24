@@ -13,6 +13,7 @@ namespace Cardgame.API
         PlayerMat,
         RecentBuys,
         RecentGains,
+        RecentPlays,
         Stash,
         Supply,
         This,

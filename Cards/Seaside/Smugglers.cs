@@ -16,7 +16,7 @@ namespace Cardgame.Cards.Seaside
 
         protected override async Task ActAsync(IActionHost host)
         {
-            var lastGains = host.Examine(Zone.RecentGains(host.GetPlayerToRight())).Where(c => c.GetCost(host) <= 6);
+            var lastGains = host.Examine(Zone.RecentGains, host.GetPlayerToRight()).Where(c => c.GetCost(host) <= 6);
             
             if (lastGains.Count() == 1)
             {
