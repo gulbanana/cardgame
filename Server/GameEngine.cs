@@ -916,7 +916,7 @@ namespace Cardgame.Server
                     var instance40 = Model.Decks[player].Take(4).First(i => i.Id == cards[0] && !found4.Contains(i)); found4.Add(instance40);
                     var instance41 = Model.Decks[player].Take(4).First(i => i.Id == cards[1] && !found4.Contains(i)); found4.Add(instance41);
                     var instance42 = Model.Decks[player].Take(4).First(i => i.Id == cards[2] && !found4.Contains(i)); found4.Add(instance42);
-                    var instance43 = Model.Decks[player].Take(4).First(i => i.Id == cards[2] && !found4.Contains(i)); found4.Add(instance43);
+                    var instance43 = Model.Decks[player].Take(4).First(i => i.Id == cards[3] && !found4.Contains(i)); found4.Add(instance43);
                     Model.Decks[player][0] = instance40;
                     Model.Decks[player][1] = instance41;
                     Model.Decks[player][2] = instance42;
