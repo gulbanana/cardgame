@@ -55,6 +55,10 @@
         var rng = new Random();
         var options = All.Presets.List.Where(p => !p.sets.Contains(CardSet.Dominion1st) && !p.sets.Contains(CardSet.Intrigue1st)).ToList();
         var preset = options[rng.Next(options.Count)];
+        while (preset.name == configPreset)
+        {
+            preset = options[rng.Next(options.Count)];
+        }
 
         Dispatch(new ConfigureGameCommand
         {
