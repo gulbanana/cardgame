@@ -32,6 +32,7 @@ namespace Cardgame.API
                 },
                 2 when card.Types.Contains(CardType.Action) && card.Types.Contains(CardType.Reaction) => 9,
                 2 when card.Types.Contains(CardType.Action) && card.Types.Contains(CardType.Attack) => 11,
+                2 when card.Types.Contains(CardType.Action) && card.Types.Contains(CardType.Duration) => 12,
                 2 when card.Types.Contains(CardType.Action) && card.Types.Contains(CardType.Treasure) => 15,
                 2 when card.Types.Contains(CardType.Action) && card.Types.Contains(CardType.Victory) => 16,
                 2 when card.Types.Contains(CardType.Treasure) && card.Types.Contains(CardType.Victory) => 25,
