@@ -1,0 +1,18 @@
+﻿@inject IJSRuntime JS
+@inherits LayoutComponentBase
+@code {
+    private ElementReference mainElement;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("MainLayout.maintainFixedHeight", mainElement);
+        }
+    }
+}
+
+<main @ref="mainElement">
+    @Body
+</main>
+<div id="with-tooltip__holder" />

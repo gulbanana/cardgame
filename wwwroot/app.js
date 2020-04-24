@@ -20,6 +20,14 @@ var FlashBorder;
     }
     FlashBorder.removeClass = removeClass;
 })(FlashBorder || (FlashBorder = {}));
+var MainLayout;
+(function (MainLayout) {
+    function maintainFixedHeight(element) {
+        element.style.height = window.innerHeight + "px";
+        window.onresize = () => element.style.height = window.innerHeight + "px";
+    }
+    MainLayout.maintainFixedHeight = maintainFixedHeight;
+})(MainLayout || (MainLayout = {}));
 var VerticalLog;
 (function (VerticalLog) {
     function observeAdditions(container) {
