@@ -5,7 +5,7 @@ namespace Cardgame.API
     public struct Zone : IEquatable<Zone>
     {
         public static Zone Create = new Zone(ZoneName.Create);
-        public static Zone CountableDeck = new Zone(ZoneName.CountableDeck);
+        public static Zone Deck = new Zone(ZoneName.Deck);
         public static Zone DeckBottom = new Zone(ZoneName.DeckBottom);
         public static Zone DeckTop1 = new Zone(ZoneName.DeckTop, 1);
         public static Zone DeckTop2 = new Zone(ZoneName.DeckTop, 2);
@@ -68,8 +68,8 @@ namespace Cardgame.API
         {
             return zone.Name switch 
             {
-                ZoneName.CountableDeck => true,
                 ZoneName.Create => true,
+                ZoneName.Deck => true,
                 ZoneName.DeckBottom => true,
                 ZoneName.DeckTop => true,
                 ZoneName.Discard => false,

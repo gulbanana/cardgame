@@ -30,7 +30,7 @@ namespace Cardgame.Cards.Intrigue
             }
             else
             {
-                var deckSize = host.Count(Zone.CountableDeck);
+                var deckSize = host.Count(Zone.Deck);
                 var options = Enumerable.Range(0, deckSize+1).Select(i =>
                 {
                     var label = 

@@ -68,6 +68,7 @@ namespace Cardgame.Server
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>";
 
+                case ZoneName.Deck:
                 case ZoneName.DeckTop:
                     return $@"<run>the top of</run>
                     <if you='your' them='their'>{Player}</if>
@@ -93,9 +94,10 @@ namespace Cardgame.Server
         {
             switch (to.Name)
             {
-                case ZoneName.DeckTop:
+                case ZoneName.Deck:
+                case ZoneName.DeckTop when to.Param is int n:
                     return $@"{LogVerb("put", "puts", "putting")}
-                              <run>it onto</run>
+                              <run>{(n > 1 ? "them" : "it")} onto</run>
                               <if you='your' them='their'>{Player}</if>
                               <run>deck.</run>";
 

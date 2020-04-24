@@ -704,6 +704,7 @@ namespace Cardgame.Server
                     instance = Model.Decks[player].Last();
                     break;
 
+                case ZoneName.Deck:
                 case ZoneName.DeckTop:
                     instance = Model.Decks[player].Extract(id);
                     break;
@@ -751,6 +752,11 @@ namespace Cardgame.Server
 
             switch (to.Name)
             {
+                case ZoneName.DeckBottom:
+                    Model.Decks[player].Add(instance);
+                    break;
+
+                case ZoneName.Deck:
                 case ZoneName.DeckTop:
                     Model.Decks[player].Insert(0, instance);
                     break;
@@ -800,9 +806,9 @@ namespace Cardgame.Server
         {
             return source.Name switch 
             {
-                ZoneName.CountableDeck => Model.Decks[player].Count(),
+                ZoneName.Deck => Model.Decks[player].Count(),
                 ZoneName.DeckBottom => Model.Decks[player].Take(1).Count(),
-                ZoneName.DeckTop => Model.Decks[player].Take((int)source.Param).Count(),
+                ZoneName.DeckTop when source.Param is int n => Model.Decks[player].Take(n).Count(),
                 ZoneName.Discard => Model.Discards[player].Count(),
                 ZoneName.Hand => Model.Hands[player].Count,
                 ZoneName.InPlay => Model.PlayedCards.Count,
@@ -839,8 +845,9 @@ namespace Cardgame.Server
 
             return source.Name switch 
             {
+                ZoneName.Deck => Model.Decks[player].ToArray(),
                 ZoneName.DeckBottom => new[] { Model.Decks[player].Last() },
-                ZoneName.DeckTop when source.Param is int topN => Model.Decks[player].Take(topN).ToArray(),
+                ZoneName.DeckTop when source.Param is int n => Model.Decks[player].Take(n).ToArray(),
                 ZoneName.Discard => Model.Discards[player].ToArray(),
                 ZoneName.Hand => Model.Hands[player].ToArray(),
                 ZoneName.InPlay => Model.PlayedCards[player].ToArray(),
@@ -875,14 +882,14 @@ namespace Cardgame.Server
         {
             switch (destination.Name)
             {
-                case ZoneName.DeckTop when destination.Param is int topN:
+                case ZoneName.DeckTop when destination.Param is int n:
                     var newOrder = new List<Instance>();
-                    for (var i = 0; i < topN; i++)
+                    for (var i = 0; i < n; i++)
                     {
-                        var instance = Model.Decks[player].Take(topN).First(inst => inst.Id == cards[i] && !newOrder.Contains(inst)); 
+                        var instance = Model.Decks[player].Take(n).First(inst => inst.Id == cards[i] && !newOrder.Contains(inst)); 
                         newOrder.Add(instance);
                     }
-                    for (var i = 0; i < topN; i++)
+                    for (var i = 0; i < n; i++)
                     {
                         Model.Decks[player][i] = newOrder[i];
                     }
