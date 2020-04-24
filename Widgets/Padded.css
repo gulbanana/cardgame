@@ -1,3 +1,7 @@
 .padded {
     padding: 1em;
 }
+
+.padded > :first-child {
+    margin-top: 0;
+}
