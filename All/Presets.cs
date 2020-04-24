@@ -7,12 +7,12 @@ namespace Cardgame.All
 {
     public static class Presets
     {
-        private static readonly List<(string name, CardSet[] sets, string[] cards)> all = new List<(string name, CardSet[] sets, string[] cards)>();
+        public static readonly List<(string name, CardSet[] sets, string[] cards)> List = new List<(string name, CardSet[] sets, string[] cards)>();
 
         static Presets()
         {
-            void preset1(string title, CardSet set, params string[] cards) { all.Add((title, new[]{ set }, cards.ToArray())); }
-            void preset2(string title, CardSet set1, CardSet set2, params string[] cards) { all.Add((title, new[]{ set1, set2 }, cards.ToArray())); }
+            void preset1(string title, CardSet set, params string[] cards) { List.Add((title, new[]{ set }, cards.ToArray())); }
+            void preset2(string title, CardSet set1, CardSet set2, params string[] cards) { List.Add((title, new[]{ set1, set2 }, cards.ToArray())); }
 
             preset1("First Game (1e)", CardSet.Dominion1st, "Cellar", "Market", "Militia", "Mine", "Moat", "Remodel", "Smithy", "Village", "Woodcutter", "Workshop");
             preset1("Big Money (1e)", CardSet.Dominion1st, "Adventurer", "Bureaucrat", "Chancellor", "Chapel", "Feast", "Laboratory", "Market", "Mine", "Moneylender", "ThroneRoom");
@@ -54,13 +54,13 @@ namespace Cardgame.All
 
         public static IReadOnlyDictionary<string, string[]> BySet(CardSet set)
         {
-            if (!all.Any(t => t.sets.Contains(set)))
+            if (!List.Any(t => t.sets.Contains(set)))
             {
                 return new Dictionary<string, string[]>();
             }
             else
             {
-                return all
+                return List
                     .Where(t => t.sets.Contains(set))
                     .ToDictionary(t => t.name, t =>
                     {
@@ -91,13 +91,13 @@ namespace Cardgame.All
                 }
             }
 
-            if (!all.Any(t => t.sets.Contains(set)))
+            if (!List.Any(t => t.sets.Contains(set)))
             {
                 return new Dictionary<string, IReadOnlyDictionary<string, string[]>>();
             }
             else
             {
-                return all
+                return List
                     .Where(t => t.sets.Contains(set))
                     .GroupBy(t => FormatSets(t.sets))
                     .ToDictionary(g => g.Key, g => g.ToDictionary(t => t.name, t =>

@@ -49,6 +49,19 @@
             KingdomPreset = configPreset
         });
     }
+
+    private void OnRandomize()
+    {
+        var rng = new Random();
+        var options = All.Presets.List.Where(p => !p.sets.Contains(CardSet.Dominion1st) && !p.sets.Contains(CardSet.Intrigue1st)).ToList();
+        var preset = options[rng.Next(options.Count)];
+
+        Dispatch(new ConfigureGameCommand
+        {
+            KingdomSet = preset.sets[0],
+            KingdomPreset = preset.name
+        });
+    }
 }
 
 <div class="config-view@(Model.KingdomHasCurse ? " config-view--constrained" : "")">
@@ -63,7 +76,10 @@
     </div>
 
     <div>
-        <h3>Game setup</h3>
+        <div class="config-view__sets-title">
+            <h3>Game setup</h3>
+            <ActiveButton Label="Randomize" Action="OnRandomize" />
+        </div>
         <div class="config-view__sets">
             <span>Primary card set:</span>
             <select disabled="@(!Model.Players.Contains(Session.Username))" @bind="ConfigSet">

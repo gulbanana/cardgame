@@ -17,3 +17,9 @@
     grid-template-rows: auto auto;
     grid-column-gap: 1em;
 }
+
+.config-view__sets-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
