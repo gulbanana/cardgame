@@ -2,6 +2,7 @@ namespace Cardgame.API
 {
     public enum ZoneName
     {
+        Attached,
         Create,
         Deck,
         DeckBottom,

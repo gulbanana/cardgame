@@ -1,9 +1,11 @@
 using System;
+using Cardgame.Shared;
 
 namespace Cardgame.API
 {
     public struct Zone : IEquatable<Zone>
     {
+        public static Zone Attached(Instance instance) => new Zone(ZoneName.Attached, instance);
         public static Zone Create = new Zone(ZoneName.Create);
         public static Zone Deck = new Zone(ZoneName.Deck);
         public static Zone DeckBottom = new Zone(ZoneName.DeckBottom);
@@ -14,7 +16,7 @@ namespace Cardgame.API
         public static Zone PlayerMat(string mat) => new Zone(ZoneName.PlayerMat, mat);
         public static Zone RecentBuys(string player) => new Zone(ZoneName.RecentBuys, player);
         public static Zone RecentGains(string player) => new Zone(ZoneName.RecentGains, player);
-        public static Zone Stash = new Zone(ZoneName.Stash);
+        public static Zone Stash() => new Zone(ZoneName.Stash, new InstanceBox());
         public static Zone SupplyAll = new Zone(ZoneName.Supply, (includeAvailable: true, includeEmpty: true));
         public static Zone SupplyAvailable = new Zone(ZoneName.Supply, (includeAvailable: true, includeEmpty: false));
         public static Zone SupplyEmpty = new Zone(ZoneName.Supply, (includeAvailable: false, includeEmpty: true));

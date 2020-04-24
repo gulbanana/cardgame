@@ -14,7 +14,6 @@ namespace Cardgame.Server
         private readonly HashSet<string> bots;
         private readonly Dictionary<string, TurnRecord> lastTurn;
         private TaskCompletionSource<string> inputTCS;
-        private Instance? stash; // a temporary Zone used as cards move around during an action
         private int turn;
 
         internal readonly HashSet<Instance> IncompleteDurations;
@@ -695,6 +694,11 @@ namespace Cardgame.Server
 
             switch (from.Name)
             {
+                case ZoneName.Attached when from.Param is Instance target:
+                    instance = Model.Attachments[target];
+                    Model.Attachments.Remove(target);
+                    break;
+
                 case ZoneName.Create:
                     instance = Instance.Of(id);
                     break;
@@ -729,10 +733,8 @@ namespace Cardgame.Server
                     instance = Model.PlayerMatCards[player][fromMat].ExtractLast(id);
                     break;
 
-                case ZoneName.Stash:
-                    if (!stash.HasValue || stash.Value.Id != id) throw new CommandException($"Stashed {id} not found.");
-                    instance = stash.Value;
-                    stash = null;
+                case ZoneName.Stash when from.Param is InstanceBox box:
+                    instance = box.Value;
                     break;
 
                 case ZoneName.Supply:
@@ -752,6 +754,10 @@ namespace Cardgame.Server
 
             switch (to.Name)
             {
+                case ZoneName.Attached when to.Param is Instance target:
+                    Model.Attachments[target] = instance;
+                    break;
+
                 case ZoneName.DeckBottom:
                     Model.Decks[player].Add(instance);
                     break;
@@ -777,9 +783,8 @@ namespace Cardgame.Server
                     Model.PlayerMatCards[player][toMat].Add(instance);
                     break;
 
-                case ZoneName.Stash:
-                    if (stash.HasValue) throw new CommandException($"Card {stash} has been lost.");
-                    stash = instance;
+                case ZoneName.Stash when to.Param is InstanceBox box:
+                    box.Value = instance;
                     break;
 
                 case ZoneName.Supply:
@@ -824,9 +829,8 @@ namespace Cardgame.Server
                         return includeEmpty;
                     }
                 }),
-                ZoneName.Stash => stash.HasValue ? 1 : 0,
                 ZoneName.Trash => Model.MatCards["TrashMat"].Count,
-                _ => throw new CommandException($"Unknown counting zone {source}")
+                _ => throw new CommandException($"Unsupported counting zone {source}")
             };
         }
 
@@ -926,19 +930,6 @@ namespace Cardgame.Server
                 default:
                     throw new CommandException($"Unsupported reorder zone {destination}");
             }
-        }
-        
-        internal void AttachStash(string player, Instance target)
-        {
-            Model.Attachments[target] = stash.Value;
-            stash = null;
-        }
-        
-        internal Instance DetachStash(string player, Instance target)
-        {
-            stash = Model.Attachments[target];
-            Model.Attachments.Remove(target);
-            return stash.Value;
         }
 
         internal async Task<TOutput> Choose<TInput, TOutput>(string player, ChoiceType type, string prompt, TInput input)

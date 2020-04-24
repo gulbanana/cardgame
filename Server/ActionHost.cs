@@ -662,8 +662,9 @@ namespace Cardgame.Server
         // this is a special case used by Masquerade, but could be generalised
         void IActionHost.PassCard(string toPlayer, string card)
         {
-            engine.MoveCard(Player, card, Zone.Hand, Zone.Stash);
-            engine.MoveCard(toPlayer, card, Zone.Stash, Zone.Hand);
+            var stash = Zone.Stash();
+            engine.MoveCard(Player, card, Zone.Hand, stash);
+            engine.MoveCard(toPlayer, card, stash, Zone.Hand);
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
