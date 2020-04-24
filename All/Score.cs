@@ -54,7 +54,7 @@ namespace Cardgame.All
         public int Total { get; private set; }
         public (string card, int count, int subtotal)[] Subtotals { get; private set; }        
 
-        public string Text()
+        public string Text(int turns)
         {
             var builder = new StringBuilder();
             builder.AppendLine("<lines>");
@@ -66,7 +66,7 @@ namespace Cardgame.All
                     builder.AppendLine($"<run>x{group.count}: {group.subtotal} VP</run>");
                     builder.AppendLine("</spans>");
                 }                
-                builder.AppendLine($"<run>Total: {Total} Victory Points</run>");
+                builder.AppendLine($"<run>Total: {Total} Victory Points in {turns} turns.</run>");
             builder.AppendLine("</lines>");
             return builder.ToString();
         }

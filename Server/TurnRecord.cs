@@ -5,7 +5,13 @@ namespace Cardgame.Server
 {
     internal class TurnRecord
     {
+        public readonly int TurnNumber;
         public readonly List<Instance> Buys = new List<Instance>();
         public readonly List<Instance> Gains = new List<Instance>();
+
+        public TurnRecord(int turnNumber)
+        {
+            TurnNumber = turnNumber;
+        }
     }
 }

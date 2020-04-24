@@ -15,8 +15,7 @@ namespace Cardgame.Server
         private readonly Dictionary<string, TurnRecord> lastTurn;
         private TaskCompletionSource<string> inputTCS;
         private Instance? stash; // a temporary Zone used as cards move around during an action
-        private bool isDemo;
-        private string demoNextActive;
+        private int turn;
 
         internal readonly HashSet<Instance> IncompleteDurations;
         internal int ActionsThisTurn { get; private set; }
@@ -65,20 +64,6 @@ namespace Cardgame.Server
 
             switch (command)
             {
-                case SetDemoCommand demo:
-                    if (Model.Seq != 0) throw new CommandException("Game has been modified and cannot be set to demo mode.");
-
-                    isDemo = true;
-
-                    break;
-
-                case SetNextPlayerCommand nextPlayer:
-                    if (!isDemo) throw new CommandException("Game must be in demo mode.");
-
-                    demoNextActive = nextPlayer.Player;
-
-                    break;
-
                 case ChatCommand chat:
                     if (chat.Message.Length > LogEntry.MAX) throw new CommandException("Chat message too long.");
 
@@ -529,30 +514,24 @@ namespace Cardgame.Server
             {
                 for (var i = 0; i < 5; i++)
                 {
-                    if (isDemo)
-                    {
-                        DrawCardIfAny(player, "Copper");
-                    }
-                    else
-                    {
-                        DrawCardIfAny(player);
-                    }
+                    DrawCardIfAny(player);
                 }
             }
             
-            Model.ActivePlayer = isDemo ? demoNextActive : Model.Players[rng.Next(Model.Players.Length)];
+            Model.ActivePlayer = Model.Players[rng.Next(Model.Players.Length)];
         }
 
         private async Task BeginTurnAsync(string player)
         {
             if (Model.IsFinished) return; // XXX what case does this cover?
 
-            lastTurn[player] = new TurnRecord();
+            var turnNumber = (turn/Model.Players.Length)+1;
+            lastTurn[player] = new TurnRecord(turnNumber);
 
             ActionsThisTurn = 0;
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
-            Model.CoinsRemaining = isDemo ? 10 : 0;
+            Model.CoinsRemaining = 0;
             Model.BuyPhase = false;
             Model.PreviouslyPlayedCards = new HashSet<Instance>(Model.PlayedCards[player]);
 
@@ -560,7 +539,7 @@ namespace Cardgame.Server
                 <spans>
                     <run>---</run>
                     <if you='Your' them=""{player}'s"">{player}</if>
-                    <run>turn ---</run>
+                    <run>turn {turnNumber} ---</run>
                 </spans>
             </bold>");
 
@@ -574,7 +553,7 @@ namespace Cardgame.Server
                 return Task.CompletedTask;
             });
 
-            if (!isDemo && bots.Contains(player))
+            if (bots.Contains(player))
             {
                 var botPlayer = player;
                 _ = Task.Run(() =>
@@ -643,19 +622,13 @@ namespace Cardgame.Server
             }
             else
             {
-                if (!isDemo)
+                var nextPlayer = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
+                if (nextPlayer >= Model.Players.Length)
                 {
-                    var nextPlayer = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
-                    if (nextPlayer >= Model.Players.Length)
-                    {
-                        nextPlayer = 0;
-                    }
-                    Model.ActivePlayer = Model.Players[nextPlayer];
+                    nextPlayer = 0;
                 }
-                else
-                {
-                    Model.ActivePlayer = demoNextActive;
-                }
+                Model.ActivePlayer = Model.Players[nextPlayer];
+                turn++;
             }
         }
 
@@ -669,9 +642,9 @@ namespace Cardgame.Server
                 </spans>
             </bold>");
             
-            foreach (var score in Model.Players.Select(player => All.Score.Calculate(Model, player)))
+            foreach (var scoreText in Model.Players.Select(player => All.Score.Calculate(Model, player).Text(lastTurn[player].TurnNumber)))
             {
-                LogEvent(score.Text());
+                LogEvent(scoreText);
             }
         }
 
