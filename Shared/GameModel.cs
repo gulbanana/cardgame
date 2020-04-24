@@ -29,6 +29,7 @@ namespace Cardgame.Shared
         public Dictionary<string, bool> SettingKeepHandSorted { get; set; }
 
         // game state
+        public string PreviousPlayer { get; set; }
         public string ActivePlayer { get; set; }
         public Dictionary<string, int> Supply { get; set; }
         public Dictionary<string, string[]> SupplyTokens { get; set; }
@@ -41,7 +42,7 @@ namespace Cardgame.Shared
         public Dictionary<Instance, Instance> Attachments { get; set; }
 
         // turn state    
-        public HashSet<Instance> PreviouslyPlayedCards { get; set; }
+        public HashSet<Instance> ContinuingDurationCards { get; set; }
         public List<string> ActiveEffects { get; set; }
         public bool ExecutingBackgroundTasks { get; set; }
         public bool BuyPhase { get; set; }
@@ -65,10 +66,10 @@ namespace Cardgame.Shared
             }
             else
             {
-                return ActiveEffects
-                    .Select(All.Effects.ByName)
-                    .OfType<IModifier>()
-                    .ToArray();
+                var fx = ActiveEffects.Select(All.Effects.ByName).OfType<IModifier>();
+                var inPlay = PlayedCards.Values.SelectMany(instances => instances).Select(All.Cards.ByName).OfType<IModifier>();
+
+                return fx.Concat(inPlay).ToArray();
             }
         }
 

@@ -412,7 +412,6 @@ namespace Cardgame.Server
         internal async Task PlayCardAsync(int indentLevel, string player, string id, Zone from)
         {       
             var played = MoveCard(player, id, from, Zone.InPlay);
-            NotePlay(player, played);
 
             await Act(indentLevel, player, Trigger.PlayCard, id, async () =>
             {
@@ -431,6 +430,7 @@ namespace Cardgame.Server
 
                     var host = new CardHost(this, indentLevel, player, played);
                     await action.ExecuteActionAsync(host);
+                    NotePlay(player, played);
 
                     if (Model.ActionsRemaining == 0)
                     {
@@ -535,7 +535,7 @@ namespace Cardgame.Server
             Model.BuysRemaining = 1;
             Model.CoinsRemaining = 0;
             Model.BuyPhase = false;
-            Model.PreviouslyPlayedCards = new HashSet<Instance>(Model.PlayedCards[player]);
+            Model.ContinuingDurationCards = new HashSet<Instance>(Model.PlayedCards[player]);
 
             LogEvent($@"<bold>
                 <spans>
@@ -604,8 +604,9 @@ namespace Cardgame.Server
                 MoveCard(player, hand[0], Zone.Hand, Zone.Discard);
             }
 
+            var nextHandSize = Model.GetModifiers().FirstOrDefault(m => m.NextHandSize.HasValue)?.NextHandSize.Value ?? 5;
             var reshuffled = false;
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < nextHandSize; i++)
             {
                 reshuffled = reshuffled | ReshuffleIfEmpty(player);
                 DrawCardIfAny(player);
@@ -624,12 +625,20 @@ namespace Cardgame.Server
             }
             else
             {
-                var nextPlayer = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
-                if (nextPlayer >= Model.Players.Length)
+                Model.PreviousPlayer = Model.ActivePlayer;
+                
+                var nextPlayer = Model.GetModifiers().Any(m => m.TakeAnotherTurn) ? Model.ActivePlayer : null;
+                if (nextPlayer == null)
                 {
-                    nextPlayer = 0;
+                    var nextPlayerIndex = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
+                    if (nextPlayerIndex >= Model.Players.Length)
+                    {
+                        nextPlayerIndex = 0;
+                    }
+                    nextPlayer = Model.Players[nextPlayerIndex];
                 }
-                Model.ActivePlayer = Model.Players[nextPlayer];
+                
+                Model.ActivePlayer = nextPlayer;
             }
         }
 

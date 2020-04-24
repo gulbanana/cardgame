@@ -4,5 +4,7 @@ namespace Cardgame.Shared
     {
         int ReduceCardCost { get; }
         int IncreaseTreasureValue(string id);
+        int? NextHandSize { get; }
+        bool TakeAnotherTurn { get; }
     }
 }

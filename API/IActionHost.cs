@@ -10,6 +10,7 @@ namespace Cardgame.API
     {
         int IndentLevel { get; set; }
         string Player { get; }
+        string PreviousPlayer { get; }
         bool IsActive { get; }
         int ShuffleCount { get; }
         int ActionCount { get; }
@@ -40,6 +41,7 @@ namespace Cardgame.API
         // interaction
         Task PlayCard(string card, Zone from);
         Task AllPlayers(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool isAttack = false);
+        void PreventAttack(bool enable);
         string GetPlayerToLeft();
         string GetPlayerToRight();
 
@@ -60,7 +62,6 @@ namespace Cardgame.API
 
         // special cases
         void DiscardEntireDeck();
-        void PreventAttack(bool enable);
         void PassCard(string player, string card);
         void InsertIntoDeck(string card, int position);
     }

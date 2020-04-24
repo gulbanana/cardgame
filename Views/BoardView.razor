@@ -14,8 +14,8 @@
     bool AnyoneChoosing => Model.ChoosingPlayers.Any();
     bool SomeoneVisibleChoosing => AnyoneChoosing && (Model.ChoosingPlayers.Peek().Equals(Session.Username) || !Model.Players.Contains(Session.Username));
 
-    IEnumerable<Instance> lastTurnCards => Model.PlayedCards[Model.ActivePlayer].Where(Model.PreviouslyPlayedCards.Contains);
-    IEnumerable<Instance> thisTurnCards => Model.PlayedCards[Model.ActivePlayer].Except(Model.PreviouslyPlayedCards);
+    IEnumerable<Instance> lastTurnCards => Model.PlayedCards[Model.ActivePlayer].Where(Model.ContinuingDurationCards.Contains);
+    IEnumerable<Instance> thisTurnCards => Model.PlayedCards[Model.ActivePlayer].Except(Model.ContinuingDurationCards);
 }
 
 <div class="board-view@(Model.KingdomHasCurse ? " board-view--constrained" : "")">

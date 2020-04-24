@@ -41,8 +41,7 @@ namespace Cardgame.Cards
             }
         }
 
-        protected abstract void OnBeginTurn(IActionHost host);
-
+        protected virtual void OnBeginTurn(IActionHost host) { }
         protected virtual void OnBeforePlayCard(IActionHost host, ICard card) { }
         protected virtual void OnAfterPlayCard(IActionHost host, ICard card) { }
     }

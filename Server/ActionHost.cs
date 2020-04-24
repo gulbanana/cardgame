@@ -13,6 +13,7 @@ namespace Cardgame.Server
         protected readonly GameEngine engine;     
         public int IndentLevel { get; set; }
         public string Player { get; }
+        public string PreviousPlayer => engine.Model.PreviousPlayer;
         public bool IsActive => engine.Model.ActivePlayer == Player;
         public int ShuffleCount { get; private set; }
         public int ActionCount => engine.ActionsThisTurn;
@@ -564,6 +565,18 @@ namespace Cardgame.Server
             }
         }
 
+        void IActionHost.PreventAttack(bool enable)
+        {
+            if (enable)
+            {
+                engine.Model.PreventedAttacks.Add(Player);
+            }
+            else
+            {
+                engine.Model.PreventedAttacks.Remove(Player);
+            }
+        }
+
         string IActionHost.GetPlayerToLeft()
         {
             var self = Array.FindIndex(engine.Model.Players, e => e == Player);
@@ -643,20 +656,6 @@ namespace Cardgame.Server
                 <if you='your' them='their'>{Player}</if>
                 <run>discard pile.</run>
             </spans>");
-        }
-
-        // this is a special case used by Moat: it triggers *before* choices about an attack are made,
-        // but only for the duration of that one card's attack
-        void IActionHost.PreventAttack(bool enable)
-        {
-            if (enable)
-            {
-                engine.Model.PreventedAttacks.Add(Player);
-            }
-            else
-            {
-                engine.Model.PreventedAttacks.Remove(Player);
-            }
         }
 
         // this is a special case used by Masquerade, but could be generalised
