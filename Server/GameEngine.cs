@@ -704,10 +704,7 @@ namespace Cardgame.Server
                     instance = Model.Decks[player].Last();
                     break;
 
-                case ZoneName.DeckTop1:
-                case ZoneName.DeckTop2:
-                case ZoneName.DeckTop3:
-                case ZoneName.DeckTop4:
+                case ZoneName.DeckTop:
                     instance = Model.Decks[player].Extract(id);
                     break;
 
@@ -726,8 +723,7 @@ namespace Cardgame.Server
                     instance = Model.PlayedCards[player].ExtractLast(id);
                     break;
 
-                case ZoneName.PlayerMat:
-                    var fromMat = (string)from.Param;
+                case ZoneName.PlayerMat when from.Param is string fromMat:
                     if (!Model.PlayerMatCards[player][fromMat].Contains(id)) throw new CommandException($"No {id} card on mat {fromMat}.");
                     instance = Model.PlayerMatCards[player][fromMat].ExtractLast(id);
                     break;
@@ -755,10 +751,7 @@ namespace Cardgame.Server
 
             switch (to.Name)
             {
-                case ZoneName.DeckTop1:
-                case ZoneName.DeckTop2:
-                case ZoneName.DeckTop3:
-                case ZoneName.DeckTop4:
+                case ZoneName.DeckTop:
                     Model.Decks[player].Insert(0, instance);
                     break;
 
@@ -774,8 +767,7 @@ namespace Cardgame.Server
                     Model.PlayedCards[player].Add(instance);
                     break;
 
-                case ZoneName.PlayerMat:
-                    var toMat = (string)to.Param;
+                case ZoneName.PlayerMat when to.Param is string toMat:
                     Model.PlayerMatCards[player][toMat].Add(instance);
                     break;
 
@@ -809,24 +801,21 @@ namespace Cardgame.Server
             return source.Name switch 
             {
                 ZoneName.CountableDeck => Model.Decks[player].Count(),
-                ZoneName.DeckTop1 => Model.Decks[player].Take(1).Count(),
-                ZoneName.DeckTop2 => Model.Decks[player].Take(2).Count(),
-                ZoneName.DeckTop3 => Model.Decks[player].Take(3).Count(),
-                ZoneName.DeckTop4 => Model.Decks[player].Take(4).Count(),
+                ZoneName.DeckBottom => Model.Decks[player].Take(1).Count(),
+                ZoneName.DeckTop => Model.Decks[player].Take((int)source.Param).Count(),
                 ZoneName.Discard => Model.Discards[player].Count(),
                 ZoneName.Hand => Model.Hands[player].Count,
                 ZoneName.InPlay => Model.PlayedCards.Count,
-                ZoneName.PlayerMat => Model.PlayerMatCards[player][(string)source.Param].Count,
-                ZoneName.Supply => Model.Supply.Keys.Count(id =>
+                ZoneName.PlayerMat when source.Param is string mat => Model.PlayerMatCards[player][mat].Count,
+                ZoneName.Supply when source.Param is (bool includeAvailable, bool includeEmpty) => Model.Supply.Keys.Count(id =>
                 {
-                    var supplyParam = (ValueTuple<bool, bool>)source.Param;
                     if (Model.Supply[id] > 0) 
                     {
-                        return supplyParam.Item1;
+                        return includeAvailable;
                     }
                     else
                     {
-                        return supplyParam.Item2;
+                        return includeEmpty;
                     }
                 }),
                 ZoneName.Stash => stash.HasValue ? 1 : 0,
@@ -839,28 +828,7 @@ namespace Cardgame.Server
         {
             onShuffle = onShuffle ?? new Action(() => {;});
 
-            if ((source == Zone.DeckTop1 || source == Zone.DeckBottom) && Model.Decks[player].Count < 1)
-            {
-                ReshuffleIfEmpty(player);
-                onShuffle();
-            }
-            else if (source == Zone.DeckTop2 && Model.Decks[player].Count < 2)
-            {
-                var setAside = Model.Decks[player].ToArray();
-                Model.Decks[player].Clear();                
-                ReshuffleIfEmpty(player);
-                Model.Decks[player].InsertRange(0, setAside);
-                onShuffle();
-            }
-            else if (source == Zone.DeckTop3 && Model.Decks[player].Count < 3)
-            {
-                var setAside = Model.Decks[player].ToArray();
-                Model.Decks[player].Clear();                
-                ReshuffleIfEmpty(player);
-                Model.Decks[player].InsertRange(0, setAside);
-                onShuffle();
-            }
-            else if (source == Zone.DeckTop4 && Model.Decks[player].Count < 4)
+            if (source is Zone { Name: ZoneName.DeckTop, Param: int n } && Model.Decks[player].Count < n)
             {
                 var setAside = Model.Decks[player].ToArray();
                 Model.Decks[player].Clear();                
@@ -872,10 +840,7 @@ namespace Cardgame.Server
             return source.Name switch 
             {
                 ZoneName.DeckBottom => new[] { Model.Decks[player].Last() },
-                ZoneName.DeckTop1 => Model.Decks[player].Take(1).ToArray(),
-                ZoneName.DeckTop2 => Model.Decks[player].Take(2).ToArray(),
-                ZoneName.DeckTop3 => Model.Decks[player].Take(3).ToArray(),
-                ZoneName.DeckTop4 => Model.Decks[player].Take(4).ToArray(),
+                ZoneName.DeckTop when source.Param is int topN => Model.Decks[player].Take(topN).ToArray(),
                 ZoneName.Discard => Model.Discards[player].ToArray(),
                 ZoneName.Hand => Model.Hands[player].ToArray(),
                 ZoneName.InPlay => Model.PlayedCards[player].ToArray(),
@@ -891,16 +856,15 @@ namespace Cardgame.Server
         {
             return source.Name switch 
             {
-                ZoneName.Supply => Model.Supply.Keys.Where(id => 
+                ZoneName.Supply when source.Param is (bool includeAvailable, bool includeEmpty) => Model.Supply.Keys.Where(id => 
                 {
-                    var supplyParam = (ValueTuple<bool, bool>)source.Param;
                     if (Model.Supply[id] > 0) 
                     {
-                        return supplyParam.Item1;
+                        return includeAvailable;
                     }
                     else
                     {
-                        return supplyParam.Item2;
+                        return includeEmpty;
                     }
                 }).ToArray(),
                 _ => GetInstances(player, source, onShuffle).Names()
@@ -911,37 +875,17 @@ namespace Cardgame.Server
         {
             switch (destination.Name)
             {
-                case ZoneName.DeckTop1:
-                    break;
-
-                case ZoneName.DeckTop2:
-                    var found2 = new HashSet<Instance>();
-                    var instance20 = Model.Decks[player].Take(2).First(i => i.Id == cards[0] && !found2.Contains(i)); found2.Add(instance20);
-                    var instance21 = Model.Decks[player].Take(2).First(i => i.Id == cards[1] && !found2.Contains(i)); found2.Add(instance21);
-                    Model.Decks[player][0] = instance20;
-                    Model.Decks[player][1] = instance21;
-                    break;
-
-                case ZoneName.DeckTop3:
-                    var found3 = new HashSet<Instance>();
-                    var instance30 = Model.Decks[player].Take(3).First(i => i.Id == cards[0] && !found3.Contains(i)); found3.Add(instance30);
-                    var instance31 = Model.Decks[player].Take(3).First(i => i.Id == cards[1] && !found3.Contains(i)); found3.Add(instance31);
-                    var instance32 = Model.Decks[player].Take(3).First(i => i.Id == cards[2] && !found3.Contains(i)); found3.Add(instance32);
-                    Model.Decks[player][0] = instance30;
-                    Model.Decks[player][1] = instance31;
-                    Model.Decks[player][2] = instance32;
-                    break;
-
-                case ZoneName.DeckTop4:
-                    var found4 = new HashSet<Instance>();
-                    var instance40 = Model.Decks[player].Take(4).First(i => i.Id == cards[0] && !found4.Contains(i)); found4.Add(instance40);
-                    var instance41 = Model.Decks[player].Take(4).First(i => i.Id == cards[1] && !found4.Contains(i)); found4.Add(instance41);
-                    var instance42 = Model.Decks[player].Take(4).First(i => i.Id == cards[2] && !found4.Contains(i)); found4.Add(instance42);
-                    var instance43 = Model.Decks[player].Take(4).First(i => i.Id == cards[3] && !found4.Contains(i)); found4.Add(instance43);
-                    Model.Decks[player][0] = instance40;
-                    Model.Decks[player][1] = instance41;
-                    Model.Decks[player][2] = instance42;
-                    Model.Decks[player][3] = instance43;
+                case ZoneName.DeckTop when destination.Param is int topN:
+                    var newOrder = new List<Instance>();
+                    for (var i = 0; i < topN; i++)
+                    {
+                        var instance = Model.Decks[player].Take(topN).First(inst => inst.Id == cards[i] && !newOrder.Contains(inst)); 
+                        newOrder.Add(instance);
+                    }
+                    for (var i = 0; i < topN; i++)
+                    {
+                        Model.Decks[player][i] = newOrder[i];
+                    }
                     break;
 
                 case ZoneName.Discard:
@@ -955,8 +899,16 @@ namespace Cardgame.Server
                     }
                     break;
 
+                // unordered zones
+                case ZoneName.Hand:
+                case ZoneName.InPlay:
+                case ZoneName.PlayerMat:
+                case ZoneName.Stash:
+                case ZoneName.Trash:
+                    break;
+
                 default:
-                    throw new CommandException($"Unsupported Zone {destination} for reorder");
+                    throw new CommandException($"Unsupported reorder zone {destination}");
             }
         }
         

@@ -7,10 +7,11 @@ namespace Cardgame.API
         public static Zone Create = new Zone(ZoneName.Create);
         public static Zone CountableDeck = new Zone(ZoneName.CountableDeck);
         public static Zone DeckBottom = new Zone(ZoneName.DeckBottom);
-        public static Zone DeckTop1 = new Zone(ZoneName.DeckTop1);
-        public static Zone DeckTop2 = new Zone(ZoneName.DeckTop2);
-        public static Zone DeckTop3 = new Zone(ZoneName.DeckTop3);
-        public static Zone DeckTop4 = new Zone(ZoneName.DeckTop4);
+        public static Zone DeckTop1 = new Zone(ZoneName.DeckTop, 1);
+        public static Zone DeckTop2 = new Zone(ZoneName.DeckTop, 2);
+        public static Zone DeckTop3 = new Zone(ZoneName.DeckTop, 3);
+        public static Zone DeckTop4 = new Zone(ZoneName.DeckTop, 4);
+        public static Zone DeckTop5 = new Zone(ZoneName.DeckTop, 5);
         public static Zone Discard = new Zone(ZoneName.Discard);
         public static Zone Hand = new Zone(ZoneName.Hand);
         public static Zone InPlay = new Zone(ZoneName.InPlay);
@@ -70,10 +71,7 @@ namespace Cardgame.API
                 ZoneName.CountableDeck => true,
                 ZoneName.Create => true,
                 ZoneName.DeckBottom => true,
-                ZoneName.DeckTop1 => true,
-                ZoneName.DeckTop2 => true,
-                ZoneName.DeckTop3 => true,
-                ZoneName.DeckTop4 => true,
+                ZoneName.DeckTop => true,
                 ZoneName.Discard => false,
                 ZoneName.Hand => true,
                 ZoneName.InPlay => false,
