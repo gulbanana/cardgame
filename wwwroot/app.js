@@ -54,9 +54,14 @@ var WithTooltip;
             element.style.top = y + 2 + "px";
             element.style.bottom = null;
         }
-        if (element.parentElement.tagName != "BODY") {
+        if (element.parentElement.id != "with-tooltip__holder") {
             element.oldParent = element.parentElement;
-            document.querySelector("body").appendChild(element);
+            let holder = document.querySelector("#with-tooltip__holder");
+            let existingChild = holder.firstChild;
+            if (existingChild != null) {
+                existingChild.oldParent.appendChild(element);
+            }
+            holder.appendChild(element);
         }
     }
     function deposition(element) {

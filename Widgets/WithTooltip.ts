@@ -25,9 +25,16 @@ namespace WithTooltip {
             element.style.bottom = null;
         }
         
-        if (element.parentElement.tagName != "BODY") {
+        if (element.parentElement.id != "with-tooltip__holder") {
             (element as any).oldParent = element.parentElement;
-            document.querySelector("body").appendChild(element);
+
+            let holder = document.querySelector("#with-tooltip__holder");
+            let existingChild = holder.firstChild;
+            if (existingChild != null) {
+                (existingChild as any).oldParent.appendChild(element);
+            }
+
+            holder.appendChild(element);
         }
     }
 
