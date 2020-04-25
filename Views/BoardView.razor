@@ -27,9 +27,9 @@
         }
         else
         {
-            <Bold If="@(!Model.BuyPhase && Model.ActionsRemaining > 0)">Actions: @Model.ActionsRemaining</Bold>
-            <Bold If="@(Model.BuysRemaining > 0)">Buys: @Model.BuysRemaining</Bold>
-            <Bold If="@(Model.CoinsRemaining > 0)">Coins: $@Model.CoinsRemaining</Bold>
+            <Bold If="@(Model.CurrentPhase == Phase.Action)">Actions: @Model.ActionsRemaining</Bold>            
+            <Bold If="@(Model.CurrentPhase == Phase.Treasure)">Coins: $@Model.CoinsRemaining</Bold>
+            <Bold If="@(Model.CurrentPhase == Phase.Buy)">Buys: @Model.BuysRemaining</Bold>
             @foreach (var effect in Model.ActiveEffects)
             {
                 <EffectView Id="@effect" />

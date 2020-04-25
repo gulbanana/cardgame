@@ -60,8 +60,8 @@
                     var isEnabled = IsActivePlayer &&
                         !CurrentModel.IsFinished &&
                         !CurrentModel.ExecutingBackgroundTasks &&
-                        (card.Types.Contains(CardType.Treasure) ||
-                            (card.Types.Contains(CardType.Action) && !CurrentModel.BuyPhase));
+                        ((card.Types.Contains(CardType.Action) && CurrentModel.CurrentPhase <= Phase.Action) ||
+                         (card.Types.Contains(CardType.Treasure) && CurrentModel.CurrentPhase <= Phase.Treasure));
 
                     if (last != null)
                     {

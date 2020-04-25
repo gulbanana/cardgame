@@ -25,7 +25,7 @@ namespace Cardgame.Shared
         public bool KingdomHasCurse { get; set; }
 
         // player config
-        public Dictionary<string, bool> SettingConfirmSkipActions { get; set; }
+        public Dictionary<string, bool> SettingConfirmSkipPhases { get; set; }
         public Dictionary<string, bool> SettingKeepHandSorted { get; set; }
 
         // game state
@@ -46,7 +46,7 @@ namespace Cardgame.Shared
         public HashSet<Instance> PlayedLastTurn { get; set; }
         public List<string> ActiveEffects { get; set; }
         public bool ExecutingBackgroundTasks { get; set; }
-        public bool BuyPhase { get; set; }
+        public Phase CurrentPhase { get; set; }
         
         public int ActionsRemaining { get; set; }
         public int BuysRemaining { get; set; }

@@ -135,59 +135,22 @@ namespace Cardgame.Server
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("Another card is already being played.");
-                    if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");
-                    
-                    if (!All.Cards.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
-                    var card = All.Cards.ByName(playCard.Id);
 
+                    if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");        
+                    if (!All.Cards.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
+
+                    var card = All.Cards.ByName(playCard.Id);
                     if (card.Types.Contains(CardType.Action))
                     {
-                        if (Model.BuyPhase) throw new CommandException($"The Action phase is over.");
+                        if (Model.CurrentPhase > Phase.Action) throw new CommandException("The Action phase is over.");
                         if (Model.ActionsRemaining < 1) throw new CommandException("You have no remaining actions.");
-                        Model.ActionsRemaining--;
                     }
-                    
-                    if (card.Types.Contains(CardType.Treasure) && 
-                        Model.SettingConfirmSkipActions[username] && 
-                        !Model.BuyPhase &&
-                        Model.ActionsRemaining > 0 &&
-                        Model.Hands[username].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Action)))
+                    else if (card.Types.Contains(CardType.Treasure))
                     {
-                        BeginBackgroundTask(playCard.Id, async id =>
-                        {
-                            MoveCard(username, id, Zone.Hand, Zone.InPlay);
-                            var skip = await Choose<string, bool>(
-                                username, 
-                                ChoiceType.YesNo, 
-                                "Skip Action phase?",
-                                "You have Action cards remaining. Do you really want to skip to the Treasure phase?"
-                            );
-                            MoveCard(username, id, Zone.InPlay, Zone.Hand);
-
-                            if (skip)
-                            {
-                                Model.SettingConfirmSkipActions[username] = false;
-
-                                LogEvent($@"<spans>
-                                    <player>{username}</player>
-                                    <if you='play' them='plays'>{username}</if>
-                                    <card suffix='.'>{playCard.Id}</card>
-                                </spans>");
-
-                                await PlayCardAsync(1, username, id, Zone.Hand);
-                            }
-                        });
+                        if (Model.CurrentPhase > Phase.Treasure) throw new CommandException("The first part of the Buy phase is over.");
                     }
-                    else
-                    {
-                        LogEvent($@"<spans>
-                            <player>{username}</player>
-                            <if you='play' them='plays'>{username}</if>
-                            <card suffix='.'>{playCard.Id}</card>
-                        </spans>");
 
-                        BeginBackgroundTask(playCard.Id, id => PlayCardAsync(1, username, id, Zone.Hand));
-                    }
+                    BeginBackgroundTask(playCard.Id, _ => PlayCardsPhasedAsync(username, card));
 
                     break;
 
@@ -197,78 +160,11 @@ namespace Cardgame.Server
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("Another card is already being played.");
 
-                    var cards = Model.Hands[username].Select(All.Cards.ByName).OfType<ITreasureCard>().ToList();
-                    var cardList = string.Join(Environment.NewLine, cards.Select((card, ix) => 
-                    {
-                        var suffix = ix == cards.Count - 1 ? "."
-                            : ix < cards.Count - 2 ? ","
-                            : " and";
-                        return $"<card suffix='{suffix}'>{card.Name}</card>";
-                    }));
+                    if (Model.CurrentPhase > Phase.Treasure) throw new CommandException("The first part of the Buy phase is over.");
 
-                    if (Model.SettingConfirmSkipActions[username] && 
-                        !Model.BuyPhase &&
-                        Model.ActionsRemaining > 0 &&
-                        Model.Hands[username].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Action)))
-                    {
-                        BeginBackgroundTask(username, async _ =>
-                        {
-                            var skip = await Choose<string, bool>(
-                                username, 
-                                ChoiceType.YesNo, 
-                                "Skip Action phase?",
-                                "You have Action cards remaining. Do you really want to skip to the Treasure phase?"
-                            );
+                    var cards = Model.Hands[username].Select(All.Cards.ByName).OfType<ITreasureCard>().ToArray();
 
-                            if (skip)
-                            {
-                                Model.SettingConfirmSkipActions[username] = false;
-
-                                foreach (var card in cards)
-                                {
-                                    await PlayCardAsync(1, username, card.Name, Zone.Hand);
-                                }
-
-                                var sum = cards.Select(card => card.GetValue(Model)).Sum();
-                                LogEvent($@"<lines>
-                                    <spans>
-                                        <player>{username}</player>
-                                        <if you='play' them='plays'>{username}</if>
-                                        {cardList}
-                                    </spans>
-                                    <spans>
-                                        <indent level='1' />
-                                        {LogVerbInitial(username, "get", "gets", "getting")}
-                                        <run>+${sum}.</run>
-                                    </spans>
-                                </lines>");
-                            }
-                        });
-                    }
-                    else
-                    {
-                        BeginBackgroundTask(username, async _ =>
-                        {
-                            foreach (var card in cards)
-                            {
-                                await PlayCardAsync(1, username, card.Name, Zone.Hand);
-                            }
-
-                            var sum = cards.Select(card => card.GetValue(Model)).Sum();
-                            LogEvent($@"<lines>
-                                <spans>
-                                    <player>{username}</player>
-                                    <if you='play' them='plays'>{username}</if>
-                                    {cardList}
-                                </spans>
-                                <spans>
-                                    <indent level='1' />
-                                    {LogVerbInitial(username, "get", "gets", "getting")}
-                                    <run>+${sum}.</run>
-                                </spans>
-                            </lines>");
-                        });
-                    }
+                    BeginBackgroundTask(username, _ => PlayCardsPhasedAsync(username, cards));
 
                     break;
 
@@ -276,19 +172,17 @@ namespace Cardgame.Server
                     if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
                     if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
-                    if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");
-                    if (Model.Supply[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("A card is currently being played.");
 
-                    BeginBackgroundTask(buyCard.Id, async id =>
-                    {
-                        await BuyCardAsync(username, id);
-                        if (Model.BuysRemaining == 0)
-                        {
-                            await EndTurnAsync(Model.ActivePlayer);
-                            await BeginTurnAsync(Model.ActivePlayer);
-                        }
-                    });
+                    if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");
+                    if (!Model.Supply.ContainsKey(buyCard.Id)) throw new CommandException($"Card {buyCard.Id} is not in the supply.");
+                    if (Model.Supply[buyCard.Id] < 1) throw new CommandException($"There are no {buyCard.Id} cards remaining.");
+                    if (Model.CurrentPhase > Phase.Buy) throw new CommandException("The Buy phase is over.");
+
+                    var boughtCard = All.Cards.ByName(buyCard.Id);
+                    if (boughtCard.GetCost(Model) > Model.CoinsRemaining) throw new CommandException($"You don't have enough money to buy card {buyCard.Id}.");
+
+                    BeginBackgroundTask(buyCard.Id, _ => BuyCardPhasedAsync(username, boughtCard));
 
                     break;
 
@@ -382,16 +276,74 @@ namespace Cardgame.Server
             }
         }
 
-        private async Task BuyCardAsync(string player, string id)
+        private async Task BuyCardPhasedAsync(string player, ICard card)
         {
-            var boughtCard = All.Cards.ByName(id);
-            if (boughtCard.GetCost(Model) > Model.CoinsRemaining) throw new CommandException($"You don't have enough money to buy card {id}.");
+            bool hasMore(CardType type) => Model.Hands[player].Select(All.Cards.ByName).Any(card => card.Types.Contains(type));
 
-            await Act(1, player, Trigger.BuyCard, id, () => 
+            // interactive preconditions
+            if (Model.CurrentPhase < Phase.Buy && Model.SettingConfirmSkipPhases[player])
             {
-                Model.CoinsRemaining -= boughtCard.GetCost(Model);
-                Model.BuysRemaining -= 1;
-                
+                if (Model.CurrentPhase == Phase.Action && Model.ActionsRemaining > 0 && hasMore(CardType.Action))
+                {
+                    var skip = await Choose<string, bool>(
+                        player, 
+                        ChoiceType.YesNo, 
+                        "Skip Action phase?",
+                        "You have Action cards remaining. Do you really want to skip to the Buy phase?"
+                    );
+
+                    if (skip)
+                    {
+                        Model.SettingConfirmSkipPhases[player] = false;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                if (Model.CurrentPhase == Phase.Treasure && Model.BuysRemaining > 1 && hasMore(CardType.Treasure))
+                {
+                    var skip = await Choose<string, bool>(
+                        player, 
+                        ChoiceType.YesNo, 
+                        "Skip playing remaining Treasures?",
+                        "You have Treasure cards and buys remaining. Do you really want to buy a card?"
+                    );
+
+                    if (skip)
+                    {
+                        Model.SettingConfirmSkipPhases[player] = false;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+
+            // commit to the buy
+            await BuyCardAsync(player, card.Name);
+
+            // advance phases
+            if (Model.CurrentPhase < Phase.Buy)
+            {
+                Model.CurrentPhase = Phase.Buy;
+            }
+
+            Model.CoinsRemaining -= card.GetCost(Model);
+
+            if (--Model.BuysRemaining == 0)
+            {
+                await EndTurnAsync(Model.ActivePlayer);
+                await BeginTurnAsync(Model.ActivePlayer);
+            }
+        }
+
+        internal async Task BuyCardAsync(string player, string id)
+        {
+            await Act(1, player, Trigger.BuyCard, id, () => 
+            {                
                 var instance = MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
                 
                 NoteBuy(player, instance);
@@ -405,6 +357,97 @@ namespace Cardgame.Server
 
                 return Task.CompletedTask;
             }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
+        }
+
+        private async Task PlayCardsPhasedAsync(string player, params ICard[] cards)
+        {
+            bool hasMore(CardType type) => Model.Hands[player].Select(All.Cards.ByName).Any(card => card.Types.Contains(type));
+            var type = cards.First().Types.Contains(CardType.Action) ? CardType.Action : CardType.Treasure;
+            if (type == CardType.Treasure && cards.Any(card => card.Types.Contains(CardType.Action)) ||
+                type == CardType.Action && cards.Any(card => card.Types.Contains(CardType.Treasure)))
+            {
+                throw new CommandException("All cards must be the same type.");
+            }
+
+            // interactive preconditions
+            if (type == CardType.Treasure && Model.CurrentPhase < Phase.Treasure && Model.SettingConfirmSkipPhases[player])
+            {
+                if (Model.CurrentPhase == Phase.Action && Model.ActionsRemaining > 0 && hasMore(CardType.Action))
+                {
+                    foreach (var card in cards)
+                    {
+                        MoveCard(player, card.Name, Zone.Hand, Zone.InPlay);
+                    }
+                    var skip = await Choose<string, bool>(
+                        player, 
+                        ChoiceType.YesNo, 
+                        "Skip Action phase?",
+                        "You have Action cards remaining. Do you really want to skip to the Buy phase?"
+                    );
+                    foreach (var card in cards)
+                    {
+                        MoveCard(player, card.Name, Zone.InPlay, Zone.Hand);
+                    }
+
+                    if (skip)
+                    {
+                        Model.SettingConfirmSkipPhases[player] = false;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+
+            // commit to the play
+            var cardList = string.Join(Environment.NewLine, cards.Select((card, ix) => 
+            {
+                var suffix = ix == cards.Length - 1 ? "."
+                    : ix < cards.Length - 2 ? ","
+                    : " and";
+                return $"<card suffix='{suffix}'>{card.Name}</card>";
+            }));
+            LogEvent($@"<spans>
+                <player>{player}</player>
+                <if you='play' them='plays'>{player}</if>
+                {cardList}
+            </spans>");
+            
+            if (type == CardType.Treasure)
+            {
+                var sum = cards.Select(card => ((ITreasureCard)card).GetValue(Model)).Sum();
+                LogPartialEvent($@"<spans>
+                    <indent level='1' />
+                    {LogVerbInitial(player, "get", "gets", "getting")}
+                    <run>+${sum}.</run>
+                </spans>");
+            }
+
+            foreach (var card in cards)
+            {
+                await PlayCardAsync(1, player, card.Name, Zone.Hand);
+            }
+
+            // advance phases
+            if (type == CardType.Action)
+            {
+                Model.ActionsRemaining -= cards.Length;
+                if (!hasMore(CardType.Action))
+                {
+                    Model.CurrentPhase = Phase.Treasure;
+                }
+            }
+
+            if (type == CardType.Treasure && Model.CurrentPhase < Phase.Treasure)
+            {
+                Model.CurrentPhase = Phase.Treasure;
+            }
+
+            if (Model.CurrentPhase == Phase.Treasure && !hasMore(CardType.Treasure))
+            {
+                Model.CurrentPhase = Phase.Buy;
+            }
         }
 
         internal async Task PlayCardAsync(int indentLevel, string player, string id, Zone from)
@@ -429,19 +472,9 @@ namespace Cardgame.Server
                     var host = new CardHost(this, indentLevel, player, played);
                     await action.ExecuteActionAsync(host);
                     NotePlay(player, played);
-
-                    if (Model.ActionsRemaining == 0)
-                    {
-                        Model.BuyPhase = true;
-                    }
                 }
                 else if (card is ITreasureCard treasure)
                 {
-                    if (!Model.BuyPhase)
-                    {
-                        Model.BuyPhase = true;
-                    }
-
                     Model.CoinsRemaining += treasure.GetValue(Model);
                 }
                 else
@@ -507,7 +540,7 @@ namespace Cardgame.Server
                 deck.Shuffle();
                 return deck;
             });
-            Model.SettingConfirmSkipActions = Model.Players.ToDictionary(k => k, _ => true);
+            Model.SettingConfirmSkipPhases = Model.Players.ToDictionary(k => k, _ => true);
             Model.SettingKeepHandSorted = Model.Players.ToDictionary(k => k, _ => true);
             Model.IsStarted = true;
 
@@ -534,7 +567,7 @@ namespace Cardgame.Server
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
             Model.CoinsRemaining = 0;
-            Model.BuyPhase = false;
+            Model.CurrentPhase = Phase.Action;
             Model.PlayedLastTurn = new HashSet<Instance>(Model.PlayedCards[player]);
 
             LogEvent($@"<bold>
@@ -547,10 +580,14 @@ namespace Cardgame.Server
 
             await Act(1, player, Trigger.BeginTurn, player, () => 
             {
-                Model.BuyPhase = !Model.Hands[player]
-                    .Select(All.Cards.ByName)
-                    .OfType<IActionCard>()
-                    .Any();
+                if (!Model.Hands[player].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Action)))
+                {
+                    Model.CurrentPhase = Phase.Treasure;
+                    if (!Model.Hands[player].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Treasure)))
+                    {
+                        Model.CurrentPhase = Phase.Buy;
+                    }
+                }
 
                 return Task.CompletedTask;
             });
@@ -577,6 +614,8 @@ namespace Cardgame.Server
 
         private async Task EndTurnAsync(string player)
         {
+            Model.CurrentPhase = Phase.Cleanup;
+
             var discard = Model.Discards[player];
             var inPlay = Model.PlayedCards[player];
 
