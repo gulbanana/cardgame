@@ -77,6 +77,7 @@
 
 .card__header__name {
     grid-column: 2;
+    font-size: calc(var(--name-scale) * var(--local-card-title-font));
 }
 
 .card__image {

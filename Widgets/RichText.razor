@@ -90,7 +90,7 @@
             var background = Backgrounds.FromTypes(model.Types);
             var cost = model.GetCost(Array.Empty<IModifier>());
             var set = All.Cards.GetSet(card.Name);
-            var value = (model as ITreasureCard)?.GetValue(Array.Empty<IModifier>());
+            var value = (model as ITreasureCard)?.GetStaticValue();
             <WithTooltip>
                 <Content>
                     @card.Prefix<span style="background: @background">@Strings.TitleCase(card.Name)</span>@card.Suffix

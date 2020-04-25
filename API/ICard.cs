@@ -12,6 +12,7 @@ namespace Cardgame.API
         string Art { get; }
         string Text { get; }
         string HasMat { get; }
+        
         Cost GetCost(IModifier[] modifiers);
     }
 

@@ -9,14 +9,16 @@
     int PotentialCoins => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()
-        .Select(card => card.GetValue(Model).Coins)
-        .Sum();
+        .Sum(card => card.GetModifiedValue(Model)?.Coins??0);
     int PotentialPotions => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()
-        .Where(card => card.GetValue(Model).Potion)
-        .Count();
-    string PotentialMoney => $"${PotentialCoins}{(PotentialPotions > 0 ? $" {PotentialPotions}P" : "")}";
+        .Count(card => card.GetModifiedValue(Model)?.Potion??false);
+    int Unknowns => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
+        .Select(All.Cards.ByName)
+        .OfType<ITreasureCard>()
+        .Count(card => !card.GetModifiedValue(Model).HasValue);
+    string PotentialMoney => $"${PotentialCoins}{(PotentialPotions > 0 ? $" {PotentialPotions}P" : "")}{(Unknowns > 0 ? $" +$?" : "")}";
     bool AnyoneChoosing => Model.ChoosingPlayers.Any();
     bool SomeoneVisibleChoosing => AnyoneChoosing && (Model.ChoosingPlayers.Peek().Equals(Session.Username) || !Model.Players.Contains(Session.Username));
 }

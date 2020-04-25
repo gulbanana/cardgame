@@ -1,6 +1,5 @@
-using System.Linq;
+using System.Threading.Tasks;
 using Cardgame.API;
-using Cardgame.Shared;
 
 namespace Cardgame.Cards
 {
@@ -10,9 +9,14 @@ namespace Cardgame.Cards
         public override string Text => null;
         public abstract Cost Value { get; }
 
-        public Cost GetValue(IModifier[] modifiers)
+        public Cost? GetStaticValue()
         {
-            return new Cost(Value.Coins + modifiers.Select(m => m.IncreaseTreasureValue(Name)).Sum(), Value.Potion);
+            return Value;
+        }
+
+        public Task<Cost> GetValueAsync(IActionHost host)
+        {
+            return Task.FromResult(Value);
         }
     }
 }

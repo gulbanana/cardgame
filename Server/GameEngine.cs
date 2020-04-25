@@ -419,21 +419,24 @@ namespace Cardgame.Server
                 <if you='play' them='plays'>{player}</if>
                 {cardList}
             </spans>");
-            
-            if (type == CardType.Treasure)
-            {
-                var coins = cards.Select(card => ((ITreasureCard)card).GetValue(Model).Coins).Sum();
-                var potions = cards.Where(card => ((ITreasureCard)card).GetValue(Model).Potion).Count();
-                LogPartialEvent($@"<spans>
-                    <indent level='1' />
-                    {LogVerbInitial(player, "get", "gets", "getting")}
-                    <run>+${coins}{(potions > 0 ? $" {potions}P" : "")}.</run>
-                </spans>");
-            }
+
+            var gainC = 0; 
+            var gainP = 0;
 
             foreach (var card in cards)
             {
-                await PlayCardAsync(1, player, card.Name, Zone.Hand);
+                var (coins, potions) = await PlayCardAsync(1, player, card.Name, Zone.Hand);
+                gainC += coins;
+                gainP += potions;
+            }
+
+            if (type == CardType.Treasure)
+            {
+                LogPartialEvent($@"<spans>
+                    <indent level='1' />
+                    {LogVerbInitial(player, "get", "gets", "getting")}
+                    <run>+${gainC}{(gainP > 0 ? $" {gainP}P" : "")}.</run>
+                </spans>");
             }
 
             // advance phases
@@ -457,9 +460,11 @@ namespace Cardgame.Server
             }
         }
 
-        internal async Task PlayCardAsync(int indentLevel, string player, string id, Zone from)
+        internal async Task<(int coins, int potions)> PlayCardAsync(int indentLevel, string player, string id, Zone from)
         {       
             var played = MoveCard(player, id, from, Zone.InPlay);
+            var gainC = 0;
+            var gainP = 0;
 
             await Act(indentLevel, player, Trigger.PlayCard, id, async () =>
             {
@@ -469,6 +474,7 @@ namespace Cardgame.Server
                     Model.PlayedWithDuration.Add(played);
                 }
 
+                var host = new CardHost(this, indentLevel, player, played);
                 if (card is IActionCard action)
                 {
                     if (player == Model.ActivePlayer)
@@ -476,20 +482,27 @@ namespace Cardgame.Server
                         ActionsThisTurn++;
                     }
 
-                    var host = new CardHost(this, indentLevel, player, played);
                     await action.ExecuteActionAsync(host);
                     NotePlay(player, played);
                 }
                 else if (card is ITreasureCard treasure)
                 {
-                    Model.CoinsRemaining += treasure.GetValue(Model).Coins;
-                    Model.PotionsRemaining += treasure.GetValue(Model).Potion ? 1 : 0;
+                    var increaseCoins = Model.GetModifiers().Select(m => m.IncreaseTreasureValue(card.Name)).Sum();
+                    var value = await treasure.GetValueAsync(host);
+
+                    gainC = value.Coins + increaseCoins;
+                    Model.CoinsRemaining += gainC;
+
+                    gainP = value.Potion ? 1 : 0;
+                    Model.PotionsRemaining += gainP;
                 }
                 else
                 {
                     throw new CommandException($"Only Actions and Treasures can be played.");
                 }
             }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
+
+            return (gainC, gainP);
         }
 
         private void LogEvent(string eventText)

@@ -10,6 +10,7 @@
     [Parameter] public string OverrideColour { get; set; }
     [Parameter] public CardSet? Set { get; set; }
     private string[] colours;
+    private double nameScale;
     private MarkupString type;
     private double typeScale;
     private string art;
@@ -20,6 +21,8 @@
         colours = OverrideColour != null 
             ? new[] { OverrideColour } 
             : Types.Select(All.Cards.GetColor).ToArray();
+
+        nameScale = Name == "Philosopher_sStone" ? 0.5 : 1.0;
 
         var builder = new System.Text.StringBuilder();
         for (var i = 0; i < Types.Length; i++)
@@ -41,9 +44,11 @@
 
         art = Art == null ? null : (Set == null ? $"/cards/Base/{Art}.jpg" : $"/cards/{Set}/{Art}.jpg");
 
-        if (Value.HasValue)
+        if (Types.Contains(CardType.Treasure))
         {
-            value = Value.Value.Potion ? "potion" : "coin" + Value.Value.Coins;
+            value = !Value.HasValue ? "coinQ" :
+                    Value.Value.Potion ? "potion" : 
+                    "coin" + Value.Value.Coins;
         }
     }
 }
@@ -60,7 +65,7 @@
                     </div>
                 }
 
-                <span class="card__header__name">@Strings.TitleCase(Name)</span>
+                <span class="card__header__name" style="--name-scale: @nameScale;">@Strings.TitleCase(Name)</span>
 
                 @if (value != null)
                 {

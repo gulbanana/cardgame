@@ -6,7 +6,7 @@ namespace Cardgame.Widgets
     {
         public static string TitleCase(string words)
         {
-            return Regex.Replace(words, @"((?<=[a-z])[A-Z]|(?<!^)[A-Z](?=[a-z]))", " $1");
+            return Regex.Replace(words, @"((?<=[a-z])[A-Z]|(?<!^)[A-Z](?=[a-z]))", " $1").Replace("_", "'");
         }
     }
 }
