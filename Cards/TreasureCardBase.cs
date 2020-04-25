@@ -9,14 +9,8 @@ namespace Cardgame.Cards
         public override string Text => null;
         public abstract Cost Value { get; }
 
-        public Cost? GetStaticValue()
-        {
-            return Value;
-        }
+        public Cost? StaticValue => Value;
 
-        public Task<Cost> GetValueAsync(IActionHost host)
-        {
-            return Task.FromResult(Value);
-        }
+        public Task<Cost> GetValueAsync(IActionHost host) => Task.FromResult(Value);
     }
 }

@@ -6,7 +6,7 @@ namespace Cardgame.API
 {
     public interface ITreasureCard : ICard
     {
-        Cost? GetStaticValue();
+        Cost? StaticValue { get; }
         Task<Cost> GetValueAsync(IActionHost host);
     }
 
@@ -14,7 +14,7 @@ namespace Cardgame.API
     {
         public static Cost? GetModifiedValue(this ITreasureCard card, IModifier[] modifiers) 
         {
-            var value = card.GetStaticValue();
+            var value = card.StaticValue;
             if (!value.HasValue)
             {
                 return value;
@@ -25,7 +25,7 @@ namespace Cardgame.API
             }
         }
 
-        public static Cost? GetModifiedValue(this ITreasureCard card, IModifierSource modifierSource) => card.GetModifiedValue(modifierSource.GetModifiers());
-        
+        public static Cost? GetModifiedValue(this ITreasureCard card, GameModel modifierSource) => card.GetModifiedValue(modifierSource.GetModifiers());        
+        public static Cost? GetModifiedValue(this ITreasureCard card, IActionHost modifierSource) => card.GetModifiedValue(modifierSource.GetModifiers());        
     }
 }

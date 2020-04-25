@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cardgame.API;
 
 namespace Cardgame.Shared
 {
-    public class GameModel : IModifierSource
+    public class GameModel
     {
         // protection against weird command orderings
         public int Seq { get; set; }
@@ -62,21 +61,6 @@ namespace Cardgame.Shared
         public ChoiceType ChoiceType { get; set; }
         public string ChoiceInput { get; set; }
 
-        public IModifier[] GetModifiers()
-        {
-            if (!IsStarted)
-            {
-                return Array.Empty<IModifier>();
-            }
-            else
-            {
-                var fx = ActiveEffects.Select(All.Effects.ByName).OfType<IModifier>();
-                var inPlay = PlayedCards.Values.SelectMany(instances => instances).Select(All.Cards.ByName).OfType<IModifier>();
-
-                return fx.Concat(inPlay).ToArray();
-            }
-        }
-
         public int GetInitialSupply(string card)
         {
             var victoryCount = Players.Length == 2 ? 8 : 12;
@@ -89,11 +73,6 @@ namespace Cardgame.Shared
                 "Potion" => 16,
                 string id => All.Cards.ByName(id).Types.Contains(API.CardType.Victory) ? victoryCount : 10
             };
-        }
-
-        public Cost MaxCost()
-        {
-            return new Cost(CoinsRemaining, PotionsRemaining > 0);
         }
     }
 }

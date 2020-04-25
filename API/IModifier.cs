@@ -1,4 +1,4 @@
-namespace Cardgame.Shared
+namespace Cardgame.API
 {
     public interface IModifier
     {

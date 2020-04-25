@@ -14,7 +14,7 @@ namespace Cardgame.Cards.Alchemy
             <run>per 5 cards total between them (round down).</run>
         ";
 
-        public Cost? GetStaticValue() => null;
+        public Cost? StaticValue => null;
 
         public async Task<Cost> GetValueAsync(IActionHost host)
         {

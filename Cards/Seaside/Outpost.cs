@@ -1,6 +1,5 @@
 using System.Linq;
 using Cardgame.API;
-using Cardgame.Shared;
 
 namespace Cardgame.Cards.Seaside
 {

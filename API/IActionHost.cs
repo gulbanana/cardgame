@@ -6,7 +6,7 @@ using Cardgame.Shared;
 
 namespace Cardgame.API
 {
-    public interface IActionHost : IModifierSource
+    public interface IActionHost
     {
         int IndentLevel { get; set; }
         string Player { get; }
@@ -14,6 +14,7 @@ namespace Cardgame.API
         bool IsActive { get; }
         int ShuffleCount { get; }
         int ActionCount { get; }
+        IModifier[] GetModifiers();
 
         // the four vanilla operations
         ICard[] DrawCards(int n);

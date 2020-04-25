@@ -18,7 +18,8 @@ namespace Cardgame.API
 
     public static class CardExtensions
     {
-        public static Cost GetCost(this ICard card, IModifierSource modifierSource) => card.GetCost(modifierSource?.GetModifiers() ?? Array.Empty<IModifier>());
+        public static Cost GetCost(this ICard card, GameModel modifierSource) => card.GetCost(modifierSource?.GetModifiers() ?? Array.Empty<IModifier>());
+        public static Cost GetCost(this ICard card, IActionHost modifierSource) => card.GetCost(modifierSource?.GetModifiers() ?? Array.Empty<IModifier>());
 
         public static int SortByTypes(this ICard card)
         {
