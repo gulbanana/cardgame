@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using Cardgame.API;
-using Cardgame.Shared;
 
 namespace Cardgame.All
 {
@@ -15,7 +13,7 @@ namespace Cardgame.All
             Name = name;
         }
 
-        public string GetContents(IReadOnlyList<Instance> cards, bool isOwner)
+        public string GetContents(string[] cards, bool isOwner)
         {
             return $"<run>{Name}: Mat not found.</run>";
         }

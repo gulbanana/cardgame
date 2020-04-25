@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Cardgame.Shared;
-
 namespace Cardgame.API
 {
     public interface IMat
@@ -8,6 +5,6 @@ namespace Cardgame.API
         string Name { get; }
         string Label { get; }
         string Art { get; }
-        string GetContents(IReadOnlyList<Instance> cards, bool isOwnerOrSpectator);
+        string GetContents(string[] cards, bool isOwnerOrSpectator);
     }
 }

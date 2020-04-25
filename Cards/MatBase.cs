@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Cardgame.API;
-using Cardgame.Shared;
 
 namespace Cardgame.Cards
 {
@@ -17,16 +15,16 @@ namespace Cardgame.Cards
             Name = this.GetType().Name;
         }
 
-        public virtual string GetContents(IReadOnlyList<Instance> cards, bool isOwnerOrSpectator)
+        public virtual string GetContents(string[] cards, bool isOwnerOrSpectator)
         {
             if (cards == null || !cards.Any()) return null;
             
             var builder = new StringBuilder();
             
             builder.AppendLine("<spans>");
-            foreach (var name in cards.Names().Distinct())
+            foreach (var name in cards.Distinct())
             {
-                var number = cards.Names().Count(id => id == name);
+                var number = cards.Count(id => id == name);
                 builder.AppendLine($"<card suffix=' x{number}'>{name}</card>");
             }
             builder.AppendLine("</spans>");

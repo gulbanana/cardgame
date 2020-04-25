@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Cardgame.Shared;
 
 namespace Cardgame.Cards.Seaside
 {
@@ -10,17 +8,17 @@ namespace Cardgame.Cards.Seaside
         public override string Art => "pirate-ship";
         public override string Label => "Pirate Ship";
 
-        public override string GetContents(IReadOnlyList<Instance> cards, bool isOwner)
+        public override string GetContents(string[] cards, bool isOwner)
         {
             if (cards == null || !cards.Any()) return null;
             
             var builder = new StringBuilder();
             builder.AppendLine("<lines>");
-            for (var i = 0; i < cards.Count; i += 2)
+            for (var i = 0; i < cards.Length; i += 2)
             {                
                 builder.AppendLine("<spans>");
                 builder.AppendLine(All.Cards.ByName(cards[i]).Text);
-                if (cards.Count > i+1)
+                if (cards.Length > i+1)
                 {
                     builder.AppendLine(All.Cards.ByName(cards[i+1]).Text);
                 }

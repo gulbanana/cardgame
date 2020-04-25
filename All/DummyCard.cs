@@ -1,5 +1,4 @@
 using Cardgame.API;
-using Cardgame.Shared;
 
 namespace Cardgame.All
 {
