@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class NativeVillage : ActionCardBase
     {
-        public override int Cost => 2;
+        public override Cost Cost => 2;
         public override string HasMat => "NativeVillageMat";
 
         public override string Text => @"<lines>

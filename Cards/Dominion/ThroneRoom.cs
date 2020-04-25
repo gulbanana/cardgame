@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Dominion
     public class ThroneRoom : ActionCardBase
     {
         public override string Art => "dom-throne-room";
-        public override int Cost => 4;
+        public override Cost Cost => 4;
         
         public override string Text => @"You may play an Action card from your hand twice.";
 

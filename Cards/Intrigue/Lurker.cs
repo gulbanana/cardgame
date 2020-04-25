@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Intrigue
     public class Lurker : ActionCardBase
     {
         public override string Art => "int-lurker";
-        public override int Cost => 2;
+        public override Cost Cost => 2;
 
         public override string Text => @"<paras>
             <bold>+1 Action</bold>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cardgame.API;
 
 namespace Cardgame.Shared
 {
@@ -23,6 +24,7 @@ namespace Cardgame.Shared
         public string[] KingdomGlobalMats { get; set; }
         public string[] KingdomPlayerMats { get; set; }
         public bool KingdomHasCurse { get; set; }
+        public bool KingdomHasPotion { get; set; }
 
         // player config
         public Dictionary<string, bool> SettingConfirmSkipPhases { get; set; }
@@ -51,6 +53,7 @@ namespace Cardgame.Shared
         public int ActionsRemaining { get; set; }
         public int BuysRemaining { get; set; }
         public int CoinsRemaining { get; set; }
+        public int PotionsRemaining { get; set; }
 
         // interrupt state
         public HashSet<string> PreventedAttacks { get; set; }
@@ -83,8 +86,14 @@ namespace Cardgame.Shared
                 "Silver" => 40,
                 "Gold" => 30,
                 "Curse" => (Players.Length - 1) * 10,
+                "Potion" => 16,
                 string id => All.Cards.ByName(id).Types.Contains(API.CardType.Victory) ? victoryCount : 10
             };
+        }
+
+        public Cost MaxCost()
+        {
+            return new Cost(CoinsRemaining, PotionsRemaining > 0);
         }
     }
 }

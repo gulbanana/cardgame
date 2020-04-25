@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Intrigue
 {
     public class SecretChamber : AttackReactionCardBase
     {
-        public override int Cost => 2;        
+        public override Cost Cost => 2;        
 
         public override string Text => @"<small>
             <split compact='true'>

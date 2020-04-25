@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Dominion
     public class Militia : AttackCardBase
     {
         public override string Art => "dom-militia";
-        public override int Cost => 4;        
+        public override Cost Cost => 4;        
 
         public override string Text => @"
         <paras>

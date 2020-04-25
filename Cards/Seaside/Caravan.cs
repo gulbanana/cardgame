@@ -4,7 +4,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Caravan : DurationCardBase
     {
-        public override int Cost => 4;
+        public override Cost Cost => 4;
 
         public override string Text => @"<paras>
             <lines>

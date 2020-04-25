@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Dominion
     public class Artisan : ActionCardBase
     {
         public override string Art => "dom-artisan";
-        public override int Cost => 6;
+        public override Cost Cost => 6;
 
         public override string Text => @"<paras>
             <spans>
@@ -22,7 +22,7 @@ namespace Cardgame.Cards.Dominion
             var gainedCard = await host.SelectCard(
                 "Choose a card to gain.", 
                 Zone.SupplyAvailable, 
-                card => card.GetCost(host) <= 5
+                card => card.GetCost(host).LessThanOrEqual(5)
             );
             host.Gain(gainedCard.Name, Zone.Hand);
 

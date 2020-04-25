@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Treasury : ActionCardBase, IReactor
     {
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<small>
             <split compact='true'>

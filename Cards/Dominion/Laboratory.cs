@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Dominion
     public class Laboratory : ActionCardBase
     {
         public override string Art => "dom-laboratory";
-        public override int Cost => 5;
+        public override Cost Cost => 5;
         
         public override string Text => @"<lines>
             <bold>+2 Cards</bold>

@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Dominion
     public class Remodel : ActionCardBase
     {
         public override string Art => "dom-remodel";
-        public override int Cost => 4;
+        public override Cost Cost => 4;
         
         public override string Text => @"<lines>
             <run>Trash a card from your hand.</run>
@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Dominion
             var gainedCard = await host.SelectCard(
                 "Choose a card to gain.", 
                 Zone.SupplyAvailable, 
-                card => card.GetCost(modifiers) <= trashedCard.GetCost(modifiers) + 2
+                card => card.GetCost(modifiers).LessThanOrEqual(trashedCard.GetCost(modifiers).Plus(2))
             );
             host.Gain(gainedCard.Name);
         }

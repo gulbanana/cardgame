@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Lookout : ActionCardBase
     {
-        public override int Cost => 3;
+        public override Cost Cost => 3;
 
         public override string Text => @"<paras>
             <bold>+1 Action</bold>

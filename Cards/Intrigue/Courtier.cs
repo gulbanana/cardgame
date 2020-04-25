@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
     public class Courtier : ActionCardBase
     {
         public override string Art => "int-courtier";
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<spans>
             <run>Reveal a card from your hand. For each type it has (Action, Attack, etc.), choose one;</run>

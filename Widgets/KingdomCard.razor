@@ -2,7 +2,8 @@
     [Parameter] public string Name { get; set; }
     [Parameter] public CardType[] Types { get; set; }
     [Parameter] public string Art { get; set; } = "missing";
-    [Parameter] public int Cost { get; set; }
+    [Parameter] public Cost Cost { get; set; }
+    [Parameter] public Cost? Value { get; set; }
     [Parameter] public string Text { get; set; }
     [Parameter] public Size Size { get; set; }
     [Parameter] public int Stack { get; set; }
@@ -12,6 +13,7 @@
     private MarkupString type;
     private double typeScale;
     private string art;
+    private string value;
 
     protected override void OnParametersSet()
     {
@@ -38,6 +40,11 @@
             0.5;
 
         art = Art == null ? null : (Set == null ? $"/cards/Base/{Art}.jpg" : $"/cards/{Set}/{Art}.jpg");
+
+        if (Value.HasValue)
+        {
+            value = Value.Value.Potion ? "potion" : "coin" + Value.Value.Coins;
+        }
     }
 }
 
@@ -46,9 +53,20 @@
         @if (Size != Size.Third)
         {
             <div class="card__header card__title">
-                @foreach (var word in Strings.TitleCase(Name).Split(" "))
+                @if (value != null)
                 {
-                    <span class="card__title__word">@word</span>
+                    <div class="card__header__value">
+                        <img class="card__cost-icon" src="/symbols/@(value).png" />
+                    </div>
+                }
+
+                <span class="card__header__name">@Strings.TitleCase(Name)</span>
+
+                @if (value != null)
+                {
+                    <div class="card__header__value">
+                        <img class="card__cost-icon" src="/symbols/@(value).png" />
+                    </div>
                 }
             </div>
         }
@@ -78,10 +96,17 @@
         {
             <div class="card__footer card__title">
                 <div class="card__footer-cost">
-                    <img class="card__cost-icon" src="/symbols/coin@(Cost).png" />
+                    <img class="card__cost-icon" src="/symbols/coin@(Cost.Coins).png" />
                 </div>
 
-                <span class="card__type" style="--type-scale: @typeScale;">@type</span>
+                @if (Cost.Potion)
+                {
+                    <div class="card__footer-cost">
+                        <img class="card__cost-icon" src="/symbols/potion.png" />
+                    </div>
+                }
+
+                <span class="card__footer__type" style="--type-scale: @typeScale;">@type</span>
 
                 @if (Set != null)
                 {

@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Dominion
     public class Moat : AttackReactionCardBase
     {
         public override string Art => "dom-moat";
-        public override int Cost => 2;        
+        public override Cost Cost => 2;        
 
         public override string Text => @"<split>
             <bold>+2 Cards</bold>

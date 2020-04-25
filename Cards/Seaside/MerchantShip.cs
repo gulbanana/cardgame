@@ -4,7 +4,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class MerchantShip : DurationCardBase
     {
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<spans>
             <run>Now and at the start of your next turn:</run>

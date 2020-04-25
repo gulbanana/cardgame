@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Intrigue
     public class WishingWell : ActionCardBase
     {
         public override string Art => "int-wishing-well";
-        public override int Cost => 3;
+        public override Cost Cost => 3;
 
         public override string Text => @"<paras>
             <lines>

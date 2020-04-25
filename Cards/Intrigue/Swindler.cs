@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Intrigue
     public class Swindler : AttackCardBase
     {
         public override string Art => "int-swindler";
-        public override int Cost => 3;
+        public override Cost Cost => 3;
 
         public override string Text => @"<paras>
             <bold><sym prefix='+'>coin2</sym></bold>
@@ -30,7 +30,7 @@ namespace Cardgame.Cards.Intrigue
                     var gained = await host.SelectCard(
                         $"Choose a card for {target.Player} to gain.", 
                         Zone.SupplyAvailable, 
-                        card => card.GetCost(host) == topDeckCost
+                        card => card.GetCost(host).Equals(topDeckCost)
                     );
                     target.Gain(gained);
                 }

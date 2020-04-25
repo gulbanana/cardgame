@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Intrigue
     public class Torturer : AttackCardBase
     {
         public override string Art => "int-torturer";
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<paras>
             <bold>+3 Cards</bold>

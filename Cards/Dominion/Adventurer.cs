@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Dominion
 {
     public class Adventurer : ActionCardBase
     {
-        public override int Cost => 6;
+        public override Cost Cost => 6;
         
         public override string Text => @"<lines>
             <run>Reveal cards from your deck until you reveal 2 Treasure cards.</run>

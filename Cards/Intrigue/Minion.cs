@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
     public class Minion : AttackCardBase
     {
         public override string Art => "int-minion";
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<paras>
             <bold>+1 Action</bold>

@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Dominion
     public class Bureaucrat : AttackCardBase
     {
         public override string Art => "dom-bureaucrat";
-        public override int Cost => 4;        
+        public override Cost Cost => 4;        
 
         public override string Text => @"Gain a Silver onto your deck. Each other player reveals a Victory card from their hand and puts it onto their deck (or reveals a hand with no Victory cards).";
 

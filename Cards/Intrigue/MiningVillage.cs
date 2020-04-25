@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
     public class MiningVillage : ActionCardBase
     {
         public override string Art => "int-mining-village";
-        public override int Cost => 4;
+        public override Cost Cost => 4;
         
         public override string Text => @"<lines>
             <bold>+1 Card</bold>

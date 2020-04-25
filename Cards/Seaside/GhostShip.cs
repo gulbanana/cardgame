@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class GhostShip : AttackCardBase
     {
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<paras>
             <bold>+2 Cards</bold>

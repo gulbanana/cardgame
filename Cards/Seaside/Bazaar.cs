@@ -4,7 +4,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Bazaar : ActionCardBase
     {
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<bold>
             <lines>

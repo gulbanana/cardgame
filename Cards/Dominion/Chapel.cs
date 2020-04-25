@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Dominion
     public class Chapel : ActionCardBase
     {
         public override string Art => "dom-chapel";
-        public override int Cost => 2;
+        public override Cost Cost => 2;
         
         public override string Text => @"Trash up to 4 cards from your hand.";
 

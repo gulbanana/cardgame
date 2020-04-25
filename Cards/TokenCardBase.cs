@@ -6,6 +6,6 @@ namespace Cardgame.Cards
     {
         public override CardType[] Types => new CardType[0];
         public override string Art => null;
-        public override int Cost => 0;
+        public override Cost Cost => 0;
     }
 }

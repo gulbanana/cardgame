@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
     public class Steward : ActionCardBase
     {
         public override string Art => "int-steward";
-        public override int Cost => 3;
+        public override Cost Cost => 3;
 
         public override string Text => @"<spans>
             <run>Choose one:</run>

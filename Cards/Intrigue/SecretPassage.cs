@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Intrigue
     public class SecretPassage : ActionCardBase
     {
         public override string Art => "int-secret-passage";
-        public override int Cost => 4;
+        public override Cost Cost => 4;
 
         public override string Text => @"<paras>
             <lines>

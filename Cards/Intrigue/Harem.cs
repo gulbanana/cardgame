@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
     {
         public override CardType[] Types => new[] { CardType.Treasure, CardType.Victory };
         public override string Art => "int-harem";
-        public override int Cost => 6;
+        public override Cost Cost => 6;
 
         public override string Text => @"<bold>
             <split>
@@ -15,7 +15,7 @@ namespace Cardgame.Cards.Intrigue
             </split>
         </bold>";
 
-        public override int Value => 2;
+        public override Cost Value => 2;
 
         public int Score(string[] dominion) => 2;
     }

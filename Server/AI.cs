@@ -21,7 +21,7 @@ namespace Cardgame.Server
                 var priorities = new[]{ "Province", "Gold", "Silver", "Copper" }.Select(All.Cards.ByName);
                 foreach (var card in priorities)
                 {
-                    if (state.Supply[card.Name] > 0 && state.CoinsRemaining >= card.GetCost(state))
+                    if (state.Supply[card.Name] > 0 && !card.GetCost(state).GreaterThan(state.MaxCost()))
                     {
                         return new BuyCardCommand { Seq = state.Seq, Id = card.Name };
                     }

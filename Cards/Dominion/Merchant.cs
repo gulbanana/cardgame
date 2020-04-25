@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Dominion
     public class Merchant : ActionCardBase
     {
         public override string Art => "dom-merchant";
-        public override int Cost => 3;
+        public override Cost Cost => 3;
         
         public override string Text => @"<paras>
             <lines>

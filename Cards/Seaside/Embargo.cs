@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Embargo : ActionCardBase
     {
-        public override int Cost => 2;
+        public override Cost Cost => 2;
 
         public override string Text => @"<paras>
             <sym prefix='+'>coin2</sym>

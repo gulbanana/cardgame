@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Dominion
     public class Village : ActionCardBase
     {
         public override string Art => "dom-village";
-        public override int Cost => 3;
+        public override Cost Cost => 3;
         
         public override string Text => @"<lines>
             <bold>+1 Card</bold>

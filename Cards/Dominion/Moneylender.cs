@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Dominion
     public class Moneylender : ActionCardBase
     {
         public override string Art => "dom-moneylender";
-        public override int Cost => 4;
+        public override Cost Cost => 4;
         
         public override string Text => @"<spans>
             <run>You may trash a Coppper from your hand for</run>

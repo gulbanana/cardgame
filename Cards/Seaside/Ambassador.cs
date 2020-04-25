@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Ambassador : AttackCardBase
     {
-        public override int Cost => 3;
+        public override Cost Cost => 3;
 
         public override string Text => @"<run>
              Reveal a card from your hand. Return up to 2 copies of it from your hand to the Supply. Then each other player gains a copy of it.

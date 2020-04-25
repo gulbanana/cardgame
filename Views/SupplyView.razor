@@ -21,6 +21,10 @@
             <SupplyPile Size="Size.Third" Id="Gold" />
             <SupplyPile Size="Size.Third" Id="Silver" />
             <SupplyPile Size="Size.Third" Id="Copper" />
+            @if (Model.KingdomHasPotion)
+            {
+                <SupplyPile Size="Size.Third" Id="Potion" />
+            }
         </div>
         
         <div class="supply-view__kingdom">
@@ -46,6 +50,10 @@
             <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Gold")" Id="Gold" />
             <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Silver")" Id="Silver" />
             <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Copper")" Id="Copper" />
+            @if (Model.KingdomHasPotion)
+            {
+                <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Potion")" Id="Potion" />
+            }
         </div>
 
         <div class="supply-view__kingdom">

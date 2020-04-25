@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class SeaHag : AttackCardBase
     {
-        public override int Cost => 4;
+        public override Cost Cost => 4;
 
         public override string Text => "Each other player discards the top card of their deck, then gains a Curse onto their deck.";
 

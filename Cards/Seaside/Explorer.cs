@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Explorer : ActionCardBase
     {
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"You may reveal a Province from your hand. If you do, gain a Gold to your hand. If you don't, gain a Silver to your hand.";
 

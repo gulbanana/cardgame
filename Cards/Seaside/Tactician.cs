@@ -4,7 +4,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Tactician : DurationCardBase
     {
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<spans>
             <run> If you have at least one card in hand, discard your hand, and at the start of your next turn,</run>

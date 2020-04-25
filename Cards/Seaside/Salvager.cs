@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Salvager : ActionCardBase
     {
-        public override int Cost => 3;
+        public override Cost Cost => 3;
 
         public override string Text => @"<paras>
             <bold>+1 Buy</bold>
@@ -26,7 +26,7 @@ namespace Cardgame.Cards.Seaside
             if (trashed != null)
             {
                 host.Trash(trashed);
-                host.AddCoins(trashed.GetCost(host));
+                host.AddCoins(trashed.GetCost(host).Coins);
             }
         }
     }

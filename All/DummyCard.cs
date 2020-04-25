@@ -16,6 +16,6 @@ namespace Cardgame.All
             Name = name;
         }
 
-        public int GetCost(IModifier[] _) => 0;
+        public Cost GetCost(IModifier[] _) => 0;
     }
 }

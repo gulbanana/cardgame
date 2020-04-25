@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Dominion
 {
     public class Feast : ActionCardBase
     {
-        public override int Cost => 4;
+        public override Cost Cost => 4;
 
         public override string Text => @"
         <lines>
@@ -24,7 +24,7 @@ namespace Cardgame.Cards.Dominion
             var gainedCard = await host.SelectCard(
                 "Choose a card to gain.", 
                 Zone.SupplyAvailable, 
-                card => card.GetCost(host) <= 5
+                card => card.GetCost(host).LessThanOrEqual(5)
             );
 
             host.Gain(gainedCard);

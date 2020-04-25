@@ -6,18 +6,24 @@
     bool IsEnabled => IsActivePlayer &&
         !Model.IsFinished &&
         !Model.ExecutingBackgroundTasks;
-    int PotentialMoney => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
+    int PotentialCoins => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()
-        .Select(card => card.GetValue(Model))
+        .Select(card => card.GetValue(Model).Coins)
         .Sum();
+    int PotentialPotions => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
+        .Select(All.Cards.ByName)
+        .OfType<ITreasureCard>()
+        .Where(card => card.GetValue(Model).Potion)
+        .Count();
+    string PotentialMoney => $"${PotentialCoins}{(PotentialPotions > 0 ? $" {PotentialPotions}P" : "")}";
     bool AnyoneChoosing => Model.ChoosingPlayers.Any();
     bool SomeoneVisibleChoosing => AnyoneChoosing && (Model.ChoosingPlayers.Peek().Equals(Session.Username) || !Model.Players.Contains(Session.Username));
 }
 
-<div class="board-view@(Model.KingdomHasCurse ? " board-view--constrained" : "")">
+<div class="board-view@((Model.KingdomHasCurse || Model.KingdomHasPotion) ? " board-view--constrained" : "")">
     <p style="grid-area: safe-commands" class="game-view__responsive-bar">
-        <ActiveButton Label="@($"+ ${PotentialMoney}")" Enabled="@(IsEnabled && PotentialMoney > 0)" Action="@(() => Dispatch(new PlayAllTreasuresCommand()))" />
+        <ActiveButton Label="@($"+{PotentialMoney}")" Enabled="@(IsEnabled && (PotentialCoins+PotentialPotions) > 0)" Action="@(() => Dispatch(new PlayAllTreasuresCommand()))" />
     </p>
 
     <p style="grid-area: stats" class="game-view__responsive-bar board-view__statbar">
@@ -29,6 +35,10 @@
         {
             <Bold If="@(Model.CurrentPhase == Phase.Action)">Actions: @Model.ActionsRemaining</Bold>            
             <Bold If="@(Model.CurrentPhase == Phase.Treasure)">Coins: $@Model.CoinsRemaining</Bold>
+            @if (Model.KingdomHasPotion)
+            {
+                <Bold If="@(Model.CurrentPhase == Phase.Treasure)">Potions: $@Model.PotionsRemaining</Bold>
+            }
             <Bold If="@(Model.CurrentPhase == Phase.Buy)">Buys: @Model.BuysRemaining</Bold>
             @foreach (var effect in Model.ActiveEffects)
             {

@@ -8,7 +8,7 @@ namespace Cardgame.Cards.Intrigue
     public class Masquerade : ActionCardBase
     {
         public override string Art => "int-masquerade";
-        public override int Cost => 3;
+        public override Cost Cost => 3;
 
         public override string Text => @"<paras>
             <bold>+2 Cards</bold>

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cardgame.API;
@@ -36,13 +37,19 @@ namespace Cardgame.All
                     "Cardgame.Cards.Dominion" => CardSet.Dominion2nd,
                     "Cardgame.Cards.Intrigue" when firstEditions.Contains(t.Name) => CardSet.Intrigue1st,
                     "Cardgame.Cards.Intrigue" => CardSet.Intrigue2nd,
-                    "Cardgame.Cards.Seaside" => CardSet.Seaside,
-                    _ => null
+                    "Cardgame.Cards.Base" => null,
+                    string ns => Enum.Parse<CardSet>(ns.Split('.').Last())
                 };
             }
 
             // XXX build from models?
-            _Cursers = new[] { "Witch", "Torturer", "Replace", "Embargo", "SeaHag" };
+            _Cursers = new[] 
+            { 
+                "Witch", 
+                "Torturer", "Replace", 
+                "Embargo", "SeaHag", 
+                "Familiar" 
+            };
         }
 
         public static ICard ByName(string id)

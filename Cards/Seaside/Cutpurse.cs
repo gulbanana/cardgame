@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Cutpurse : AttackCardBase
     {
-        public override int Cost => 4;
+        public override Cost Cost => 4;
 
         public override string Text => @"<paras>
             <bold><sym prefix='+'>coin2</sym></bold>

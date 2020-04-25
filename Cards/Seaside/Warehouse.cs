@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Warehouse : ActionCardBase
     {
-        public override int Cost => 3;
+        public override Cost Cost => 3;
 
         public override string Text => @"<paras>
             <lines>

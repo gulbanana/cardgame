@@ -12,16 +12,16 @@ namespace Cardgame.Cards
         public abstract CardType[] Types { get; }
         public abstract string Text { get; }
         public virtual string HasMat => null;
-        public abstract int Cost { get; }
+        public abstract Cost Cost { get; }
 
         public CardBase()
         {
             Name = this.GetType().Name;
         }
 
-        public int GetCost(IModifier[] modifiers)
+        public Cost GetCost(IModifier[] modifiers)
         {
-            return Math.Max(0, Cost - modifiers.Select(m => m.ReduceCardCost).Sum());
+            return new Cost(Math.Max(0, Cost.Coins - modifiers.Select(m => m.ReduceCardCost).Sum()), Cost.Potion);
         }
 
         public override bool Equals(object obj)

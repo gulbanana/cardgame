@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
     public class Upgrade : ActionCardBase
     {
         public override string Art => "int-upgrade";
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<paras>
             <lines>
@@ -30,8 +30,8 @@ namespace Cardgame.Cards.Intrigue
             {
                 host.Trash(trashed);
 
-                var value = trashed.GetCost(host) + 1;
-                var gained = await host.SelectCard("Choose a card to gain.", Zone.SupplyAvailable, card => card.GetCost(host) == value);
+                var value = trashed.GetCost(host).Plus(1);
+                var gained = await host.SelectCard("Choose a card to gain.", Zone.SupplyAvailable, card => card.GetCost(host).Equals(value));
                 if (gained != null)
                 {
                     host.Gain(gained);

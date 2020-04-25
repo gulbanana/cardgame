@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
     public class Nobles : VictoryActionCardBase
     {
         public override string Art => "int-nobles";
-        public override int Cost => 6;
+        public override Cost Cost => 6;
         public override int Score => 2;
 
         public override string Text => @"<split>

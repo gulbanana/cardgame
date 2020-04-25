@@ -8,7 +8,7 @@ namespace Cardgame.Cards.Dominion
     public class Library : ActionCardBase
     {
         public override string Art => "dom-library";
-        public override int Cost => 5;
+        public override Cost Cost => 5;
         
         public override string Text => @"Draw until you have 7 cards in hand, skipping any Action cards you choose to; set those aside, discarding them afterwards.";
 

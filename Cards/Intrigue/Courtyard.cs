@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
     public class Courtyard : ActionCardBase
     {
         public override string Art => "int-courtyard";
-        public override int Cost => 2;
+        public override Cost Cost => 2;
 
         public override string Text => @"<paras>
             <bold>+3 Cards</bold>

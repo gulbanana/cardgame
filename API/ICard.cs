@@ -12,12 +12,12 @@ namespace Cardgame.API
         string Art { get; }
         string Text { get; }
         string HasMat { get; }
-        int GetCost(IModifier[] modifiers);
+        Cost GetCost(IModifier[] modifiers);
     }
 
     public static class CardExtensions
     {
-        public static int GetCost(this ICard card, IModifierSource modifierSource) => card.GetCost(modifierSource?.GetModifiers() ?? Array.Empty<IModifier>());
+        public static Cost GetCost(this ICard card, IModifierSource modifierSource) => card.GetCost(modifierSource?.GetModifiers() ?? Array.Empty<IModifier>());
 
         public static int SortByTypes(this ICard card)
         {

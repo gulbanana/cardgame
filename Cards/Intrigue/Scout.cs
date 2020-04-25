@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
 {
     public class Scout : ActionCardBase
     {
-        public override int Cost => 4;
+        public override Cost Cost => 4;
 
         public override string Text => @"<paras>
             <bold>+1 Action</bold>

@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Dominion
 {
     public class Spy : AttackCardBase
     {
-        public override int Cost => 4;
+        public override Cost Cost => 4;
 
         public override string Text => @"<paras>
             <lines>

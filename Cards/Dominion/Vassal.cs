@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Dominion
     public class Vassal : ActionCardBase
     {
         public override string Art => "dom-vassal";
-        public override int Cost => 3;
+        public override Cost Cost => 3;
         
         public override string Text => @"<paras>
             <bold>

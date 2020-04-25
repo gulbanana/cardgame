@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class PirateShip : AttackCardBase
     {
-        public override int Cost => 4;
+        public override Cost Cost => 4;
         public override string HasMat => "PirateShipMat";
 
         public override string Text => @"<small>

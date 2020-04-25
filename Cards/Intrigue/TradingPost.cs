@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Intrigue
     public class TradingPost : ActionCardBase
     {
         public override string Art => "int-trading-post";
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"Trash 2 cards from your hand. If you did, gain a silver to your hand.";
 

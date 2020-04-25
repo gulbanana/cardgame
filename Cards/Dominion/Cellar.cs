@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Dominion
     public class Cellar : ActionCardBase
     {
         public override string Art => "dom-cellar";
-        public override int Cost => 2;
+        public override Cost Cost => 2;
         
         public override string Text => @"<paras>
             <bold>+1 Action</bold>

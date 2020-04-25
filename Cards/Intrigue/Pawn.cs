@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Intrigue
     public class Pawn : ActionCardBase
     {
         public override string Art => "int-pawn";
-        public override int Cost => 2;
+        public override Cost Cost => 2;
 
         public override string Text => @"<lines>
             <spans>        

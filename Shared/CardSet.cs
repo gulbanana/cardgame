@@ -5,6 +5,7 @@ namespace Cardgame.Shared
         Dominion2nd,        
         Intrigue2nd,
         Seaside,
+        Alchemy,
         Dominion1st,
         Intrigue1st,
     }

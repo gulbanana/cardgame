@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Dominion
 {
     public class Thief : AttackCardBase
     {
-        public override int Cost => 4;
+        public override Cost Cost => 4;
 
         public override string Text => @"<lines>
             <small>Each other player reveals the top 2 cards of their deck.</small>

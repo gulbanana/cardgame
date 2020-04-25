@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Intrigue
     public class Conspirator : ActionCardBase
     {
         public override string Art => "int-conspirator";
-        public override int Cost => 4;
+        public override Cost Cost => 4;
         
         public override string Text => @"<paras>
             <bold><sym prefix='+'>coin2</sym></bold>

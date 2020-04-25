@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Island : VictoryActionCardBase
     {
-        public override int Cost => 4;
+        public override Cost Cost => 4;
         public override int Score => 2;
         public override string HasMat => "IslandMat";
 

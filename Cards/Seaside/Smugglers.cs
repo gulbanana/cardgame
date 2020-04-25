@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Smugglers : ActionCardBase
     {
-        public override int Cost => 3;
+        public override Cost Cost => 3;
 
         public override string Text => @"<spans>
             <run>Gain a copy of a card costing up to</run>
@@ -16,7 +16,7 @@ namespace Cardgame.Cards.Seaside
 
         protected override async Task ActAsync(IActionHost host)
         {
-            var lastGains = host.Examine(Zone.RecentGains, host.GetPlayerToRight()).Where(c => c.GetCost(host) <= 6);
+            var lastGains = host.Examine(Zone.RecentGains, host.GetPlayerToRight()).Where(c => c.GetCost(host).LessThanOrEqual(6));
             
             if (lastGains.Count() == 1)
             {

@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Intrigue
     public class Baron : ActionCardBase
     {
         public override string Art => "int-baron";
-        public override int Cost => 4;
+        public override Cost Cost => 4;
 
         public override string Text => @"<paras>
             <bold>+1 Buy</bold>

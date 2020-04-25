@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Intrigue
     public class Replace : AttackCardBase
     {
         public override string Art => "int-replace";
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<small>
             <run>Trash a card from your hand. Gain a card costing up to</run>
@@ -23,7 +23,11 @@ namespace Cardgame.Cards.Intrigue
                 var cost = trashed.GetCost(host);
                 host.Trash(trashed);
 
-                var gained = await host.SelectCard("Choose a card to gain.", Zone.SupplyAvailable, card => card.GetCost(host) <= cost + 2);
+                var gained = await host.SelectCard(
+                    "Choose a card to gain.", 
+                    Zone.SupplyAvailable, 
+                    card => card.GetCost(host).LessThanOrEqual(cost.Plus(2))
+                );
                 if (gained != null)
                 {
                     if (gained.Types.Contains(CardType.Action) || gained.Types.Contains(CardType.Treasure))

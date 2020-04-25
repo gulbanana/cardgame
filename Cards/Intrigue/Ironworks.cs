@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Intrigue
     public class Ironworks : ActionCardBase
     {
         public override string Art => "int-ironworks";
-        public override int Cost => 4;
+        public override Cost Cost => 4;
 
         public override string Text => @"<paras>
             <lines>
@@ -35,7 +35,7 @@ namespace Cardgame.Cards.Intrigue
 
         protected override async Task ActAsync(IActionHost host)
         {
-            var gained = await host.SelectCard("Choose a card to gain.", Zone.SupplyAvailable, card => card.GetCost(host) <= 4);
+            var gained = await host.SelectCard("Choose a card to gain.", Zone.SupplyAvailable, card => card.GetCost(host).LessThanOrEqual(4));
             host.Gain(gained);
 
             if (gained is IActionCard) host.AddActions(1);

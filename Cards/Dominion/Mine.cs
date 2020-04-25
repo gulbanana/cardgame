@@ -7,7 +7,7 @@ namespace Cardgame.Cards.Dominion
     public class Mine : ActionCardBase
     {
         public override string Art => "dom-mine";
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"<spans>
             <run>You may trash a Treasure from your hand.</run>
@@ -34,7 +34,9 @@ namespace Cardgame.Cards.Dominion
                 var gainedCard = await host.SelectCard(
                     "Choose a Treasure to gain.", 
                     Zone.SupplyAvailable, 
-                    cards => cards.OfType<ITreasureCard>().Where(card => card.GetCost(modifiers) <= trashedCard.GetCost(modifiers) + 3)
+                    cards => cards
+                        .OfType<ITreasureCard>()
+                        .Where(card => card.GetCost(modifiers).LessThanOrEqual(trashedCard.GetCost(modifiers).Plus(3)))
                 );
 
                 host.Gain(gainedCard.Name, Zone.Hand);

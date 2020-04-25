@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class Outpost : ModifierDurationCardBase, IModifier
     {
-        public override int Cost => 5;
+        public override Cost Cost => 5;
 
         public override string Text => @"
             If this is the first time you played an Outpost this turn, and the previous turn wasn't yours, 

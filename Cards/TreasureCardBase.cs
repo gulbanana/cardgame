@@ -8,11 +8,11 @@ namespace Cardgame.Cards
     {
         public override CardType[] Types => new[] { CardType.Treasure };
         public override string Text => null;
-        public abstract int Value { get; }
+        public abstract Cost Value { get; }
 
-        public int GetValue(IModifier[] modifiers)
+        public Cost GetValue(IModifier[] modifiers)
         {
-            return Value + modifiers.Select(m => m.IncreaseTreasureValue(Name)).Sum();
+            return new Cost(Value.Coins + modifiers.Select(m => m.IncreaseTreasureValue(Name)).Sum(), Value.Potion);
         }
     }
 }

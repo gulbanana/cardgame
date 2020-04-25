@@ -6,7 +6,7 @@ namespace Cardgame.Cards.Seaside
 {
     public class PearlDiver : ActionCardBase
     {
-        public override int Cost => 2;
+        public override Cost Cost => 2;
 
         public override string Text => @"<paras>
             <lines>

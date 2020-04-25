@@ -106,10 +106,8 @@ namespace Cardgame.Server
 
                     Model.KingdomSet = configureGame.KingdomSet;
                     Model.KingdomPreset = configureGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
-                    Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
-                    Model.KingdomHasCurse = Model.KingdomCards.Any(All.Cards.UsesCurse);
-                    Model.KingdomGlobalMats = new[] { "TrashMat" };
-                    Model.KingdomPlayerMats = Model.KingdomCards.Select(All.Cards.ByName).SelectMany(card => card.HasMat != null ? new[] { card.HasMat } : new string[0]).ToArray();
+
+                    ConfigureKingdom();
 
                     break;
 
@@ -120,11 +118,8 @@ namespace Cardgame.Server
 
                     Model.KingdomSet = startGame.KingdomSet;
                     Model.KingdomPreset = startGame.KingdomPreset ?? All.Presets.BySet(Model.KingdomSet).Keys.First();
-                    Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
-                    Model.KingdomHasCurse = Model.KingdomCards.Any(All.Cards.UsesCurse);
-                    Model.KingdomGlobalMats = new[] { "TrashMat" };
-                    Model.KingdomPlayerMats = Model.KingdomCards.Select(All.Cards.ByName).SelectMany(card => card.HasMat != null ? new[] { card.HasMat } : new string[0]).ToArray();
 
+                    ConfigureKingdom();
                     BeginGame();
                     BeginBackgroundTask(Model.ActivePlayer, BeginTurnAsync);
 
@@ -180,7 +175,7 @@ namespace Cardgame.Server
                     if (Model.CurrentPhase > Phase.Buy) throw new CommandException("The Buy phase is over.");
 
                     var boughtCard = All.Cards.ByName(buyCard.Id);
-                    if (boughtCard.GetCost(Model) > Model.CoinsRemaining) throw new CommandException($"You don't have enough money to buy card {buyCard.Id}.");
+                    if (boughtCard.GetCost(Model).GreaterThan(Model.MaxCost())) throw new CommandException($"You don't have enough money to buy card {buyCard.Id}.");
 
                     BeginBackgroundTask(buyCard.Id, _ => BuyCardPhasedAsync(username, boughtCard));
 
@@ -276,6 +271,15 @@ namespace Cardgame.Server
             }
         }
 
+        private void ConfigureKingdom()
+        {
+            Model.KingdomCards = All.Presets.BySet(Model.KingdomSet)[Model.KingdomPreset];
+            Model.KingdomHasCurse = Model.KingdomCards.Any(All.Cards.UsesCurse);
+            Model.KingdomHasPotion = Model.KingdomCards.Select(All.Cards.ByName).Any(c => c.GetCost(Model).Potion);
+            Model.KingdomGlobalMats = new[] { "TrashMat" };
+            Model.KingdomPlayerMats = Model.KingdomCards.Select(All.Cards.ByName).SelectMany(card => card.HasMat != null ? new[] { card.HasMat } : new string[0]).ToArray();
+        }
+
         private async Task BuyCardPhasedAsync(string player, ICard card)
         {
             bool hasMore(CardType type) => Model.Hands[player].Select(All.Cards.ByName).Any(card => card.Types.Contains(type));
@@ -331,7 +335,9 @@ namespace Cardgame.Server
                 Model.CurrentPhase = Phase.Buy;
             }
 
-            Model.CoinsRemaining -= card.GetCost(Model);
+            var cost = card.GetCost(Model);
+            Model.CoinsRemaining -= cost.Coins;
+            if (cost.Potion) Model.PotionsRemaining--;
 
             if (--Model.BuysRemaining == 0)
             {
@@ -416,11 +422,12 @@ namespace Cardgame.Server
             
             if (type == CardType.Treasure)
             {
-                var sum = cards.Select(card => ((ITreasureCard)card).GetValue(Model)).Sum();
+                var coins = cards.Select(card => ((ITreasureCard)card).GetValue(Model).Coins).Sum();
+                var potions = cards.Where(card => ((ITreasureCard)card).GetValue(Model).Potion).Count();
                 LogPartialEvent($@"<spans>
                     <indent level='1' />
                     {LogVerbInitial(player, "get", "gets", "getting")}
-                    <run>+${sum}.</run>
+                    <run>+${coins}{(potions > 0 ? $" {potions}P" : "")}.</run>
                 </spans>");
             }
 
@@ -475,7 +482,8 @@ namespace Cardgame.Server
                 }
                 else if (card is ITreasureCard treasure)
                 {
-                    Model.CoinsRemaining += treasure.GetValue(Model);
+                    Model.CoinsRemaining += treasure.GetValue(Model).Coins;
+                    Model.PotionsRemaining += treasure.GetValue(Model).Potion ? 1 : 0;
                 }
                 else
                 {
@@ -520,6 +528,7 @@ namespace Cardgame.Server
             var rng = new Random();
 
             Model.Supply = All.Cards.Base().Concat(Model.KingdomCards).ToDictionary(id => id, id => Model.GetInitialSupply(id));
+            if (Model.KingdomHasPotion) Model.Supply["Potion"] = Model.GetInitialSupply("Potion");
             Model.SupplyTokens = Model.Supply.Keys.ToDictionary(k => k, _ => new string[0]);
             Model.ActiveEffects = new List<string>();
             Model.PreventedAttacks = new HashSet<string>();
@@ -567,6 +576,7 @@ namespace Cardgame.Server
             Model.ActionsRemaining = 1;
             Model.BuysRemaining = 1;
             Model.CoinsRemaining = 0;
+            Model.PotionsRemaining = 0;
             Model.CurrentPhase = Phase.Action;
             Model.PlayedLastTurn = new HashSet<Instance>(Model.PlayedCards[player]);
 
