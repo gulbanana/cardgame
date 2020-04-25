@@ -17,10 +17,10 @@ namespace Cardgame.Cards.Seaside
             for (var i = 0; i < cards.Length; i += 2)
             {                
                 builder.AppendLine("<spans>");
-                builder.AppendLine(All.Cards.ByName(cards[i]).Text);
+                builder.AppendLine(AllCards.ByName(cards[i]).Text);
                 if (cards.Length > i+1)
                 {
-                    builder.AppendLine(All.Cards.ByName(cards[i+1]).Text);
+                    builder.AppendLine(AllCards.ByName(cards[i+1]).Text);
                 }
                 builder.AppendLine("</spans>");                
             }

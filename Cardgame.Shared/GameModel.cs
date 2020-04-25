@@ -60,19 +60,5 @@ namespace Cardgame.Shared
         public string ChoicePrompt { get; set; }
         public ChoiceType ChoiceType { get; set; }
         public string ChoiceInput { get; set; }
-
-        public int GetInitialSupply(string card)
-        {
-            var victoryCount = Players.Length == 2 ? 8 : 12;
-            return card switch
-            {
-                "Copper" => 60 - (Players.Length * 7),
-                "Silver" => 40,
-                "Gold" => 30,
-                "Curse" => (Players.Length - 1) * 10,
-                "Potion" => 16,
-                string id => All.Cards.ByName(id).Types.Contains(API.CardType.Victory) ? victoryCount : 10
-            };
-        }
     }
 }

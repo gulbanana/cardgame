@@ -21,7 +21,7 @@ namespace Cardgame.Cards
                 }
                 else if (triggerType == Trigger.PlayCard)
                 {
-                    var card = All.Cards.ByName(triggerParameter);
+                    var card = AllCards.ByName(triggerParameter);
                     return Task.FromResult(Reaction.BeforeAndAfter(() =>
                     {
                         OnBeforePlayCard(host, card);

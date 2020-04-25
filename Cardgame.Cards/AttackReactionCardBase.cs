@@ -12,7 +12,7 @@ namespace Cardgame.Cards
         protected sealed override async Task<Reaction> ReactAsync(IActionHost host, string trigger)
         {
             if (!host.IsActive && 
-                All.Cards.ByName(trigger).Types.Contains(CardType.Attack) && 
+                AllCards.ByName(trigger).Types.Contains(CardType.Attack) && 
                 await host.YesNo(Name, $@"<run>Reveal</run><card>{Name}</card><run>from your hand?</run>"))
             {
                 host.Reveal(Name);

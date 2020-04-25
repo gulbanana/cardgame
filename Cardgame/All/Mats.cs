@@ -13,7 +13,7 @@ namespace Cardgame.All
             byName = new Dictionary<string, IMat>();
 
             var baseType = typeof(IMat);
-            var types = typeof(Cards).Assembly.GetTypes()
+            var types = typeof(Cardgame.Cards.MatBase).Assembly.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
                 .Where(t => baseType.IsAssignableFrom(t));

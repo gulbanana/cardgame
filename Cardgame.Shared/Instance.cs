@@ -89,9 +89,4 @@ namespace Cardgame.Shared
             JsonSerializer.Serialize<Dictionary<string, T>>(writer, proxyValue, options);
         }
     }
-
-    public class InstanceBox
-    {
-        public Instance Value { get; set; }
-    }
 }

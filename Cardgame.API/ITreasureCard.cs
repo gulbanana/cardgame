@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Cardgame.Shared;
 
 namespace Cardgame.API
 {
@@ -25,7 +24,6 @@ namespace Cardgame.API
             }
         }
 
-        public static Cost? GetModifiedValue(this ITreasureCard card, GameModel modifierSource) => card.GetModifiedValue(modifierSource.GetModifiers());        
         public static Cost? GetModifiedValue(this ITreasureCard card, IActionHost modifierSource) => card.GetModifiedValue(modifierSource.GetModifiers());        
     }
 }

@@ -25,7 +25,7 @@ namespace Cardgame.Server
 
         public override void Attach(string card, Zone from)
         {
-            engine.MoveCard(Player, card, from, Zone.Attached(Card));
+            engine.MoveCard(Player, card, from, new Zone(ZoneName.Attached, Card));
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
@@ -37,7 +37,7 @@ namespace Cardgame.Server
 
         public override void Detach(Zone to)
         {
-            engine.MoveCard(Player, null, Zone.Attached(Card), to);
+            engine.MoveCard(Player, null, new Zone(ZoneName.Attached, Card), to);
 
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />

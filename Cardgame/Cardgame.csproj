@@ -1,12 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <NoWarn>1998;8509</NoWarn>
+    <NoWarn>8509</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.435" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="3.8.3" />
+    <ProjectReference Include="../Cardgame.Cards/Cardgame.Cards.csproj" />
+    <ProjectReference Include="../Cardgame.Shared/Cardgame.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

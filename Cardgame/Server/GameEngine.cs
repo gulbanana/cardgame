@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Cardgame.All;
 using Cardgame.API;
 using Cardgame.Shared;
 
@@ -14,6 +15,7 @@ namespace Cardgame.Server
         private readonly HashSet<string> bots;
         private readonly Dictionary<string, TurnRecord> lastTurn;
         private readonly Dictionary<string, int> turnNumbers;
+        private readonly Dictionary<int, Instance> stashes;
         private TaskCompletionSource<string> inputTCS;
 
         internal int ActionsThisTurn { get; private set; }
@@ -26,6 +28,7 @@ namespace Cardgame.Server
             bots = new HashSet<string>();
             lastTurn = new Dictionary<string, TurnRecord>();
             turnNumbers = new Dictionary<string, int>();
+            stashes = new Dictionary<int, Instance>();
 
             Model = new GameModel();
             Model.EventLog = new List<string>();
@@ -806,8 +809,9 @@ namespace Cardgame.Server
                     instance = Model.PlayerMatCards[player][fromMat].ExtractLast(id);
                     break;
 
-                case ZoneName.Stash when from.Param is InstanceBox box:
-                    instance = box.Value;
+                case ZoneName.Stash when from.Param is int stashID:
+                    instance = stashes[stashID];
+                    stashes.Remove(stashID);
                     break;
 
                 case ZoneName.Supply:
@@ -856,8 +860,8 @@ namespace Cardgame.Server
                     Model.PlayerMatCards[player][toMat].Add(instance);
                     break;
 
-                case ZoneName.Stash when to.Param is InstanceBox box:
-                    box.Value = instance;
+                case ZoneName.Stash when to.Param is int stashID:
+                    stashes[stashID] = instance;
                     break;
 
                 case ZoneName.Supply:

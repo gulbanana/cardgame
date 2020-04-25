@@ -1,11 +1,11 @@
 using System;
-using Cardgame.Shared;
 
 namespace Cardgame.API
 {
     public struct Zone : IEquatable<Zone>
     {
-        public static Zone Attached(Instance instance) => new Zone(ZoneName.Attached, instance);
+        private static int stashCounter;
+
         public static Zone Create = new Zone(ZoneName.Create);
         public static Zone Deck = new Zone(ZoneName.Deck);
         public static Zone DeckBottom = new Zone(ZoneName.DeckBottom);
@@ -17,7 +17,7 @@ namespace Cardgame.API
         public static Zone RecentBuys => new Zone(ZoneName.RecentBuys);
         public static Zone RecentGains => new Zone(ZoneName.RecentGains);
         public static Zone RecentPlays => new Zone(ZoneName.RecentPlays);
-        public static Zone Stash() => new Zone(ZoneName.Stash, new InstanceBox());
+        public static Zone Stash() => new Zone(ZoneName.Stash, stashCounter++);
         public static Zone SupplyAll = new Zone(ZoneName.Supply, (includeAvailable: true, includeEmpty: true));
         public static Zone SupplyAvailable = new Zone(ZoneName.Supply, (includeAvailable: true, includeEmpty: false));
         public static Zone SupplyEmpty = new Zone(ZoneName.Supply, (includeAvailable: false, includeEmpty: true));
@@ -27,7 +27,8 @@ namespace Cardgame.API
         public ZoneName Name { get; }
         public object Param { get; }
 
-        private Zone(ZoneName name, object param)
+        // XXX should be private, but Attach zones are constructed with a .Shared param - model data is being passed through the API from actionhost to gameengine
+        public Zone(ZoneName name, object param)
         {
             Name = name;
             Param = param;
