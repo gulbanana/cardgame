@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Cardgame.Shared
+namespace Cardgame.Model
 {
     public struct Instance
     {

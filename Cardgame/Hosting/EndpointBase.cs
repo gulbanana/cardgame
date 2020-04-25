@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using Cardgame.Shared;
+using Cardgame.Model;
 
 namespace Cardgame.Hosting
 {

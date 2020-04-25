@@ -5,6 +5,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../Cardgame.Cards/Cardgame.Cards.csproj" />
-    <ProjectReference Include="../Cardgame.Shared/Cardgame.Shared.csproj" />
+    <ProjectReference Include="../Cardgame.Model/Cardgame.Model.csproj" />
   </ItemGroup>
 </Project>

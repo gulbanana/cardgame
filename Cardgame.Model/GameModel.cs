@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Cardgame.Shared
+namespace Cardgame.Model
 {
     public class GameModel
     {

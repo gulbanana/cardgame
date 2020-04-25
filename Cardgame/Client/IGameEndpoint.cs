@@ -1,4 +1,4 @@
-using Cardgame.Shared;
+using Cardgame.Model;
 
 namespace Cardgame.Client
 {

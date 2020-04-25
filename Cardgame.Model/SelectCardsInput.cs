@@ -1,4 +1,4 @@
-namespace Cardgame.Shared
+namespace Cardgame.Model
 {
     public class SelectCardsInput
     {

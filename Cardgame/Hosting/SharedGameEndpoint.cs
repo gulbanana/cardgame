@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cardgame.Client;
-using Cardgame.Shared;
+using Cardgame.Model;
 using Cardgame.Server;
 
 namespace Cardgame.Hosting

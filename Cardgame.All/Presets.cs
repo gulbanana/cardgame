@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cardgame.API;
-using Cardgame.Shared;
+using Cardgame.Model;
 
 namespace Cardgame.All
 {

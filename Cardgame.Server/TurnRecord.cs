@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Cardgame.Shared;
+using Cardgame.Model;
 
 namespace Cardgame.Server
 {

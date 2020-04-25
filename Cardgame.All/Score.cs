@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using Cardgame.API;
 using Cardgame.Cards.Base;
-using Cardgame.Shared;
+using Cardgame.Model;
 
 namespace Cardgame.All
 {
