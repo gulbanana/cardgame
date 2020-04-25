@@ -31,11 +31,6 @@
     justify-content: center;
 }
 
-.board-view__played-cards__scrolling-wrapper {
-    overflow-x: auto;
-    scroll-behavior: smooth;
-}
-
 .board-view__played-cards__cards-and-choice {
     width: 100%;
     display: grid;
@@ -43,7 +38,7 @@
     grid-template-rows: auto auto;
 }
 
-.board-view__choice {
+.board-view__played-cards__choice {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;

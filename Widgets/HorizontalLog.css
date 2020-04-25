@@ -1,0 +1,4 @@
+.horizontal-log {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+}

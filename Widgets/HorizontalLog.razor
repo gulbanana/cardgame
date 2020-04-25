@@ -1,0 +1,18 @@
+@inject IJSRuntime JS
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Type { get; set; }
+    private ElementReference containerElement;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("HorizontalLog.observeAdditions", containerElement);
+        }
+    }
+}
+
+<div class="horizontal-log" @ref="containerElement">
+    @ChildContent
+</div>

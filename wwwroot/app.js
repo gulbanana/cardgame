@@ -13,6 +13,17 @@ var FlashBorder;
     }
     FlashBorder.removeClass = removeClass;
 })(FlashBorder || (FlashBorder = {}));
+var HorizontalLog;
+(function (HorizontalLog) {
+    function observeAdditions(container) {
+        let config = { childList: true, subtree: true };
+        let observer = new MutationObserver((muts, o) => {
+            container.scrollLeft = (container.scrollWidth - container.clientWidth);
+        });
+        observer.observe(container, config);
+    }
+    HorizontalLog.observeAdditions = observeAdditions;
+})(HorizontalLog || (HorizontalLog = {}));
 var MainLayout;
 (function (MainLayout) {
     function maintainFixedHeight(element) {
