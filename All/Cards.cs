@@ -42,7 +42,7 @@ namespace Cardgame.All
             }
 
             // XXX build from models?
-            _Cursers = new[] { "Witch", "Torturer", "Replace", "Embargo" };
+            _Cursers = new[] { "Witch", "Torturer", "Replace", "Embargo", "SeaHag" };
         }
 
         public static ICard ByName(string id)
