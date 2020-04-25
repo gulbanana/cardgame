@@ -1,4 +1,4 @@
-namespace Cardgame.Choices
+namespace Cardgame.Shared
 {
     public class SelectCardsInput
     {

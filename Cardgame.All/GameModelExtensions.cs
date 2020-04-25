@@ -5,6 +5,7 @@ using Cardgame.Shared;
 
 namespace Cardgame.All
 {
+    // XXX these functions use types from both Shared and API, and are needed both by Client and by Server; for a small amount of shared code we have a lot of coupling
     public static class GameModelExtensions
     {        
         public static Cost MaxCost(this GameModel model)

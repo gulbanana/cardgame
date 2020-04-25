@@ -10,7 +10,7 @@ using Cardgame.Shared;
 
 namespace Cardgame.Server
 {
-    internal class GameEngine
+    public class GameEngine
     {
         private readonly HashSet<string> bots;
         private readonly Dictionary<string, TurnRecord> lastTurn;
