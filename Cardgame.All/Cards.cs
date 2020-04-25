@@ -18,7 +18,7 @@ namespace Cardgame.All
             bySet = new Dictionary<string, CardSet?>();
 
             var baseType = typeof(ICard);
-            var types = typeof(Cards).Assembly.GetTypes()
+            var types = typeof(Cardgame.Cards.CardBase).Assembly.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
                 .Where(t => baseType.IsAssignableFrom(t));

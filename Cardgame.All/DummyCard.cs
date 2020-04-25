@@ -2,7 +2,7 @@ using Cardgame.API;
 
 namespace Cardgame.All
 {
-    public class DummyCard : ICard
+    internal class DummyCard : ICard
     {
         public string Name { get; }
         public CardType[] Types => new[] { CardType.Curse };
