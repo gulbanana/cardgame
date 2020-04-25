@@ -16,7 +16,6 @@ namespace Cardgame.Server
         private readonly Dictionary<string, int> turnNumbers;
         private TaskCompletionSource<string> inputTCS;
 
-        internal readonly HashSet<Instance> IncompleteDurations;
         internal int ActionsThisTurn { get; private set; }
 
         public readonly GameModel Model;
@@ -27,7 +26,6 @@ namespace Cardgame.Server
             bots = new HashSet<string>();
             lastTurn = new Dictionary<string, TurnRecord>();
             turnNumbers = new Dictionary<string, int>();
-            IncompleteDurations = new HashSet<Instance>();
 
             Model = new GameModel();
             Model.EventLog = new List<string>();
@@ -418,7 +416,7 @@ namespace Cardgame.Server
                 var card = All.Cards.ByName(id);
                 if (card.Types.Contains(CardType.Duration))
                 {
-                    IncompleteDurations.Add(played);
+                    Model.PlayedWithDuration.Add(played);
                 }
 
                 if (card is IActionCard action)
@@ -496,6 +494,8 @@ namespace Cardgame.Server
             Model.Hands = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.Discards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
             Model.PlayedCards = Model.Players.ToDictionary(k => k, _ => new List<Instance>());
+            Model.PlayedWithDuration = new HashSet<Instance>();
+            Model.PlayedLastTurn = new HashSet<Instance>();
             Model.MatCards = Model.KingdomGlobalMats.ToDictionary(k => k, _ => new List<Instance>());
             Model.PlayerMatCards = Model.Players.ToDictionary(k => k, k => Model.KingdomPlayerMats.ToDictionary(k2 => k2, _ => new List<Instance>()));
             Model.Attachments = new Dictionary<Instance, Instance>();
@@ -535,7 +535,7 @@ namespace Cardgame.Server
             Model.BuysRemaining = 1;
             Model.CoinsRemaining = 0;
             Model.BuyPhase = false;
-            Model.ContinuingDurationCards = new HashSet<Instance>(Model.PlayedCards[player]);
+            Model.PlayedLastTurn = new HashSet<Instance>(Model.PlayedCards[player]);
 
             LogEvent($@"<bold>
                 <spans>
@@ -584,7 +584,7 @@ namespace Cardgame.Server
             foreach (var instance in inPlay.ToList())
             {
                 var card = All.Cards.ByName(instance);
-                if (!card.Types.Contains(CardType.Duration) || !IncompleteDurations.Contains(instance))
+                if (!card.Types.Contains(CardType.Duration) || !Model.PlayedWithDuration.Contains(instance))
                 {
                     var reactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
                     await Act(1, player, Trigger.DiscardCard, instance.Id, () =>

@@ -23,31 +23,27 @@
     align-items: center;
 }
 
-.board-view__played-cards {
+.board-view__played-cards__centering-wrapper {
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 100%;
+    
+    overflow-x: auto;
+    scroll-behavior: smooth;
 }
 
 .board-view__played-cards__centered-row {
+    width: 100%;
     display: grid;
     grid-template-columns: 50% 50%;
     grid-template-rows: auto auto;
-    grid-column-gap: var(--std-gap);
-    width: 100%;
-}
-
-.board-view__played-cards__centered-row__actual-played-cards {
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    padding-top: 8px;
-    margin-top: -8px;
 }
 
 .board-view__choice {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    z-index: 1; /* to go above magnify... */
+    margin-left: var(--std-gap);
 }

@@ -20,7 +20,7 @@ namespace Cardgame.Server
 
         public override void CompleteDuration()
         {
-            engine.IncompleteDurations.Remove(Card);
+            engine.Model.PlayedWithDuration.Remove(Card);
         }
 
         public override void Attach(string card, Zone from)

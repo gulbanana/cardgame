@@ -1,0 +1,58 @@
+@code {
+    [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
+
+    IEnumerable<Instance> lastTurnCards;
+    IEnumerable<Instance> lastTurnNonDurations;
+    IEnumerable<Instance> thisTurnCards;
+    IEnumerable<Instance> thisTurnNonDurations;
+    Instance? latestCard;
+    IEnumerable<Instance> nonLatestDurations;
+    IEnumerable<Instance> nonLatestThisTurnNonDurations;
+
+    protected override void OnParametersSet()
+    {
+        lastTurnCards = Model.PlayedCards[Model.ActivePlayer].Where(Model.PlayedLastTurn.Contains);
+        lastTurnNonDurations = lastTurnCards.Except(Model.PlayedWithDuration);
+        thisTurnCards = Model.PlayedCards[Model.ActivePlayer].Except(Model.PlayedLastTurn);
+        thisTurnNonDurations = thisTurnCards.Except(Model.PlayedWithDuration);
+        latestCard = thisTurnCards.Any() ? thisTurnCards.Last() : default(Instance?);
+        nonLatestDurations = Model.PlayedWithDuration.Except(latestCard.HasValue ? new[] { latestCard.Value } : Array.Empty<Instance>() );
+        nonLatestThisTurnNonDurations = thisTurnNonDurations.Except(latestCard.HasValue ? new[] { latestCard.Value } : Array.Empty<Instance>() );
+    }
+}
+
+<div class="played-view" style="@(nonLatestDurations.Any() ? "--zoom-scale: 2.0" : "")">
+    <div style="grid-area: durations" class="played-view__cards">
+        @foreach (var instance in nonLatestDurations)
+        {
+            var stack = Model.Attachments.ContainsKey(instance) ? 2 : 1;
+            <ActiveCard Id="@instance.Id" Stack="stack" />
+        }
+    </div>
+    <div style="grid-area: previous-plays" class="played-view__cards">
+        @foreach (var instance in lastTurnNonDurations)
+        {
+            var stack = Model.Attachments.ContainsKey(instance) ? 2 : 1;
+            <ActiveCard Id="@instance.Id" Stack="stack" />
+        }
+        @if (lastTurnNonDurations.Any() && thisTurnNonDurations.Any())
+        {
+            <div class="played-view__cards__separator" />
+        }
+    </div>
+    <div style="grid-area: current-plays" class="played-view__cards">
+        @foreach (var instance in nonLatestThisTurnNonDurations)
+        {
+            var stack = Model.Attachments.ContainsKey(instance) ? 2 : 1;
+            <ActiveCard Id="@instance.Id" Stack="stack" />
+        }
+    </div>
+    <div style="grid-area: last-play;" class="played-view__cards__onecard">
+        @if (latestCard.HasValue)
+        {
+            var instance = latestCard.Value;
+            var stack = Model.Attachments.ContainsKey(instance) ? 2 : 1;
+            <ActiveCard @key="instance.Id" Id="@instance.Id" Stack="stack" Large="true" />
+        }
+    </div>
+</div>

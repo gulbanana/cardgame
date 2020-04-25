@@ -1,0 +1,30 @@
+.played-view {
+    justify-self: center;
+    display: grid;
+    grid-template-areas: '. durations      durations     last-play .'
+                         '. previous-plays current-plays last-play .';
+    grid-template-columns: 1fr max-content max-content max-content 1fr;
+    grid-template-rows: auto auto;
+    grid-row-gap: var(--std-gap);
+}
+
+.played-view__cards {
+    display: flex;
+}
+
+.played-view__cards > * {
+    margin-right: var(--std-gap);
+}
+
+.played-view__cards__onecard {
+    align-self: center;
+}
+
+.played-view__cards__separator {
+    border-left: 1px; 
+    border-right: 1px; 
+    border-style: dashed; 
+    border-color: black; 
+    width: 2px; 
+    height: var(--card-height);
+}

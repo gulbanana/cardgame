@@ -1,11 +1,4 @@
 "use strict";
-var ActiveCard;
-(function (ActiveCard) {
-    function scrollIntoView(content) {
-        content.scrollIntoView();
-    }
-    ActiveCard.scrollIntoView = scrollIntoView;
-})(ActiveCard || (ActiveCard = {}));
 var FadeIn;
 (function (FadeIn) {
     function removeClass(element) {
@@ -69,9 +62,9 @@ var WithTooltip;
         if (element.parentElement.id != "with-tooltip__holder") {
             element.oldParent = element.parentElement;
             let holder = document.querySelector("#with-tooltip__holder");
-            let existingChild = holder.firstChild;
+            let existingChild = holder.firstElementChild;
             if (existingChild != null) {
-                existingChild.oldParent.appendChild(element);
+                deposition(existingChild);
             }
             holder.appendChild(element);
         }

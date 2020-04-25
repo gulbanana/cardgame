@@ -1,4 +1,3 @@
-@inject IJSRuntime JS
 @code {
     [CascadingParameter(Name = "Current")] public GameModel Game { get; set; }
     [Parameter] public string Id { get; set; }
@@ -9,7 +8,6 @@
     [Parameter] public bool Large { get; set; }
     [Parameter] public int Stack { get; set; }
     [Parameter] public string OverrideColour { get; set; }
-    [Parameter] public bool KeepVisible { get; set; }
     private int cost;
     private CardSet? set;
     ElementReference contentElement;
@@ -27,14 +25,6 @@
 
         cost = Model.GetCost(Game);
         set = All.Cards.GetSet(Id);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (Large && KeepVisible)
-        {
-            await JS.InvokeVoidAsync("ActiveCard.scrollIntoView", contentElement);
-        }
     }
 
     private void OnClick()

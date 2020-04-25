@@ -42,7 +42,8 @@ namespace Cardgame.Shared
         public Dictionary<Instance, Instance> Attachments { get; set; }
 
         // turn state    
-        public HashSet<Instance> ContinuingDurationCards { get; set; }
+        public HashSet<Instance> PlayedWithDuration { get; set; }
+        public HashSet<Instance> PlayedLastTurn { get; set; }
         public List<string> ActiveEffects { get; set; }
         public bool ExecutingBackgroundTasks { get; set; }
         public bool BuyPhase { get; set; }

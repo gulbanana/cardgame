@@ -29,9 +29,9 @@ namespace WithTooltip {
             (element as any).oldParent = element.parentElement;
 
             let holder = document.querySelector("#with-tooltip__holder");
-            let existingChild = holder.firstChild;
+            let existingChild = holder.firstElementChild;
             if (existingChild != null) {
-                (existingChild as any).oldParent.appendChild(element);
+                deposition(existingChild as HTMLElement);
             }
 
             holder.appendChild(element);
