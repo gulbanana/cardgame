@@ -29,15 +29,17 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    
+}
+
+.board-view__played-cards__scrolling-wrapper {
     overflow-x: auto;
     scroll-behavior: smooth;
 }
 
-.board-view__played-cards__centered-row {
+.board-view__played-cards__cards-and-choice {
     width: 100%;
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 1fr minmax(50%, 1fr);
     grid-template-rows: auto auto;
 }
 

@@ -42,22 +42,24 @@
     </p>
 
     <div style="grid-area: played-cards; display: grid;">
-        <div class="board-view__played-cards__centering-wrapper">
-            <div class="board-view__played-cards__centered-row">
-                <div style="grid-column: @(SomeoneVisibleChoosing ? "1/2" : "1/3")">
-                    <PlayedView />
-                </div>
-
-                @if (AnyoneChoosing && SomeoneVisibleChoosing)
-                {
-                    <div style="grid-column: 2/3" class="board-view__choice">
-                        <ActiveChoice Enabled="@Model.ChoosingPlayers.Peek().Equals(Session.Username)"
-                                    Action="@(output => Dispatch(new EnterChoiceCommand { Output = output }))"
-                                    Prompt="@Model.ChoicePrompt"
-                                    Type="@Model.ChoiceType"
-                                    Input="@Model.ChoiceInput" />
+        <div class="board-view__played-cards__scrolling-wrapper">
+            <div class="board-view__played-cards__centering-wrapper">
+                <div class="board-view__played-cards__cards-and-choice">
+                    <div style="grid-column: @(SomeoneVisibleChoosing ? "1/2" : "1/3")">
+                        <PlayedView />
                     </div>
-                }
+
+                    @if (AnyoneChoosing && SomeoneVisibleChoosing)
+                    {
+                        <div style="grid-column: 2/3" class="board-view__choice">
+                            <ActiveChoice Enabled="@Model.ChoosingPlayers.Peek().Equals(Session.Username)"
+                                        Action="@(output => Dispatch(new EnterChoiceCommand { Output = output }))"
+                                        Prompt="@Model.ChoicePrompt"
+                                        Type="@Model.ChoiceType"
+                                        Input="@Model.ChoiceInput" />
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
