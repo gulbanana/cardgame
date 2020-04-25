@@ -50,6 +50,10 @@ namespace Cardgame.All
             preset2("A Star to Steer By", CardSet.Seaside, CardSet.Intrigue2nd, "SecretPassage", "Diplomat", "Swindler", "WishingWell", "Courtier", "Lookout", "TreasureMap", "GhostShip", "Haven", "Outpost");
             preset2("Shore Patrol", CardSet.Seaside, CardSet.Intrigue2nd, "Patrol", "Replace", "ShantyTown", "TradingPost", "Pawn", "Island", "Wharf", "Cutpurse", "Lighthouse", "Warehouse");
             preset2("Bridge Crossing", CardSet.Seaside, CardSet.Intrigue2nd, "Lurker", "Nobles", "Duke", "Conspirator", "Bridge", "Salvager", "Embargo", "Smugglers", "NativeVillage", "Treasury");
+
+            preset2("Forbidden Arts", CardSet.Alchemy, CardSet.Dominion2nd, "Apprentice", "Familiar", "Possession", "University", "Bandit", "Cellar", "CouncilRoom", "Gardens", "Laboratory", "ThroneRoom");
+            preset2("Potion Mixers", CardSet.Alchemy, CardSet.Dominion2nd, "Alchemist", "Apothecary", "Golem", "Herbalist", "Transmute", "Cellar", "Festival", "Militia", "Poacher", "Smithy");
+            preset2("Chemistry Lesson", CardSet.Alchemy, CardSet.Dominion2nd, "Alchemist", "Golem", "Philosopher_sStone", "University", "Bureaucrat", "Market", "Moat", "Remodel", "Vassal", "Witch");
         }
 
         public static IReadOnlyDictionary<string, string[]> BySet(CardSet set)
