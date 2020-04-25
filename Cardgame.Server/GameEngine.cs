@@ -543,8 +543,8 @@ namespace Cardgame.Server
         {
             var rng = new Random();
 
-            Model.Supply = All.Cards.Base().Concat(Model.KingdomCards).ToDictionary(id => id, id => Model.GetInitialSupply(id));
-            if (Model.KingdomHasPotion) Model.Supply["Potion"] = Model.GetInitialSupply("Potion");
+            Model.Supply = All.Cards.Base().Concat(Model.KingdomCards).ToDictionary(id => id, id => Supply.GetInitialCount(Model.Players.Length, id));
+            if (Model.KingdomHasPotion) Model.Supply["Potion"] = Supply.GetInitialCount(Model.Players.Length, "Potion");
             Model.SupplyTokens = Model.Supply.Keys.ToDictionary(k => k, _ => new string[0]);
             Model.ActiveEffects = new List<string>();
             Model.PreventedAttacks = new HashSet<string>();

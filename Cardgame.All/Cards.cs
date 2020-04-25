@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Cardgame.API;
 using Cardgame.Model;
 
@@ -16,9 +17,12 @@ namespace Cardgame.All
         {
             byName = new Dictionary<string, ICard>();
             bySet = new Dictionary<string, CardSet?>();
+        }
 
+        public static void Init(Assembly implementations)
+        {
             var baseType = typeof(ICard);
-            var types = typeof(Cardgame.Cards.CardBase).Assembly.GetTypes()
+            var types = implementations.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
                 .Where(t => baseType.IsAssignableFrom(t));

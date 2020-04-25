@@ -16,6 +16,11 @@ namespace Cardgame
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            var cardImplementations = typeof(Cardgame.Cards.CardBase).Assembly;
+            All.Cards.Init(cardImplementations);
+            All.Effects.Init(cardImplementations);
+            All.Mats.Init(cardImplementations);
         }
 
         public void ConfigureServices(IServiceCollection services)

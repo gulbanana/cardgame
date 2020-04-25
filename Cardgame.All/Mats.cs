@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Cardgame.API;
 
 namespace Cardgame.All
@@ -11,9 +12,12 @@ namespace Cardgame.All
         static Mats()
         {
             byName = new Dictionary<string, IMat>();
+        }
 
+        public static void Init(Assembly implementations)
+        {
             var baseType = typeof(IMat);
-            var types = typeof(Cardgame.Cards.MatBase).Assembly.GetTypes()
+            var types = implementations.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
                 .Where(t => baseType.IsAssignableFrom(t));

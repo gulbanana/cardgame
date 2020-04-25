@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Cardgame.API;
 
 namespace Cardgame.All
@@ -11,9 +12,12 @@ namespace Cardgame.All
         static Effects()
         {
             byName = new Dictionary<string, IEffect>();
+        }
 
+        public static void Init(Assembly implementations)
+        {
             var baseType = typeof(IEffect);
-            var types = typeof(Cardgame.Cards.EffectBase).Assembly.GetTypes()
+            var types = implementations.GetTypes()
                 .Where(t => t.IsPublic)
                 .Where(t => !t.IsAbstract)
                 .Where(t => baseType.IsAssignableFrom(t));

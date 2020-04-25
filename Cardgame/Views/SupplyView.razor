@@ -37,22 +37,22 @@
     else
     {
         <div class="supply-view__victory supply-view__sidebar">        
-            <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Province")" Id="Province" />
-            <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Duchy")" Id="Duchy" />
-            <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Estate")" Id="Estate" />
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Supply.GetInitialCount(Model.Players.Length, "Province"))" Id="Province" />
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Supply.GetInitialCount(Model.Players.Length, "Duchy"))" Id="Duchy" />
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Supply.GetInitialCount(Model.Players.Length, "Estate"))" Id="Estate" />
             @if (Model.KingdomHasCurse)
             {
-                <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Curse")" Id="Curse" />
+                <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Supply.GetInitialCount(Model.Players.Length, "Curse"))" Id="Curse" />
             }            
         </div>
 
         <div class="supply-view__treasure supply-view__sidebar">
-            <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Gold")" Id="Gold" />
-            <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Silver")" Id="Silver" />
-            <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Copper")" Id="Copper" />
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Supply.GetInitialCount(Model.Players.Length, "Gold"))" Id="Gold" />
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Supply.GetInitialCount(Model.Players.Length, "Silver"))" Id="Silver" />
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Supply.GetInitialCount(Model.Players.Length, "Copper"))" Id="Copper" />
             @if (Model.KingdomHasPotion)
             {
-                <ActiveCard Enabled="false" Size="Size.Third" Stack="@Model.GetInitialSupply("Potion")" Id="Potion" />
+                <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Supply.GetInitialCount(Model.Players.Length, "Potion"))" Id="Potion" />
             }
         </div>
 
@@ -65,7 +65,7 @@
                 }
                 else
                 {
-                    <ActiveCard @key="Model.KingdomCards[i]" Id="@Model.KingdomCards[i]" Stack="@Model.GetInitialSupply(Model.KingdomCards[i])" Enabled="false" Size="Size.Half" />
+                    <ActiveCard @key="Model.KingdomCards[i]" Id="@Model.KingdomCards[i]" Stack="@(Supply.GetInitialCount(Model.Players.Length, Model.KingdomCards[i]))" Enabled="false" Size="Size.Half" />
                 }                
             }
         </div>

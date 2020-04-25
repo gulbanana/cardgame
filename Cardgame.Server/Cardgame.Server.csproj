@@ -4,8 +4,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Cardgame.API/Cardgame.API.csproj" />
-    <ProjectReference Include="../Cardgame.Model/Cardgame.Model.csproj" />
     <ProjectReference Include="../Cardgame.All/Cardgame.All.csproj" />
   </ItemGroup>
 </Project>

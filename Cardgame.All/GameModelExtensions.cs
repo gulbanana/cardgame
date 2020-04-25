@@ -13,20 +13,6 @@ namespace Cardgame.All
             return new Cost(model.CoinsRemaining, model.PotionsRemaining > 0);
         }
 
-        public static int GetInitialSupply(this GameModel model, string card)
-        {
-            var victoryCount = model.Players.Length == 2 ? 8 : 12;
-            return card switch
-            {
-                "Copper" => 60 - (model.Players.Length * 7),
-                "Silver" => 40,
-                "Gold" => 30,
-                "Curse" => (model.Players.Length - 1) * 10,
-                "Potion" => 16,
-                string id => All.Cards.ByName(id).Types.Contains(API.CardType.Victory) ? victoryCount : 10
-            };
-        }
-
         public static IModifier[] GetModifiers(this GameModel model)
         {
             if (!model.IsStarted)

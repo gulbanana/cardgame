@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Cardgame.API;
-using Cardgame.Cards.Base;
 using Cardgame.Model;
 
 namespace Cardgame.All
@@ -34,7 +33,7 @@ namespace Cardgame.All
                     total += score;
                     subtotals.Add((group.Key, group.Count(), score));
                 }
-                var curseCards = dominion.Select(All.Cards.ByName).OfType<Curse>();
+                var curseCards = dominion.Select(All.Cards.ByName).Where(card => card.Types.Contains(CardType.Curse));
                 if (curseCards.Any())
                 {
                     var score = curseCards.Count();
