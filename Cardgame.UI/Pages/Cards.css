@@ -1,0 +1,7 @@
+.cards__set {
+    display: flex;
+}
+
+.cards__set > * {
+    margin-right: calc(5px * var(--zoom-scale));
+}

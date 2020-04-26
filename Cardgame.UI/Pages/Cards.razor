@@ -10,26 +10,36 @@
     }
 }
 
-<Padded>
-    <h3>All Cards</h3>
+<div style="--zoom-scale: @(zoom)">
+    <Padded>
+        <h3>All Cards</h3>
 
-    <input id="small" type="radio" name="size" value="1.0" @onchange="OnChange">
-    <label for="small">Small</label>
+        <input id="small" type="radio" name="size" value="1.0" @onchange="OnChange">
+        <label for="small">Small</label>
 
-    <input id="medium" type="radio" name="size" value="1.5" @onchange="OnChange" checked>
-    <label for="medium">Medium</label>
+        <input id="medium" type="radio" name="size" value="1.5" @onchange="OnChange" checked>
+        <label for="medium">Medium</label>
 
-    <input id="large" type="radio" name="size" value="2.0" @onchange="OnChange">
-    <label for="large">Large</label>
+        <input id="large" type="radio" name="size" value="2.0" @onchange="OnChange">
+        <label for="large">Large</label>
 
-    @foreach (var set in All.Cards.BySet().OrderBy(g => g.Key))
-    {
-        <h4>@set.Key.ToString().Replace("2nd", "").Replace("1st", " (first edition)")</h4>
-        <p style="--zoom-scale: @(zoom); display: flex;">
-            @foreach (var id in set)
+        <h4>Base Cards</h4>
+        <p class="cards__set">
+            @foreach (var id in All.Cards.Base())
             {
                 <ActiveCard Large="true" Id="@id" />
             }
         </p>
-    }
-</Padded>
+
+        @foreach (var set in All.Cards.BySet().OrderBy(g => g.Key))
+        {
+            <h4>@set.Key.ToString().Replace("2nd", "").Replace("1st", " (first edition)")</h4>
+            <p class="cards__set">
+                @foreach (var id in set)
+                {
+                    <ActiveCard Large="true" Id="@id" />
+                }
+            </p>
+        }
+    </Padded>
+</div>

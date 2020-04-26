@@ -106,7 +106,7 @@ namespace Cardgame.All
 
         public static string[] Base()
         {
-            return new[]{"Estate", "Duchy", "Province", "Copper", "Silver", "Gold", "Curse"};
+            return new[]{"Copper", "Silver", "Gold", "Estate", "Duchy", "Province", "Curse"};
         }
 
         public static CardSet? GetSet(string id)
