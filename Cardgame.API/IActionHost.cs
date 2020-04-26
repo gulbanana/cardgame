@@ -50,7 +50,7 @@ namespace Cardgame.API
         Task ChooseOne(string prompt, params NamedOption[] options);
         Task ChooseMultiple(string prompt, int number, params NamedOption[] options);
         Task<T[]> SelectCards<T>(string prompt, Zone source, Func<IEnumerable<ICard>, IEnumerable<T>> filter, int? min, int? max) where T : ICard;
-        Task<ICard[]> OrderCards(string prompt, Zone source);
+        Task<ICard[]> OrderCards(string prompt, string[] cards);
 
         // advanced
         void AddEffect(string effect);
@@ -76,7 +76,7 @@ namespace Cardgame.API
 
         public static void Trash(this IActionHost host, ICard[] cards, Zone from)
         {
-            host.Trash(cards.Select(card => card.Name).ToArray(), from);
+            host.Trash(cards.Names(), from);
         }
 
         public static void Trash(this IActionHost host, ICard card, Zone from)
@@ -91,7 +91,7 @@ namespace Cardgame.API
 
         public static void Trash(this IActionHost host, ICard[] cards)
         {
-            host.Trash(cards.Select(card => card.Name).ToArray(), Zone.Hand);
+            host.Trash(cards.Names(), Zone.Hand);
         }
 
         public static void Trash(this IActionHost host, ICard card)
@@ -128,7 +128,7 @@ namespace Cardgame.API
 
         public static void Discard(this IActionHost host, ICard[] cards, Zone from)
         {
-            host.Discard(cards.Select(card => card.Name).ToArray(), from);
+            host.Discard(cards.Names(), from);
         }
 
         public static void Discard(this IActionHost host, ICard card, Zone from)
@@ -138,7 +138,7 @@ namespace Cardgame.API
 
         public static void Discard(this IActionHost host, ICard[] cards)
         {
-            host.Discard(cards.Select(card => card.Name).ToArray(), Zone.Hand);
+            host.Discard(cards.Names(), Zone.Hand);
         }
 
         public static void Discard(this IActionHost host, ICard card)
@@ -175,7 +175,7 @@ namespace Cardgame.API
 
         public static void GainFrom(this IActionHost host, ICard[] cards, Zone from)
         {
-            host.GainFrom(cards.Select(card => card.Name).ToArray(), from);
+            host.GainFrom(cards.Names(), from);
         }
 
         public static void GainFrom(this IActionHost host, ICard card, Zone from)
@@ -197,12 +197,12 @@ namespace Cardgame.API
 
         public static void PutOnDeck(this IActionHost host, ICard[] cards, Zone from)
         {
-            host.PutOnDeck(cards.Select(card => card.Name).ToArray(), from);
+            host.PutOnDeck(cards.Names(), from);
         }
 
         public static void PutOnDeck(this IActionHost host, ICard[] cards)
         {
-            host.PutOnDeck(cards.Select(card => card.Name).ToArray(), Zone.Hand);
+            host.PutOnDeck(cards.Names(), Zone.Hand);
         }
 
         public static void PutOnDeck(this IActionHost host, ICard card)
@@ -219,7 +219,7 @@ namespace Cardgame.API
 
         public static void PutIntoHand(this IActionHost host, ICard[] cards, Zone from)
         {
-            host.PutIntoHand(cards.Select(card => card.Name).ToArray(), from);
+            host.PutIntoHand(cards.Names(), from);
         }
 
         public static void PutIntoHand(this IActionHost host, ICard card, Zone from)
@@ -242,7 +242,7 @@ namespace Cardgame.API
 
         public static void PutOnMat(this IActionHost host, string mat, ICard[] cards, Zone from)
         {
-            host.PutOnMat(mat, cards.Select(card => card.Name).ToArray(), from);
+            host.PutOnMat(mat, cards.Names(), from);
         }
 
         public static void PutOnMat(this IActionHost host, string mat, ICard card, Zone from)
@@ -254,7 +254,7 @@ namespace Cardgame.API
         #region ReturnToSupply
         public static void ReturnToSupply(this IActionHost host, ICard[] cards)
         {
-            host.ReturnToSupply(cards.Select(card => card.Name).ToArray());
+            host.ReturnToSupply(cards.Names());
         }
         #endregion
 
@@ -271,12 +271,12 @@ namespace Cardgame.API
         
         public static void Reveal(this IActionHost host, ICard[] cards, Zone from)
         {
-            host.Reveal(cards.Select(card => card.Name).ToArray(), from);
+            host.Reveal(cards.Names(), from);
         }
 
         public static void Reveal(this IActionHost host, ICard[] cards)
         {
-            host.Reveal(cards.Select(card => card.Name).ToArray(), Zone.Hand);
+            host.Reveal(cards.Names(), Zone.Hand);
         }
 
         public static void Reveal(this IActionHost host, ICard card, Zone from)
@@ -309,7 +309,7 @@ namespace Cardgame.API
 
         public static void Reorder(this IActionHost host, ICard[] cards, Zone @in)
         {
-            host.Reorder(cards.Select(card => card.Name).ToArray(), @in);
+            host.Reorder(cards.Names(), @in);
         }
 
         public static void PlayCard(this IActionHost host, string card)
@@ -422,6 +422,19 @@ namespace Cardgame.API
         {
             var cards = await host.SelectCards<ICard>(prompt, Zone.Hand, x => x, 1, 1);
             return cards.SingleOrDefault();
+        }
+        #endregion
+
+        #region OrderCards
+        public static Task<ICard[]> OrderCards(this IActionHost host, string prompt, ICard[] cards)
+        {
+            return host.OrderCards(prompt, cards.Names());
+        }
+
+        public static async Task<ICard[]> OrderCards(this IActionHost host, string prompt, Zone @in)
+        {
+            var sourceCards = host.Examine(@in);
+            return await host.OrderCards(prompt, sourceCards.Names());
         }
         #endregion
 

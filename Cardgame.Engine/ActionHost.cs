@@ -430,6 +430,8 @@ namespace Cardgame.Engine
 
         void IActionHost.Reveal(string[] cards, Zone from)
         {
+            if (!cards.Any()) return;
+            
             engine.LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
                 {LogVerbInitial("reveal", "reveals", "revealing")}
@@ -450,6 +452,8 @@ namespace Cardgame.Engine
 
         void IActionHost.Reorder(string[] cards, Zone @in)
         {
+            if (!cards.Any()) return;
+
             var existingCards = engine.GetCards(Player, @in, NoteReshuffle);
             if (existingCards.Length != cards.Length || !existingCards.OrderBy(id => id).SequenceEqual(cards.OrderBy(id => id)))
             {
@@ -538,15 +542,13 @@ namespace Cardgame.Engine
             return ids.Select(All.Cards.ByName).Cast<T>().ToArray();
         }
 
-        async Task<ICard[]> IActionHost.OrderCards(string prompt, Zone source)
+        async Task<ICard[]> IActionHost.OrderCards(string prompt, string[] cards)
         {
-            var sourceCards = engine.GetCards(Player, source, NoteReshuffle);
-
             var ids = await engine.Choose<string[], string[]>(
                 Player,
                 ChoiceType.OrderCards,
                 prompt,
-                sourceCards
+                cards
             );
 
             return ids.Select(All.Cards.ByName).ToArray();
