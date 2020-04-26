@@ -16,6 +16,7 @@ steps:
   inputs:
     command: publish
     nobuild: true
+    publishWebProjects: false
     projects: 'Cardgame/Cardgame.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
