@@ -61,7 +61,7 @@
                 @if (value != null)
                 {
                     <div class="card__header__value">
-                        <img class="card__cost-icon" src="/symbols/@(value).png" />
+                        <img class="card__cost-icon" src="/_content/Cardgame.Client/symbols/@(value).png" />
                     </div>
                 }
 
@@ -70,7 +70,7 @@
                 @if (value != null)
                 {
                     <div class="card__header__value">
-                        <img class="card__cost-icon" src="/symbols/@(value).png" />
+                        <img class="card__cost-icon" src="/_content/Cardgame.Client/symbols/@(value).png" />
                     </div>
                 }
             </div>
@@ -101,13 +101,13 @@
         {
             <div class="card__footer card__title">
                 <div class="card__footer-cost">
-                    <img class="card__cost-icon" src="/symbols/coin@(Cost.Coins).png" />
+                    <img class="card__cost-icon" src="/_content/Cardgame.Client/symbols/coin@(Cost.Coins).png" />
                 </div>
 
                 @if (Cost.Potion)
                 {
                     <div class="card__footer-cost">
-                        <img class="card__cost-icon" src="/symbols/potion.png" />
+                        <img class="card__cost-icon" src="/_content/Cardgame.Client/symbols/potion.png" />
                     </div>
                 }
 
@@ -116,7 +116,7 @@
                 @if (Set != null)
                 {
                     <div class="card__footer-set">
-                        <img class="card__set-icon" src="/symbols/set-@(Set).png" />
+                        <img class="card__set-icon" src="/sets/@(Set).png" />
                     </div>
                 }
             </div>

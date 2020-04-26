@@ -17,7 +17,7 @@ namespace Cardgame
         {
             Configuration = configuration;
 
-            var cardImplementations = typeof(Cardgame.Cards.CardBase).Assembly;
+            var cardImplementations = typeof(Cards.CardBase).Assembly;
             All.Cards.Init(cardImplementations);
             All.Effects.Init(cardImplementations);
             All.Mats.Init(cardImplementations);

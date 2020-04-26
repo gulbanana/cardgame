@@ -1,15 +1,15 @@
 @font-face {
     font-family: 'Charlemagne Std Bold';
-    src: url('/fonts/charlemagne.woff2') format("woff2"), /* chrome、firefox */
-         url('/fonts/charlemagne.woff') format("woff"), /* chrome、firefox */
-         url('/fonts/charlemagne.ttf') format("truetype"); /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+    src: url('/_content/Cardgame.Client/fonts/charlemagne.woff2') format("woff2"), /* chrome、firefox */
+         url('/_content/Cardgame.Client/fonts/charlemagne.woff') format("woff"), /* chrome、firefox */
+         url('/_content/Cardgame.Client/fonts/charlemagne.ttf') format("truetype"); /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
 }
 
 @font-face {
     font-family: 'Trajan Pro Regular';
-    src: url('/fonts/trajan.woff2') format("woff2"), /* chrome、firefox */
-         url('/fonts/trajan.woff') format("woff"), /* chrome、firefox */
-         url('/fonts/trajan.ttf') format("truetype"); /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+    src: url('/_content/Cardgame.Client/fonts/trajan.woff2') format("woff2"), /* chrome、firefox */
+         url('/_content/Cardgame.Client/fonts/trajan.woff') format("woff"), /* chrome、firefox */
+         url('/_content/Cardgame.Client/fonts/trajan.ttf') format("truetype"); /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
 }
 
 :root {
