@@ -55,6 +55,11 @@ namespace Cardgame.All
             preset2("Forbidden Arts", CardSet.Alchemy, CardSet.Dominion2nd, "Apprentice", "Familiar", "Possession", "University", "Bandit", "Cellar", "CouncilRoom", "Gardens", "Laboratory", "ThroneRoom");
             preset2("Potion Mixers", CardSet.Alchemy, CardSet.Dominion2nd, "Alchemist", "Apothecary", "Golem", "Herbalist", "Transmute", "Cellar", "Festival", "Militia", "Poacher", "Smithy");
             preset2("Chemistry Lesson", CardSet.Alchemy, CardSet.Dominion2nd, "Alchemist", "Golem", "Philosopher_sStone", "University", "Bureaucrat", "Market", "Moat", "Remodel", "Vassal", "Witch");
+            preset2("Servants", CardSet.Alchemy, CardSet.Intrigue2nd, "Golem", "Possession", "Scrying Pool", "Transmute", "Vineyard", "Conspirator", "Mill", "Minion", "Pawn", "Steward");
+            preset2("Secret Research", CardSet.Alchemy, CardSet.Intrigue2nd, "Familiar", "Herbalist", "Philosopher_sStone", "University", "Bridge", "Masquerade", "Minion", "Nobles", "ShantyTown", "Torturer");
+            preset2("Pools, Tools and Fools", CardSet.Alchemy, CardSet.Intrigue2nd, "Apothecary", "Apprentice", "Golem", "ScryingPool", "Baron", "Ironworks", "Lurker", "Nobles", "TradingPost", "WishingWell");
+            preset2("Forewarned", CardSet.Alchemy, CardSet.Seaside, "Apothecary", "Golem", "Possession", "ScryingPool", "Transmute", "Cutpurse", "Embargo", "GhostShip", "NativeVillage", "TreasureMap");
+            preset2("Gummed Up", CardSet.Alchemy, CardSet.Seaside, "Apprentice", "Familiar", "Herbalist", "Philosopher_sStone", "Vineyard", "Ambassador", "Haven", "SeaHag", "Smugglers", "Warehouse");            
         }
 
         public static IReadOnlyDictionary<string, string[]> BySet(CardSet set)
