@@ -8,4 +8,10 @@
     <ProjectReference Include="../Cardgame.Server/Cardgame.Server.csproj" />
     <ProjectReference Include="../Cardgame.Cards/Cardgame.Cards.csproj" />    
   </ItemGroup>
+
+  <ItemGroup>
+    <Watch Include="..\Cardgame.Client\**\*.razor" />
+    <Watch Include="..\Cardgame.Client\**\*.css" Exclude="..\Cardgame.Client\**\*.min.css" />
+    <Watch Include="..\Cardgame.Client\**\*.ts" />
+  </ItemGroup>
 </Project>
