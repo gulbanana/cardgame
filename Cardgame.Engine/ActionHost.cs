@@ -75,13 +75,16 @@ namespace Cardgame.Engine
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>";
 
+                case ZoneName.Discard:
+                    return $@"<if you='your' them='their'>{Player}</if>
+                    <run>discard pile.</run>";
+
                 case ZoneName.Hand:
                     return $@"<if you='your' them='their'>{Player}</if>
                     <run>hand.</run>";
 
-                case ZoneName.Discard:
-                    return $@"<if you='your' them='their'>{Player}</if>
-                    <run>discard pile.</run>";
+                case ZoneName.InPlay:
+                    return "<run>in play.</run>";
 
                 case ZoneName.Trash:
                     return $@"<run>the trash.</run>";

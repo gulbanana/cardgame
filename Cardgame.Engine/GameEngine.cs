@@ -648,7 +648,7 @@ namespace Cardgame.Engine
             var inPlay = Model.PlayedCards[player];
 
             var toDiscard = new List<Instance>();
-            foreach (var instance in inPlay.ToList())
+            foreach (var instance in inPlay.OrderBy(i => All.Cards.ByName(i) is IReactor ? 0 : 1).ToList())
             {
                 var card = All.Cards.ByName(instance);
                 if (!card.Types.Contains(CardType.Duration) || !Model.PlayedWithDuration.Contains(instance))

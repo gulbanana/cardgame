@@ -195,6 +195,11 @@ namespace Cardgame.API
             host.PutOnDeck(new[] { card.Name }, from);
         }
 
+        public static void PutOnDeck(this IActionHost host, ICard[] cards, Zone from)
+        {
+            host.PutOnDeck(cards.Select(card => card.Name).ToArray(), from);
+        }
+
         public static void PutOnDeck(this IActionHost host, ICard[] cards)
         {
             host.PutOnDeck(cards.Select(card => card.Name).ToArray(), Zone.Hand);

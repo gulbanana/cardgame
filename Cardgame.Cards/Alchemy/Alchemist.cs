@@ -24,10 +24,8 @@ namespace Cardgame.Cards.Alchemy
         
         protected override async Task OnDiscardedAsync(IActionHost host)
         {
-            // inaccurate - it should check whether potions are IN play... but the discard sequence is unpredictable
-            // RAW, this works because you can *choose* your discard order. it's probably ok in practice, because if a potion was played,
-            // nothing's going to have taken it out of play... right?
-            var playedPotion = host.Examine(Zone.RecentPlays).Any(card => card.Name == "Potion");
+            // XXX RAW you choose discard order, but we elide that for UI reasons. in practice we trigger all IReactor discards first
+            var playedPotion = host.Examine(Zone.InPlay).Any(card => card.Name == "Potion");
             if (playedPotion && await host.YesNo("Alchemist", "<run>Put</run><card>Alchemist</card><run>back onto your deck?</run>"))
             {
                 host.PutOnDeck("Alchemist", Zone.Discard);
