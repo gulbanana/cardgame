@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Cardgame.UI;
+using Cardgame.Model.ClientServer;
 
-namespace Cardgame.Hosting
+namespace Cardgame.ClientServer
 {
     // adapter implementing game protocol using shared memory
     class SharedLobbyEndpoint : EndpointBase<GameSummary[]>, ILobbyEndpoint

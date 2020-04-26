@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Cardgame.UI;
 using Cardgame.Model;
+using Cardgame.Model.ClientServer;
 using Cardgame.Engine;
 
-namespace Cardgame.Hosting
+namespace Cardgame.ClientServer
 {
     // adapter implementing game protocol using shared memory
     class SharedGame : EndpointBase<GameModel>, IGameEndpoint
@@ -64,15 +64,7 @@ namespace Cardgame.Hosting
 
         private void UpdateSummary()
         {
-            Summary = new GameSummary
-            {
-                Name = name,
-                Players = engine.Model.Players,
-                Status = engine.Model.IsFinished ? "finished"
-                    : engine.Model.IsStarted ? "in progress" 
-                    : "waiting to start"
-            };            
-            
+            Summary = new GameSummary(name, engine.Model);
             SummaryUpdated?.Invoke();
         }
     }

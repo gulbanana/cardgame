@@ -1,6 +1,6 @@
 using System;
 
-namespace Cardgame.UI
+namespace Cardgame.Model.ClientServer
 {
     public interface IEndpoint<T>
     {        

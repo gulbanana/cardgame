@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cardgame.UI;
+using Cardgame.Model.ClientServer;
 
-namespace Cardgame.Hosting
+namespace Cardgame.ClientServer
 {
     class UserManager
     {

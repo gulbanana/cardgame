@@ -1,6 +1,6 @@
 using Cardgame.Model;
 
-namespace Cardgame.UI
+namespace Cardgame.Model.ClientServer
 {
     // theoretical client-server separation point
     public interface IGameEndpoint : IEndpoint<GameModel>

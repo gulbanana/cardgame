@@ -1,10 +1,10 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Cardgame.UI;
-using Microsoft.AspNetCore.Components.Authorization;
+using Cardgame.Model.ClientServer;
 
-namespace Cardgame.Hosting
+namespace Cardgame.ClientServer
 {
     // adapter implementing user protocol using DI
     class NameclaimUserSession : AuthenticationStateProvider, IUserSession, IDisposable

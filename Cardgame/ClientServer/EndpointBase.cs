@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using Cardgame.Model;
 
-namespace Cardgame.Hosting
+namespace Cardgame.ClientServer
 {
     abstract class EndpointBase<T>
     {

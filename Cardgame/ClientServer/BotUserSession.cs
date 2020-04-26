@@ -1,6 +1,6 @@
-using Cardgame.UI;
+using Cardgame.Model.ClientServer;
 
-namespace Cardgame.Hosting
+namespace Cardgame.ClientServer
 {
     public class BotUserSession : IUserSession
     {
