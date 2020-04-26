@@ -86,6 +86,9 @@ namespace Cardgame.Engine
                 case ZoneName.InPlay:
                     return "<run>in play.</run>";
 
+                case ZoneName.Revealed:
+                    return "<run>the revealed cards.</run>";
+
                 case ZoneName.Trash:
                     return $@"<run>the trash.</run>";
 
@@ -439,6 +442,35 @@ namespace Cardgame.Engine
                 <run>from</run>
                 {LogSource(from)}
             </spans>");
+        }
+
+        ICard[] IActionHost.RevealUntil(Func<ICard, bool> predicate)
+        {
+            var found = false;
+            var cards = new List<ICard>();
+
+            while (!found && (engine.CountCards(Player, Zone.Deck) + engine.CountCards(Player, Zone.Discard) > 0))
+            {
+                var top = engine.GetCards(Player, Zone.DeckTop(1), NoteReshuffle).Single();
+                engine.MoveCard(Player, top, Zone.Deck, Zone.Revealed);
+
+                var card = All.Cards.ByName(top);
+                cards.Add(card);
+                if (predicate(card)) 
+                {
+                    found = true;
+                }
+            }
+
+            engine.LogPartialEvent($@"<spans>
+                <indent level='{IndentLevel}' />
+                {LogVerbInitial("reveal", "reveals", "revealing")}
+                {LogCardList(cards.Names(), terminal: false)}
+                <run>from</run>
+                {LogSource(Zone.Deck)}
+            </spans>");
+
+            return cards.ToArray();
         }
 
         void IActionHost.Name(string card)

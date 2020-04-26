@@ -31,6 +31,7 @@ namespace Cardgame.API
         void PutOnMat(string mat, string[] cards, Zone from);
         void ReturnToSupply(string[] cards);
         void Reveal(string[] cards, Zone from);
+        ICard[] RevealUntil(Func<ICard, bool> predicate);
         void Name(string card);
 
         // manipulate entire zones

@@ -2,23 +2,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cardgame.API;
 
-namespace Cardgame.Cards.Dominion
+namespace Cardgame.Cards.Alchemy
 {
-    public class Spy : AttackCardBase
+    public class ScryingPool : AttackCardBase
     {
-        public override Cost Cost => 4;
+        public override Cost Cost => new Cost(2, true);
 
-        public override string Text => @"<paras>
-            <lines>
-                <bold>+1 Card</bold>
-                <bold>+1 Action</bold>
-            </lines>
-            <small>Each player (including you) reveals the top card of their deck and either discards it or puts it back, your choice.</small>
-        </paras>";
+        public override string Text => @"<lines>
+            <bold>+1 Action</bold>
+            <small>Each player (including you) reveals the top card of their deck and either discards it or puts it back, your choice. Then reveal cards from your deck until revealing one that isn’t an Action. Put all of those revealed cards into your hand.</small>
+        </lines>";
 
         protected override async Task ActAsync(IActionHost host)
         {
-            host.DrawCards(1);
             host.AddActions(1);
 
             await host.AllPlayers(async target =>
@@ -35,6 +31,9 @@ namespace Cardgame.Cards.Dominion
                     }
                 }
             }, isAttack: true);
+
+            var revealed = host.RevealUntil(card => !card.Types.Contains(CardType.Action));
+            host.PutIntoHand(revealed, Zone.Revealed);
         }
     }
 }

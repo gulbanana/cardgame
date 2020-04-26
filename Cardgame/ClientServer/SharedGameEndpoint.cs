@@ -22,7 +22,7 @@ namespace Cardgame.ClientServer
             engine = new GameEngine();
             this.name = name;
 
-            engine.ActionUpdated += OnActionUpdated;
+            engine.ModelUpdated += OnModelUpdated;
 
             UpdateSummary();
         }
@@ -57,7 +57,7 @@ namespace Cardgame.ClientServer
             }
         }
 
-        private void OnActionUpdated()
+        private void OnModelUpdated()
         {
             Notify();
         }

@@ -14,6 +14,7 @@ namespace Cardgame.API
         RecentBuys,
         RecentGains,
         RecentPlays,
+        Revealed,
         Stash,
         Supply,
         This,

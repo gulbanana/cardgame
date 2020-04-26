@@ -17,6 +17,7 @@ namespace Cardgame.API
         public static Zone RecentBuys => new Zone(ZoneName.RecentBuys);
         public static Zone RecentGains => new Zone(ZoneName.RecentGains);
         public static Zone RecentPlays => new Zone(ZoneName.RecentPlays);
+        public static Zone Revealed => new Zone(ZoneName.Revealed);
         public static Zone Stash() => new Zone(ZoneName.Stash, stashCounter++);
         public static Zone SupplyAll = new Zone(ZoneName.Supply, (includeAvailable: true, includeEmpty: true));
         public static Zone SupplyAvailable = new Zone(ZoneName.Supply, (includeAvailable: true, includeEmpty: false));
@@ -68,6 +69,7 @@ namespace Cardgame.API
         {
             return zone.Name switch 
             {
+                ZoneName.Attached => true,
                 ZoneName.Create => true,
                 ZoneName.Deck => true,
                 ZoneName.DeckBottom => true,
@@ -79,6 +81,7 @@ namespace Cardgame.API
                 ZoneName.RecentBuys => false,
                 ZoneName.RecentGains => false,
                 ZoneName.RecentPlays => false,
+                ZoneName.Revealed => false,
                 ZoneName.Stash => true,
                 ZoneName.Supply => false,
                 ZoneName.Trash => false,

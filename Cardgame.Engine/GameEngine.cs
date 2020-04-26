@@ -15,21 +15,28 @@ namespace Cardgame.Engine
     {
         private readonly HashSet<string> bots;
         private readonly Dictionary<string, TurnRecord> lastTurn;
-        private readonly Dictionary<string, int> turnNumbers;
-        private readonly Dictionary<int, Instance> stashes;
+        private readonly Dictionary<string, int> turnNumbers;        
         private TaskCompletionSource<string> inputTCS;
 
+        // temporary zones, can only exist during an action
+        private readonly Dictionary<int, Instance> stashes;
+        private readonly List<Instance> revealed;
+
+        // XXX replace with something in TurnRecord
         internal int ActionsThisTurn { get; private set; }
 
+        // public state - each command results in 1+ model updates
         public readonly GameModel Model;
-        public event Action ActionUpdated;
+        public event Action ModelUpdated;
 
         public GameEngine()
         {
             bots = new HashSet<string>();
             lastTurn = new Dictionary<string, TurnRecord>();
             turnNumbers = new Dictionary<string, int>();
+
             stashes = new Dictionary<int, Instance>();
+            revealed = new List<Instance>(); // could move to the model, or have a copy "RecentlyRevealed"
 
             Model = new GameModel();
             Model.EventLog = new List<string>();
@@ -215,7 +222,7 @@ namespace Cardgame.Engine
         private void Notify()
         {
             Model.Seq++;    
-            ActionUpdated?.Invoke();
+            ModelUpdated?.Invoke();
         }
 
         private void BeginBackgroundTask(string id, Func<string, Task> f)
@@ -505,6 +512,11 @@ namespace Cardgame.Engine
                 }
 
                 NotePlay(player, played);
+
+                if (stashes.Any() || revealed.Any())
+                {
+                    throw new CommandException("Stashed or revealed cards not drained");
+                }
             }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
 
             return (gainC, gainP);
@@ -824,6 +836,10 @@ namespace Cardgame.Engine
                     instance = Model.PlayerMatCards[player][fromMat].ExtractLast(id);
                     break;
 
+                case ZoneName.Revealed:
+                    instance = revealed.Extract(id);
+                    break;
+
                 case ZoneName.Stash when from.Param is int stashID:
                     instance = stashes[stashID];
                     stashes.Remove(stashID);
@@ -873,6 +889,10 @@ namespace Cardgame.Engine
 
                 case ZoneName.PlayerMat when to.Param is string toMat:
                     Model.PlayerMatCards[player][toMat].Add(instance);
+                    break;
+
+                case ZoneName.Revealed:
+                    revealed.Add(instance);
                     break;
 
                 case ZoneName.Stash when to.Param is int stashID:

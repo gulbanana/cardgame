@@ -20,32 +20,24 @@ namespace Cardgame.Cards.Intrigue
         {
             await host.Attack(async target =>
             {
-reveal:         var topDeck = target.Reveal(Zone.DeckTop(1)).SingleOrDefault();
-                if (topDeck != null)
+                var revealed = target.RevealUntil(card => card.GetCost(host).GreaterThan(2));
+                if (revealed.Any())
                 {
-                    var topDeckCost = topDeck.GetCost(host);                    
-                    if (topDeckCost.GreaterThan(2))
+                    var trashed = revealed.Last();
+                    target.Trash(trashed, Zone.Revealed);
+
+                    var gained = await target.SelectCards(
+                        "Choose a card to gain, or none.", 
+                        Zone.SupplyAvailable, 
+                        card => card.GetCost(host).LessThanOrEqual(trashed.GetCost(host).Minus(2)), 
+                        0, 1
+                    );
+                    if (gained.Any())
                     {
-                        target.Trash(topDeck, Zone.Deck);
-                        var gained = await target.SelectCards(
-                            "Choose a card to gain, or none.", 
-                            Zone.SupplyAvailable, 
-                            card => card.GetCost(host).LessThanOrEqual(topDeckCost.Minus(2)), 
-                            0, 1
-                        );
-                        if (gained.Any())
-                        {
-                            target.Gain(gained.Single());
-                        }
+                        target.Gain(gained.Single());
                     }
-                    else
-                    {
-                        target.Discard(topDeck, Zone.Deck);
-                        if (target.ShuffleCount < 2)
-                        {
-                            goto reveal;
-                        }
-                    }
+
+                    target.Discard(revealed.Take(revealed.Length - 1).ToArray(), Zone.Revealed);
                 }
             });
         }
