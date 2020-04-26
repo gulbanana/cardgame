@@ -23,7 +23,7 @@ namespace Cardgame.Cards.Alchemy
 
             var top4 = host.Reveal(Zone.DeckTop(4));
             var drawn = top4.Where(card => card.Name == "Copper" || card.Name == "Potion").ToArray();
-            var notDrawn = top4.Except(drawn).ToArray();
+            var notDrawn = top4.Without(drawn).ToArray();
 
             host.PutIntoHand(drawn, Zone.Deck);
 

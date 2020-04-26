@@ -16,8 +16,8 @@ namespace Cardgame.Cards.Dominion
             var doubledCard = await host.SelectCard("Choose an Action card.", Zone.Hand, cards => cards.OfType<IActionCard>());
             if (doubledCard != null)
             {
-                host.PlayCard(doubledCard, Zone.Hand);
-                host.PlayCard(doubledCard, Zone.InPlay);
+                await host.PlayCard(doubledCard, Zone.Hand);
+                await host.PlayCard(doubledCard, Zone.InPlay);
             }
         }
     }

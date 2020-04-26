@@ -42,7 +42,7 @@ namespace Cardgame.Cards.Seaside
                             target.Trash(trashed, Zone.Deck);
                             anyTrashes = true;
                         }
-                        target.Discard(top2.Except(top2Treasures).ToArray(), Zone.Deck);
+                        target.Discard(top2.Without(top2Treasures).ToArray(), Zone.Deck);
                     });
 
                     if (anyTrashes)

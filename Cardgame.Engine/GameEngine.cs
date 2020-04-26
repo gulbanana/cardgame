@@ -450,11 +450,35 @@ namespace Cardgame.Engine
                 </spans>");
             }
 
+            // check postconditions            
+            if (Model.PreventedAttacks.Any())
+            {
+                LogPartialEvent("<error>Warning: PreventedAttacks not cleared</error>");
+                Model.PreventedAttacks.Clear();
+            }
+
+            if (Model.ChoosingPlayers.Any())
+            {
+                LogPartialEvent($"<error>Warning: choice is stuck on '{Model.ChoicePrompt}'</error>");
+                Model.ChoosingPlayers.Clear();
+            }
+
+            if (stashes.Any() || revealed.Any())
+            {
+                LogPartialEvent($@"<lines>
+                    <error>Warning: temp zones not drained.</error>
+                    <error>Stashes: {string.Join(", ", stashes.Values.Names())}</error>
+                    <error>Revealed: {string.Join(", ", revealed.Names())}</error>
+                </lines>");
+                stashes.Clear();
+                revealed.Clear();
+            }
+
             // advance phases
             if (type == CardType.Action)
             {
                 Model.ActionsRemaining -= cards.Length;
-                if (!hasMore(CardType.Action))
+                if (Model.ActionsRemaining == 0 || !hasMore(CardType.Action))
                 {
                     Model.CurrentPhase = Phase.Treasure;
                 }
@@ -512,11 +536,6 @@ namespace Cardgame.Engine
                 }
 
                 NotePlay(player, played);
-
-                if (stashes.Any() || revealed.Any())
-                {
-                    throw new CommandException("Stashed or revealed cards not drained");
-                }
             }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
 
             return (gainC, gainP);
@@ -837,6 +856,7 @@ namespace Cardgame.Engine
                     break;
 
                 case ZoneName.Revealed:
+                    if (!revealed.Contains(id)) throw new CommandException($"No {id} card has been revealed.");
                     instance = revealed.Extract(id);
                     break;
 

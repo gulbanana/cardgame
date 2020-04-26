@@ -323,19 +323,19 @@ namespace Cardgame.API
             host.Reorder(cards.Names(), @in);
         }
 
-        public static void PlayCard(this IActionHost host, string card)
+        public static Task PlayCard(this IActionHost host, string card)
         {
-            host.PlayCard(card, Zone.Hand);
+            return host.PlayCard(card, Zone.Hand);
         }
 
-        public static void PlayCard(this IActionHost host, IActionCard card, Zone from)
+        public static Task PlayCard(this IActionHost host, IActionCard card, Zone from)
         {
-            host.PlayCard(card.Name, from);
+            return host.PlayCard(card.Name, from);
         }
 
-        public static void PlayCard(this IActionHost host, IActionCard card)
+        public static Task PlayCard(this IActionHost host, IActionCard card)
         {
-            host.PlayCard(card.Name, Zone.Hand);
+            return host.PlayCard(card.Name, Zone.Hand);
         }
 
         public static Task ChooseOne(this IActionHost host, string prompt, IEnumerable<NamedOption> options)
