@@ -1,37 +1,29 @@
-In theory, this app could be split into client and server pieces with a WASM frontend. The components are strictly layered:
+Prerequisites: [.NET SDK 3.1](https://dot.net/)
+To run a dev server: `dotnet watch -p Cardgame run`
 
-                     ♣---------♣
-                     |  Main   |
-                     ♣---------♣            
-                   /             \
-                  v               v
-                 /                 \
-     ♦---------♦     ♠---------♠     ♥---------♥
-     |  Pages  |     |  Client +--<--+ Hosting |
-     ♦----+----♦     ♠----+----♠     ♥----+----♥
-          |        /      |               |
-          v       ^       v               v
-          |      /        |               |
-     ♦----+----♦     ♠----+----♠     ♥----+----♥
-     |  Views  |     | Shared  |     | Server  |
-     ♦----+----♦     ♠----+----♠     ♥---------♥
-          |      \        |        /
-          v       v       ^       v
-          |        \      |      /
-     ♦----+----♦     ♠----+----♠ 
-     | Choices |     |   All   |
-     ♦----+----♦     ♠----+----♠
-          |               |      
-          v               v      
-          |               |         
-     ♦----+----♦     ♠----+----♠
-     | Widgets +-->--+   API   |
-     ♦---------♦     ♠----+----♠
-                          |
-                          ^
-♣ composition             |
-♦ frontend           ♠----+----♠
-♥ backend            |  Cards  |
-♠ common             ♠---------♠
+Cardgame is split into client and server pieces; the top-level app connects them together using blazor server, implementing the hosting interfaces from Cardgame.Client using shared memory. In theory the client could be WASM instead. Component layering:
+```
+                  ♣----------♣
+                  | Cardgame |
+                  ♣-----+----♣            
+                 /      |     \
+                v       |      v
+               /        |       \
+     ♦--------♦    ♥----+---♥    ♠-------♠
+     | Client |    | Server |    | Cards |
+     ♦---+----♦    ♥---+----♥    ♠-------♠
+          \           /         / 
+           v         v         v   
+            \       /         /      
+             ♠-----♠   ♠-----♠
+             | All +->-+ API |
+             ♠--+--♠   ♠-----♠
+                |
+                v           ♣ composition
+                |           ♦ frontend
+            ♠---+---♠       ♥ backend
+            | Model |       ♠ common
+            ♠-------♠
+```
 
-For a client-server version, replace the Hosting namespace which uses shared-memory with alternate implementations of the Client namespace that communicate with Server over an API.
+The point of the All/API split is to prevent card implementations from depending on how the engine actually works; Model contains the types which the server and client use to describe gamestate.
