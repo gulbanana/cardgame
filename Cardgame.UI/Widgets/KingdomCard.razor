@@ -100,9 +100,12 @@
         @if (Size != Size.Third)
         {
             <div class="card__footer card__title">
-                <div class="card__footer-cost">
-                    <img class="card__cost-icon" src="/_content/Cardgame.UI/symbols/coin@(Cost.Coins).png" />
-                </div>
+                @if (!Cost.Potion || Cost.Coins > 0)
+                {
+                    <div class="card__footer-cost">
+                        <img class="card__cost-icon" src="/_content/Cardgame.UI/symbols/coin@(Cost.Coins).png" />
+                    </div>
+                }
 
                 @if (Cost.Potion)
                 {
