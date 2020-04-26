@@ -16,7 +16,7 @@ steps:
   inputs:
     command: publish
     nobuild: true
-    publishWebProjects: true
+    projects: 'Cardgame/Cardgame.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
 - task: AzureWebApp@1
