@@ -12,7 +12,7 @@
         <Content>
             <Stacked Count="@Stack" Colour="@Colour" Size="@Size">
                 <div class="special-card active-border" style="background: var(--card-type-@Colour);">
-                    <img class="special-card__@(Size.ToString().ToLower())" src="/cards/@(Name)-@(Size.ToString().ToLower()).jpg" />
+                    <img class="special-card__@(Size.ToString().ToLower())" src="/_content/Cardgame.UI/cards/@(Name)-@(Size.ToString().ToLower()).jpg" />
                 </div>
             </Stacked>
         </Content>
@@ -20,7 +20,7 @@
             <Magnify>
                 <StackHeader Count="@TrueCount">
                     <div class="special-card active-border" style="background: var(--card-type-@Colour);">
-                        <img class="special-card__full" src="/cards/@(Name)-full.jpg" />
+                        <img class="special-card__full" src="/_content/Cardgame.UI/cards/@(Name)-full.jpg" />
                     </div>
                 </StackHeader>
             </Magnify>
@@ -31,7 +31,7 @@ else
 {
     <Stacked Count="@Stack" Colour="@Colour">
         <div class="special-card active-border" style="background: var(--card-type-@Colour);">
-            <img class="special-card__full" src="/cards/@(Name)-full.jpg" />
+            <img class="special-card__full" src="/_content/Cardgame.UI/cards/@(Name)-full.jpg" />
         </div>
     </Stacked>
 }

@@ -42,7 +42,7 @@
             Types.Length == 2 ? 0.75 :
             0.5;
 
-        art = Art == null ? null : (Set == null ? $"/cards/Base/{Art}.jpg" : $"/cards/{Set}/{Art}.jpg");
+        art = Art == null ? null : (Set == null ? $"/_content/Cardgame.UI/cards/Base/{Art}.jpg" : $"/_content/Cardgame.UI/cards/{Set}/{Art}.jpg");
 
         if (Types.Contains(CardType.Treasure))
         {
@@ -116,7 +116,7 @@
                 @if (Set != null)
                 {
                     <div class="card__footer-set">
-                        <img class="card__set-icon" src="/sets/@(Set).png" />
+                        <img class="card__set-icon" src="/_content/Cardgame.UI/sets/@(Set).png" />
                     </div>
                 }
             </div>
