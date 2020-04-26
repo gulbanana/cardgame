@@ -2,7 +2,7 @@
 @code {
     [CascadingParameter(Name = "Current")] public GameModel CurrentModel { get; set; }
     [CascadingParameter(Name = "Previous")] public GameModel PreviousModel { get; set; }
-    [CascadingParameter] public Executor Dispatch { get; set; } 
+    [CascadingParameter] public ClientDispatcher Dispatch { get; set; } 
     bool IsActivePlayer => Session.Username.Equals(CurrentModel.ActivePlayer);
     string PlayerOrSpectatee => CurrentModel.Players.Contains(Session.Username) ? Session.Username : CurrentModel.ActivePlayer;
 }

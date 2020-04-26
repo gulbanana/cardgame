@@ -12,7 +12,7 @@
         game = Lobby.FindGame(GameName);
     }
 
-    private void OnExecute(GameModel model, ClientCommand command)
+    private void OnDispatch(GameModel model, ClientCommand command)
     {
         command.Seq = model.Seq;
         var error = game.Execute(Session.Username, command);
@@ -33,7 +33,7 @@
 <Subscribed Endpoint="@game" IsNewer="@IsNewer">    
     <CascadingValue Name="Previous" Value="@context.Previous">
         <CascadingValue Name="Current" Value="@context.Current">
-            <CascadingValue Value="@(new Executor(c => OnExecute(context.Current, c)))">
+            <CascadingValue Value="@(new ClientDispatcher(c => OnDispatch(context.Current, c)))">
                 <GameView Name="@GameName" />
             </CascadingValue>
         </CascadingValue>
