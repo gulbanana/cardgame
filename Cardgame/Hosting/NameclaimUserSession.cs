@@ -1,7 +1,7 @@
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Cardgame.Client;
+using Cardgame.UI;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Cardgame.Hosting

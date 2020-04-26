@@ -1,73 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Cardgame.API;
-using Cardgame.Model;
-
 namespace Cardgame.All
 {
     public class Score
     {    
-        public static Score Calculate(GameModel game, string player)
-        {            
-            var dominion = game.IsStarted ? 
-                game.Decks[player]
-                    .Concat(game.Hands[player])
-                    .Concat(game.Discards[player])
-                    .Concat(game.PlayedCards[player])
-                    .Concat(game.PlayedCards[player].Where(card => game.Attachments.ContainsKey(card)).Select(card => game.Attachments[card]))
-                    .Concat(game.PlayerMatCards[player].Values.SelectMany(card => card))
-                    .Names()
-                    .ToArray() : 
-                new[] { "Estate", "Estate", "Estate" } ;
-
-            var victoryCards = dominion.Select(All.Cards.ByName).OfType<IVictoryCard>().GroupBy(card => card.Name);
-
-            var total = 0;
-            var subtotals = new List<(string, int, int)>();
-
-                foreach (var group in victoryCards)
-                {
-                    var exemplar = group.First();
-                    var score = exemplar.Score(dominion) * group.Count();
-                    total += score;
-                    subtotals.Add((group.Key, group.Count(), score));
-                }
-                var curseCards = dominion.Select(All.Cards.ByName).Where(card => card.Types.Contains(CardType.Curse));
-                if (curseCards.Any())
-                {
-                    var score = curseCards.Count();
-                    total -= score;
-                    subtotals.Add(("Curse", score, -score));
-                }
-
-            return new Score 
-            {
-                Player = player,
-                Total = total,
-                Subtotals = subtotals.ToArray()
-            };
-        }
-
-        public string Player { get; private set; }
-        public int Total { get; private set; }
-        public (string card, int count, int subtotal)[] Subtotals { get; private set; }        
-
-        public string Text(int turns)
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine("<lines>");
-                builder.AppendLine($"<spans><player>{Player}</player><run>scored:</run></spans>");                    
-                foreach (var group in Subtotals)
-                {
-                    builder.AppendLine("<spans>");
-                    builder.AppendLine($"<card>{group.card}</card>");
-                    builder.AppendLine($"<run>x{group.count}: {group.subtotal} VP</run>");
-                    builder.AppendLine("</spans>");
-                }                
-                builder.AppendLine($"<run>Total: {Total} Victory Points in {turns} turns.</run>");
-            builder.AppendLine("</lines>");
-            return builder.ToString();
-        }
+        public string Player { get; set; }
+        public int Total { get; set; }
+        public (string card, int count, int subtotal)[] Subtotals { get; set; }
     }
 }

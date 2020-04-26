@@ -11,11 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardgame.API", "Cardgame.AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardgame.Cards", "Cardgame.Cards\Cardgame.Cards.csproj", "{E2957293-E75E-43C0-A16E-EAD540D357BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardgame.Client", "Cardgame.Client\Cardgame.Client.csproj", "{21297429-58CB-4BF4-AA0E-C2C62FFA2F66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardgame.UI", "Cardgame.UI\Cardgame.UI.csproj", "{21297429-58CB-4BF4-AA0E-C2C62FFA2F66}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardgame.Model", "Cardgame.Model\Cardgame.Model.csproj", "{C3148CBC-695D-4E1C-9848-534015CF1376}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardgame.Server", "Cardgame.Server\Cardgame.Server.csproj", "{6345521E-4DF1-47A7-B4D4-C745916F97BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardgame.Engine", "Cardgame.Engine\Cardgame.Engine.csproj", "{6345521E-4DF1-47A7-B4D4-C745916F97BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

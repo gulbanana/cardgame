@@ -1,4 +1,4 @@
-using Cardgame.Client;
+using Cardgame.UI;
 
 namespace Cardgame.Hosting
 {

@@ -4,14 +4,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Cardgame.Client/Cardgame.Client.csproj" />
-    <ProjectReference Include="../Cardgame.Server/Cardgame.Server.csproj" />
+    <ProjectReference Include="../Cardgame.UI/Cardgame.UI.csproj" />
+    <ProjectReference Include="../Cardgame.Engine/Cardgame.Engine.csproj" />
     <ProjectReference Include="../Cardgame.Cards/Cardgame.Cards.csproj" />    
   </ItemGroup>
 
   <ItemGroup>
-    <Watch Include="..\Cardgame.Client\**\*.razor" />
-    <Watch Include="..\Cardgame.Client\**\*.css" Exclude="..\Cardgame.Client\**\*.min.css" />
-    <Watch Include="..\Cardgame.Client\**\*.ts" />
+    <Watch Include="..\Cardgame.UI\**\*.razor" />
+    <Watch Include="..\Cardgame.UI\**\*.css" Exclude="..\Cardgame.UI\**\*.min.css" />
+    <Watch Include="..\Cardgame.UI\**\*.ts" />
   </ItemGroup>
 </Project>

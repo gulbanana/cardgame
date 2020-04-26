@@ -1,0 +1,115 @@
+@inject IUserSession Session
+@code {
+    [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
+    [CascadingParameter] public Executor Dispatch { get; set; }
+    [Parameter] public string Name { get; set; }
+}
+
+<div class="game-view">   
+    <div class="game-view__nav">
+        <span style="flex: 1">
+            <ActiveLink Href="/">&lt; games</ActiveLink> |
+            <ActiveLink Href="@("/game/" + Name)">@Name</ActiveLink> |
+            @(Model.IsStarted ? (Model.IsFinished ? "Game finished." : "Game in progress.") : "Waiting to start.")
+        </span>
+        @if (Model.Players.Any())
+        {
+            <span>
+                Players:
+                @foreach (var player in Model.Players)
+                {       
+                    var score = All.Rules.CalculateScore(Model, player).Total;
+                    var suffix = player == Model.Players.Last() ? "." : ", ";
+                    var text = $"<sym prefix='({score}' suffix='){suffix}'>vp</sym>";
+                    <PlayerLink @key="@player" Name="@player" />
+                    <RichText @key="player+score" Model="@text" /> 
+                }
+            </span>
+        }
+        else
+        {
+            <span>No players.</span>
+        }
+    </div>
+
+    <ChatView />
+
+    <GridSeparator Area="left-bar"/>
+
+    <div style="grid-area: board" class="game-view__board">
+        <SupplyView />
+
+        <div>
+            @if (!Model.IsStarted)
+            {   
+                <ConfigView Set="@Model.KingdomSet" Preset="@Model.KingdomPreset" />
+            }
+            else
+            {
+                <BoardView />
+            }
+        </div>
+
+        <DominionView />
+    </div>
+
+    <GridSeparator Area="right-bar"/>
+
+    <div class="game-view__global-mats game-view__mats">        
+        @if (Model.KingdomCards != null)
+        {
+            @foreach (var id in Model.KingdomGlobalMats)
+            {
+                <MatView Id="@id" />
+            }
+        }        
+    </div>
+
+    <div class="game-view__player-mats game-view__mats game-view__reverse-mats">        
+        @if (Model.KingdomCards != null)
+        {
+            @foreach (var player in Model.Players)
+            {
+                <div class="game-view__mat-group">
+                    @foreach (var id in Model.KingdomPlayerMats)
+                    {
+                        <MatView Id="@id" Owner="@player" />
+                    }
+                </div>
+            }
+        }        
+    </div>
+
+    <div id="all-mats" class="game-view__mats">
+        @if (Model.KingdomCards != null)
+        {
+            @foreach (var id in Model.KingdomGlobalMats)
+            {
+                <MatView Id="@id" />
+            }
+        }        
+        @if (Model.KingdomCards != null)
+        {
+            @foreach (var player in Model.Players)
+            {
+                <div class="game-view__mat-group">
+                    @foreach (var id in Model.KingdomPlayerMats)
+                    {
+                        <MatView Id="@id" Owner="@player" />
+                    }
+                </div>
+            }
+        }        
+    </div>
+
+    <div style="grid-area: event-log" class="game-view__event-log">
+        <VerticalLog>
+            @foreach (var e in Model.EventLog)
+            {
+                <p>
+                    <RichText @key="e.GetHashCode()" Model="@e"/>
+                </p>
+            }
+        </VerticalLog>
+    </div>
+</div>

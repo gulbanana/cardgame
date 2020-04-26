@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Cardgame.Client;
+using Cardgame.UI;
 using Cardgame.Model;
-using Cardgame.Server;
+using Cardgame.Engine;
 
 namespace Cardgame.Hosting
 {

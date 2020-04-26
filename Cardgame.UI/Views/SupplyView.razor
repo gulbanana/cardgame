@@ -1,0 +1,73 @@
+@inject IUserSession Session
+@code {
+    [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
+    [CascadingParameter] public Executor Dispatch { get; set; }
+}
+
+<div class="supply-view">
+    @if (Model.IsStarted)
+    {
+        <div class="supply-view__victory supply-view__sidebar">
+            <SupplyPile Size="Size.Third" Id="Province" />
+            <SupplyPile Size="Size.Third" Id="Duchy" />
+            <SupplyPile Size="Size.Third" Id="Estate" />
+            @if (Model.KingdomHasCurse)
+            {
+                <SupplyPile Size="Size.Third" Id="Curse" />
+            }
+        </div>
+
+        <div class="supply-view__treasure supply-view__sidebar">
+            <SupplyPile Size="Size.Third" Id="Gold" />
+            <SupplyPile Size="Size.Third" Id="Silver" />
+            <SupplyPile Size="Size.Third" Id="Copper" />
+            @if (Model.KingdomHasPotion)
+            {
+                <SupplyPile Size="Size.Third" Id="Potion" />
+            }
+        </div>
+        
+        <div class="supply-view__kingdom">
+            @for (var i = 0; i < 10; i++)
+            {
+                <SupplyPile Size="Size.Half" Id="@Model.KingdomCards[i]" />
+            }
+        </div>
+    }
+    else
+    {
+        <div class="supply-view__victory supply-view__sidebar">        
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Rules.GetInitialSupply(Model.Players.Length, "Province"))" Id="Province" />
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Rules.GetInitialSupply(Model.Players.Length, "Duchy"))" Id="Duchy" />
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Rules.GetInitialSupply(Model.Players.Length, "Estate"))" Id="Estate" />
+            @if (Model.KingdomHasCurse)
+            {
+                <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Rules.GetInitialSupply(Model.Players.Length, "Curse"))" Id="Curse" />
+            }            
+        </div>
+
+        <div class="supply-view__treasure supply-view__sidebar">
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Rules.GetInitialSupply(Model.Players.Length, "Gold"))" Id="Gold" />
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Rules.GetInitialSupply(Model.Players.Length, "Silver"))" Id="Silver" />
+            <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Rules.GetInitialSupply(Model.Players.Length, "Copper"))" Id="Copper" />
+            @if (Model.KingdomHasPotion)
+            {
+                <ActiveCard Enabled="false" Size="Size.Third" Stack="@(Rules.GetInitialSupply(Model.Players.Length, "Potion"))" Id="Potion" />
+            }
+        </div>
+
+        <div class="supply-view__kingdom">
+            @for (var i = 0; i < 10; i++)
+            {
+                @if (Model.KingdomCards == null)
+                {
+                    <SpecialCard Size="Size.Half" Name="randomizer" Colour="randomizer" Stack="10" />
+                }
+                else
+                {
+                    <ActiveCard @key="Model.KingdomCards[i]" Id="@Model.KingdomCards[i]" Stack="@(Rules.GetInitialSupply(Model.Players.Length, Model.KingdomCards[i]))" Enabled="false" Size="Size.Half" />
+                }                
+            }
+        </div>
+    }
+</div>
