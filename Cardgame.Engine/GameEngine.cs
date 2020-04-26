@@ -487,7 +487,6 @@ namespace Cardgame.Engine
                     }
 
                     await action.ExecuteActionAsync(host);
-                    NotePlay(player, played);
                 }
                 else if (card is ITreasureCard treasure)
                 {
@@ -504,6 +503,8 @@ namespace Cardgame.Engine
                 {
                     throw new CommandException($"Only Actions and Treasures can be played.");
                 }
+
+                NotePlay(player, played);
             }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
 
             return (gainC, gainP);
@@ -653,7 +654,7 @@ namespace Cardgame.Engine
                 if (!card.Types.Contains(CardType.Duration) || !Model.PlayedWithDuration.Contains(instance))
                 {
                     var reactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
-                    await Act(1, player, Trigger.DiscardCard, instance.Id, () =>
+                    await Act(1, player, Trigger.DiscardFromPlay, instance.Id, () =>
                     {
                         inPlay.Remove(instance);
                         discard.Add(instance);

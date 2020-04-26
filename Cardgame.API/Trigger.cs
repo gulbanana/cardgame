@@ -4,7 +4,7 @@ namespace Cardgame.API
     {
         BeginTurn,
         BuyCard,
-        DiscardCard,
+        DiscardFromPlay,
         PlayCard,
     }
 }

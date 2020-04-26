@@ -4,7 +4,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Seaside
 {
-    public class Treasury : ActionCardBase, IReactor
+    public class Treasury : TriggeredActionCardBase
     {
         public override Cost Cost => 5;
 
@@ -30,22 +30,14 @@ namespace Cardgame.Cards.Seaside
             host.AddCoins(1);
         }
 
-        public async Task<Reaction> ExecuteReactionAsync(IActionHost host, Zone reactFrom, Trigger triggerType, string triggerParameter)
+        protected override async Task OnDiscardedAsync(IActionHost host)
         {
-            if (reactFrom == Zone.This && triggerType == Trigger.DiscardCard)
+            var bought = host.Examine(Zone.RecentBuys);
+            var boughtVictories = bought.Any(card => card.Types.Contains(CardType.Victory));
+            if (!boughtVictories && await host.YesNo("Treasury", "<run>Put</run><card>Treasury</card><run>back onto your deck?</run>"))
             {
-                var bought = host.Examine(Zone.RecentBuys);
-                var boughtVictories = bought.Any(card => card.Types.Contains(CardType.Victory));
-                if (!boughtVictories && await host.YesNo("Treasury", "<run>Put</run><card>Treasury</card><run>back onto your deck?</run>"))
-                {
-                    return Reaction.After(() =>
-                    {
-                        host.PutOnDeck("Treasury", Zone.Discard);
-                    });
-                }
+                host.PutOnDeck("Treasury", Zone.Discard);
             }
-
-            return Reaction.None();
         }
     }
 }
