@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Text.Json;
 
-namespace Cardgame.Choices
+namespace Cardgame.Client.Choices
 {
     public class ChoiceBase<TInput, TOutput> : ComponentBase
     {

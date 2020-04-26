@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Cardgame.Widgets
+namespace Cardgame.Client.Widgets
 {
     internal static class Strings
     {

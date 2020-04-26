@@ -1,6 +1,6 @@
 using Cardgame.Model;
 
-namespace Cardgame
+namespace Cardgame.Client.Views
 {
     public delegate void Executor(ClientCommand command);
 }

@@ -1,4 +1,4 @@
-namespace Cardgame.Widgets
+namespace Cardgame.Client.Widgets
 {
     public enum Size
     {

@@ -2,8 +2,9 @@ using System;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Cardgame.Widgets
+namespace Cardgame.Model
 {
+    // never actually serialised at the moment - we send xml representations and build the tree on the client side
     public abstract class TextModel
     {        
         public class Spans : TextModel
