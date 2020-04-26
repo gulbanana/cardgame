@@ -24,7 +24,7 @@ namespace Cardgame.API
         // move cards around
         void Discard(string[] cards, Zone from);
         void Trash(string[] cards, Zone from);
-        void Gain(string card, Zone to);        
+        void Gain(string[] cards, Zone to);        
         void GainFrom(string[] cards, Zone from);
         void PutOnDeck(string[] cards, Zone from);
         void PutIntoHand(string[] cards, Zone from);
@@ -159,19 +159,29 @@ namespace Cardgame.API
         #endregion Discard
 
         #region Gain
+        public static void Gain(this IActionHost host, string card, Zone to)
+        {
+            host.Gain(new[] { card }, Zone.Discard);
+        }
+
         public static void Gain(this IActionHost host, string card)
         {
-            host.Gain(card, Zone.Discard);
+            host.Gain(new[] { card }, Zone.Discard);
         }
 
         public static void Gain(this IActionHost host, ICard card, Zone to)
         {
-            host.Gain(card.Name, to);
+            host.Gain(new[] { card.Name }, to);
         }
 
         public static void Gain(this IActionHost host, ICard card)
         {
-            host.Gain(card.Name, Zone.Discard);
+            host.Gain(new[] { card.Name }, Zone.Discard);
+        }
+
+        public static void Gain(this IActionHost host, ICard[] cards)
+        {
+            host.Gain(cards.Names(), Zone.Discard);
         }
 
         public static void GainFrom(this IActionHost host, ICard[] cards, Zone from)

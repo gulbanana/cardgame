@@ -287,28 +287,36 @@ namespace Cardgame.Engine
             </spans>");        
         }
 
-        void IActionHost.Gain(string id, Zone to)
+        void IActionHost.Gain(string[] cards, Zone to)
         {
-            if (engine.Model.Supply[id] == 0)
+            var gainedAny = false;
+            foreach (var card in cards)
             {
-                engine.LogPartialEvent($@"<spans>
-                    <indent level='{IndentLevel}' />
-                    {LogVerbInitial("don&apos;t gain", "doesn&apos;t gain", "not gaining")}
-                    <card suffix=','>{id}</card>
-                    <run>because there are none available.</run>
-                </spans>");
-                return;
+                if (engine.Model.Supply[card] > 0)
+                {
+                    var instance = engine.MoveCard(Player, card, Zone.SupplyAvailable, to);
+                    engine.NoteGain(Player, instance);
+                    gainedAny = true;
+                }
+                else
+                {
+                    engine.LogPartialEvent($@"<spans>
+                        <indent level='{IndentLevel}' />
+                        {LogVerbInitial("don&apos;t gain", "doesn&apos;t gain", "not gaining")}
+                        <card suffix=','>{card}</card>
+                        <run>because there are none available.</run>
+                    </spans>");
+                }
             }
 
-            var instance = engine.MoveCard(Player, id, Zone.SupplyAvailable, to);
-            engine.NoteGain(Player, instance);
+            if (!gainedAny) return;
 
             if (to == Zone.Discard)
             {
                 engine.LogPartialEvent($@"<spans>
                     <indent level='{IndentLevel}' />
                     {LogVerbInitial("gain", "gains", "gaining")}
-                    <card suffix='.'>{id}</card>
+                    {LogCardList(cards)}
                 </spans>");
             }
             else
@@ -316,7 +324,7 @@ namespace Cardgame.Engine
                 engine.LogPartialEvent($@"<spans>
                     <indent level='{IndentLevel}' />
                     {LogVerbInitial("gain", "gains", "gaining")}
-                    <card>{id}</card>
+                    {LogCardList(cards, terminal: false)}
                     <run>and</run>
                     {LogDestination(to)}
                 </spans>");
