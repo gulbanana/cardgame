@@ -22,7 +22,7 @@
                     var suffix = player == Model.Players.Last() ? "." : ", ";
                     var text = $"<sym prefix='({score}' suffix='){suffix}'>vp</sym>";
                     <PlayerLink @key="@player" Name="@player" />
-                    <RichText @key="player+score" Model="@text" /> 
+                    <RichText @key="player+score" Text="@text" /> 
                 }
             </span>
         }
@@ -107,7 +107,7 @@
             @foreach (var e in Model.EventLog)
             {
                 <p>
-                    <RichText @key="e.GetHashCode()" Model="@e"/>
+                    <RichText @key="e.GetHashCode()" Text="@e"/>
                 </p>
             }
         </VerticalLog>

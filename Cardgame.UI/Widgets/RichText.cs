@@ -12,15 +12,12 @@ namespace Cardgame.UI.Widgets
     public class RichText : ComponentBase
     {
         [Inject] private IUserSession Session { get; set; }
-        [Parameter] public string Model { get; set; }
-        [Parameter] public TextModel Parsed { get; set; }
+        [Parameter] public string Text { get; set; }
+        private TextModel Parsed;
 
         protected override void OnParametersSet()
         {
-            if (Parsed == null)
-            {
-                Parsed = TextModel.Parse(Model);
-            }
+            Parsed = TextModel.Parse(Text);
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -138,12 +135,12 @@ namespace Cardgame.UI.Widgets
                         var value = (model as ITreasureCard)?.StaticValue;
 
                         builder.OpenComponent<WithTooltip>(seq++);
-                            builder.AddAttribute(seq++, "Content", (RenderFragment)((contentBuilder) => {
+                            builder.AddAttribute(seq++, nameof(WithTooltip.Content), (RenderFragment)((contentBuilder) => {
                                 contentBuilder.AddMarkupContent(seq++, $"{card.Prefix}<span style=\"background: {background}\">{Strings.TitleCase(card.Name)}</span>{card.Suffix}");
                             }));
-                            builder.AddAttribute(seq++, "Tooltip", (RenderFragment)((tooltipBuilder) => {
+                            builder.AddAttribute(seq++, nameof(WithTooltip.Tooltip), (RenderFragment)((tooltipBuilder) => {
                                 tooltipBuilder.OpenComponent<Magnify>(seq++);
-                                    tooltipBuilder.AddAttribute(seq++, "ChildContent", (RenderFragment)((cardBuilder) => {
+                                    tooltipBuilder.AddAttribute(seq++, nameof(Magnify.ChildContent), (RenderFragment)((cardBuilder) => {
                                         cardBuilder.OpenComponent<KingdomCard>(seq++);
                                             cardBuilder.AddAttribute(seq++, "Name", card.Name);
                                             cardBuilder.AddAttribute(seq++, "Types", model.Types);
@@ -160,14 +157,14 @@ namespace Cardgame.UI.Widgets
                     else
                     {
                         builder.OpenComponent<WithTooltip>(seq++);
-                            builder.AddAttribute(seq++, "Content", (RenderFragment)((contentBuilder) => {
+                            builder.AddAttribute(seq++, nameof(WithTooltip.Content), (RenderFragment)((contentBuilder) => {
                                 contentBuilder.AddContent(seq++, $"{card.Prefix}a {Strings.TitleCase(card.Name)} token{card.Suffix}");
                             }));
-                            builder.AddAttribute(seq++, "Tooltip", (RenderFragment)((tooltipBuilder) => {
+                            builder.AddAttribute(seq++, nameof(WithTooltip.Tooltip), (RenderFragment)((tooltipBuilder) => {
                                 tooltipBuilder.OpenComponent<Magnify>(seq++);
-                                    tooltipBuilder.AddAttribute(seq++, "ChildContent", (RenderFragment)((cardBuilder) => {
+                                    tooltipBuilder.AddAttribute(seq++, nameof(Magnify.ChildContent), (RenderFragment)((cardBuilder) => {
                                         cardBuilder.OpenComponent<RichText>(seq++);
-                                            cardBuilder.AddAttribute(seq++, "Model", model.Text);
+                                            cardBuilder.AddAttribute(seq++, nameof(Text), model.Text);
                                         cardBuilder.CloseComponent();
                                     }));
                                 tooltipBuilder.CloseComponent();
@@ -184,9 +181,9 @@ namespace Cardgame.UI.Widgets
                     else
                     {
                         builder.OpenComponent<PlayerLink>(seq++);                        
-                        builder.AddAttribute(seq++, "Prefix", player.Prefix);
-                        builder.AddAttribute(seq++, "Name", player.Name);
-                        builder.AddAttribute(seq++, "Suffix", player.Suffix);
+                        builder.AddAttribute(seq++, nameof(PlayerLink.Prefix), player.Prefix);
+                        builder.AddAttribute(seq++, nameof(PlayerLink.Name), player.Name);
+                        builder.AddAttribute(seq++, nameof(PlayerLink.Suffix), player.Suffix);
                         builder.CloseComponent();
                     }
                     break;

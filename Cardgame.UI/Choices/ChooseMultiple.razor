@@ -30,7 +30,7 @@
         var ix = i;
         <label>
             <input type="checkbox" @onchange="args => choices[ix] = (bool)args.Value">
-            <RichText Model="@Model.Choices[ix]" />
+            <RichText Text="@Model.Choices[ix]" />
         </label>
         <br />
     }
