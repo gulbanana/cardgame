@@ -8,14 +8,14 @@ namespace Cardgame.Engine
     {
         public Instance Card { get; }
 
-        public CardHost(GameEngine engine, int indentLevel, string owningPlayer, Instance sourceCard) : base(engine, indentLevel, owningPlayer)
+        public CardHost(GameEngine engine, LogRecord logRecord, int indentLevel, string owningPlayer, Instance sourceCard) : base(engine, logRecord, indentLevel, owningPlayer)
         {
             Card = sourceCard;
         }
 
         protected override IActionHost CloneHost(string owningPlayer)
         {
-            return new CardHost(engine, IndentLevel, owningPlayer, Card);
+            return new CardHost(engine, logRecord, IndentLevel, owningPlayer, Card);
         }
 
         public override void CompleteDuration()
@@ -27,7 +27,7 @@ namespace Cardgame.Engine
         {
             engine.MoveCard(Player, card, from, new Zone(ZoneName.Attached, Card));
 
-            engine.LogPartialEvent($@"<spans>
+            LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
                 {LogVerbInitial("put", "puts", "putting")}
                 <run>a card under</run>
@@ -39,7 +39,7 @@ namespace Cardgame.Engine
         {
             engine.MoveCard(Player, null, new Zone(ZoneName.Attached, Card), to);
 
-            engine.LogPartialEvent($@"<spans>
+            LogPartialEvent($@"<spans>
                 <indent level='{IndentLevel}' />
                 {LogVerbInitial("remove", "removes", "removing")}
                 <run>a card from under</run>

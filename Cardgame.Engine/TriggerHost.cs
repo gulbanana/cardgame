@@ -8,7 +8,7 @@ namespace Cardgame.Engine
         public Trigger TriggerType { get; }
         public string TriggerParameter { get; }
 
-        public TriggerHost(GameEngine engine, int indentLevel, string owningPlayer, Trigger triggerType, string triggerParameter) : base(engine, indentLevel, owningPlayer)
+        public TriggerHost(GameEngine engine, LogRecord logRecord, int indentLevel, string owningPlayer, Trigger triggerType, string triggerParameter) : base(engine, logRecord, indentLevel, owningPlayer)
         {
             TriggerType = triggerType;
             TriggerParameter = triggerParameter;
@@ -16,7 +16,7 @@ namespace Cardgame.Engine
 
         protected override IActionHost CloneHost(string owningPlayer)
         {
-            return new TriggerHost(engine, IndentLevel, owningPlayer, TriggerType, TriggerParameter);
+            return new TriggerHost(engine, logRecord, IndentLevel, owningPlayer, TriggerType, TriggerParameter);
         }
     }
 }
