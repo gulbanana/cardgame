@@ -217,9 +217,9 @@ namespace Cardgame.Engine.Logging
                     return $"<run>under</run><card>{instance.Id}</card>";
 
                 case ZoneName.DeckBottom:
-                    return @"<run>the bottom of</run>
-                             <if you='your' them='their'>{actor}</if>
-                             <run>deck</run>";
+                    return $@"<run>the bottom of</run>
+                              <if you='your' them='their'>{actor}</if>
+                              <run>deck</run>";
 
                 case ZoneName.Deck:
                 case ZoneName.DeckTop:
@@ -274,8 +274,16 @@ namespace Cardgame.Engine.Logging
                         builder.Append(FormatVerb(actor, "gain", "gains", "gaining", first));
                         break;
 
+                    case Motion.Play:
+                        builder.Append(FormatVerb(actor, "play", "plays", "playing", first));
+                        break;
+
                     case Motion.Put:
                         builder.Append(FormatVerb(actor, "put", "puts", "putting", first));
+                        break;
+
+                    case Motion.Reveal:
+                        builder.Append(FormatVerb(actor, "reveal", "reveals", "revealing", first));
                         break;
 
                     case Motion.Trash:
@@ -288,7 +296,7 @@ namespace Cardgame.Engine.Logging
             }
 
             // the card list and source, unless we're referring to a previous set
-            if (previous != null && previous.Cards.SequenceEqual(movement.Cards))
+            if (previous != null && previous.Cards.SequenceEqual(movement.Cards) && (previous.Type == Motion.Reveal || movement.Type == Motion.Play))
             {
                 if (movement.Cards.Length > 1)
                 {
@@ -334,8 +342,10 @@ namespace Cardgame.Engine.Logging
                         }
                         break;
 
-                    // "put" has no special meaning 
+                    // sources with no special interpretation 
+                    case Motion.Play:
                     case Motion.Put:
+                    case Motion.Reveal:
                         builder.Append("<run>from</run>");
                         builder.Append(FormatZone(actor, movement.From));
                         break;
@@ -360,6 +370,8 @@ namespace Cardgame.Engine.Logging
             switch (movement.Type)
             {
                 case Motion.Discard:
+                case Motion.Play:
+                case Motion.Reveal:
                 case Motion.Trash:
                     break;             
 

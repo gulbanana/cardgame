@@ -58,7 +58,7 @@ namespace Cardgame.Engine
             logRecord.Update();
         }
 
-        protected string LogVerbInitial(string secondPerson, string thirdPerson, string continuous)
+        protected string FormatInitialVerb(string secondPerson, string thirdPerson, string continuous)
         {
             if (Player == engine.Model.ActivePlayer)
             {
@@ -67,18 +67,6 @@ namespace Cardgame.Engine
             else
             {
                 return $"<player>{Player}</player><if you='{secondPerson}' them='{thirdPerson}'>{Player}</if>";
-            }
-        }
-
-        private string LogVerb(string secondPerson, string thirdPerson, string continuous)
-        {
-            if (Player == engine.Model.ActivePlayer)
-            {
-                return $"<if you='{secondPerson}' them='{continuous}'>{Player}</if>";
-            }
-            else
-            {
-                return $"<if you='{secondPerson}' them='{thirdPerson}'>{Player}</if>";
             }
         }
 
@@ -278,7 +266,7 @@ namespace Cardgame.Engine
                 else
                 {
                     LogLine($@"
-                        {LogVerbInitial("don&apos;t gain", "doesn&apos;t gain", "not gaining")}
+                        {FormatInitialVerb("don&apos;t gain", "doesn&apos;t gain", "not gaining")}
                         <card suffix=','>{card}</card>
                         <run>because there are none available.</run>
                     ");
@@ -350,22 +338,18 @@ namespace Cardgame.Engine
             }
 
             LogLine($@"
-                {LogVerbInitial("return", "returns", "returning")}
+                {FormatInitialVerb("return", "returns", "returning")}
                 {LogSecurely(cards, Zone.Hand, Zone.SupplyAvailable)}
                 <run>to the supply.</run>
             ");
         }
 
+        // XXX should probably put things into the Revealed zone!
         void IActionHost.Reveal(string[] cards, Zone from)
         {
             if (!cards.Any()) return;
             
-            LogLine($@"
-                {LogVerbInitial("reveal", "reveals", "revealing")}
-                {LogCardList(cards, terminal: false)}
-                <run>from</run>
-                {LogSource(from)}
-            ");
+            LogMovement(Motion.Reveal, cards, from, Zone.Revealed);
         }
 
         ICard[] IActionHost.RevealUntil(Func<ICard, bool> predicate)
@@ -386,12 +370,7 @@ namespace Cardgame.Engine
                 }
             }
 
-            LogLine($@"
-                {LogVerbInitial("reveal", "reveals", "revealing")}
-                {LogCardList(cards.Names(), terminal: false)}
-                <run>from</run>
-                {LogSource(Zone.Deck)}
-            ");
+            LogMovement(Motion.Reveal, cards.Names(), Zone.Deck, Zone.Revealed);
 
             return cards.ToArray();
         }
@@ -399,7 +378,7 @@ namespace Cardgame.Engine
         void IActionHost.Name(string card)
         {
             LogLine($@"
-                {LogVerbInitial("name", "names", "naming")}
+                {FormatInitialVerb("name", "names", "naming")}
                 <card suffix='.'>{card}</card>
             ");
         }
@@ -417,17 +396,14 @@ namespace Cardgame.Engine
             engine.SetCardOrder(Player, cards, @in);
 
             LogLine($@"
-                {LogVerbInitial("reorder", "reorders", "reordering")}
+                {FormatInitialVerb("reorder", "reorders", "reordering")}
                 {LogSource(@in)}
             ");
         }
 
         async Task IActionHost.PlayCard(string card, Zone from)
         {
-            LogLine($@"
-                {LogVerbInitial("play", "plays", "playing")}
-                <card suffix='.'>{card}</card>
-            ");
+            LogMovement(Motion.Play, new[] { card }, from, Zone.InPlay);
 
             await engine.PlayCardAsync(logRecord.CreateSubrecord(Player, inline: false), Player, card, from);
         }
@@ -568,7 +544,7 @@ namespace Cardgame.Engine
             var description = (token as IToken)?.Description ?? token.Name;
             
             LogLine($@"
-                {LogVerbInitial("put", "puts", "putting")}
+                {FormatInitialVerb("put", "puts", "putting")}
                 <run>{description} on</run>
                 <card suffix='.'>{pile}</card>.
             ");
@@ -600,7 +576,7 @@ namespace Cardgame.Engine
             }
 
             LogLine($@"
-                {LogVerbInitial("put", "puts", "putting")}
+                {FormatInitialVerb("put", "puts", "putting")}
                 <if you='your' them='their'>{Player}</if>
                 <run>deck into</run>
                 <if you='your' them='their'>{Player}</if>
@@ -616,7 +592,7 @@ namespace Cardgame.Engine
             engine.MoveCard(toPlayer, card, stash, Zone.Hand);
 
             LogLine($@"
-                {LogVerbInitial("pass", "passes", "passing")}
+                {FormatInitialVerb("pass", "passes", "passing")}
                 <run>a card to</run>
                 <player suffix='.'>{toPlayer}</player>
             ");
@@ -631,7 +607,7 @@ namespace Cardgame.Engine
             if (position == 0)
             {
                 LogLine($@"
-                    {LogVerbInitial("put", "puts", "putting")}
+                    {FormatInitialVerb("put", "puts", "putting")}
                     <run>a card onto</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>
@@ -640,7 +616,7 @@ namespace Cardgame.Engine
             else if (position == engine.Model.Decks[Player].Count - 1)
             {
                 LogLine($@"
-                    {LogVerbInitial("put", "puts", "putting")}
+                    {FormatInitialVerb("put", "puts", "putting")}
                     <run>a card on the bottom of</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>                
@@ -649,7 +625,7 @@ namespace Cardgame.Engine
             else
             {
                 LogLine($@"
-                    {LogVerbInitial("put", "puts", "putting")}
+                    {FormatInitialVerb("put", "puts", "putting")}
                     <run>a card into</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck, {position} cards down.</run>
