@@ -7,13 +7,13 @@ namespace Cardgame.API
 {
     public interface IActionHost
     {
-        int IndentLevel { get; set; }
         string Player { get; }
         string PreviousPlayer { get; }
         bool IsActive { get; }
         int ShuffleCount { get; }
         int ActionCount { get; }
         IModifier[] GetModifiers();
+        IActionHost Isolate();
 
         // the four vanilla operations
         ICard[] DrawCards(int n);

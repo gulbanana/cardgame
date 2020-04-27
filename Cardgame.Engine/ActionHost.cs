@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cardgame.All;
 using Cardgame.API;
+using Cardgame.Engine.Logging;
 using Cardgame.Model;
 
 namespace Cardgame.Engine
@@ -11,28 +12,26 @@ namespace Cardgame.Engine
     internal abstract class ActionHost : IActionHost
     {   
         protected readonly GameEngine engine;     
-        protected readonly LogRecord logRecord;
-        public int IndentLevel { get; set; }
+        protected readonly IRecord logRecord;
         public string Player { get; }
         public string PreviousPlayer => engine.Model.PreviousPlayer;
         public bool IsActive => engine.Model.ActivePlayer == Player;        
         public int ActionCount => engine.ActionsThisTurn;
         public int ShuffleCount { get; private set; }
 
-        public ActionHost(GameEngine engine, LogRecord logRecord, int indentLevel, string owningPlayer)
+        public ActionHost(GameEngine engine, IRecord logRecord, string owningPlayer)
         {
             this.logRecord = logRecord;
             this.engine = engine;
-            this.IndentLevel = indentLevel;
             this.Player = owningPlayer;
         }
 
-        protected abstract IActionHost CloneHost(string owningPlayer);
+        protected abstract IActionHost CloneHost(IRecord logRecord, string owningPlayer);
 
-        protected void LogPartialEvent(string eventText)
+        protected void LogLine(string eventText)
         {
-            logRecord.Lines.Add(eventText);
-            engine.UpdateLog(logRecord);
+            logRecord.LatestChunk.Add(eventText);
+            logRecord.Update();
         }
 
         protected string LogVerbInitial(string secondPerson, string thirdPerson, string continuous)
@@ -169,12 +168,19 @@ namespace Cardgame.Engine
         private void NoteReshuffle()
         {
             ShuffleCount++;
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
-                <if you='(you reshuffle.)' them='(reshuffling.)'>{Player}</if>
-            </spans>");
+            LogLine($"<if you='(you reshuffle.)' them='(reshuffling.)'>{Player}</if>");
         }
 
+        IModifier[] IActionHost.GetModifiers() 
+        {
+            return engine.Model.GetModifiers();
+        }
+
+        public IActionHost Isolate()
+        {
+            return CloneHost(logRecord.CreateSubrecord(), Player);
+        }
+    
         ICard[] IActionHost.Examine(Zone @in, string player)
         {
             return engine.GetCards(player ?? Player, @in, NoteReshuffle).Select(All.Cards.ByName).ToArray();
@@ -189,33 +195,30 @@ namespace Cardgame.Engine
         {
             engine.Model.ActionsRemaining += n;
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 <if you='you get' them='getting'>{engine.Model.ActivePlayer}</if>
                 <run>+{n} actions.</run>
-            </spans>");
+            ");
         }
 
         void IActionHost.AddBuys(int n)
         {
             engine.Model.BuysRemaining += n;
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 <if you='you get' them='getting'>{engine.Model.ActivePlayer}</if>
                 <run>+{n} buys.</run>
-            </spans>");
+            ");
         }
 
         void IActionHost.AddCoins(int n)
         {
             engine.Model.CoinsRemaining += n;
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 <if you='you get' them='getting'>{engine.Model.ActivePlayer}</if>
                 <run>+${n}.</run>
-            </spans>");
+            ");
         }
 
         ICard[] IActionHost.DrawCards(int n)
@@ -241,11 +244,10 @@ namespace Cardgame.Engine
                 NoteReshuffle();
             }
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("draw", "draws", "drawing")}
                 <run>{(n == 1 ? "a card." : $"{n} cards.")}</run>
-            </spans>");
+            ");
 
             return drawn.Select(All.Cards.ByName).ToArray();
         }
@@ -261,21 +263,19 @@ namespace Cardgame.Engine
 
             if (from == Zone.Hand)
             {
-                LogPartialEvent($@"<spans>
-                    <indent level='{IndentLevel}' />
+                LogLine($@"
                     {LogVerbInitial("discard", "discards", "discarding")}
                     {LogCardList(cards)}
-                </spans>");
+                ");
             }
             else
             {
-                LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+                LogLine($@"
                     {LogVerbInitial("discard", "discards", "discarding")}
                     {LogCardList(cards, terminal: false)}
                     <run>from</run>
                     {LogSource(from)}
-                </spans>");            
+                ");            
             }
         }
 
@@ -288,11 +288,10 @@ namespace Cardgame.Engine
                 engine.MoveCard(Player, card, from, Zone.Trash);
             }
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("trash", "trashes", "trashing")}
                 {LogCardList(cards)}
-            </spans>");        
+            ");        
         }
 
         void IActionHost.Gain(string[] cards, Zone to)
@@ -308,12 +307,11 @@ namespace Cardgame.Engine
                 }
                 else
                 {
-                    LogPartialEvent($@"<spans>
-                        <indent level='{IndentLevel}' />
+                    LogLine($@"
                         {LogVerbInitial("don&apos;t gain", "doesn&apos;t gain", "not gaining")}
                         <card suffix=','>{card}</card>
                         <run>because there are none available.</run>
-                    </spans>");
+                    ");
                 }
             }
 
@@ -321,21 +319,19 @@ namespace Cardgame.Engine
 
             if (to == Zone.Discard)
             {
-                LogPartialEvent($@"<spans>
-                    <indent level='{IndentLevel}' />
+                LogLine($@"
                     {LogVerbInitial("gain", "gains", "gaining")}
                     {LogCardList(cards)}
-                </spans>");
+                ");
             }
             else
             {
-                LogPartialEvent($@"<spans>
-                    <indent level='{IndentLevel}' />
+                LogLine($@"
                     {LogVerbInitial("gain", "gains", "gaining")}
                     {LogCardList(cards, terminal: false)}
                     <run>and</run>
                     {LogDestination(to)}
-                </spans>");
+                ");
             }
         }
 
@@ -349,13 +345,12 @@ namespace Cardgame.Engine
                 engine.NoteGain(Player, instance);
             }
             
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("gain", "gains", "gaining")}
                 {LogCardList(cards, terminal: false)}
                 <run>from</run>
                 {LogSource(from)}
-            </spans>");
+            ");
         }
 
         void IActionHost.PutOnDeck(string[] cards, Zone from)
@@ -369,26 +364,24 @@ namespace Cardgame.Engine
             
             if (from == Zone.Hand)
             {
-                LogPartialEvent($@"<spans>
-                    <indent level='{IndentLevel}' />
+                LogLine($@"
                     {LogVerbInitial("put", "puts", "putting")}
                     {LogCardList(cards, terminal: false)}
                     <run>onto</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>
-                </spans>");
+                ");
             }
             else
             {
-                LogPartialEvent($@"<spans>
-                    <indent level='{IndentLevel}' />
+                LogLine($@"
                     {LogVerbInitial("put", "puts", "putting")}
                     {LogCardList(cards, terminal: false)}
                     <run>onto</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck from</run>
                     {LogSource(from)}
-                </spans>");
+                ");
             }
         }
 
@@ -401,14 +394,13 @@ namespace Cardgame.Engine
                 engine.MoveCard(Player, card, from, Zone.Hand);
             }
             
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("put", "puts", "putting")}
                 {LogSecurely(cards, from, Zone.Hand)}
                 <run>into</run>
                 <if you='your' them='their'>{Player}</if>
                 <run>hand.</run>
-            </spans>");
+            ");
         }
 
         void IActionHost.PutOnMat(string mat, string[] cards, Zone from)
@@ -420,14 +412,13 @@ namespace Cardgame.Engine
                 engine.MoveCard(Player, card, from, Zone.PlayerMat(mat));
             }
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("put", "puts", "putting")}
                 {LogSecurely(cards, from, Zone.PlayerMat(mat))}
                 <run>onto</run>
                 <if you='your' them='their'>{Player}</if>
                 <run>{All.Mats.ByName(mat).Label} mat.</run>
-            </spans>");
+            ");
         }
 
         void IActionHost.ReturnToSupply(string[] cards)
@@ -439,25 +430,23 @@ namespace Cardgame.Engine
                 engine.MoveCard(Player, card, Zone.Hand, Zone.SupplyAvailable);
             }
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("return", "returns", "returning")}
                 {LogSecurely(cards, Zone.Hand, Zone.SupplyAvailable)}
                 <run>to the supply.</run>
-            </spans>");
+            ");
         }
 
         void IActionHost.Reveal(string[] cards, Zone from)
         {
             if (!cards.Any()) return;
             
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("reveal", "reveals", "revealing")}
                 {LogCardList(cards, terminal: false)}
                 <run>from</run>
                 {LogSource(from)}
-            </spans>");
+            ");
         }
 
         ICard[] IActionHost.RevealUntil(Func<ICard, bool> predicate)
@@ -478,24 +467,22 @@ namespace Cardgame.Engine
                 }
             }
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("reveal", "reveals", "revealing")}
                 {LogCardList(cards.Names(), terminal: false)}
                 <run>from</run>
                 {LogSource(Zone.Deck)}
-            </spans>");
+            ");
 
             return cards.ToArray();
         }
 
         void IActionHost.Name(string card)
         {
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("name", "names", "naming")}
                 <card suffix='.'>{card}</card>
-            </spans>");
+            ");
         }
 
         void IActionHost.Reorder(string[] cards, Zone @in)
@@ -510,22 +497,20 @@ namespace Cardgame.Engine
 
             engine.SetCardOrder(Player, cards, @in);
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("reorder", "reorders", "reordering")}
                 {LogSource(@in)}
-            </spans>");
+            ");
         }
 
         async Task IActionHost.PlayCard(string card, Zone from)
         {
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("play", "plays", "playing")}
                 <card suffix='.'>{card}</card>
-            </spans>");
+            ");
 
-            await engine.PlayCardAsync(logRecord, IndentLevel + 1, Player, card, from);
+            await engine.PlayCardAsync(logRecord.CreateSubrecord(), Player, card, from);
         }
 
         Task<bool> IActionHost.YesNo(string prompt, string message)
@@ -605,7 +590,7 @@ namespace Cardgame.Engine
         async Task IActionHost.AllPlayers(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool isAttack)
         {
             var targetPlayers = engine.Model.Players
-                .Select(player => CloneHost(player))
+                .Select(player => CloneHost(logRecord, player))
                 .Where(filter)
                 .ToList();
             
@@ -646,11 +631,6 @@ namespace Cardgame.Engine
             return engine.Model.Players[right];
         }
 
-        public IModifier[] GetModifiers() 
-        {
-            return engine.Model.GetModifiers();
-        }
-    
         void IActionHost.AddEffect(string effect)
         {
             engine.Model.ActiveEffects.Add(effect);
@@ -668,12 +648,11 @@ namespace Cardgame.Engine
             var token = All.Effects.ByName(effect);
             var description = (token as IToken)?.Description ?? token.Name;
             
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("put", "puts", "putting")}
                 <run>{description} on</run>
                 <card suffix='.'>{pile}</card>.
-            </spans>");
+            ");
         }
         
         public virtual void Attach(string card, Zone from)
@@ -701,14 +680,13 @@ namespace Cardgame.Engine
                 engine.MoveCard(Player, deck[0], Zone.Deck, Zone.Discard);
             }
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("put", "puts", "putting")}
                 <if you='your' them='their'>{Player}</if>
                 <run>deck into</run>
                 <if you='your' them='their'>{Player}</if>
                 <run>discard pile.</run>
-            </spans>");
+            ");
         }
 
         // this is a special case used by Masquerade, but could be generalised
@@ -718,12 +696,11 @@ namespace Cardgame.Engine
             engine.MoveCard(Player, card, Zone.Hand, stash);
             engine.MoveCard(toPlayer, card, stash, Zone.Hand);
 
-            LogPartialEvent($@"<spans>
-                <indent level='{IndentLevel}' />
+            LogLine($@"
                 {LogVerbInitial("pass", "passes", "passing")}
                 <run>a card to</run>
                 <player suffix='.'>{toPlayer}</player>
-            </spans>");
+            ");
         }
 
         // this is a special case used by Secret Passage
@@ -734,33 +711,30 @@ namespace Cardgame.Engine
             
             if (position == 0)
             {
-                LogPartialEvent($@"<spans>
-                    <indent level='{IndentLevel}' />
+                LogLine($@"
                     {LogVerbInitial("put", "puts", "putting")}
                     <run>a card onto</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>
-                </spans>");
+                ");
             }
             else if (position == engine.Model.Decks[Player].Count - 1)
             {
-                LogPartialEvent($@"<spans>
-                    <indent level='{IndentLevel}' />
+                LogLine($@"
                     {LogVerbInitial("put", "puts", "putting")}
                     <run>a card on the bottom of</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck.</run>                
-                </spans>");
+                ");
             }
             else
             {
-                LogPartialEvent($@"<spans>
-                    <indent level='{IndentLevel}' />
+                LogLine($@"
                     {LogVerbInitial("put", "puts", "putting")}
                     <run>a card into</run>
                     <if you='your' them='their'>{Player}</if>
                     <run>deck, {position} cards down.</run>
-                </spans>");
+                ");
             }
         }
     }

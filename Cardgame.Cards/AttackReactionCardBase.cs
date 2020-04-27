@@ -16,11 +16,11 @@ namespace Cardgame.Cards
                 await host.YesNo(Name, $@"<run>Reveal</run><card>{Name}</card><run>from your hand?</run>"))
             {
                 host.Reveal(Name);
-                host.IndentLevel++;
                 
+                var subHost = host.Isolate();
                 return Reaction.BeforeAndAfter(
-                    () => BeforeAttackAsync(host),
-                    () => AfterAttackAsync(host)
+                    () => BeforeAttackAsync(subHost),
+                    () => AfterAttackAsync(subHost)
                 );
             }
             else

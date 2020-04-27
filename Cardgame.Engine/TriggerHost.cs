@@ -1,4 +1,5 @@
 using Cardgame.API;
+using Cardgame.Engine.Logging;
 
 namespace Cardgame.Engine
 {
@@ -8,15 +9,15 @@ namespace Cardgame.Engine
         public Trigger TriggerType { get; }
         public string TriggerParameter { get; }
 
-        public TriggerHost(GameEngine engine, LogRecord logRecord, int indentLevel, string owningPlayer, Trigger triggerType, string triggerParameter) : base(engine, logRecord, indentLevel, owningPlayer)
+        public TriggerHost(GameEngine engine, IRecord logRecord, string owningPlayer, Trigger triggerType, string triggerParameter) : base(engine, logRecord, owningPlayer)
         {
             TriggerType = triggerType;
             TriggerParameter = triggerParameter;
         }
 
-        protected override IActionHost CloneHost(string owningPlayer)
+        protected override IActionHost CloneHost(IRecord logRecord, string owningPlayer)
         {
-            return new TriggerHost(engine, logRecord, IndentLevel, owningPlayer, TriggerType, TriggerParameter);
+            return new TriggerHost(engine, logRecord, owningPlayer, TriggerType, TriggerParameter);
         }
     }
 }

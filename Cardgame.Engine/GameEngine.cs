@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Cardgame.All;
 using Cardgame.API;
+using Cardgame.Engine.Logging;
 using Cardgame.Model;
 
 namespace Cardgame.Engine
@@ -14,7 +15,7 @@ namespace Cardgame.Engine
     public class GameEngine
     {
         private readonly HashSet<string> bots;
-        private readonly List<LogRecord> logs;
+        private readonly List<Record> logs;
         private readonly Dictionary<string, TurnRecord> turns;
         private readonly Dictionary<string, int> turnNumbers;  
         private TaskCompletionSource<string> inputTCS;
@@ -33,7 +34,7 @@ namespace Cardgame.Engine
         public GameEngine()
         {
             bots = new HashSet<string>();
-            logs = new List<LogRecord>();
+            logs = new List<Record>();
             turns = new Dictionary<string, TurnRecord>();
             turnNumbers = new Dictionary<string, int>();
 
@@ -367,7 +368,7 @@ namespace Cardgame.Engine
                 <card suffix='.'>{id}</card>
             </spans>");
 
-            await Act(buyRecord, 1, player, Trigger.BuyCard, id, () => 
+            await Act(buyRecord, player, Trigger.BuyCard, id, () => 
             {                
                 var instance = MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
                 
@@ -439,36 +440,35 @@ namespace Cardgame.Engine
 
             foreach (var card in cards)
             {                
-                var (coins, potions) = await PlayCardAsync(playCardsRecord, 1, player, card.Name, Zone.Hand);
+                var (coins, potions) = await PlayCardAsync(playCardsRecord, player, card.Name, Zone.Hand);
                 gainC += coins;
                 gainP += potions;
             }
 
             if (type == CardType.Treasure)
             {
-                playCardsRecord.Lines.Add($@"<spans>
-                    <indent level='1' />
+                playCardsRecord.LatestChunk.Add($@"
                     {LogVerbInitial(player, "get", "gets", "getting")}
                     <run>+${gainC}{(gainP > 0 ? $" {gainP}P" : "")}.</run>
-                </spans>");
+                ");
             }
 
             // check postconditions            
             if (Model.PreventedAttacks.Any())
             {
-                playCardsRecord.Lines.Add("<error>Warning: PreventedAttacks not cleared</error>");
+                playCardsRecord.LatestChunk.Add("<error>Warning: PreventedAttacks not cleared</error>");
                 Model.PreventedAttacks.Clear();
             }
 
             if (Model.ChoosingPlayers.Any())
             {
-                playCardsRecord.Lines.Add($"<error>Warning: choice is stuck on '{Model.ChoicePrompt}'</error>");
+                playCardsRecord.LatestChunk.Add($"<error>Warning: choice is stuck on '{Model.ChoicePrompt}'</error>");
                 Model.ChoosingPlayers.Clear();
             }
 
             if (stashes.Any() || revealed.Any())
             {
-                playCardsRecord.Lines.Add($@"<lines>
+                playCardsRecord.LatestChunk.Add($@"<lines>
                     <error>Warning: temp zones not drained.</error>
                     <error>Stashes: {string.Join(", ", stashes.Values.Names())}</error>
                     <error>Revealed: {string.Join(", ", revealed.Names())}</error>
@@ -500,13 +500,13 @@ namespace Cardgame.Engine
             }
         }
 
-        internal async Task<(int coins, int potions)> PlayCardAsync(LogRecord logRecord, int indentLevel, string player, string id, Zone from)
+        internal async Task<(int coins, int potions)> PlayCardAsync(IRecord logRecord, string player, string id, Zone from)
         {       
             var played = MoveCard(player, id, from, Zone.InPlay);
             var gainC = 0;
             var gainP = 0;
 
-            await Act(logRecord, indentLevel, player, Trigger.PlayCard, id, async () =>
+            await Act(logRecord, player, Trigger.PlayCard, id, async () =>
             {
                 var card = All.Cards.ByName(id);
                 if (card.Types.Contains(CardType.Duration))
@@ -514,7 +514,7 @@ namespace Cardgame.Engine
                     Model.PlayedWithDuration.Add(played);
                 }
 
-                var host = new CardHost(this, logRecord, indentLevel, player, played);
+                var host = new CardHost(this, logRecord, player, played);
                 if (card is IActionCard action)
                 {
                     if (player == Model.ActivePlayer)
@@ -551,21 +551,51 @@ namespace Cardgame.Engine
             Model.EventLog.Add(eventText);
         }
 
-        private LogRecord LogComplexEvent(string eventText)
+        private Record LogComplexEvent(string eventText)
         {
-            var record = new LogRecord(Model.EventLog.Count, eventText);
+            var record = new Record(Model.EventLog.Count, eventText, UpdateLog);
             Model.EventLog.Add(record.Header);
             return record;
         }
         
-        internal void UpdateLog(LogRecord record)
+        private void UpdateLog(Record record)
         {
-            var partialXML = string.Join(Environment.NewLine, record.Lines.Prepend(record.Header));
-            var finalXML = $"<lines>{partialXML}</lines>";            
+            var lines = new List<string>();
+            lines.Add(record.Header);
+            lines.AddRange(GetLogLines(record, 1));
+
+            var partialXML = string.Join(Environment.NewLine, lines);
+            var finalXML = $@"<lines>
+                {partialXML}
+            </lines>";            
             Model.EventLog[record.Index] = finalXML.ToString();
         }
 
-        private void ClearLog(LogRecord record)
+        private IEnumerable<string> GetLogLines(Subrecord subrecord, int indent)
+        {
+            foreach (var section in subrecord.Sections)
+            {
+                if (section.Chunk != null)
+                {
+                    foreach (var line in section.Chunk)
+                    {
+                        yield return $@"<spans>
+                            <indent level='{indent}' />
+                            {line}
+                        </spans>";
+                    }
+                }
+                else
+                {
+                    foreach (var indentedLine in GetLogLines(section.Subrecord, indent + 1))
+                    {
+                        yield return indentedLine;
+                    }
+                }
+            }
+        }
+
+        private void ClearLog(Record record)
         {
             Model.EventLog.RemoveAt(record.Index);
         }
@@ -640,14 +670,12 @@ namespace Cardgame.Engine
             Model.PlayedLastTurn = new HashSet<Instance>(Model.PlayedCards[player]);
 
             var beginTurnRecord = LogComplexEvent($@"<bold>
-                <spans>
-                    <run>---</run>
-                    <if you='Your' them=""{player}'s"">{player}</if>
-                    <run>turn {turnNumber} ---</run>
-                </spans>
+                <run>---</run>
+                <if you='Your' them=""{player}'s"">{player}</if>
+                <run>turn {turnNumber} ---</run>
             </bold>");
 
-            await Act(beginTurnRecord, 1, player, Trigger.BeginTurn, player, () => 
+            await Act(beginTurnRecord, player, Trigger.BeginTurn, player, () => 
             {
                 if (!Model.Hands[player].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Action)))
                 {
@@ -701,7 +729,7 @@ namespace Cardgame.Engine
                 if (!card.Types.Contains(CardType.Duration) || !Model.PlayedWithDuration.Contains(instance))
                 {
                     var reactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
-                    await Act(endTurnRecord, 1, player, Trigger.DiscardFromPlay, instance.Id, () =>
+                    await Act(endTurnRecord, player, Trigger.DiscardFromPlay, instance.Id, () =>
                     {
                         inPlay.Remove(instance);
                         discard.Add(instance);
@@ -727,16 +755,15 @@ namespace Cardgame.Engine
             }
             if (reshuffled)
             {
-                endTurnRecord.Lines.Add($@"<spans>
-                    <indent level='1' />
+                endTurnRecord.LatestChunk.Add($@"
                     <player prefix='('>{player}</player>
                     <if you='reshuffle.)' them='reshuffles.)'>{player}</if>
-                </spans>");
+                ");
                 UpdateLog(endTurnRecord);
             }
             
             // display the EOT record only if it's got content
-            if (!endTurnRecord.Lines.Any())
+            if (!endTurnRecord.HasLines())
             {
                 ClearLog(endTurnRecord);
             }
@@ -768,11 +795,7 @@ namespace Cardgame.Engine
         {
             Model.IsFinished = true;
 
-            LogBasicEvent($@"<bold>
-                <spans>
-                    <run>--- Game over ---</run>
-                </spans>
-            </bold>");
+            LogBasicEvent($@"<bold>--- Game over ---</bold>");
 
             foreach (var pair in Model.Players.Select(player => (s: All.Rules.CalculateScore(Model, player), t: turnNumbers[player])))
             {
@@ -1115,11 +1138,11 @@ namespace Cardgame.Engine
             return JsonSerializer.Deserialize<TOutput>(output);
         }
 
-        internal async Task Act(LogRecord addToRecord, int indentLevel, string player, Trigger trigger, string parameter, Func<Task> f, IEnumerable<IReactor> extraReactors = null)
+        internal async Task Act(IRecord addToRecord, string player, Trigger trigger, string parameter, Func<Task> f, IEnumerable<IReactor> extraReactors = null)
         {
             var reactions = new List<Reaction>();
 
-            var globalHost = new TriggerHost(this, addToRecord, indentLevel, player, trigger, parameter);
+            var globalHost = new TriggerHost(this, addToRecord, player, trigger, parameter);
 
             var globalReactors = Model.ActiveEffects
                 .Select(All.Effects.ByName)
@@ -1157,7 +1180,7 @@ namespace Cardgame.Engine
                 {
                     var ownedReactor = ownedReactors.First();
                     reacted.Add(ownedReactor.instance);
-                    var ownedHost = new CardHost(this, addToRecord, indentLevel, owningPlayer, ownedReactor.instance);
+                    var ownedHost = new CardHost(this, addToRecord, owningPlayer, ownedReactor.instance);
                     reactions.Add(await ownedReactor.reactor.ExecuteReactionAsync(ownedHost, ownedReactor.zone, trigger, parameter));
                 }
             }
