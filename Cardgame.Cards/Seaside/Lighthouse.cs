@@ -1,3 +1,4 @@
+using System.Linq;
 using Cardgame.API;
 
 namespace Cardgame.Cards.Seaside
@@ -32,12 +33,10 @@ namespace Cardgame.Cards.Seaside
 
         protected override void OnBeforePlayCard(IActionHost host, ICard card)
         {
-            host.PreventAttack(true);
-        }
-
-        protected override void OnAfterPlayCard(IActionHost host, ICard card)
-        {
-            host.PreventAttack(false);
+            if (card.Types.Contains(CardType.Attack))
+            {
+                host.PreventNextAttack();
+            }
         }
     }
 }

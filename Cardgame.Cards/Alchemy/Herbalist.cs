@@ -22,7 +22,7 @@ namespace Cardgame.Cards.Alchemy
             host.AddCoins(1);
         }
         
-        protected override async Task OnDiscardedAsync(IActionHost host)
+        protected override async Task OnDiscardFromPlayAsync(IActionHost host)
         {
             var playedTreasures = host.Examine(Zone.RecentPlays).Any(card => card.Types.Contains(CardType.Treasure));
             if (playedTreasures)

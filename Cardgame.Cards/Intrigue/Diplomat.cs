@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Intrigue
             }
         }
 
-        protected override async Task BeforeAttackAsync(IActionHost host)
+        protected override async Task ReactAsync(IActionHost host)
         {
             host.DrawCards(2);
             var discarded = await host.SelectCards("Choose cards to discard.", Zone.Hand, 3, 3);

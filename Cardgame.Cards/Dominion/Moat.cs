@@ -17,14 +17,9 @@ namespace Cardgame.Cards.Dominion
             host.DrawCards(2);
         }
 
-        protected override void BeforeAttack(IActionHost host)
+        protected override void React(IActionHost host)
         {
-            host.PreventAttack(true);
-        }
-
-        protected override void AfterAttack(IActionHost host)
-        {
-            host.PreventAttack(false);
+            host.PreventNextAttack();
         }
     }
 }

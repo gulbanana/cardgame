@@ -9,20 +9,20 @@ namespace Cardgame.Cards
         public override CardType[] Types => new[] { CardType.Action, CardType.Reaction };
         public abstract Trigger ReactionTrigger { get; }
 
-        public async Task<Reaction> ExecuteReactionAsync(IActionHost host, Zone reactFrom, Trigger triggerType, string triggerParameter)
+        public async Task ExecuteReactionAsync(IActionHost host, Zone reactFrom, Trigger triggerType, string triggerParameter)
         {
             if (reactFrom == Zone.Hand && triggerType == ReactionTrigger)
             {
-                return await ReactAsync(host, triggerParameter);                        
-            }
-            else
-            {
-                return Reaction.None();
+                await ReactAsync(host, triggerParameter);                        
             }
         }
 
-        protected virtual Task<Reaction> ReactAsync(IActionHost host, string trigger) => Task.FromResult(React(host, trigger));
+        protected virtual Task ReactAsync(IActionHost host, string trigger)
+        {
+            React(host, trigger);
+            return Task.CompletedTask;
+        }
 
-        protected virtual Reaction React(IActionHost host, string trigger) => throw new NotImplementedException($"Reaction not implemented.");
+        protected virtual void React(IActionHost host, string trigger) => throw new NotImplementedException($"Reaction not implemented.");
     }
 }

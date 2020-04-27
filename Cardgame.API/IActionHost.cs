@@ -42,7 +42,7 @@ namespace Cardgame.API
         // interaction
         Task PlayCard(string card, Zone from);
         Task AllPlayers(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool isAttack = false);
-        void PreventAttack(bool enable);
+        void PreventNextAttack();
         string GetPlayerToLeft();
         string GetPlayerToRight();
 

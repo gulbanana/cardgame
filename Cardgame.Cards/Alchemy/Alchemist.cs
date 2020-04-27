@@ -22,7 +22,7 @@ namespace Cardgame.Cards.Alchemy
             host.AddActions(1);
         }
         
-        protected override async Task OnDiscardedAsync(IActionHost host)
+        protected override async Task OnDiscardFromPlayAsync(IActionHost host)
         {
             // XXX RAW you choose discard order, but we elide that for UI reasons. in practice we trigger all IReactor discards first
             var playedPotion = host.Examine(Zone.InPlay).Any(card => card.Name == "Potion");

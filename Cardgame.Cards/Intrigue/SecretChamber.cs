@@ -24,7 +24,7 @@ namespace Cardgame.Cards.Intrigue
             host.AddCoins(discarded.Length);
         }
 
-        protected override async Task BeforeAttackAsync(IActionHost host)
+        protected override async Task ReactAsync(IActionHost host)
         {
             host.DrawCards(2);
             var put = await host.SelectCards("Choose cards to put back.", Zone.Hand, 2, 2);

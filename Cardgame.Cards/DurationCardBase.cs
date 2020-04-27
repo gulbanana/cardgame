@@ -7,38 +7,28 @@ namespace Cardgame.Cards
     {
         public override CardType[] Types => new[] { CardType.Action, CardType.Duration } ;
 
-        public Task<Reaction> ExecuteReactionAsync(IActionHost host, Zone reactFrom, Trigger triggerType, string triggerParameter)
+        public Task ExecuteReactionAsync(IActionHost host, Zone reactFrom, Trigger triggerType, string triggerParameter)
         {
             if (reactFrom == Zone.InPlay)
             {
                 if (triggerType == Trigger.BeginTurn && triggerParameter == host.Player)
                 {
-                    return Task.FromResult(Reaction.Before(() => 
-                    {
-                        OnBeginTurn(host);
-                        host.CompleteDuration();
-                    }));
+                    OnBeginTurn(host);
+                    host.CompleteDuration();
                 }
-                else if (triggerType == Trigger.PlayCard)
+                else if (triggerType == Trigger.BeforePlayCard)
                 {
                     var card = AllCards.ByName(triggerParameter);
-                    return Task.FromResult(Reaction.BeforeAndAfter(() =>
-                    {
-                        OnBeforePlayCard(host, card);
-                    }, () =>
-                    {
-                        OnAfterPlayCard(host, card);
-                    }));
+                    OnBeforePlayCard(host, card);
                 }
-                else
+                else if (triggerType == Trigger.AfterPlayCard)
                 {
-                    return Task.FromResult(Reaction.None());
+                    var card = AllCards.ByName(triggerParameter);
+                    OnAfterPlayCard(host, card);
                 }
             }
-            else
-            {
-                return Task.FromResult(Reaction.None());
-            }
+
+            return Task.CompletedTask;
         }
 
         protected virtual void OnBeginTurn(IActionHost host) { }

@@ -441,23 +441,27 @@ namespace Cardgame.Engine
             
             foreach (var target in targetPlayers)
             {
-                if (!isAttack || !engine.Model.PreventedAttacks.Contains(target.Player))
+                if (isAttack)
+                {
+                    if (engine.Model.PreventedAttacks.Contains(target.Player))
+                    {
+                        engine.Model.PreventedAttacks.Remove(target.Player);
+                    }
+                    else
+                    {
+                        await act(target);
+                    }
+                }
+                else
                 {
                     await act(target);
                 }
             }
         }
 
-        void IActionHost.PreventAttack(bool enable)
+        void IActionHost.PreventNextAttack()
         {
-            if (enable)
-            {
-                engine.Model.PreventedAttacks.Add(Player);
-            }
-            else
-            {
-                engine.Model.PreventedAttacks.Remove(Player);
-            }
+            engine.Model.PreventedAttacks.Add(Player);
         }
 
         string IActionHost.GetPlayerToLeft()

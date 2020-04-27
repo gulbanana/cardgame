@@ -368,15 +368,11 @@ namespace Cardgame.Engine
         {            
             var buyRecord = logManager.LogComplexEvent(player, new BuyCard { Card = id });
 
-            await Act(buyRecord, player, Trigger.BuyCard, id, () => 
-            {                
-                var instance = MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
-                
-                NoteBuy(player, instance);
-                NoteGain(player, instance);
+            var instance = MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
+            NoteBuy(player, instance);
+            NoteGain(player, instance);
 
-                return Task.CompletedTask;
-            }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
+            await TriggerReactions(buyRecord, player, Trigger.BuyCard, id, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
 
             logManager.Save(buyRecord);
         }
@@ -494,42 +490,44 @@ namespace Cardgame.Engine
             var gainC = 0;
             var gainP = 0;
 
-            await Act(logRecord, player, Trigger.PlayCard, id, async () =>
+            var extraReactors = Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>();
+            await TriggerReactions(logRecord, player, Trigger.BeforePlayCard, id, extraReactors);
+            
+            var card = All.Cards.ByName(id);
+            if (card.Types.Contains(CardType.Duration))
             {
-                var card = All.Cards.ByName(id);
-                if (card.Types.Contains(CardType.Duration))
+                Model.PlayedWithDuration.Add(played);
+            }
+
+            var host = new CardHost(this, logRecord, player, played);
+            if (card is IActionCard action)
+            {
+                if (player == Model.ActivePlayer)
                 {
-                    Model.PlayedWithDuration.Add(played);
+                    ActionsThisTurn++;
                 }
 
-                var host = new CardHost(this, logRecord, player, played);
-                if (card is IActionCard action)
-                {
-                    if (player == Model.ActivePlayer)
-                    {
-                        ActionsThisTurn++;
-                    }
+                await action.ExecuteActionAsync(host);
+            }
+            else if (card is ITreasureCard treasure)
+            {
+                var increaseCoins = Model.GetModifiers().Select(m => m.IncreaseTreasureValue(card.Name)).Sum();
+                var value = await treasure.GetValueAsync(host);
 
-                    await action.ExecuteActionAsync(host);
-                }
-                else if (card is ITreasureCard treasure)
-                {
-                    var increaseCoins = Model.GetModifiers().Select(m => m.IncreaseTreasureValue(card.Name)).Sum();
-                    var value = await treasure.GetValueAsync(host);
+                gainC = value.Coins + increaseCoins;
+                Model.CoinsRemaining += gainC;
 
-                    gainC = value.Coins + increaseCoins;
-                    Model.CoinsRemaining += gainC;
+                gainP = value.Potion ? 1 : 0;
+                Model.PotionsRemaining += gainP;
+            }
+            else
+            {
+                throw new CommandException($"Only Actions and Treasures can be played.");
+            }
 
-                    gainP = value.Potion ? 1 : 0;
-                    Model.PotionsRemaining += gainP;
-                }
-                else
-                {
-                    throw new CommandException($"Only Actions and Treasures can be played.");
-                }
+            NotePlay(player, played);
 
-                NotePlay(player, played);
-            }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
+            await TriggerReactions(logRecord, player, Trigger.AfterPlayCard, id, extraReactors);
 
             return (gainC, gainP);
         }
@@ -592,22 +590,18 @@ namespace Cardgame.Engine
             Model.PlayedLastTurn = new HashSet<Instance>(Model.PlayedCards[player]);
 
             var beginTurnRecord = logManager.LogComplexEvent(player, new BeginTurn { TurnNumber = turnNumber });
-
-            await Act(beginTurnRecord, player, Trigger.BeginTurn, player, () => 
-            {
-                if (!Model.Hands[player].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Action)))
-                {
-                    Model.CurrentPhase = Phase.Treasure;
-                    if (!Model.Hands[player].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Treasure)))
-                    {
-                        Model.CurrentPhase = Phase.Buy;
-                    }
-                }
-
-                return Task.CompletedTask;
-            });
-
+            await TriggerReactions(beginTurnRecord, player, Trigger.BeginTurn, player);
             logManager.Save(beginTurnRecord);
+
+            // advance phases
+            if (!Model.Hands[player].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Action)))
+            {
+                Model.CurrentPhase = Phase.Treasure;
+                if (!Model.Hands[player].Select(All.Cards.ByName).Any(card => card.Types.Contains(CardType.Treasure)))
+                {
+                    Model.CurrentPhase = Phase.Buy;
+                }
+            }
 
             if (bots.Contains(player))
             {
@@ -644,13 +638,11 @@ namespace Cardgame.Engine
                 var card = All.Cards.ByName(instance);
                 if (!card.Types.Contains(CardType.Duration) || !Model.PlayedWithDuration.Contains(instance))
                 {
+                    inPlay.Remove(instance);
+                    discard.Add(instance);
+
                     var reactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
-                    await Act(endTurnRecord, player, Trigger.DiscardFromPlay, instance.Id, () =>
-                    {
-                        inPlay.Remove(instance);
-                        discard.Add(instance);
-                        return Task.CompletedTask;
-                    }, reactors);
+                    await TriggerReactions(endTurnRecord, player, Trigger.DiscardFromPlay, instance.Id, reactors);
                 }
             }
 
@@ -1062,11 +1054,9 @@ namespace Cardgame.Engine
             return JsonSerializer.Deserialize<TOutput>(output);
         }
 
-        internal async Task Act(IRecord addToRecord, string player, Trigger trigger, string parameter, Func<Task> f, IEnumerable<IReactor> extraReactors = null)
+        internal async Task TriggerReactions(IRecord addToRecord, string player, Trigger type, string parameter, IEnumerable<IReactor> extraReactors = null)
         {
-            var reactions = new List<Reaction>();
-
-            var globalHost = new TriggerHost(this, addToRecord, player, trigger, parameter);
+            var globalHost = new TriggerHost(this, addToRecord, player, type, parameter);
 
             var globalReactors = Model.ActiveEffects
                 .Select(All.Effects.ByName)
@@ -1077,7 +1067,7 @@ namespace Cardgame.Engine
             {
                 var reactor = globalReactors.First();
                 globalReactors.Remove(reactor);                
-                reactions.Add(await reactor.ExecuteReactionAsync(globalHost, Zone.InPlay, trigger, parameter));
+                await reactor.ExecuteReactionAsync(globalHost, Zone.InPlay, type, parameter);
             }
 
             var localReactors = extraReactors?.ToList();
@@ -1085,7 +1075,7 @@ namespace Cardgame.Engine
             {
                 var reactor = localReactors.First();
                 localReactors.Remove(reactor);
-                reactions.Add(await reactor.ExecuteReactionAsync(globalHost, Zone.This, trigger, parameter));
+                await reactor.ExecuteReactionAsync(globalHost, Zone.This, type, parameter);
             }
 
             foreach (var owningPlayer in Model.Players)
@@ -1104,21 +1094,11 @@ namespace Cardgame.Engine
                 {
                     var ownedReactor = ownedReactors.First();
                     reacted.Add(ownedReactor.instance);
-                    var ownedHost = new CardHost(this, addToRecord, owningPlayer, ownedReactor.instance);
-                    reactions.Add(await ownedReactor.reactor.ExecuteReactionAsync(ownedHost, ownedReactor.zone, trigger, parameter));
+                    
+                    var ownedRecord = addToRecord.CreateSubrecord(owningPlayer, true);
+                    var ownedHost = new CardHost(this, ownedRecord, owningPlayer, ownedReactor.instance);
+                    await ownedReactor.reactor.ExecuteReactionAsync(ownedHost, ownedReactor.zone, type, parameter);
                 }
-            }
-
-            foreach (var reaction in reactions)
-            {
-                await reaction.ActBefore();
-            }
-            
-            await f();
-
-            foreach (var reaction in reactions)
-            {
-                await reaction.ActAfter();
             }
         }
 

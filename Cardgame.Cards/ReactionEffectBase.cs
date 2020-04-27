@@ -8,15 +8,11 @@ namespace Cardgame.Cards
     {
         public abstract Trigger ReactionTrigger { get; }
         
-        public async Task<Reaction> ExecuteReactionAsync(IActionHost host, Zone reactFrom, Trigger triggerType, string triggerParameter)
+        public async Task ExecuteReactionAsync(IActionHost host, Zone reactFrom, Trigger triggerType, string triggerParameter)
         {
             if (triggerType == ReactionTrigger)
             {
-                return Reaction.After(() => ReactAsync(host, triggerParameter));
-            }
-            else
-            {
-                return Reaction.None();
+                await ReactAsync(host, triggerParameter);
             }
         }
 

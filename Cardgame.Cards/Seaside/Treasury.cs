@@ -30,7 +30,7 @@ namespace Cardgame.Cards.Seaside
             host.AddCoins(1);
         }
 
-        protected override async Task OnDiscardedAsync(IActionHost host)
+        protected override async Task OnDiscardFromPlayAsync(IActionHost host)
         {
             var bought = host.Examine(Zone.RecentBuys);
             var boughtVictories = bought.Any(card => card.Types.Contains(CardType.Victory));
