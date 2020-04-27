@@ -26,26 +26,18 @@ namespace Cardgame.Engine
 
         public override void Attach(string card, Zone from)
         {
-            engine.MoveCard(Player, card, from, new Zone(ZoneName.Attached, Card));
+            var attachee = new Zone(ZoneName.Attached, Card);
+            engine.MoveCard(Player, card, from, attachee);
 
-            LogLine($@"
-                {LogVerbInitial("put", "puts", "putting")}
-                <run>a card under</run>
-                <card suffix='.'>{Card.Id}</card>.
-            ");
+            LogMovement(Motion.Put, new[]{card}, from, attachee);
         }
 
         public override void Detach(Zone to)
         {
-            engine.MoveCard(Player, null, new Zone(ZoneName.Attached, Card), to);
+            var attachee = new Zone(ZoneName.Attached, Card);
+            var attachment = engine.MoveCard(Player, null, attachee, to);
 
-            LogLine($@"
-                {LogVerbInitial("remove", "removes", "removing")}
-                <run>a card from under</run>
-                <card>{Card.Id}</card>
-                <run>and</run>
-                {LogDestination(to)}
-            ");
+            LogMovement(Motion.Put, new[]{ attachment.Id }, attachee, to);
         }
     }
 }

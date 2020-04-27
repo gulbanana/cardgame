@@ -46,7 +46,7 @@ namespace Cardgame.Engine
             logRecord.Update();
         }
 
-        protected void LogLine(string eventText)
+        private void LogLine(string eventText)
         {
             if (logRecord.LatestChunk.HasVanillaContent())
             {
@@ -135,36 +135,6 @@ namespace Cardgame.Engine
             }
         }
 
-        protected string LogDestination(Zone to)
-        {
-            switch (to.Name)
-            {
-                case ZoneName.Deck:
-                case ZoneName.DeckTop when to.Param is int n:
-                    return $@"{LogVerb("put", "puts", "putting")}
-                              <run>it onto</run>
-                              <if you='your' them='their'>{Player}</if>
-                              <run>deck.</run>";
-
-                case ZoneName.Hand:
-                    return $@"{LogVerb("put", "puts", "putting")}
-                              <run>it into</run>
-                              <if you='your' them='their'>{Player}</if>
-                              <run>hand.</run>";
-
-                case ZoneName.Discard:
-                    return $@"{LogVerb("discard", "discards", "discarding")}
-                              <run>it.</run>";
-
-                case ZoneName.Trash:
-                    return $@"{LogVerb("trash", "trashes", "trashing")}
-                              <run>it.</run>";
-
-                default:
-                    throw new CommandException($"Unknown destination zone {to}");
-            }
-        }
-
         private string LogSecurely(string card, Zone source, Zone destination)
         {
             if (source.IsPrivate() && destination.IsPrivate())
@@ -199,7 +169,7 @@ namespace Cardgame.Engine
         private void NoteReshuffle()
         {
             ShuffleCount++;
-            LogLine($"<if you='(you reshuffle.)' them='(reshuffling.)'>{Player}</if>");
+            LogVanilla(chunk => chunk.Reshuffled = true);
         }
 
         IModifier[] IActionHost.GetModifiers() 
@@ -367,13 +337,7 @@ namespace Cardgame.Engine
                 engine.MoveCard(Player, card, from, Zone.PlayerMat(mat));
             }
 
-            LogLine($@"
-                {LogVerbInitial("put", "puts", "putting")}
-                {LogSecurely(cards, from, Zone.PlayerMat(mat))}
-                <run>onto</run>
-                <if you='your' them='their'>{Player}</if>
-                <run>{All.Mats.ByName(mat).Label} mat.</run>
-            ");
+            LogMovement(Motion.Put, cards, from, Zone.PlayerMat(mat));
         }
 
         void IActionHost.ReturnToSupply(string[] cards)

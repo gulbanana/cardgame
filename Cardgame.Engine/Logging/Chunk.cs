@@ -7,6 +7,7 @@ namespace Cardgame.Engine.Logging
     {
         public readonly string Actor;
 
+        public bool Reshuffled;
         public List<string> AddedCards;
         public int AddedActions;
         public int AddedBuys;
@@ -27,7 +28,7 @@ namespace Cardgame.Engine.Logging
 
         public bool HasVanillaContent()
         {
-            return AddedCards.Count > 0 || AddedActions > 0 || AddedBuys > 0 || AddedCoins > 0 || AddedPotions > 0;
+            return Reshuffled || AddedCards.Count > 0 || AddedActions > 0 || AddedBuys > 0 || AddedCoins > 0 || AddedPotions > 0;
         }
 
         public bool HasContent()

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Cardgame.API;
+using Cardgame.Model;
 
 namespace Cardgame.Engine.Logging
 {
@@ -88,9 +89,14 @@ namespace Cardgame.Engine.Logging
             }
 
             // vanilla bonuses, potentially consequences of the movements
+            if (chunk.Reshuffled)
+            {
+                builder.Append(FormatVerb(chunk.Actor, "reshuffle", "reshuffles", "reshuffling", !chunk.Movements.Any()));
+            }
+
             if (chunk.AddedCards.Count > 0)
             {
-                builder.Append(FormatVerb(chunk.Actor, "draw", "draws", "drawing", !chunk.Movements.Any()));
+                builder.Append(FormatVerb(chunk.Actor, "draw", "draws", "drawing", !chunk.Movements.Any() && !chunk.Reshuffled));
                 var altText = chunk.AddedCards.Count > 1 ? $"{chunk.AddedCards.Count} cards" : "a card";
                 builder.Append($"<private owner='{chunk.Actor}' alt='{altText}'>");
                 builder.Append(FormatCardList(chunk.AddedCards));
@@ -99,7 +105,7 @@ namespace Cardgame.Engine.Logging
 
             if (chunk.AddedActions > 0 || chunk.AddedBuys > 0 || chunk.AddedCoins > 0 || chunk.AddedPotions > 0)
             {
-                builder.Append(FormatVerb(chunk.Actor, "get", "gets", "getting", !chunk.Movements.Any() && !chunk.AddedCards.Any()));
+                builder.Append(FormatVerb(chunk.Actor, "get", "gets", "getting", !chunk.Movements.Any() && !chunk.Reshuffled && !chunk.AddedCards.Any()));
 
                 var got = new List<string>();
                 if (chunk.AddedActions > 0) got.Add($"+{chunk.AddedActions} {(chunk.AddedActions > 1 ? "actions" : "action")}");
@@ -202,6 +208,9 @@ namespace Cardgame.Engine.Logging
         {
             switch (zone.Name)
             {
+                case ZoneName.Attached when zone.Param is Instance instance:
+                    return $"<run>under</run><card>{instance.Id}</card>";
+
                 case ZoneName.DeckBottom:
                     return @"<run>the bottom of</run>
                              <if you='your' them='their'>{actor}</if>
@@ -219,6 +228,10 @@ namespace Cardgame.Engine.Logging
 
                 case ZoneName.InPlay:
                     return "<run>play</run>";
+
+                case ZoneName.PlayerMat when zone.Param is string id:
+                    var mat = All.Mats.ByName(id);
+                    return $"<if you='your' them='their'>{actor}</if><run>{mat.Label} mat</run>";
 
                 case ZoneName.Revealed:
                     return "<run>the revealed cards</run>";
@@ -356,12 +369,14 @@ namespace Cardgame.Engine.Logging
                 // "put" has adaptive grammar
                 case Motion.Put:
                     var preposition = movement.To.Name switch {                        
+                        ZoneName.Attached => string.Empty,
                         ZoneName.Deck => "onto",
                         ZoneName.DeckTop => "onto",
                         ZoneName.DeckBottom => "on the bottom of",
                         ZoneName.Discard => "onto",
                         ZoneName.Hand => "onto",
                         ZoneName.InPlay => "into",
+                        ZoneName.PlayerMat => "onto",
                         ZoneName.Supply => "into",
                         ZoneName.Trash => "into",
                         _ => throw new NotSupportedException("Unknown log put destination {movement.To.Name}")

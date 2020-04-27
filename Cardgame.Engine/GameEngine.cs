@@ -688,10 +688,7 @@ namespace Cardgame.Engine
             }
             if (reshuffled)
             {
-                endTurnRecord.LatestChunk.Lines.Add($@"
-                    <player prefix='('>{player}</player>
-                    <if you='reshuffle.)' them='reshuffles.)'>{player}</if>
-                ");
+                endTurnRecord.LatestChunk.Reshuffled = true;
                 endTurnRecord.Update();
             }
             
