@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Cardgame.API;
@@ -38,7 +37,7 @@ namespace Cardgame.Cards.Seaside
                  new NamedOption("<run>Put cards back on deck.</run>", async () => 
                  {
                      var reordered = await host.OrderCards("Navigator", Zone.DeckTop(5));
-                     host.Reorder(reordered, Zone.Deck);
+                     host.Reorder(reordered, Zone.DeckTop(5));
                  })
             );
         }
