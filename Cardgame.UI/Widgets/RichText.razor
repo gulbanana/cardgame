@@ -142,11 +142,11 @@
     case TextModel.Pronominal pro:
         if (Session.Username.Equals(pro.Name))
         {
-            <text>@pro.IfYou</text>
+            <text>@(pro.Prefix)@pro.IfYou@(pro.Suffix)</text>
         }
         else
         {
-            <text>@pro.IfThem</text>
+            <text>@(pro.Prefix)@pro.IfThem@(pro.Suffix)</text>
         }
         break;
 

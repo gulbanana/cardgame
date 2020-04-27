@@ -126,6 +126,11 @@ namespace Cardgame.Engine.Logging
             var xml = XDocument.Parse(temp).Root;
             var lastRun = xml.Elements().Last();
 
+            while (lastRun.Name == "private")
+            {
+                lastRun = lastRun.Elements().Last();
+            }
+
             if (lastRun.Name == "run")
             {
                 lastRun.Value += ".";

@@ -87,6 +87,8 @@ namespace Cardgame.Model
             public string Name { get; set; }
             public string IfYou { get; set; }
             public string IfThem { get; set; }
+            public string Prefix { get; set; }
+            public string Suffix { get; set; }
         }
 
         public static TextModel Parse(string xml)
@@ -177,7 +179,9 @@ namespace Cardgame.Model
                     { 
                         Name = element.Value, 
                         IfYou = element.Attribute("you").Value, 
-                        IfThem = element.Attribute("them").Value 
+                        IfThem = element.Attribute("them").Value,
+                        Prefix = element.Attribute("prefix")?.Value,
+                        Suffix = element.Attribute("suffix")?.Value
                     };
 
                 default:
