@@ -54,6 +54,7 @@ namespace Cardgame.Engine.Logging
         
         public void Save(Record record)
         {
+            #if DEBUG
             var options = new JsonSerializerOptions 
             { 
                 Converters = { new JsonStringEnumConverter(), new EventConverter(), new ChunkConverter() },
@@ -63,6 +64,7 @@ namespace Cardgame.Engine.Logging
             };
             var json = JsonSerializer.Serialize(record, options);
             Console.WriteLine(json);
+            #endif
         }
 
         private string GetRecordHeader(Record record)
