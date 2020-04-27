@@ -29,8 +29,8 @@ namespace Cardgame.UI.Widgets
                     foreach (var span in spans.Children)
                     {
                         __builder.AddContent(0, "            ");
-                        __builder.OpenComponent<Cardgame.UI.Widgets.RichText>(1);
-                        __builder.AddAttribute(2, "Parsed", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.Model.TextModel>(
+                        __builder.OpenComponent<RichText>(1);
+                        __builder.AddAttribute(2, "Parsed", (
                                span
                         ));
                         __builder.CloseComponent();
@@ -43,8 +43,8 @@ namespace Cardgame.UI.Widgets
                     foreach (var line in lines.Children)
                     {
                         __builder.AddContent(4, "            ");
-                        __builder.OpenComponent<Cardgame.UI.Widgets.RichText>(5);
-                        __builder.AddAttribute(6, "Parsed", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.Model.TextModel>(
+                        __builder.OpenComponent<RichText>(5);
+                        __builder.AddAttribute(6, "Parsed", (
                             line
                         ));
                         __builder.CloseComponent();
@@ -63,8 +63,8 @@ namespace Cardgame.UI.Widgets
                         __builder.AddContent(12, "                ");
                         __builder.OpenElement(13, "p");
                         __builder.AddMarkupContent(14, "\r\n                    ");
-                        __builder.OpenComponent<Cardgame.UI.Widgets.RichText>(15);
-                        __builder.AddAttribute(16, "Parsed", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.Model.TextModel>(
+                        __builder.OpenComponent<RichText>(15);
+                        __builder.AddAttribute(16, "Parsed", (
                             para
                         ));
                         __builder.CloseComponent();
@@ -81,8 +81,8 @@ namespace Cardgame.UI.Widgets
                     for (var i = 0; i < split.Children.Length; i++)
                     {
                         __builder.AddContent(21, "            ");
-                        __builder.OpenComponent<Cardgame.UI.Widgets.RichText>(22);
-                        __builder.AddAttribute(23, "Parsed", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.Model.TextModel>(
+                        __builder.OpenComponent<RichText>(22);
+                        __builder.AddAttribute(23, "Parsed", (
                             split.Children[i]
                         ));
                         __builder.CloseComponent();
@@ -106,8 +106,8 @@ namespace Cardgame.UI.Widgets
                     __builder.OpenElement(30, "span");
                     __builder.AddAttribute(31, "class", "rich-text__bold");
                     __builder.AddMarkupContent(32, "\r\n            ");
-                    __builder.OpenComponent<Cardgame.UI.Widgets.RichText>(33);
-                    __builder.AddAttribute(34, "Parsed", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.Model.TextModel>(
+                    __builder.OpenComponent<RichText>(33);
+                    __builder.AddAttribute(34, "Parsed", (
                         bold.Child
                     ));
                     __builder.CloseComponent();
@@ -122,8 +122,8 @@ namespace Cardgame.UI.Widgets
                     __builder.OpenElement(38, "span");
                     __builder.AddAttribute(39, "class", "rich-text__small");
                     __builder.AddMarkupContent(40, "\r\n            ");
-                    __builder.OpenComponent<Cardgame.UI.Widgets.RichText>(41);
-                    __builder.AddAttribute(42, "Parsed", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.Model.TextModel>(
+                    __builder.OpenComponent<RichText>(41);
+                    __builder.AddAttribute(42, "Parsed", (
                         small.Child
                     ));
                     __builder.CloseComponent();
@@ -145,8 +145,8 @@ namespace Cardgame.UI.Widgets
                     __builder.OpenElement(47, "span");
                     __builder.AddAttribute(48, "class", "rich-text__error");
                     __builder.AddMarkupContent(49, "\r\n            ");
-                    __builder.OpenComponent<Cardgame.UI.Widgets.RichText>(50);
-                    __builder.AddAttribute(51, "Parsed", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.Model.TextModel>(
+                    __builder.OpenComponent<RichText>(50);
+                    __builder.AddAttribute(51, "Parsed", (
                         error.Child
                     ));
                     __builder.CloseComponent();
@@ -160,8 +160,8 @@ namespace Cardgame.UI.Widgets
                     if (Session.Username == p.Owner)
                     {
                         __builder.AddContent(54, "            ");
-                        __builder.OpenComponent<Cardgame.UI.Widgets.RichText>(55);
-                        __builder.AddAttribute(56, "Parsed", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.Model.TextModel>(
+                        __builder.OpenComponent<RichText>(55);
+                        __builder.AddAttribute(56, "Parsed", (
                             p.Child
                         ));
                         __builder.CloseComponent();
@@ -216,8 +216,8 @@ namespace Cardgame.UI.Widgets
                         var set = All.Cards.GetSet(card.Name);
                         var value = (model as ITreasureCard)?.StaticValue;
                         __builder.AddContent(69, "            ");
-                        __builder.OpenComponent<Cardgame.UI.Widgets.WithTooltip>(70);
-                        __builder.AddAttribute(71, "Content", (Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
+                        __builder.OpenComponent<WithTooltip>(70);
+                        __builder.AddAttribute(71, "Content", (RenderFragment)((__builder2) => {
                             __builder2.AddMarkupContent(72, "\r\n                    ");
                             __builder2.AddContent(73,
                                 card.Prefix
@@ -236,28 +236,28 @@ namespace Cardgame.UI.Widgets
                             __builder2.AddMarkupContent(78, "\r\n                ");
                         }
                         ));
-                        __builder.AddAttribute(79, "Tooltip", (Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
+                        __builder.AddAttribute(79, "Tooltip", (RenderFragment)((__builder2) => {
                             __builder2.AddMarkupContent(80, "\r\n                    ");
-                            __builder2.OpenComponent<Cardgame.UI.Widgets.Magnify>(81);
-                            __builder2.AddAttribute(82, "ChildContent", (Microsoft.AspNetCore.Components.RenderFragment)((__builder3) => {
+                            __builder2.OpenComponent<Magnify>(81);
+                            __builder2.AddAttribute(82, "ChildContent", (RenderFragment)((__builder3) => {
                                 __builder3.AddMarkupContent(83, "\r\n                        ");
-                                __builder3.OpenComponent<Cardgame.UI.Widgets.KingdomCard>(84);
-                                __builder3.AddAttribute(85, "Name", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<System.String>(
+                                __builder3.OpenComponent<KingdomCard>(84);
+                                __builder3.AddAttribute(85, "Name", (
                                     card.Name
                                 ));
-                                __builder3.AddAttribute(86, "Types", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.API.CardType[]>(
+                                __builder3.AddAttribute(86, "Types", (
                                     model.Types
                                 ));
-                                __builder3.AddAttribute(87, "Art", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<System.String>(
+                                __builder3.AddAttribute(87, "Art", (
                                     model.Art
                                 ));
-                                __builder3.AddAttribute(88, "Cost", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.API.Cost>(
+                                __builder3.AddAttribute(88, "Cost", (
                                     cost
                                 ));
-                                __builder3.AddAttribute(89, "Text", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<System.String>(
+                                __builder3.AddAttribute(89, "Text", (
                                     model.Text
                                 ));
-                                __builder3.AddAttribute(90, "Set", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<Cardgame.Model.CardSet?>(
+                                __builder3.AddAttribute(90, "Set", (
                                     set
                                 ));
                                 __builder3.CloseComponent();
@@ -274,8 +274,8 @@ namespace Cardgame.UI.Widgets
                     else
                     {
                         __builder.AddContent(94, "            ");
-                        __builder.OpenComponent<Cardgame.UI.Widgets.WithTooltip>(95);
-                        __builder.AddAttribute(96, "Content", (Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
+                        __builder.OpenComponent<WithTooltip>(95);
+                        __builder.AddAttribute(96, "Content", (RenderFragment)((__builder2) => {
                             __builder2.AddMarkupContent(97, "\r\n                    ");
                             __builder2.AddContent(98,
                                 card.Prefix
@@ -291,13 +291,13 @@ namespace Cardgame.UI.Widgets
                             __builder2.AddMarkupContent(103, "\r\n                ");
                         }
                         ));
-                        __builder.AddAttribute(104, "Tooltip", (Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
+                        __builder.AddAttribute(104, "Tooltip", (RenderFragment)((__builder2) => {
                             __builder2.AddMarkupContent(105, "\r\n                    ");
-                            __builder2.OpenComponent<Cardgame.UI.Widgets.Magnify>(106);
-                            __builder2.AddAttribute(107, "ChildContent", (Microsoft.AspNetCore.Components.RenderFragment)((__builder3) => {
+                            __builder2.OpenComponent<Magnify>(106);
+                            __builder2.AddAttribute(107, "ChildContent", (RenderFragment)((__builder3) => {
                                 __builder3.AddMarkupContent(108, "\r\n                        ");
-                                __builder3.OpenComponent<Cardgame.UI.Widgets.RichText>(109);
-                                __builder3.AddAttribute(110, "Model", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<System.String>(
+                                __builder3.OpenComponent<RichText>(109);
+                                __builder3.AddAttribute(110, "Model", (
                                     model.Text
                                 ));
                                 __builder3.CloseComponent();
@@ -327,14 +327,14 @@ namespace Cardgame.UI.Widgets
                     else
                     {
                         __builder.AddContent(117, "            ");
-                        __builder.OpenComponent<Cardgame.UI.Widgets.PlayerLink>(118);
-                        __builder.AddAttribute(119, "Name", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<System.String>(
+                        __builder.OpenComponent<PlayerLink>(118);
+                        __builder.AddAttribute(119, "Name", (
                             player.Name
                         ));
-                        __builder.AddAttribute(120, "Prefix", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<System.String>(
+                        __builder.AddAttribute(120, "Prefix", (
                             player.Prefix
                         ));
-                        __builder.AddAttribute(121, "Suffix", Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<System.String>(
+                        __builder.AddAttribute(121, "Suffix", (
                             player.Suffix
                         ));
                         __builder.CloseComponent();
