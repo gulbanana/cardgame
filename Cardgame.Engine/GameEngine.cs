@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Cardgame.API;
 using Cardgame.Engine.Logging;
 using Cardgame.Model;
 
+[assembly:InternalsVisibleTo("Cardgame.Tests")]
 namespace Cardgame.Engine
 {
     public class GameEngine
@@ -20,6 +22,8 @@ namespace Cardgame.Engine
         internal readonly Queue<string> ExtraTurns;
 
         private TaskCompletionSource<string> inputTCS;
+        private TaskCompletionSource<bool> backgroundTCS;
+        public Task Background => backgroundTCS?.Task ?? Task.CompletedTask;
 
         // temporary zones, can only exist during an action
         private readonly Dictionary<int, Instance> stashes;
@@ -57,7 +61,7 @@ namespace Cardgame.Engine
             {
                 try
                 {
-                    ExecuteImpl(username, command);
+                    ExecuteInternal(username, command);
                     Notify();
                     return true;
                 }
@@ -71,7 +75,7 @@ namespace Cardgame.Engine
             }
         }
 
-        private void ExecuteImpl(string username, ClientCommand command)
+        internal void ExecuteInternal(string username, ClientCommand command)
         {
             if (Model.Seq != command.Seq)
             {
@@ -249,6 +253,7 @@ namespace Cardgame.Engine
                 }
                 else
                 {
+                    backgroundTCS = new TaskCompletionSource<bool>();
                     task.ContinueWith(EndBackgroundTask, id);
                 }
             }
@@ -274,6 +279,8 @@ namespace Cardgame.Engine
                 CompleteBackgroundTask(t, id as string);
                 Notify();
             }
+            backgroundTCS.SetResult(true);
+            backgroundTCS = null;
         }
 
         private void CompleteBackgroundTask(Task t, string id)
@@ -504,7 +511,11 @@ namespace Cardgame.Engine
             var pileReactors = Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>();
             var instanceReactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
             var extraReactors = pileReactors.Concat(instanceReactors).ToArray();        
-            await TriggerReactions(logRecord, player, Trigger.BeforePlayCard, id, extraReactors);
+
+            if (card.Types.Contains(CardType.Attack))
+            {
+                await TriggerReactions(logRecord, player, Trigger.Attack, player, extraReactors);
+            }
                         
             if (card.Types.Contains(CardType.Duration))
             {
@@ -541,7 +552,7 @@ namespace Cardgame.Engine
 
             NotePlay(player, played);
 
-            await TriggerReactions(logRecord, player, Trigger.AfterPlayCard, id, extraReactors);
+            await TriggerReactions(logRecord, player, Trigger.PlayCard, id, extraReactors);
 
             return (gainC, gainP);
         }
@@ -588,7 +599,7 @@ namespace Cardgame.Engine
             Model.ActivePlayer = Model.Players[rng.Next(Model.Players.Length)];
         }
 
-        private async Task BeginTurnAsync(string player)
+        internal async Task BeginTurnAsync(string player)
         {
             if (Model.IsFinished) return; // XXX what case does this cover?
 
@@ -637,7 +648,7 @@ namespace Cardgame.Engine
             }
         }
 
-        private async Task EndTurnAsync(string player)
+        internal async Task EndTurnAsync(string player)
         {
             Model.CurrentPhase = Phase.Cleanup;
 
@@ -1057,6 +1068,7 @@ namespace Cardgame.Engine
                 }
             }
 
+            if (Model.ChoosingPlayers.Any()) throw new Exception("choice stack can occur somehow");
             Model.ChoosingPlayers.Push(player);           
              
             inputTCS = new TaskCompletionSource<string>();

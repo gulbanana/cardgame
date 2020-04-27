@@ -5,7 +5,7 @@ namespace Cardgame.Cards.Dominion
     public class MerchantEffect : ReactionEffectBase
     {
         public override string Art => "Dominion2nd/dom-merchant";
-        public override Trigger ReactionTrigger => Trigger.AfterPlayCard;
+        public override Trigger ReactionTrigger => Trigger.PlayCard;
         
         public override string Text => @"
             <run>The first time you play a Silver this turn,</run>

@@ -31,9 +31,9 @@ namespace Cardgame.Cards.Seaside
             host.AddCoins(1);
         }
 
-        protected override void OnBeforePlayCard(IActionHost host, ICard card)
+        protected override void OnAttack(IActionHost host, string attacker)
         {
-            if (card.Types.Contains(CardType.Attack))
+            if (attacker != host.Player)
             {
                 host.PreventNextAttack();
             }

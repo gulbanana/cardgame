@@ -16,23 +16,22 @@ namespace Cardgame.Cards
                     OnBeginTurn(host);
                     host.CompleteDuration();
                 }
-                else if (triggerType == Trigger.BeforePlayCard)
+                else if (triggerType == Trigger.Attack)
                 {
-                    var card = AllCards.ByName(triggerParameter);
-                    OnBeforePlayCard(host, card);
+                    OnAttack(host, triggerParameter);
                 }
-                else if (triggerType == Trigger.AfterPlayCard)
+                else if (triggerType == Trigger.PlayCard)
                 {
                     var card = AllCards.ByName(triggerParameter);
-                    OnAfterPlayCard(host, card);
+                    OnPlayCard(host, card);
                 }
             }
 
             return Task.CompletedTask;
         }
 
+        protected virtual void OnAttack(IActionHost host, string attacker) { }
         protected virtual void OnBeginTurn(IActionHost host) { }
-        protected virtual void OnBeforePlayCard(IActionHost host, ICard card) { }
-        protected virtual void OnAfterPlayCard(IActionHost host, ICard card) { }
+        protected virtual void OnPlayCard(IActionHost host, ICard card) { }
     }
 }

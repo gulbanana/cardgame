@@ -9,7 +9,6 @@ namespace Cardgame.API
     {
         string Player { get; }
         string PreviousPlayer { get; }
-        bool IsActive { get; }
         int ShuffleCount { get; }
         int ActionCount { get; }
         IModifier[] GetModifiers();

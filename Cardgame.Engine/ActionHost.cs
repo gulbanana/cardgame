@@ -15,7 +15,6 @@ namespace Cardgame.Engine
         protected readonly IRecord logRecord;
         public string Player { get; }
         public string PreviousPlayer => engine.Model.PreviousPlayer;
-        public bool IsActive => engine.Model.ActivePlayer == Player;        
         public int ActionCount => engine.ActionsThisTurn;
         public int ShuffleCount { get; private set; }
 

@@ -54,17 +54,15 @@ namespace Cardgame.Engine.Logging
         
         public void Save(Record record)
         {
-            #if DEBUG
-            var options = new JsonSerializerOptions 
-            { 
-                Converters = { new JsonStringEnumConverter(), new EventConverter(), new ChunkConverter() },
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                IgnoreNullValues = true,
-                WriteIndented = true,
-            };
-            var json = JsonSerializer.Serialize(record, options);
-            Console.WriteLine(json);
-            #endif
+            //var options = new JsonSerializerOptions 
+            //{ 
+            //    Converters = { new JsonStringEnumConverter(), new EventConverter(), new ChunkConverter() },
+            //    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            //    IgnoreNullValues = true,
+            //    WriteIndented = true,
+            //};
+            //var json = JsonSerializer.Serialize(record, options);
+            //Console.WriteLine(json);
         }
 
         private string GetRecordHeader(Record record)
