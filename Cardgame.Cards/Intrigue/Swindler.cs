@@ -32,7 +32,7 @@ namespace Cardgame.Cards.Intrigue
                         Zone.SupplyAvailable, 
                         card => card.GetCost(host).Equals(topDeckCost)
                     );
-                    target.Gain(gained);
+                    await target.Gain(gained);
                 }
             });
         }

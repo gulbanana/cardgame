@@ -34,7 +34,7 @@ namespace Cardgame.Cards.Intrigue
                     );
                     if (gained.Any())
                     {
-                        target.Gain(gained.Single());
+                        await target.Gain(gained.Single());
                     }
 
                     target.Discard(revealed.Take(revealed.Length - 1).ToArray(), Zone.Revealed);

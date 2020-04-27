@@ -32,11 +32,11 @@ namespace Cardgame.Cards.Intrigue
                 {
                     if (gained.Types.Contains(CardType.Action) || gained.Types.Contains(CardType.Treasure))
                     {
-                        host.Gain(gained, Zone.Deck);
+                        await host.Gain(gained, Zone.Deck);
                     }
                     else
                     {
-                        host.Gain(gained);
+                        await host.Gain(gained);
                     }
 
                     if (gained.Types.Contains(CardType.Victory))

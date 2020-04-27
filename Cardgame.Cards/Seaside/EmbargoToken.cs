@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Cardgame.API;
 
 namespace Cardgame.Cards.Seaside
@@ -10,9 +11,9 @@ namespace Cardgame.Cards.Seaside
 
         public override string Text => "When a player buys a card from this pile, they gain a Curse.";
 
-        protected override void React(IActionHost host, string trigger)
+        protected override async Task ReactAsync(IActionHost host, string trigger)
         {
-            host.Gain("Curse");
+            await host.Gain("Curse");
         }
     }
 }

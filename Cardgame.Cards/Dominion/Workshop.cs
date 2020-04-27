@@ -21,7 +21,7 @@ namespace Cardgame.Cards.Dominion
                 Zone.SupplyAvailable, 
                 card => card.GetCost(host).LessThanOrEqual(4)
             );
-            host.Gain(gainedCard.Name);
+            await host.Gain(gainedCard.Name);
         }
     }
 }

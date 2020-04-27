@@ -24,7 +24,7 @@ namespace Cardgame.Cards.Dominion
                 Zone.SupplyAvailable, 
                 card => card.GetCost(host).LessThanOrEqual(5)
             );
-            host.Gain(gainedCard.Name, Zone.Hand);
+            await host.Gain(gainedCard.Name, Zone.Hand);
 
             var placedCard = await host.SelectCard(
                 "Choose a card to put onto your deck.", 

@@ -11,10 +11,10 @@ namespace Cardgame.Cards.Seaside
 
         protected override async Task ActAsync(IActionHost host)
         {
-            await host.Attack(target =>
+            await host.Attack(async target =>
             {
                 target.Discard(Zone.DeckTop(1));
-                target.Gain("Curse", Zone.Deck);
+                await target.Gain("Curse", Zone.Deck);
             });
         }
     }

@@ -34,7 +34,7 @@ namespace Cardgame.Cards.Intrigue
                 var gained = await host.SelectCard("Choose a card to gain.", Zone.SupplyAvailable, card => card.GetCost(host).Equals(value));
                 if (gained != null)
                 {
-                    host.Gain(gained);
+                    await host.Gain(gained);
                 }
             }
         }

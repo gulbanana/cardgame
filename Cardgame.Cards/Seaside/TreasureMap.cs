@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Cardgame.API;
 
 namespace Cardgame.Cards.Seaside
@@ -9,14 +10,14 @@ namespace Cardgame.Cards.Seaside
 
         public override string Text => "Trash this and a Treasure Map from your hand. If you trashed two Treasure Maps, gain 4 Golds onto your deck.";
 
-        protected override void Act(IActionHost host)
+        protected override async Task ActAsync(IActionHost host)
         {
             host.Trash("TreasureMap", Zone.InPlay);
             var hand = host.Examine(Zone.Hand);
             if (hand.Any(card => card.Name == "TreasureMap"))
             {
                 host.Trash("TreasureMap", Zone.Hand);
-                host.Gain(new[]{"Gold", "Gold", "Gold", "Gold"}, Zone.Deck);
+                await host.Gain(new[]{"Gold", "Gold", "Gold", "Gold"}, Zone.Deck);
             }
         }
     }

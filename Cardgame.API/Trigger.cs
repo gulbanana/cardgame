@@ -5,6 +5,7 @@ namespace Cardgame.API
         BeginTurn,
         BuyCard,
         DiscardFromPlay,
+        GainCard,
         BeforePlayCard,
         AfterPlayCard,
     }

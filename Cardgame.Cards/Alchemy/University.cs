@@ -26,7 +26,7 @@ namespace Cardgame.Cards.Alchemy
                 card => card.Types.Contains(CardType.Action) && card.GetCost(host).LessThan(6),
                 0, 1
             );
-            host.Gain(gained);
+            await host.Gain(gained);
         }
     }
 }

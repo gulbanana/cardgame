@@ -27,7 +27,7 @@ namespace Cardgame.Cards.Dominion
                 card => card.GetCost(host).LessThanOrEqual(5)
             );
 
-            host.Gain(gainedCard);
+            await host.Gain(gainedCard);
         }
     }
 }

@@ -204,7 +204,7 @@ namespace Cardgame.Engine
             LogMovement(Motion.Trash, cards, from, Zone.Trash);
         }
 
-        void IActionHost.Gain(string[] cards, Zone to)
+        async Task IActionHost.Gain(string[] cards, Zone to)
         {
             if (!cards.Any()) return;
 
@@ -212,9 +212,8 @@ namespace Cardgame.Engine
             foreach (var card in cards)
             {
                 if (engine.Model.Supply[card] > 0)
-                {
-                    var instance = engine.MoveCard(Player, card, Zone.SupplyAvailable, to);                    
-                    engine.NoteGain(Player, instance);
+                {             
+                    await engine.GainCardAsync(logRecord, Player, card, Zone.SupplyAvailable, to);
                     actuallyGained.Add(card);
                 }
                 else
@@ -233,14 +232,13 @@ namespace Cardgame.Engine
             }
         }
 
-        void IActionHost.GainFrom(string[] cards, Zone from)
+        async Task IActionHost.GainFrom(string[] cards, Zone from)
         {
             if (!cards.Any()) return;
 
             foreach (var id in cards)
             {
-                var instance = engine.MoveCard(Player, id, from, Zone.Discard);
-                engine.NoteGain(Player, instance);
+                await engine.GainCardAsync(logRecord, Player, id, from, Zone.Discard);
             }
 
             LogMovement(Motion.Gain, cards, from, Zone.Discard);

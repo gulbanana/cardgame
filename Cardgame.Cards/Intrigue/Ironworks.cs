@@ -36,7 +36,7 @@ namespace Cardgame.Cards.Intrigue
         protected override async Task ActAsync(IActionHost host)
         {
             var gained = await host.SelectCard("Choose a card to gain.", Zone.SupplyAvailable, card => card.GetCost(host).LessThanOrEqual(4));
-            host.Gain(gained);
+            await host.Gain(gained);
 
             if (gained is IActionCard) host.AddActions(1);
             if (gained is ITreasureCard) host.AddCoins(1);

@@ -25,9 +25,9 @@ namespace Cardgame.Cards.Alchemy
             var trashed = await host.SelectCard("Choose a card to trash.");
             if (trashed != null)
             {
-                if (trashed.Types.Contains(CardType.Action)) host.Gain("Duchy");
-                if (trashed.Types.Contains(CardType.Treasure)) host.Gain("Transmute");
-                if (trashed.Types.Contains(CardType.Victory)) host.Gain("Gold");
+                if (trashed.Types.Contains(CardType.Action)) await host.Gain("Duchy");
+                if (trashed.Types.Contains(CardType.Treasure)) await host.Gain("Transmute");
+                if (trashed.Types.Contains(CardType.Victory)) await host.Gain("Gold");
             }
         }
     }

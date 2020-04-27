@@ -27,7 +27,7 @@ namespace Cardgame.Cards.Intrigue
                 new NamedOption("Gain an Action card from the Trash", async () => 
                 {
                     var gained = await host.SelectCard("Choose a card to gain.", Zone.Trash, cards => cards.OfType<IActionCard>());
-                    host.GainFrom(gained, Zone.Trash);
+                    await host.GainFrom(gained, Zone.Trash);
                 })
             );
         }

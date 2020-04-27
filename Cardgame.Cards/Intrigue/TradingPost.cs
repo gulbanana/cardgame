@@ -20,7 +20,7 @@ namespace Cardgame.Cards.Intrigue
 
             if (trashed.Count() == 2)
             {
-                host.Gain("Silver", Zone.Hand);
+                await host.Gain("Silver", Zone.Hand);
             }
         }
     }

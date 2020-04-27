@@ -14,7 +14,7 @@ namespace Cardgame.Cards.Dominion
 
         protected override async Task ActAsync(IActionHost host)
         {
-            host.Gain("Gold");
+            await host.Gain("Gold");
             var trashed = new List<ICard>();
             
             await host.Attack(async player => 

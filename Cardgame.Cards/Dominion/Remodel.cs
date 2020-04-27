@@ -30,7 +30,7 @@ namespace Cardgame.Cards.Dominion
                 Zone.SupplyAvailable, 
                 card => card.GetCost(modifiers).LessThanOrEqual(trashedCard.GetCost(modifiers).Plus(2))
             );
-            host.Gain(gainedCard.Name);
+            await host.Gain(gainedCard.Name);
         }
     }
 }

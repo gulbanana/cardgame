@@ -20,12 +20,12 @@ namespace Cardgame.Cards.Seaside
             
             if (lastGains.Count() == 1)
             {
-                host.Gain(lastGains.Single());
+                await host.Gain(lastGains.Single());
             }
             else if (lastGains.Count() > 1)
             {
                 var gainedCopy = await host.SelectCard("Choose a card to gain.", lastGains);
-                host.Gain(gainedCopy);
+                await host.Gain(gainedCopy);
             }
         }
     }

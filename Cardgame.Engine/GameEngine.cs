@@ -370,11 +370,23 @@ namespace Cardgame.Engine
 
             var instance = MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
             NoteBuy(player, instance);
-            NoteGain(player, instance);
 
-            await TriggerReactions(buyRecord, player, Trigger.BuyCard, id, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
+            var pileReactors = Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>();
+            await TriggerReactions(buyRecord, player, Trigger.BuyCard, id, pileReactors);
+
+            await GainCardAsync(buyRecord, player, id, Zone.SupplyAvailable, Zone.Discard);
 
             logManager.Save(buyRecord);
+        }
+
+        internal async Task GainCardAsync(IRecord logRecord, string player, string id, Zone from, Zone to)
+        {            
+            var instance = MoveCard(player, id, from, to);                    
+            NoteGain(player, instance);
+
+            var card = All.Cards.ByName(id);
+            var instanceReactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
+            await TriggerReactions(logRecord, player, Trigger.GainCard, id, instanceReactors);
         }
 
         private async Task PlayCardsPhasedAsync(string player, params ICard[] cards)
@@ -487,18 +499,20 @@ namespace Cardgame.Engine
         internal async Task<(int coins, int potions)> PlayCardAsync(IRecord logRecord, string player, string id, Zone from)
         {       
             var played = MoveCard(player, id, from, Zone.InPlay);
-            var gainC = 0;
-            var gainP = 0;
-
-            var extraReactors = Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>();
-            await TriggerReactions(logRecord, player, Trigger.BeforePlayCard, id, extraReactors);
-            
             var card = All.Cards.ByName(id);
+
+            var pileReactors = Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>();
+            var instanceReactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
+            var extraReactors = pileReactors.Concat(instanceReactors).ToArray();        
+            await TriggerReactions(logRecord, player, Trigger.BeforePlayCard, id, extraReactors);
+                        
             if (card.Types.Contains(CardType.Duration))
             {
                 Model.PlayedWithDuration.Add(played);
             }
 
+            var gainC = 0;
+            var gainP = 0;
             var host = new CardHost(this, logRecord, player, played);
             if (card is IActionCard action)
             {
@@ -1102,7 +1116,7 @@ namespace Cardgame.Engine
             }
         }
 
-        internal void NoteBuy(string player, Instance instance)
+        private void NoteBuy(string player, Instance instance)
         {
             if (player == Model.ActivePlayer)
             {
@@ -1110,7 +1124,7 @@ namespace Cardgame.Engine
             }
         }
 
-        internal void NoteGain(string player, Instance instance)
+        private void NoteGain(string player, Instance instance)
         {
             if (player == Model.ActivePlayer)
             {
@@ -1118,7 +1132,7 @@ namespace Cardgame.Engine
             }
         }
 
-        internal void NotePlay(string player, Instance instance)
+        private void NotePlay(string player, Instance instance)
         {
             if (player == Model.ActivePlayer)
             {

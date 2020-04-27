@@ -16,11 +16,11 @@ namespace Cardgame.Cards.Seaside
             if (hand.Names().Contains("Province") && await host.YesNo("Explorer", "<run>Reveal a</run><card>Province</card><run>from your hand?</run>"))
             {
                 host.Reveal("Province");
-                host.Gain("Gold", Zone.Hand);
+                await host.Gain("Gold", Zone.Hand);
             }
             else
             {
-                host.Gain("Silver", Zone.Hand);
+                await host.Gain("Silver", Zone.Hand);
             }
         }
     }

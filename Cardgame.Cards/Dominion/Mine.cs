@@ -39,7 +39,7 @@ namespace Cardgame.Cards.Dominion
                         .Where(card => card.GetCost(modifiers).LessThanOrEqual(trashedCard.GetCost(modifiers).Plus(3)))
                 );
 
-                host.Gain(gainedCard.Name, Zone.Hand);
+                await host.Gain(gainedCard.Name, Zone.Hand);
             }
         }
     }

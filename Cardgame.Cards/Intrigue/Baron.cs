@@ -36,7 +36,7 @@ namespace Cardgame.Cards.Intrigue
                 }
             }
 
-            host.Gain("Estate");
+            await host.Gain("Estate");
         }
     }
 }

@@ -24,8 +24,8 @@ namespace Cardgame.API
         // move cards around
         void Discard(string[] cards, Zone from);
         void Trash(string[] cards, Zone from);
-        void Gain(string[] cards, Zone to);
-        void GainFrom(string[] cards, Zone from);
+        Task Gain(string[] cards, Zone to);
+        Task GainFrom(string[] cards, Zone from);
         void PutOnDeck(string[] cards, Zone from);
         void PutIntoHand(string[] cards, Zone from);
         void PutOnMat(string mat, string[] cards, Zone from);
@@ -160,39 +160,39 @@ namespace Cardgame.API
         #endregion Discard
 
         #region Gain
-        public static void Gain(this IActionHost host, string card, Zone to)
+        public static Task Gain(this IActionHost host, string card, Zone to)
         {
-            host.Gain(new[] { card }, Zone.Discard);
+            return host.Gain(new[] { card }, Zone.Discard);
         }
 
-        public static void Gain(this IActionHost host, string card)
+        public static Task Gain(this IActionHost host, string card)
         {
-            host.Gain(new[] { card }, Zone.Discard);
+            return host.Gain(new[] { card }, Zone.Discard);
         }
 
-        public static void Gain(this IActionHost host, ICard card, Zone to)
+        public static Task Gain(this IActionHost host, ICard card, Zone to)
         {
-            host.Gain(new[] { card.Name }, to);
+            return host.Gain(new[] { card.Name }, to);
         }
 
-        public static void Gain(this IActionHost host, ICard card)
+        public static Task Gain(this IActionHost host, ICard card)
         {
-            host.Gain(new[] { card.Name }, Zone.Discard);
+            return host.Gain(new[] { card.Name }, Zone.Discard);
         }
 
-        public static void Gain(this IActionHost host, ICard[] cards)
+        public static Task Gain(this IActionHost host, ICard[] cards)
         {
-            host.Gain(cards.Names(), Zone.Discard);
+            return host.Gain(cards.Names(), Zone.Discard);
         }
 
-        public static void GainFrom(this IActionHost host, ICard[] cards, Zone from)
+        public static Task GainFrom(this IActionHost host, ICard[] cards, Zone from)
         {
-            host.GainFrom(cards.Names(), from);
+            return host.GainFrom(cards.Names(), from);
         }
 
-        public static void GainFrom(this IActionHost host, ICard card, Zone from)
+        public static Task GainFrom(this IActionHost host, ICard card, Zone from)
         {
-            host.GainFrom(new[] { card.Name }, from);
+            return host.GainFrom(new[] { card.Name }, from);
         }
         #endregion
 

@@ -45,7 +45,7 @@ namespace Cardgame.Cards.Dominion
                 var gained = await host.SelectCards("Choose trashed Treasures to gain.", trashed);
                 if (gained.Any())
                 {
-                    host.GainFrom(gained, Zone.Trash);
+                    await host.GainFrom(gained, Zone.Trash);
                 }
             }
         }
