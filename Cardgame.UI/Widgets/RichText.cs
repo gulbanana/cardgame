@@ -36,69 +36,42 @@ namespace Cardgame.UI.Widgets
                     {
                         seq = RenderTextNode(builder, span, seq);
                     }
-
                     break;
 
                 case TextModel.Lines lines:
-                    foreach (var line in lines.Children)
+                    for (var i = 0; i < lines.Children.Length; i++)
                     {
-                        builder.AddContent(seq++, "            ");
-                        builder.OpenComponent<RichText>(seq++);
-                        builder.AddAttribute(seq++, "Parsed", (
-                            line
-                        ));
-                        builder.CloseComponent();
-                        builder.AddMarkupContent(seq++, "<br>\r\n");
+                        seq = RenderTextNode(builder, lines.Children[i], seq);
+                        if (i < lines.Children.Length - 1)
+                        {
+                            builder.AddMarkupContent(seq++, "<br>");
+                        }
                     }
-
                     break;
 
                 case TextModel.Paras paras:
-                    builder.AddContent(seq++, "        ");
                     builder.OpenElement(seq++, "div");
-                    builder.AddAttribute(seq++, "class", "rich-text__paras");
-                    builder.AddMarkupContent(seq++, "\r\n");
-                    foreach (var para in paras.Children)
-                    {
-                        builder.AddContent(seq++, "                ");
-                        builder.OpenElement(seq++, "p");
-                        builder.AddMarkupContent(seq++, "\r\n                    ");
-                        builder.OpenComponent<RichText>(seq++);
-                        builder.AddAttribute(seq++, "Parsed", (
-                            para
-                        ));
-                        builder.CloseComponent();
-                        builder.AddMarkupContent(seq++, "\r\n                ");
-                        builder.CloseElement();
-                        builder.AddMarkupContent(seq++, "\r\n");
-                    }
-                    builder.AddContent(seq++, "        ");
+                        builder.AddAttribute(seq++, "class", "rich-text__paras");
+                        foreach (var para in paras.Children)
+                        {
+                            builder.OpenElement(seq++, "p");
+                                seq = RenderTextNode(builder, para, seq);                        
+                            builder.CloseElement();
+                        }
                     builder.CloseElement();
-                    builder.AddMarkupContent(seq++, "\r\n");
                     break;
 
                 case TextModel.Split split:
                     for (var i = 0; i < split.Children.Length; i++)
                     {
-                        builder.AddContent(seq++, "            ");
-                        builder.OpenComponent<RichText>(seq++);
-                        builder.AddAttribute(seq++, "Parsed", (
-                            split.Children[i]
-                        ));
-                        builder.CloseComponent();
-                        builder.AddMarkupContent(seq++, "\r\n");
+                        seq = RenderTextNode(builder, split.Children[i], seq);
+
                         if (i < split.Children.Length - 1)
                         {
-                            builder.AddContent(seq++, "                ");
-                            builder.OpenElement(seq++, "div");
-                            builder.AddAttribute(seq++, "class", "rich-text__bar" + (
-                                split.IsCompact ? " rich-text__bar--compact" : ""
-                            ));
-                            builder.CloseElement();
-                            builder.AddMarkupContent(seq++, "\r\n");
+                            var compactClass = split.IsCompact ? " rich-text__bar--compact" : "";
+                            builder.AddMarkupContent(seq++, $"<div class=\"rich-text__bar{compactClass}\" />");                            
                         }
                     }
-
                     break;
 
                 case TextModel.Bold bold:
