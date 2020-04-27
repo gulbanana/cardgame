@@ -5,6 +5,7 @@ using Cardgame.API;
 using Cardgame.Model;
 using Cardgame.Model.ClientServer;
 using Microsoft.AspNetCore.Components.Rendering;
+using System.Text;
 
 namespace Cardgame.UI.Widgets
 {
@@ -89,7 +90,7 @@ namespace Cardgame.UI.Widgets
                     break;
 
                 case TextModel.Run run:
-                    builder.AddContent(seq++, run.Text);
+                    builder.AddContent(seq++, $" {run.Text} ");
                     break;
 
                 case TextModel.Error error:
@@ -112,34 +113,19 @@ namespace Cardgame.UI.Widgets
                     break;
 
                 case TextModel.Indent indent:
+                    var indentBuilder = new StringBuilder();
                     for (var i = 0; i < indent.Level; i++)
                     {
-                        builder.AddContent(seq++, "...");
+                        indentBuilder.Append("... ");
                     }
+                    builder.AddContent(seq++, indentBuilder.ToString());
 
                     break;
 
                 case TextModel.Symbol symbol:
-                    builder.AddContent(seq++, "        ");
-                    builder.OpenElement(seq++, "span");
-                    builder.AddAttribute(seq++, "class", "rich-text__no-break" + (
-                        symbol.IsLarge ? " rich-text__no-break--large" : ""
-                    ));
-                    builder.AddContent(seq++,
-                        symbol.Prefix
-                    );
-                    builder.OpenElement(seq++, "img");
-                    builder.AddAttribute(seq++, "class", "rich-text__symbol" + (
-                        symbol.IsLarge ? " rich-text__symbol--large" : ""
-                    ));
-                    builder.AddAttribute(seq++, "src", "/_content/Cardgame.UI/symbols/" + (symbol.Name) + ".png");
-                    builder.CloseElement();
-                    builder.AddContent(seq++,
-                        symbol.Suffix
-                    );
-                    builder.CloseElement();
-                    builder.AddMarkupContent(seq++, "\r\n");
-
+                    var largeSpanClass = symbol.IsLarge ? " rich-text__no-break--large" : "";
+                    var largeImgClass = symbol.IsLarge ? " rich-text__symbol--large" : "";
+                    builder.AddMarkupContent(seq++, $"<span class=\"rich-text__no-break{largeSpanClass}\">{symbol.Prefix}<img class=\"rich-text__symbol{largeImgClass}\" src=\"/_content/Cardgame.UI/symbols/{symbol.Name}.png\">{symbol.Suffix}</span>");
                     break;
 
                 case TextModel.Card card:
@@ -251,62 +237,32 @@ namespace Cardgame.UI.Widgets
                 case TextModel.Player player:
                     if (Session.Username.Equals(player.Name))
                     {
-                        builder.AddContent(seq++,
-                            player.Prefix
-                        );
-                        builder.AddContent(seq++, "You");
-                        builder.AddContent(seq++,
-                            player.Suffix
-                        );
+                        builder.AddContent(seq++, $" {player.Prefix}You{player.Suffix} ");
                     }
                     else
                     {
-                        builder.AddContent(seq++, "            ");
-                        builder.OpenComponent<PlayerLink>(seq++);
-                        builder.AddAttribute(seq++, "Name", (
-                            player.Name
-                        ));
-                        builder.AddAttribute(seq++, "Prefix", (
-                            player.Prefix
-                        ));
-                        builder.AddAttribute(seq++, "Suffix", (
-                            player.Suffix
-                        ));
+                        builder.OpenComponent<PlayerLink>(seq++);                        
+                        builder.AddAttribute(seq++, "Prefix", player.Prefix);
+                        builder.AddAttribute(seq++, "Name", player.Name);
+                        builder.AddAttribute(seq++, "Suffix", player.Suffix);
                         builder.CloseComponent();
-                        builder.AddMarkupContent(seq++, "\r\n");
                     }
                     break;
 
                 case TextModel.Pronominal pro:
                     if (Session.Username.Equals(pro.Name))
                     {
-                        builder.AddContent(seq++,
-                            pro.Prefix
-                        );
-                        builder.AddContent(seq++,
-                            pro.IfYou
-                        );
-                        builder.AddContent(seq++,
-                            pro.Suffix
-                        );
+                        builder.AddContent(seq++, $" {pro.Prefix}{pro.IfYou}{pro.Suffix} ");
                     }
                     else
                     {
-                        builder.AddContent(seq++,
-                            pro.Prefix
-                        );
-                        builder.AddContent(seq++,
-                            pro.IfThem
-                        );
-                        builder.AddContent(seq++,
-                        pro.Suffix
-                        );
+                        builder.AddContent(seq++, $" {pro.Prefix}{pro.IfThem}{pro.Suffix} ");
                     }
                     break;
 
                 default:
                     builder.AddContent(seq++,
-                        Parsed
+                        node.ToString()
                     );
                     break;
             }
