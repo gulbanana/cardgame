@@ -363,11 +363,11 @@ namespace Cardgame.Engine
 
         internal async Task BuyCardAsync(string player, string id)
         {            
-            var buyRecord = logManager.LogComplexEvent(player, $@"<spans>
-                <player>{player}</player>
-                <if you='buy' them='buys'>{player}</if>
-                <card suffix='.'>{id}</card>
-            </spans>");
+            var buyRecord = logManager.LogComplexEvent(player, "<spans>" +
+                $"<player>{player}</player>" +
+                $"<if you='buy' them='buys'>{player}</if>" +
+                $"<card suffix='.'>{id}</card>" +
+            "</spans>");
 
             await Act(buyRecord, player, Trigger.BuyCard, id, () => 
             {                
@@ -378,6 +378,8 @@ namespace Cardgame.Engine
 
                 return Task.CompletedTask;
             }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
+
+            logManager.Save(buyRecord);
         }
 
         private async Task PlayCardsPhasedAsync(string player, params ICard[] cards)
@@ -430,11 +432,11 @@ namespace Cardgame.Engine
                 return $"<card suffix='{suffix}'>{card.Name}</card>";
             }));
 
-            var playCardsRecord = logManager.LogComplexEvent(player, $@"<spans>
-                <player>{player}</player>
-                <if you='play' them='plays'>{player}</if>
-                {cardList}
-            </spans>");
+            var playCardsRecord = logManager.LogComplexEvent(player, "<spans>" +
+                $"<player>{player}</player>" +
+                $"<if you='play' them='plays'>{player}</if>" +
+                $"{cardList}" +
+            "</spans>");
 
             var gainC = 0; 
             var gainP = 0;
@@ -477,6 +479,7 @@ namespace Cardgame.Engine
             }
 
             playCardsRecord.Update();
+            logManager.Save(playCardsRecord);
 
             // advance phases
             if (type == CardType.Action)
@@ -602,11 +605,11 @@ namespace Cardgame.Engine
             Model.CurrentPhase = Phase.Action;
             Model.PlayedLastTurn = new HashSet<Instance>(Model.PlayedCards[player]);
 
-            var beginTurnRecord = logManager.LogComplexEvent(player, $@"<bold>
-                <run>---</run>
-                <if you='Your' them=""{player}'s"">{player}</if>
-                <run>turn {turnNumber} ---</run>
-            </bold>");
+            var beginTurnRecord = logManager.LogComplexEvent(player, "<bold>" +
+                $"<run>---</run>" +
+                $"<if you='Your' them='{player}&apos;s'>{player}</if>" +
+                $"<run>turn {turnNumber} ---</run>" +
+            "</bold>");
 
             await Act(beginTurnRecord, player, Trigger.BeginTurn, player, () => 
             {
@@ -621,6 +624,8 @@ namespace Cardgame.Engine
 
                 return Task.CompletedTask;
             });
+
+            logManager.Save(beginTurnRecord);
 
             if (bots.Contains(player))
             {
@@ -646,11 +651,11 @@ namespace Cardgame.Engine
         {
             Model.CurrentPhase = Phase.Cleanup;
 
-            var endTurnRecord = logManager.LogComplexEvent(player, $@"<spans>
-                <player>{player}</player>
-                <if you='end your' them='ends their'>{player}</if>
-                <run>turn.</run>
-            </spans>");
+            var endTurnRecord = logManager.LogComplexEvent(player, "<spans>" +
+                $"<player>{player}</player>" +
+                $"<if you='end your' them='ends their'>{player}</if>" +
+                $"<run>turn.</run>" +
+            "</spans>");
 
             var discard = Model.Discards[player];
             var inPlay = Model.PlayedCards[player];
@@ -693,7 +698,11 @@ namespace Cardgame.Engine
             }
             
             // display the EOT record only if it's got content
-            if (!endTurnRecord.HasContent())
+            if (endTurnRecord.HasContent())
+            {
+                logManager.Save(endTurnRecord);
+            }
+            else
             {
                 logManager.ClearEntry(endTurnRecord);
             }

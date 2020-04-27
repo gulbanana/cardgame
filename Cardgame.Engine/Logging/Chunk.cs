@@ -7,16 +7,16 @@ namespace Cardgame.Engine.Logging
     {
         public readonly string Actor;
 
-        public bool Reshuffled;
-        public List<string> AddedCards;
-        public int AddedActions;
-        public int AddedBuys;
-        public int AddedCoins;
-        public int AddedPotions;
+        public bool Reshuffled { get; set; }
+        public List<string> AddedCards { get; set; }
+        public int AddedActions { get; set; }
+        public int AddedBuys { get; set; }
+        public int AddedCoins { get; set; }
+        public int AddedPotions { get; set; }
 
-        public readonly List<Movement> Movements;
+        public List<Movement> Movements { get; }
 
-        public readonly List<string> Lines;
+        public List<string> Lines { get; }
 
         public Chunk(string actor)
         {

@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using Cardgame.API;
 using Cardgame.Model;
@@ -47,6 +50,19 @@ namespace Cardgame.Engine.Logging
                 {partialXML}
             </lines>";            
             managedEntries[record.Index] = finalXML.ToString();
+        }
+        
+        public void Save(Record record)
+        {
+            var options = new JsonSerializerOptions 
+            { 
+                Converters = { new JsonStringEnumConverter(), new ChunkConverter() },
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                IgnoreNullValues = true,
+                WriteIndented = true,
+            };
+            var json = JsonSerializer.Serialize(record, options);
+            Console.WriteLine(json);
         }
 
         private IEnumerable<string> GetRecordLines(Subrecord subrecord, int indent)

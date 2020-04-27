@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Cardgame.Engine.Logging
 {
     internal class Subrecord : IRecord
     {
-        public readonly string Actor;
+        public string Actor { get; }
         public readonly bool Inline;
         private readonly Action updateThis;
-        public readonly List<Section> Sections;
+        public List<Section> Sections { get; }
 
         public Subrecord(string actor, bool inline, Action updateThis)
         {
@@ -32,6 +33,7 @@ namespace Cardgame.Engine.Logging
             return Sections.Any(s => s.Chunk != null && s.Chunk.HasContent() || s.Subrecord.HasContent());
         }
         
+        [JsonIgnore]
         public Chunk LatestChunk
         {
             get

@@ -4,10 +4,10 @@ namespace Cardgame.Engine.Logging
 {
     public class Movement
     {
-        public readonly Motion Type;
-        public readonly string[] Cards;
-        public readonly Zone From;
-        public readonly Zone To;
+        public Motion Type { get; }
+        public string[] Cards { get; }
+        public Zone From { get; }
+        public Zone To { get; }
 
         public Movement(Motion type, string[] cards, Zone from, Zone to)
         {

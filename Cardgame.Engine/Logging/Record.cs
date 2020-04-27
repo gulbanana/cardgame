@@ -6,7 +6,7 @@ namespace Cardgame.Engine.Logging
     {
         private readonly Action<Record> updateAny;
         public readonly int Index;
-        public readonly string Header;
+        public string Header { get; }
 
         public Record(int index, string actor, string header, Action<Record> updateRecord) : base(actor)
         {

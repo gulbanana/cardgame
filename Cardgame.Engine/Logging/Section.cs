@@ -1,11 +1,12 @@
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Cardgame.Engine.Logging
 {
     internal class Section
     {
-        public readonly Chunk Chunk;
-        public readonly Subrecord Subrecord;
+        [JsonPropertyName("Record")]
+        public Chunk Chunk { get; }
+        public Subrecord Subrecord { get; }
 
         public Section(string player)
         {
