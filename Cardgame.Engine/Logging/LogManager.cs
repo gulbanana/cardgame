@@ -269,10 +269,23 @@ namespace Cardgame.Engine.Logging
                 }
             }
 
-            builder.Append(FormatCardList(movement.Cards));
+
+            var cardList = FormatCardList(movement.Cards);
+            if (movement.From.IsPrivate() && movement.To.IsPrivate())
+            {
+                var altText = movement.Cards.Length > 1 ? $"{movement.Cards.Length} cards" : "a card";
+                builder.Append($"<private owner='{actor}' alt='{altText}'>");
+                builder.Append(cardList);
+                builder.Append("</private>");
+            }
+            else
+            {
+                builder.Append(cardList);
+            }
 
             switch (movement.Type)
             {
+                // discards from hand are normal
                 case Motion.Discard:
                     if (movement.From != Zone.Hand)
                     {
@@ -281,6 +294,7 @@ namespace Cardgame.Engine.Logging
                     }
                     break;
 
+                // gains are always either from supply or to discard, frequently both
                 case Motion.Gain:
                     if (movement.From.Name != ZoneName.Supply)
                     {
@@ -295,8 +309,8 @@ namespace Cardgame.Engine.Logging
                     }
                     break;
 
-                case Motion.Trash:
-                    // only note trashes from odd places
+                // only note trashes from odd places
+                case Motion.Trash:                    
                     switch (movement.From.Name)
                     {
                         case ZoneName.Supply:
