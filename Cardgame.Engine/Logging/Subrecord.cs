@@ -55,6 +55,11 @@ namespace Cardgame.Engine.Logging
             }
         }
 
+        public void CloseChunk()
+        {
+            Sections.Add(new Section(Actor));
+        }
+
         public IRecord CreateSubrecord(string actor, bool inline)
         {
             var newRecord = new Subrecord(actor, inline, Update);

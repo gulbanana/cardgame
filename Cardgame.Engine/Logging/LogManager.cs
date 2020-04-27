@@ -73,7 +73,14 @@ namespace Cardgame.Engine.Logging
         }
 
         private IEnumerable<string> GetChunkLines(Chunk chunk)
-        {
+        {            
+            // custom text
+            foreach (var line in chunk.TextLines)
+            {
+                yield return line;
+            }
+
+            // vanilla bonuses, potentially consequences of the custom text or card movements
             var vanilla = new StringBuilder();
             if (chunk.AddedCards > 0)
             {
@@ -110,12 +117,6 @@ namespace Cardgame.Engine.Logging
             if (vanilla.Length > 0)
             {
                 yield return Terminate(vanilla.ToString());
-            }
-
-            // custom text
-            foreach (var line in chunk.TextLines)
-            {
-                yield return line;
             }
         }
         

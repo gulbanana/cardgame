@@ -30,11 +30,16 @@ namespace Cardgame.Engine
 
         protected void LogLine(string eventText)
         {
+            if (logRecord.LatestChunk.HasVanillaContent())
+            {
+                logRecord.CloseChunk();
+            }
+
             logRecord.LatestChunk.TextLines.Add(eventText);
             logRecord.Update();
         }
 
-        protected void Log(Action<Chunk> f)
+        protected void LogVanilla(Action<Chunk> f)
         {
             f(logRecord.LatestChunk);
             logRecord.Update();
@@ -207,19 +212,19 @@ namespace Cardgame.Engine
         void IActionHost.AddActions(int n)
         {
             engine.Model.ActionsRemaining += n;
-            Log(chunk => chunk.AddedActions += n);
+            LogVanilla(chunk => chunk.AddedActions += n);
         }
 
         void IActionHost.AddBuys(int n)
         {
             engine.Model.BuysRemaining += n;
-            Log(chunk => chunk.AddedBuys += n);
+            LogVanilla(chunk => chunk.AddedBuys += n);
         }
 
         void IActionHost.AddCoins(int n)
         {
             engine.Model.CoinsRemaining += n;
-            Log(chunk => chunk.AddedCoins += n);
+            LogVanilla(chunk => chunk.AddedCoins += n);
         }
 
         ICard[] IActionHost.DrawCards(int n)
@@ -245,7 +250,7 @@ namespace Cardgame.Engine
                 NoteReshuffle();
             }
 
-            Log(chunk => chunk.AddedCards += n);
+            LogVanilla(chunk => chunk.AddedCards += n);
 
             return drawn.Select(All.Cards.ByName).ToArray();
         }

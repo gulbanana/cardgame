@@ -19,9 +19,14 @@ namespace Cardgame.Engine.Logging
             TextLines = new List<string>();
         }
 
+        public bool HasVanillaContent()
+        {
+            return AddedCards > 0 || AddedActions > 0 || AddedBuys > 0 || AddedCoins > 0 || AddedPotions > 0;
+        }
+
         public bool HasContent()
         {
-            return TextLines.Any();
+            return HasVanillaContent() || TextLines.Any();
         }
     }
 }
