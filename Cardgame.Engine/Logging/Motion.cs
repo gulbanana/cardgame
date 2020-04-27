@@ -4,6 +4,7 @@ namespace Cardgame.Engine.Logging
     {
         Discard,
         Gain,
+        Put,
         Trash,        
     }
 }

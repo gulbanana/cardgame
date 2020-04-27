@@ -342,28 +342,8 @@ namespace Cardgame.Engine
             {
                 engine.MoveCard(Player, card, from, Zone.Deck);
             }
-            
-            if (from == Zone.Hand)
-            {
-                LogLine($@"
-                    {LogVerbInitial("put", "puts", "putting")}
-                    {LogCardList(cards, terminal: false)}
-                    <run>onto</run>
-                    <if you='your' them='their'>{Player}</if>
-                    <run>deck.</run>
-                ");
-            }
-            else
-            {
-                LogLine($@"
-                    {LogVerbInitial("put", "puts", "putting")}
-                    {LogCardList(cards, terminal: false)}
-                    <run>onto</run>
-                    <if you='your' them='their'>{Player}</if>
-                    <run>deck from</run>
-                    {LogSource(from)}
-                ");
-            }
+
+            LogMovement(Motion.Put, cards, from, Zone.Deck);
         }
 
         void IActionHost.PutIntoHand(string[] cards, Zone from)
@@ -374,14 +354,8 @@ namespace Cardgame.Engine
             {
                 engine.MoveCard(Player, card, from, Zone.Hand);
             }
-            
-            LogLine($@"
-                {LogVerbInitial("put", "puts", "putting")}
-                {LogSecurely(cards, from, Zone.Hand)}
-                <run>into</run>
-                <if you='your' them='their'>{Player}</if>
-                <run>hand.</run>
-            ");
+
+            LogMovement(Motion.Put, cards, from, Zone.Deck);
         }
 
         void IActionHost.PutOnMat(string mat, string[] cards, Zone from)

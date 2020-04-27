@@ -99,7 +99,7 @@ namespace Cardgame.Engine.Logging
 
             if (chunk.AddedActions > 0 || chunk.AddedBuys > 0 || chunk.AddedCoins > 0 || chunk.AddedPotions > 0)
             {
-                builder.Append(FormatVerb(chunk.Actor, "get", "gets", "getting", !chunk.AddedCards.Any()));
+                builder.Append(FormatVerb(chunk.Actor, "get", "gets", "getting", !chunk.Movements.Any() && !chunk.AddedCards.Any()));
 
                 var got = new List<string>();
                 if (chunk.AddedActions > 0) got.Add($"+{chunk.AddedActions} {(chunk.AddedActions > 1 ? "actions" : "action")}");
@@ -203,26 +203,22 @@ namespace Cardgame.Engine.Logging
             switch (zone.Name)
             {
                 case ZoneName.DeckBottom:
-                    return $@"<run>the bottom of</run>
-                    <if you='your' them='their'>{actor}</if>
-                    <run>deck</run>";
+                    return @"<run>the bottom of</run>
+                             <if you='your' them='their'>{actor}</if>
+                             <run>deck</run>";
 
                 case ZoneName.Deck:
                 case ZoneName.DeckTop:
-                    return $@"<run>the top of</run>
-                    <if you='your' them='their'>{actor}</if>
-                    <run>deck</run>";
+                    return $"<if you='your' them='their'>{actor}</if><run>deck</run>";
 
                 case ZoneName.Discard:
-                    return $@"<if you='your' them='their'>{actor}</if>
-                    <run>discard pile</run>";
+                    return $"<if you='your' them='their'>{actor}</if><run>discard pile</run>";
 
                 case ZoneName.Hand:
-                    return $@"<if you='your' them='their'>{actor}</if>
-                    <run>hand</run>";
+                    return $"<if you='your' them='their'>{actor}</if><run>hand</run>";
 
                 case ZoneName.InPlay:
-                    return "<run>in play</run>";
+                    return "<run>play</run>";
 
                 case ZoneName.Revealed:
                     return "<run>the revealed cards</run>";
@@ -231,7 +227,7 @@ namespace Cardgame.Engine.Logging
                     return "<run>the supply</run>";
 
                 case ZoneName.Trash:
-                    return $@"<run>the trash</run>";
+                    return "<run>the trash</run>";
 
                 default:
                     throw new NotSupportedException($"Unknown log zone {zone}");
@@ -240,10 +236,10 @@ namespace Cardgame.Engine.Logging
 
         private string FormatMovement(string actor, Movement movement, Movement previous)
         {
-            var builder = new StringBuilder();
-            
+            var builder = new StringBuilder();            
             var first = previous == null;
             
+            // the motion kind, unless we're repeating one
             if (previous != null && previous.Type == movement.Type)
             {
                 builder.Append("<run>and</run>");
@@ -260,6 +256,10 @@ namespace Cardgame.Engine.Logging
                         builder.Append(FormatVerb(actor, "gain", "gains", "gaining", first));
                         break;
 
+                    case Motion.Put:
+                        builder.Append(FormatVerb(actor, "put", "puts", "putting", first));
+                        break;
+
                     case Motion.Trash:
                         builder.Append(FormatVerb(actor, "trash", "trashes", "trashing", first));
                         break;
@@ -269,39 +269,83 @@ namespace Cardgame.Engine.Logging
                 }
             }
 
-
-            var cardList = FormatCardList(movement.Cards);
-            if (movement.From.IsPrivate() && movement.To.IsPrivate())
+            // the card list and source, unless we're referring to a previous set
+            if (previous != null && previous.Cards.SequenceEqual(movement.Cards))
             {
-                var altText = movement.Cards.Length > 1 ? $"{movement.Cards.Length} cards" : "a card";
-                builder.Append($"<private owner='{actor}' alt='{altText}'>");
-                builder.Append(cardList);
-                builder.Append("</private>");
+                if (movement.Cards.Length > 1)
+                {
+                    builder.Append("<run>them</run>");
+                }
+                else
+                {
+                    builder.Append("<run>it</run>");
+                }
             }
             else
             {
-                builder.Append(cardList);
+                var cardList = FormatCardList(movement.Cards);
+                if (movement.From.IsPrivate() && movement.To.IsPrivate())
+                {
+                    var altText = movement.Cards.Length > 1 ? $"{movement.Cards.Length} cards" : "a card";
+                    builder.Append($"<private owner='{actor}' alt='{altText}'>");
+                    builder.Append(cardList);
+                    builder.Append("</private>");
+                }
+                else
+                {
+                    builder.Append(cardList);
+                }
+
+                switch (movement.Type)
+                {
+                    // discards from hand are normal
+                    case Motion.Discard:
+                        if (movement.From != Zone.Hand)
+                        {
+                            builder.Append("<run>from</run>");
+                            builder.Append(FormatZone(actor, movement.From));
+                        }
+                        break;
+
+                    // gains are always either from supply or to discard, frequently both
+                    case Motion.Gain:
+                        if (movement.From.Name != ZoneName.Supply)
+                        {
+                            builder.Append("<run>from</run>");
+                            builder.Append(FormatZone(actor, movement.From));
+                        }
+                        break;
+
+                    // "put" has no special meaning 
+                    case Motion.Put:
+                        builder.Append("<run>from</run>");
+                        builder.Append(FormatZone(actor, movement.From));
+                        break;
+
+                    // only note trashes from odd places
+                    case Motion.Trash:                    
+                        switch (movement.From.Name)
+                        {
+                            case ZoneName.Supply:
+                                builder.Append("<run>from</run>");
+                                builder.Append(FormatZone(actor, movement.From));
+                                break;
+                        }
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Unknown log motion {movement.Type}");
+                }
             }
 
+            // the card destination, if worth noting
             switch (movement.Type)
             {
-                // discards from hand are normal
                 case Motion.Discard:
-                    if (movement.From != Zone.Hand)
-                    {
-                        builder.Append("<run>from</run>");
-                        builder.Append(FormatZone(actor, movement.From));
-                    }
-                    break;
+                case Motion.Trash:
+                    break;             
 
-                // gains are always either from supply or to discard, frequently both
                 case Motion.Gain:
-                    if (movement.From.Name != ZoneName.Supply)
-                    {
-                        builder.Append("<run>from</run>");
-                        builder.Append(FormatZone(actor, movement.From));
-                    }
-
                     if (movement.To != Zone.Discard)
                     {
                         builder.Append("<run>to</run>");
@@ -309,15 +353,22 @@ namespace Cardgame.Engine.Logging
                     }
                     break;
 
-                // only note trashes from odd places
-                case Motion.Trash:                    
-                    switch (movement.From.Name)
-                    {
-                        case ZoneName.Supply:
-                            builder.Append("<run>from</run>");
-                            builder.Append(FormatZone(actor, movement.From));
-                            break;
-                    }
+                // "put" has adaptive grammar
+                case Motion.Put:
+                    var preposition = movement.To.Name switch {                        
+                        ZoneName.Deck => "onto",
+                        ZoneName.DeckTop => "onto",
+                        ZoneName.DeckBottom => "on the bottom of",
+                        ZoneName.Discard => "onto",
+                        ZoneName.Hand => "onto",
+                        ZoneName.InPlay => "into",
+                        ZoneName.Supply => "into",
+                        ZoneName.Trash => "into",
+                        _ => throw new NotSupportedException("Unknown log put destination {movement.To.Name}")
+                    };
+
+                    builder.Append($"<run>{preposition}</run>");
+                    builder.Append(FormatZone(actor, movement.To));
                     break;
 
                 default:
