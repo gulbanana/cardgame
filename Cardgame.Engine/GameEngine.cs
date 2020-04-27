@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Cardgame.All;
 using Cardgame.API;
 using Cardgame.Engine.Logging;
@@ -30,6 +29,7 @@ namespace Cardgame.Engine
         // public state - each command results in 1+ model updates
         public readonly GameModel Model;
         public event Action ModelUpdated;
+        private readonly LogManager logManager;
 
         public GameEngine()
         {
@@ -45,6 +45,7 @@ namespace Cardgame.Engine
             Model.EventLog = new List<string>();
             Model.ChatLog = new List<LogEntry>();        
             Model.Players = new string[0];
+            logManager = new LogManager(Model.EventLog);
         }
 
         public bool Execute(string username, ClientCommand command)
@@ -59,7 +60,7 @@ namespace Cardgame.Engine
                 }
                 catch (CommandException e)
                 {
-                    LogBasicEvent($"<error>{username}: {e.Message}</error>");
+                    logManager.LogBasicEvent($"<error>{username}: {e.Message}</error>");
                     Console.WriteLine(e.ToString());
                     Notify();
                     return false;
@@ -94,7 +95,7 @@ namespace Cardgame.Engine
                         bots.Add(username);
                     }
 
-                    LogBasicEvent($@"<spans>
+                    logManager.LogBasicEvent($@"<spans>
                         <player>{username}</player>
                         <if you='join' them='joins'>{username}</if>
                         <run>the game.</run>
@@ -108,7 +109,7 @@ namespace Cardgame.Engine
                     Model.Players = Model.Players.Except(new[]{username}).ToArray();
                     bots.Remove(username);
 
-                    LogBasicEvent($@"<spans>
+                    logManager.LogBasicEvent($@"<spans>
                         <player>{username}</player>
                         <if you='leave' them='leaves'>{username}</if>
                         <run>the game.</run>
@@ -258,7 +259,7 @@ namespace Cardgame.Engine
             {
                 Model.ExecutingBackgroundTasks = false;
 
-                LogBasicEvent($"<error>{id}: {e.Message}</error>");
+                logManager.LogBasicEvent($"<error>{id}: {e.Message}</error>");
                 Console.WriteLine(e.ToString());
             }
         }
@@ -279,7 +280,7 @@ namespace Cardgame.Engine
             if (t.Status == TaskStatus.Faulted)
             {
                 var e = t.Exception.InnerException ?? t.Exception;
-                LogBasicEvent($"<error>{id}: {e.Message}</error>");
+                logManager.LogBasicEvent($"<error>{id}: {e.Message}</error>");
                 Console.WriteLine(e.ToString());
                 // rollback somehow?
             }
@@ -362,7 +363,7 @@ namespace Cardgame.Engine
 
         internal async Task BuyCardAsync(string player, string id)
         {            
-            var buyRecord = LogComplexEvent($@"<spans>
+            var buyRecord = logManager.LogComplexEvent($@"<spans>
                 <player>{player}</player>
                 <if you='buy' them='buys'>{player}</if>
                 <card suffix='.'>{id}</card>
@@ -429,7 +430,7 @@ namespace Cardgame.Engine
                 return $"<card suffix='{suffix}'>{card.Name}</card>";
             }));
 
-            var playCardsRecord = LogComplexEvent($@"<spans>
+            var playCardsRecord = logManager.LogComplexEvent($@"<spans>
                 <player>{player}</player>
                 <if you='play' them='plays'>{player}</if>
                 {cardList}
@@ -477,7 +478,7 @@ namespace Cardgame.Engine
                 revealed.Clear();
             }
 
-            UpdateLog(playCardsRecord);
+            playCardsRecord.Update();
 
             // advance phases
             if (type == CardType.Action)
@@ -544,60 +545,6 @@ namespace Cardgame.Engine
             }, Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>());
 
             return (gainC, gainP);
-        }
-
-        private void LogBasicEvent(string eventText)
-        {
-            Model.EventLog.Add(eventText);
-        }
-
-        private Record LogComplexEvent(string eventText)
-        {
-            var record = new Record(Model.EventLog.Count, eventText, UpdateLog);
-            Model.EventLog.Add(record.Header);
-            return record;
-        }
-        
-        private void UpdateLog(Record record)
-        {
-            var lines = new List<string>();
-            lines.Add(record.Header);
-            lines.AddRange(GetLogLines(record, 1));
-
-            var partialXML = string.Join(Environment.NewLine, lines);
-            var finalXML = $@"<lines>
-                {partialXML}
-            </lines>";            
-            Model.EventLog[record.Index] = finalXML.ToString();
-        }
-
-        private IEnumerable<string> GetLogLines(Subrecord subrecord, int indent)
-        {
-            foreach (var section in subrecord.Sections)
-            {
-                if (section.Chunk != null)
-                {
-                    foreach (var line in section.Chunk)
-                    {
-                        yield return $@"<spans>
-                            <indent level='{indent}' />
-                            {line}
-                        </spans>";
-                    }
-                }
-                else
-                {
-                    foreach (var indentedLine in GetLogLines(section.Subrecord, indent + 1))
-                    {
-                        yield return indentedLine;
-                    }
-                }
-            }
-        }
-
-        private void ClearLog(Record record)
-        {
-            Model.EventLog.RemoveAt(record.Index);
         }
 
         internal string LogVerbInitial(string player, string secondPerson, string thirdPerson, string continuous)
@@ -669,7 +616,7 @@ namespace Cardgame.Engine
             Model.CurrentPhase = Phase.Action;
             Model.PlayedLastTurn = new HashSet<Instance>(Model.PlayedCards[player]);
 
-            var beginTurnRecord = LogComplexEvent($@"<bold>
+            var beginTurnRecord = logManager.LogComplexEvent($@"<bold>
                 <run>---</run>
                 <if you='Your' them=""{player}'s"">{player}</if>
                 <run>turn {turnNumber} ---</run>
@@ -703,7 +650,7 @@ namespace Cardgame.Engine
                     }
                     if (!executed)
                     {
-                        LogBasicEvent($"<error>{botPlayer}: Sorry! I'm just a bot.</error>");
+                        logManager.LogBasicEvent($"<error>{botPlayer}: Sorry! I'm just a bot.</error>");
                     }
                 });
             }
@@ -713,7 +660,7 @@ namespace Cardgame.Engine
         {
             Model.CurrentPhase = Phase.Cleanup;
 
-            var endTurnRecord = LogComplexEvent($@"<spans>
+            var endTurnRecord = logManager.LogComplexEvent($@"<spans>
                 <player>{player}</player>
                 <if you='end your' them='ends their'>{player}</if>
                 <run>turn.</run>
@@ -759,13 +706,13 @@ namespace Cardgame.Engine
                     <player prefix='('>{player}</player>
                     <if you='reshuffle.)' them='reshuffles.)'>{player}</if>
                 ");
-                UpdateLog(endTurnRecord);
+                endTurnRecord.Update();
             }
             
             // display the EOT record only if it's got content
             if (!endTurnRecord.HasLines())
             {
-                ClearLog(endTurnRecord);
+                logManager.ClearEntry(endTurnRecord);
             }
 
             if (Model.Supply["Province"] == 0 || Model.Supply.Values.Where(v => v == 0).Count() >= 3)
@@ -795,7 +742,7 @@ namespace Cardgame.Engine
         {
             Model.IsFinished = true;
 
-            LogBasicEvent($@"<bold>--- Game over ---</bold>");
+            logManager.LogBasicEvent($@"<bold>--- Game over ---</bold>");
 
             foreach (var pair in Model.Players.Select(player => (s: All.Rules.CalculateScore(Model, player), t: turnNumbers[player])))
             {
@@ -812,7 +759,7 @@ namespace Cardgame.Engine
                     builder.AppendLine($"<run>Total: {pair.s.Total} Victory Points in {pair.t} turns.</run>");
                 builder.AppendLine("</lines>");
 
-                LogBasicEvent(builder.ToString());
+                logManager.LogBasicEvent(builder.ToString());
             }
         }
 

@@ -2,7 +2,7 @@ using System;
 
 namespace Cardgame.Engine.Logging
 {
-    public class Record : Subrecord
+    internal class Record : Subrecord
     {
         private readonly Action<Record> updateAny;
         public readonly int Index;

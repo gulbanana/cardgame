@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cardgame.Engine.Logging
 {
-    public class Subrecord : IRecord
+    internal class Subrecord : IRecord
     {
         private readonly Action updateThis;
         public readonly List<Section> Sections;
