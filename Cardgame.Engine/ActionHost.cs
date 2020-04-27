@@ -69,24 +69,9 @@ namespace Cardgame.Engine
                 return $"<player>{Player}</player><if you='{secondPerson}' them='{thirdPerson}'>{Player}</if>";
             }
         }
-
-        private string LogCardList(string[] ids, bool terminal = true)
-        {
-            if (!ids.Any())
-            {
-                return terminal ? "<run>nothing.</run>" : "<run>nothing</run>";
-            }
-
-            return string.Join(Environment.NewLine, ids.Select((id, ix) => 
-            {
-                var suffix = ix == ids.Length -1 ? (terminal ? "." : "")
-                    : ix < ids.Length - 2 ? ","
-                    : " and";
-                return $"<card suffix='{suffix}'>{id}</card>";
-            }));
-        }
-
-        private string LogSource(Zone from)
+    
+        // XXX should go in logmanager.. if reorders are even worth logging. they always seem to happen as a result of putting cards back.
+        private string FormatSourceForReorder(Zone from)
         {
             switch (from.Name)
             {
@@ -120,37 +105,6 @@ namespace Cardgame.Engine
 
                 default:
                     throw new CommandException($"Unknown source zone {from}");
-            }
-        }
-
-        private string LogSecurely(string card, Zone source, Zone destination)
-        {
-            if (source.IsPrivate() && destination.IsPrivate())
-            {
-                return $"<run>a card</run>";
-            }
-            else
-            {
-                return $"<card>{card}</card>";
-            }
-        }
-
-        private string LogSecurely(string[] cards, Zone source, Zone destination)
-        {
-            if (source.IsPrivate() && destination.IsPrivate())
-            {
-                if (cards.Length == 1)
-                {
-                    return $"<run>a card</run>";
-                }
-                else
-                {
-                    return $"<run>{cards.Length} cards</run>";
-                }
-            }
-            else
-            {
-                return LogCardList(cards, terminal: false);
             }
         }
 
@@ -337,11 +291,7 @@ namespace Cardgame.Engine
                 engine.MoveCard(Player, card, Zone.Hand, Zone.SupplyAvailable);
             }
 
-            LogLine($@"
-                {FormatInitialVerb("return", "returns", "returning")}
-                {LogSecurely(cards, Zone.Hand, Zone.SupplyAvailable)}
-                <run>to the supply.</run>
-            ");
+            LogMovement(Motion.Return, cards, Zone.Hand, Zone.SupplyAvailable);
         }
 
         // XXX should probably put things into the Revealed zone!
@@ -397,7 +347,7 @@ namespace Cardgame.Engine
 
             LogLine($@"
                 {FormatInitialVerb("reorder", "reorders", "reordering")}
-                {LogSource(@in)}
+                {FormatSourceForReorder(@in)}
             ");
         }
 

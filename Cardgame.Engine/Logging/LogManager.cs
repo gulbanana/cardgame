@@ -286,6 +286,10 @@ namespace Cardgame.Engine.Logging
                         builder.Append(FormatVerb(actor, "reveal", "reveals", "revealing", first));
                         break;
 
+                    case Motion.Return:
+                        builder.Append(FormatVerb(actor, "return", "returns", "returning", first));
+                        break;
+
                     case Motion.Trash:
                         builder.Append(FormatVerb(actor, "trash", "trashes", "trashing", first));
                         break;
@@ -346,6 +350,7 @@ namespace Cardgame.Engine.Logging
                     case Motion.Play:
                     case Motion.Put:
                     case Motion.Reveal:
+                    case Motion.Return:
                         builder.Append("<run>from</run>");
                         builder.Append(FormatZone(actor, movement.From));
                         break;
@@ -375,12 +380,18 @@ namespace Cardgame.Engine.Logging
                 case Motion.Trash:
                     break;             
 
+                // Gain and Return motions have an implied destination, but you never know
                 case Motion.Gain:
                     if (movement.To != Zone.Discard)
                     {
                         builder.Append("<run>to</run>");
                         builder.Append(FormatZone(actor, movement.To));
                     }
+                    break;
+
+                case Motion.Return:
+                    builder.Append("<run>to</run>");
+                    builder.Append(FormatZone(actor, movement.To));
                     break;
 
                 // "put" has adaptive grammar

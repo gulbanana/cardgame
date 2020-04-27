@@ -6,6 +6,7 @@ namespace Cardgame.Engine.Logging
         Gain,
         Play,
         Put,
+        Return,
         Reveal,
         Trash,
     }
