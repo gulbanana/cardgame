@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardgame.Model", "Cardgame.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardgame.Engine", "Cardgame.Engine\Cardgame.Engine.csproj", "{6345521E-4DF1-47A7-B4D4-C745916F97BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardgame.Tests", "Cardgame.Tests\Cardgame.Tests.csproj", "{4A64E00B-56BD-4841-8398-597DF52DA2D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,5 +116,17 @@ Global
 		{6345521E-4DF1-47A7-B4D4-C745916F97BB}.Release|x64.Build.0 = Release|Any CPU
 		{6345521E-4DF1-47A7-B4D4-C745916F97BB}.Release|x86.ActiveCfg = Release|Any CPU
 		{6345521E-4DF1-47A7-B4D4-C745916F97BB}.Release|x86.Build.0 = Release|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Debug|x64.Build.0 = Debug|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Debug|x86.Build.0 = Debug|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Release|x64.ActiveCfg = Release|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Release|x64.Build.0 = Release|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Release|x86.ActiveCfg = Release|Any CPU
+		{4A64E00B-56BD-4841-8398-597DF52DA2D5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
