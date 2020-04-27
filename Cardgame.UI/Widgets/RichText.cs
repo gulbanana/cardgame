@@ -136,101 +136,43 @@ namespace Cardgame.UI.Widgets
                         var cost = model.GetCost(Array.Empty<IModifier>());
                         var set = All.Cards.GetSet(card.Name);
                         var value = (model as ITreasureCard)?.StaticValue;
-                        builder.AddContent(seq++, "            ");
+
                         builder.OpenComponent<WithTooltip>(seq++);
-                        builder.AddAttribute(seq++, "Content", (RenderFragment)((contentBuilder) => {
-                            contentBuilder.AddMarkupContent(seq++, "\r\n                    ");
-                            contentBuilder.AddContent(seq++,
-                                card.Prefix
-                            );
-                            contentBuilder.OpenElement(seq++, "span");
-                            contentBuilder.AddAttribute(seq++, "style", "background:" + " " + (
-                                background
-                            ));
-                            contentBuilder.AddContent(seq++,
-                                Strings.TitleCase(card.Name)
-                            );
-                            contentBuilder.CloseElement();
-                            contentBuilder.AddContent(seq++,
-                                card.Suffix
-                            );
-                            contentBuilder.AddMarkupContent(seq++, "\r\n                ");
-                        }
-                        ));
-                        builder.AddAttribute(seq++, "Tooltip", (RenderFragment)((tooltipBuilder) => {
-                            tooltipBuilder.AddMarkupContent(seq++, "\r\n                    ");
-                            tooltipBuilder.OpenComponent<Magnify>(seq++);
-                            tooltipBuilder.AddAttribute(seq++, "ChildContent", (RenderFragment)((cardBuilder) => {
-                                cardBuilder.AddMarkupContent(seq++, "\r\n                        ");
-                                cardBuilder.OpenComponent<KingdomCard>(seq++);
-                                cardBuilder.AddAttribute(seq++, "Name", (
-                                    card.Name
-                                ));
-                                cardBuilder.AddAttribute(seq++, "Types", (
-                                    model.Types
-                                ));
-                                cardBuilder.AddAttribute(seq++, "Art", (
-                                    model.Art
-                                ));
-                                cardBuilder.AddAttribute(seq++, "Cost", (
-                                    cost
-                                ));
-                                cardBuilder.AddAttribute(seq++, "Text", (
-                                    model.Text
-                                ));
-                                cardBuilder.AddAttribute(seq++, "Set", (
-                                    set
-                                ));
-                                cardBuilder.CloseComponent();
-                                cardBuilder.AddMarkupContent(seq++, "\r\n                    ");
-                            }
-                            ));
-                            tooltipBuilder.CloseComponent();
-                            tooltipBuilder.AddMarkupContent(seq++, "\r\n                ");
-                        }
-                        ));
+                            builder.AddAttribute(seq++, "Content", (RenderFragment)((contentBuilder) => {
+                                contentBuilder.AddMarkupContent(seq++, $"{card.Prefix}<span style=\"background: {background}\">{Strings.TitleCase(card.Name)}</span>{card.Suffix}");
+                            }));
+                            builder.AddAttribute(seq++, "Tooltip", (RenderFragment)((tooltipBuilder) => {
+                                tooltipBuilder.OpenComponent<Magnify>(seq++);
+                                    tooltipBuilder.AddAttribute(seq++, "ChildContent", (RenderFragment)((cardBuilder) => {
+                                        cardBuilder.OpenComponent<KingdomCard>(seq++);
+                                            cardBuilder.AddAttribute(seq++, "Name", card.Name);
+                                            cardBuilder.AddAttribute(seq++, "Types", model.Types);
+                                            cardBuilder.AddAttribute(seq++, "Art", model.Art);
+                                            cardBuilder.AddAttribute(seq++, "Cost", cost);
+                                            cardBuilder.AddAttribute(seq++, "Text", model.Text);
+                                            cardBuilder.AddAttribute(seq++, "Set", set);
+                                        cardBuilder.CloseComponent();
+                                    }));
+                                tooltipBuilder.CloseComponent();
+                            }));
                         builder.CloseComponent();
-                        builder.AddMarkupContent(seq++, "   \r\n");
                     }
                     else
                     {
-                        builder.AddContent(seq++, "            ");
                         builder.OpenComponent<WithTooltip>(seq++);
-                        builder.AddAttribute(seq++, "Content", (RenderFragment)((contentBuilder) => {
-                            contentBuilder.AddMarkupContent(seq++, "\r\n                    ");
-                            contentBuilder.AddContent(seq++,
-                                card.Prefix
-                            );
-                            contentBuilder.AddContent(seq++, "a ");
-                            contentBuilder.AddContent(seq++,
-                                Strings.TitleCase(card.Name)
-                            );
-                            contentBuilder.AddContent(seq++, " token");
-                            contentBuilder.AddContent(seq++,
-                                card.Suffix
-                            );
-                            contentBuilder.AddMarkupContent(seq++, "\r\n                ");
-                        }
-                        ));
-                        builder.AddAttribute(seq++, "Tooltip", (RenderFragment)((tooltipBuilder) => {
-                            tooltipBuilder.AddMarkupContent(seq++, "\r\n                    ");
-                            tooltipBuilder.OpenComponent<Magnify>(seq++);
-                            tooltipBuilder.AddAttribute(seq++, "ChildContent", (RenderFragment)((cardBuilder) => {
-                                cardBuilder.AddMarkupContent(seq++, "\r\n                        ");
-                                cardBuilder.OpenComponent<RichText>(seq++);
-                                cardBuilder.AddAttribute(seq++, "Model", (
-                                    model.Text
-                                ));
-                                cardBuilder.CloseComponent();
-                                cardBuilder.AddMarkupContent(seq++, "\r\n                    ");
-                            }
-                            ));
-                            tooltipBuilder.CloseComponent();
-                            tooltipBuilder.AddMarkupContent(seq++, "\r\n                ");
-                        }
-                        ));
+                            builder.AddAttribute(seq++, "Content", (RenderFragment)((contentBuilder) => {
+                                contentBuilder.AddContent(seq++, $"{card.Prefix}a {Strings.TitleCase(card.Name)} token{card.Suffix}");
+                            }));
+                            builder.AddAttribute(seq++, "Tooltip", (RenderFragment)((tooltipBuilder) => {
+                                tooltipBuilder.OpenComponent<Magnify>(seq++);
+                                    tooltipBuilder.AddAttribute(seq++, "ChildContent", (RenderFragment)((cardBuilder) => {
+                                        cardBuilder.OpenComponent<RichText>(seq++);
+                                            cardBuilder.AddAttribute(seq++, "Model", model.Text);
+                                        cardBuilder.CloseComponent();
+                                    }));
+                                tooltipBuilder.CloseComponent();
+                            }));
                         builder.CloseComponent();
-                        builder.AddMarkupContent(seq++, "   \r\n");
                     }
                     break;
 
