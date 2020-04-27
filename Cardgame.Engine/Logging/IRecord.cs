@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-
 namespace Cardgame.Engine.Logging
 {
     internal interface IRecord
     {        
-        List<string> LatestChunk { get; }
-        IRecord CreateSubrecord();
+        Chunk LatestChunk { get; }
+        IRecord CreateSubrecord(string actor, bool inline);
         void Update();
     }
 }

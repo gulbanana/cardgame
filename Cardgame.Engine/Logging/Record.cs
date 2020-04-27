@@ -8,7 +8,7 @@ namespace Cardgame.Engine.Logging
         public readonly int Index;
         public readonly string Header;
 
-        public Record(int index, string header, Action<Record> updateRecord) : base(null)
+        public Record(int index, string actor, string header, Action<Record> updateRecord) : base(actor)
         {
             this.updateAny = updateRecord;
             Index = index;

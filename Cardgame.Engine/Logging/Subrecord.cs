@@ -6,27 +6,39 @@ namespace Cardgame.Engine.Logging
 {
     internal class Subrecord : IRecord
     {
+        public readonly string Actor;
+        public readonly bool Inline;
         private readonly Action updateThis;
         public readonly List<Section> Sections;
 
-        public Subrecord(Action updateThis)
+        public Subrecord(string actor, bool inline, Action updateThis)
         {
+            this.Actor = actor;
+            this.Inline = inline;
             this.updateThis = updateThis;
             Sections = new List<Section>();
         }
-                
-        public bool HasLines()
+
+        protected Subrecord(string actor)
         {
-            return Sections.Any(s => s.Chunk != null && s.Chunk.Any() || s.Subrecord.HasLines());
+            this.Actor = actor;
+            this.Inline = true;
+            this.updateThis = null;
+            Sections = new List<Section>();
+        }
+                
+        public bool HasContent()
+        {
+            return Sections.Any(s => s.Chunk != null && s.Chunk.HasContent() || s.Subrecord.HasContent());
         }
         
-        public List<string> LatestChunk
+        public Chunk LatestChunk
         {
             get
             {
                 if (!Sections.Any())
                 {
-                    var firstSection = new Section();
+                    var firstSection = new Section(Actor);
                     Sections.Add(firstSection);
                     return firstSection.Chunk;
                 }
@@ -36,16 +48,16 @@ namespace Cardgame.Engine.Logging
                 }
                 else
                 {
-                    var newSection = new Section();
+                    var newSection = new Section(Actor);
                     Sections.Add(newSection);
                     return newSection.Chunk;
                 }
             }
         }
 
-        public IRecord CreateSubrecord()
+        public IRecord CreateSubrecord(string actor, bool inline)
         {
-            var newRecord = new Subrecord(Update);
+            var newRecord = new Subrecord(actor, inline, Update);
             var newSection = new Section(newRecord);
             Sections.Add(newSection);
             return newRecord;

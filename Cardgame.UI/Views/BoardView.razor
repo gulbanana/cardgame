@@ -18,14 +18,14 @@
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()
         .Count(card => !card.GetModifiedValue(Model).HasValue);
-    string PotentialMoney => $"${PotentialCoins}{(PotentialPotions > 0 ? $" {PotentialPotions}P" : "")}{(Unknowns > 0 ? $" +$?" : "")}";
+    string PotentialMoney => $"+{Cost.Format(PotentialCoins, PotentialPotions)}{(Unknowns > 0 ? $" +$?" : "")}";
     bool AnyoneChoosing => Model.ChoosingPlayers.Any();
     bool SomeoneVisibleChoosing => AnyoneChoosing && (Model.ChoosingPlayers.Peek().Equals(Session.Username) || !Model.Players.Contains(Session.Username));
 }
 
 <div class="board-view@((Model.KingdomHasCurse || Model.KingdomHasPotion) ? " board-view--constrained" : "")">
     <p style="grid-area: safe-commands" class="game-view__responsive-bar">
-        <ActiveButton Label="@($"+{PotentialMoney}")" Enabled="@(IsEnabled && (PotentialCoins+PotentialPotions) > 0)" Action="@(() => Dispatch(new PlayAllTreasuresCommand()))" />
+        <ActiveButton Label="@PotentialMoney" Enabled="@(IsEnabled && (PotentialCoins+PotentialPotions) > 0)" Action="@(() => Dispatch(new PlayAllTreasuresCommand()))" />
     </p>
 
     <p style="grid-area: stats" class="game-view__responsive-bar board-view__statbar">

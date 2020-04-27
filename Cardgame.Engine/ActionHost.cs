@@ -30,13 +30,26 @@ namespace Cardgame.Engine
 
         protected void LogLine(string eventText)
         {
-            logRecord.LatestChunk.Add(eventText);
+            logRecord.LatestChunk.TextLines.Add(eventText);
+            logRecord.Update();
+        }
+
+        protected void Log(Action<Chunk> f)
+        {
+            f(logRecord.LatestChunk);
             logRecord.Update();
         }
 
         protected string LogVerbInitial(string secondPerson, string thirdPerson, string continuous)
         {
-            return engine.LogVerbInitial(Player, secondPerson, thirdPerson, continuous);
+            if (Player == engine.Model.ActivePlayer)
+            {
+                return $"<if you='you {secondPerson}' them='{continuous}'>{Player}</if>";
+            }
+            else
+            {
+                return $"<player>{Player}</player><if you='{secondPerson}' them='{thirdPerson}'>{Player}</if>";
+            }
         }
 
         private string LogVerb(string secondPerson, string thirdPerson, string continuous)
@@ -178,7 +191,7 @@ namespace Cardgame.Engine
 
         public IActionHost Isolate()
         {
-            return CloneHost(logRecord.CreateSubrecord(), Player);
+            return CloneHost(logRecord.CreateSubrecord(Player, inline: false), Player);
         }
     
         ICard[] IActionHost.Examine(Zone @in, string player)
@@ -194,31 +207,19 @@ namespace Cardgame.Engine
         void IActionHost.AddActions(int n)
         {
             engine.Model.ActionsRemaining += n;
-
-            LogLine($@"
-                <if you='you get' them='getting'>{engine.Model.ActivePlayer}</if>
-                <run>+{n} actions.</run>
-            ");
+            Log(chunk => chunk.AddedActions += n);
         }
 
         void IActionHost.AddBuys(int n)
         {
             engine.Model.BuysRemaining += n;
-
-            LogLine($@"
-                <if you='you get' them='getting'>{engine.Model.ActivePlayer}</if>
-                <run>+{n} buys.</run>
-            ");
+            Log(chunk => chunk.AddedBuys += n);
         }
 
         void IActionHost.AddCoins(int n)
         {
             engine.Model.CoinsRemaining += n;
-
-            LogLine($@"
-                <if you='you get' them='getting'>{engine.Model.ActivePlayer}</if>
-                <run>+${n}.</run>
-            ");
+            Log(chunk => chunk.AddedCoins += n);
         }
 
         ICard[] IActionHost.DrawCards(int n)
@@ -244,10 +245,7 @@ namespace Cardgame.Engine
                 NoteReshuffle();
             }
 
-            LogLine($@"
-                {LogVerbInitial("draw", "draws", "drawing")}
-                <run>{(n == 1 ? "a card." : $"{n} cards.")}</run>
-            ");
+            Log(chunk => chunk.AddedCards += n);
 
             return drawn.Select(All.Cards.ByName).ToArray();
         }
@@ -510,7 +508,7 @@ namespace Cardgame.Engine
                 <card suffix='.'>{card}</card>
             ");
 
-            await engine.PlayCardAsync(logRecord.CreateSubrecord(), Player, card, from);
+            await engine.PlayCardAsync(logRecord.CreateSubrecord(Player, inline: false), Player, card, from);
         }
 
         Task<bool> IActionHost.YesNo(string prompt, string message)
@@ -590,7 +588,7 @@ namespace Cardgame.Engine
         async Task IActionHost.AllPlayers(Func<IActionHost, bool> filter, Func<IActionHost, Task> act, bool isAttack)
         {
             var targetPlayers = engine.Model.Players
-                .Select(player => CloneHost(logRecord, player))
+                .Select(player => CloneHost(logRecord.CreateSubrecord(player, inline: true), player))
                 .Where(filter)
                 .ToList();
             

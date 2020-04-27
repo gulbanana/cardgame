@@ -45,7 +45,7 @@ namespace Cardgame.Engine
             Model.EventLog = new List<string>();
             Model.ChatLog = new List<LogEntry>();        
             Model.Players = new string[0];
-            logManager = new LogManager(Model.EventLog);
+            logManager = new LogManager(Model.EventLog, () => Model.ActivePlayer);
         }
 
         public bool Execute(string username, ClientCommand command)
@@ -363,7 +363,7 @@ namespace Cardgame.Engine
 
         internal async Task BuyCardAsync(string player, string id)
         {            
-            var buyRecord = logManager.LogComplexEvent($@"<spans>
+            var buyRecord = logManager.LogComplexEvent(player, $@"<spans>
                 <player>{player}</player>
                 <if you='buy' them='buys'>{player}</if>
                 <card suffix='.'>{id}</card>
@@ -430,7 +430,7 @@ namespace Cardgame.Engine
                 return $"<card suffix='{suffix}'>{card.Name}</card>";
             }));
 
-            var playCardsRecord = logManager.LogComplexEvent($@"<spans>
+            var playCardsRecord = logManager.LogComplexEvent(player, $@"<spans>
                 <player>{player}</player>
                 <if you='play' them='plays'>{player}</if>
                 {cardList}
@@ -448,28 +448,26 @@ namespace Cardgame.Engine
 
             if (type == CardType.Treasure)
             {
-                playCardsRecord.LatestChunk.Add($@"
-                    {LogVerbInitial(player, "get", "gets", "getting")}
-                    <run>+${gainC}{(gainP > 0 ? $" {gainP}P" : "")}.</run>
-                ");
+                playCardsRecord.LatestChunk.AddedCoins += gainC;
+                playCardsRecord.LatestChunk.AddedPotions += gainP;
             }
 
             // check postconditions            
             if (Model.PreventedAttacks.Any())
             {
-                playCardsRecord.LatestChunk.Add("<error>Warning: PreventedAttacks not cleared</error>");
+                playCardsRecord.LatestChunk.TextLines.Add("<error>Warning: PreventedAttacks not cleared</error>");
                 Model.PreventedAttacks.Clear();
             }
 
             if (Model.ChoosingPlayers.Any())
             {
-                playCardsRecord.LatestChunk.Add($"<error>Warning: choice is stuck on '{Model.ChoicePrompt}'</error>");
+                playCardsRecord.LatestChunk.TextLines.Add($"<error>Warning: choice is stuck on '{Model.ChoicePrompt}'</error>");
                 Model.ChoosingPlayers.Clear();
             }
 
             if (stashes.Any() || revealed.Any())
             {
-                playCardsRecord.LatestChunk.Add($@"<lines>
+                playCardsRecord.LatestChunk.TextLines.Add($@"<lines>
                     <error>Warning: temp zones not drained.</error>
                     <error>Stashes: {string.Join(", ", stashes.Values.Names())}</error>
                     <error>Revealed: {string.Join(", ", revealed.Names())}</error>
@@ -547,18 +545,6 @@ namespace Cardgame.Engine
             return (gainC, gainP);
         }
 
-        internal string LogVerbInitial(string player, string secondPerson, string thirdPerson, string continuous)
-        {
-            if (player == Model.ActivePlayer)
-            {
-                return $"<if you='you {secondPerson}' them='{continuous}'>{player}</if>";
-            }
-            else
-            {
-                return $"<player>{player}</player><if you='{secondPerson}' them='{thirdPerson}'>{player}</if>";
-            }
-        }
-
         private void BeginGame()
         {
             var rng = new Random();
@@ -616,7 +602,7 @@ namespace Cardgame.Engine
             Model.CurrentPhase = Phase.Action;
             Model.PlayedLastTurn = new HashSet<Instance>(Model.PlayedCards[player]);
 
-            var beginTurnRecord = logManager.LogComplexEvent($@"<bold>
+            var beginTurnRecord = logManager.LogComplexEvent(player, $@"<bold>
                 <run>---</run>
                 <if you='Your' them=""{player}'s"">{player}</if>
                 <run>turn {turnNumber} ---</run>
@@ -660,7 +646,7 @@ namespace Cardgame.Engine
         {
             Model.CurrentPhase = Phase.Cleanup;
 
-            var endTurnRecord = logManager.LogComplexEvent($@"<spans>
+            var endTurnRecord = logManager.LogComplexEvent(player, $@"<spans>
                 <player>{player}</player>
                 <if you='end your' them='ends their'>{player}</if>
                 <run>turn.</run>
@@ -702,7 +688,7 @@ namespace Cardgame.Engine
             }
             if (reshuffled)
             {
-                endTurnRecord.LatestChunk.Add($@"
+                endTurnRecord.LatestChunk.TextLines.Add($@"
                     <player prefix='('>{player}</player>
                     <if you='reshuffle.)' them='reshuffles.)'>{player}</if>
                 ");
@@ -710,7 +696,7 @@ namespace Cardgame.Engine
             }
             
             // display the EOT record only if it's got content
-            if (!endTurnRecord.HasLines())
+            if (!endTurnRecord.HasContent())
             {
                 logManager.ClearEntry(endTurnRecord);
             }

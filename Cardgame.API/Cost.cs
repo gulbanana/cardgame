@@ -1,9 +1,20 @@
 using System;
+using System.Text;
 
 namespace Cardgame.API
 {
     public struct Cost : IEquatable<Cost>, IComparable<Cost>
     {
+        public static string Format(int coins, int potions)
+        {
+            if (coins == 0 && potions == 0) return "$0";
+            var builder = new StringBuilder();
+            if (coins > 0) builder.AppendFormat("${0}", coins);
+            if (coins > 0 && potions > 0) builder.Append(" ");
+            if (potions > 0) builder.AppendFormat("{0}P", potions);
+            return builder.ToString();
+        }
+
         public static implicit operator Cost(int coins) => new Cost { Coins = coins, Potion = false };
 
         public int Coins { get; set; }
@@ -15,7 +26,7 @@ namespace Cardgame.API
             Potion = potion;
         }
 
-        public override string ToString() => Potion ? Coins+"P" : Coins.ToString();
+        public override string ToString() => Format(Coins, Potion ? 1 : 0);
 
         public bool Equals(Cost other)
         {

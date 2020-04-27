@@ -4,12 +4,12 @@ namespace Cardgame.Engine.Logging
 {
     internal class Section
     {
-        public readonly List<string> Chunk;
+        public readonly Chunk Chunk;
         public readonly Subrecord Subrecord;
 
-        public Section()
+        public Section(string player)
         {
-            Chunk = new List<string>();
+            Chunk = new Chunk(player);
         }
 
         public Section(Subrecord subrecord)
