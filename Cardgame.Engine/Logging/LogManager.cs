@@ -27,10 +27,10 @@ namespace Cardgame.Engine.Logging
             managedEntries.Add(eventText);
         }
 
-        public Record LogComplexEvent(string actor, string eventText)
+        public Record LogComplexEvent(string actor, Event @event)
         {
-            var record = new Record(managedEntries.Count, actor, eventText, UpdateEntry);
-            managedEntries.Add(record.Header);
+            var record = new Record(managedEntries.Count, actor, @event, UpdateEntry);
+            managedEntries.Add(GetRecordHeader(record));
             return record;
         }
         
@@ -42,7 +42,7 @@ namespace Cardgame.Engine.Logging
         public void UpdateEntry(Record record)
         {
             var lines = new List<string>();
-            lines.Add(record.Header);
+            lines.Add(GetRecordHeader(record));
             lines.AddRange(GetRecordLines(record, 1));
 
             var partialXML = string.Join(Environment.NewLine, lines);
@@ -56,13 +56,44 @@ namespace Cardgame.Engine.Logging
         {
             var options = new JsonSerializerOptions 
             { 
-                Converters = { new JsonStringEnumConverter(), new ChunkConverter() },
+                Converters = { new JsonStringEnumConverter(), new EventConverter(), new ChunkConverter() },
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 IgnoreNullValues = true,
                 WriteIndented = true,
             };
             var json = JsonSerializer.Serialize(record, options);
             Console.WriteLine(json);
+        }
+
+        private string GetRecordHeader(Record record)
+        {
+            return record.Event switch {
+                BeginTurn { TurnNumber: int turnNumber } => $@"<bold>
+                    <run>---</run>
+                    <if you='Your' them='{record.Actor}&apos;s'>{record.Actor}</if>
+                    <run>turn {turnNumber} ---</run>
+                </bold>",
+
+                BuyCard { Card: var card } => $@"<spans>
+                    <player>{record.Actor}</player>
+                    <if you='buy' them='buys'>{record.Actor}</if>
+                    <card suffix='.'>{card}</card>
+                </spans>",
+
+                PlayCards { Cards: var cards } => $@"<spans>
+                    <player>{record.Actor}</player>
+                    <if you='play' them='plays'>{record.Actor}</if>
+                    {Terminate(FormatCardList(cards))}
+                </spans>",
+                
+                Cleanup _ => $@"<spans>
+                    <player>{record.Actor}</player>
+                    <if you='end your' them='ends their'>{record.Actor}</if>
+                    <run>turn.</run>
+                </spans>",
+
+                _ => throw new NotSupportedException(record.Event.ToString())
+            };
         }
 
         private IEnumerable<string> GetRecordLines(Subrecord subrecord, int indent)

@@ -363,11 +363,7 @@ namespace Cardgame.Engine
 
         internal async Task BuyCardAsync(string player, string id)
         {            
-            var buyRecord = logManager.LogComplexEvent(player, "<spans>" +
-                $"<player>{player}</player>" +
-                $"<if you='buy' them='buys'>{player}</if>" +
-                $"<card suffix='.'>{id}</card>" +
-            "</spans>");
+            var buyRecord = logManager.LogComplexEvent(player, new BuyCard { Card = id });
 
             await Act(buyRecord, player, Trigger.BuyCard, id, () => 
             {                
@@ -424,20 +420,7 @@ namespace Cardgame.Engine
             }
 
             // commit to the play
-            var cardList = string.Join(Environment.NewLine, cards.Select((card, ix) => 
-            {
-                var suffix = ix == cards.Length - 1 ? "."
-                    : ix < cards.Length - 2 ? ","
-                    : " and";
-                return $"<card suffix='{suffix}'>{card.Name}</card>";
-            }));
-
-            var playCardsRecord = logManager.LogComplexEvent(player, "<spans>" +
-                $"<player>{player}</player>" +
-                $"<if you='play' them='plays'>{player}</if>" +
-                $"{cardList}" +
-            "</spans>");
-
+            var playCardsRecord = logManager.LogComplexEvent(player, new PlayCards { Cards = cards.Names() } );
             var gainC = 0; 
             var gainP = 0;
 
@@ -605,11 +588,7 @@ namespace Cardgame.Engine
             Model.CurrentPhase = Phase.Action;
             Model.PlayedLastTurn = new HashSet<Instance>(Model.PlayedCards[player]);
 
-            var beginTurnRecord = logManager.LogComplexEvent(player, "<bold>" +
-                $"<run>---</run>" +
-                $"<if you='Your' them='{player}&apos;s'>{player}</if>" +
-                $"<run>turn {turnNumber} ---</run>" +
-            "</bold>");
+            var beginTurnRecord = logManager.LogComplexEvent(player, new BeginTurn { TurnNumber = turnNumber });
 
             await Act(beginTurnRecord, player, Trigger.BeginTurn, player, () => 
             {
@@ -651,11 +630,7 @@ namespace Cardgame.Engine
         {
             Model.CurrentPhase = Phase.Cleanup;
 
-            var endTurnRecord = logManager.LogComplexEvent(player, "<spans>" +
-                $"<player>{player}</player>" +
-                $"<if you='end your' them='ends their'>{player}</if>" +
-                $"<run>turn.</run>" +
-            "</spans>");
+            var endTurnRecord = logManager.LogComplexEvent(player, new Cleanup());
 
             var discard = Model.Discards[player];
             var inPlay = Model.PlayedCards[player];
