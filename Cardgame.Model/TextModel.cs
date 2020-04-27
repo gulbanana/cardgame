@@ -48,6 +48,13 @@ namespace Cardgame.Model
             public TextModel Child { get; set; }
         }
 
+        public class Private : TextModel
+        {
+            public TextModel Child { get; set; }
+            public string Owner { get; set; }
+            public string AltText { get; set; }
+        }
+
         public class Indent : TextModel
         {
             public int Level { get; set; }
@@ -125,6 +132,14 @@ namespace Cardgame.Model
 
                 case "error":
                     return new Error { Child = ParseContents(element) };
+
+                case "private":
+                    return new Private 
+                    { 
+                        Child = ParseContents(element),
+                        Owner = element.Attribute("owner").Value,
+                        AltText = element.Attribute("alt").Value
+                    };
 
                 case "run":
                     return new Run { Text = element.Value };

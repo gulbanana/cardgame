@@ -7,7 +7,7 @@ namespace Cardgame.Engine.Logging
     {
         public readonly string Actor;
 
-        public int AddedCards;
+        public List<string> AddedCards;
         public int AddedActions;
         public int AddedBuys;
         public int AddedCoins;
@@ -20,13 +20,14 @@ namespace Cardgame.Engine.Logging
         public Chunk(string actor)
         {
             Actor = actor;
+            AddedCards = new List<string>();
             Movements = new List<Movement>();
             Lines = new List<string>();
         }
 
         public bool HasVanillaContent()
         {
-            return AddedCards > 0 || AddedActions > 0 || AddedBuys > 0 || AddedCoins > 0 || AddedPotions > 0;
+            return AddedCards.Count > 0 || AddedActions > 0 || AddedBuys > 0 || AddedCoins > 0 || AddedPotions > 0;
         }
 
         public bool HasContent()

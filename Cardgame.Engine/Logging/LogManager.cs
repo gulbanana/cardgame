@@ -88,22 +88,18 @@ namespace Cardgame.Engine.Logging
             }
 
             // vanilla bonuses, potentially consequences of the movements
-            if (chunk.AddedCards > 0)
+            if (chunk.AddedCards.Count > 0)
             {
                 builder.Append(FormatVerb(chunk.Actor, "draw", "draws", "drawing", !chunk.Movements.Any()));
-                if (chunk.AddedCards > 1)
-                {
-                    builder.AppendFormat("<run>{0} cards</run>", chunk.AddedCards);
-                }
-                else
-                {
-                    builder.Append("<run>a card</run>");
-                }
+                var altText = chunk.AddedCards.Count > 1 ? $"{chunk.AddedCards.Count} cards" : "a card";
+                builder.Append($"<private owner='{chunk.Actor}' alt='{altText}'>");
+                builder.Append(FormatCardList(chunk.AddedCards));
+                builder.Append("</private>");
             }
 
             if (chunk.AddedActions > 0 || chunk.AddedBuys > 0 || chunk.AddedCoins > 0 || chunk.AddedPotions > 0)
             {
-                builder.Append(FormatVerb(chunk.Actor, "get", "gets", "getting", chunk.AddedCards == 0));
+                builder.Append(FormatVerb(chunk.Actor, "get", "gets", "getting", !chunk.AddedCards.Any()));
 
                 var got = new List<string>();
                 if (chunk.AddedActions > 0) got.Add($"+{chunk.AddedActions} {(chunk.AddedActions > 1 ? "actions" : "action")}");
@@ -157,7 +153,7 @@ namespace Cardgame.Engine.Logging
             return builder.ToString();
         }
 
-        private string FormatCardList(string[] ids)
+        private string FormatCardList(IReadOnlyList<string> ids)
         {
             if (ids == null || !ids.Any())
             {
@@ -166,8 +162,8 @@ namespace Cardgame.Engine.Logging
 
             return string.Join(Environment.NewLine, ids.Select((id, ix) => 
             {
-                var suffix = ix == ids.Length -1 ? string.Empty
-                    : ix < ids.Length - 2 ? ","
+                var suffix = ix == ids.Count -1 ? string.Empty
+                    : ix < ids.Count - 2 ? ","
                     : " and";
                 return $"<card suffix='{suffix}'>{id}</card>";
             }));

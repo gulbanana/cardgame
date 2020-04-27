@@ -263,7 +263,7 @@ namespace Cardgame.Engine
                 NoteReshuffle();
             }
 
-            LogVanilla(chunk => chunk.AddedCards += n);
+            LogVanilla(chunk => chunk.AddedCards.AddRange(drawn));
 
             return drawn.Select(All.Cards.ByName).ToArray();
         }

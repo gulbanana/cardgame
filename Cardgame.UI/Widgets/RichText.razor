@@ -72,6 +72,17 @@
         </span>
         break;
 
+    case TextModel.Private p:
+        if (Session.Username == p.Owner)
+        {
+            <RichText Parsed="@p.Child" />
+        }
+        else
+        {
+            <text>@p.AltText</text>
+        }
+        break;
+
     case TextModel.Indent indent:
         @for (var i = 0; i < indent.Level; i++)
         {
