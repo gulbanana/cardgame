@@ -7,6 +7,5 @@ namespace Cardgame.Cards
         public virtual int ReduceCardCost => 0;
         public virtual int IncreaseTreasureValue(string id) => 0;
         public virtual int? NextHandSize => null;
-        public virtual bool TakeAnotherTurn => false;
     }
 }

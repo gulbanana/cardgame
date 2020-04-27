@@ -3,7 +3,7 @@ using Cardgame.API;
 
 namespace Cardgame.Cards.Seaside
 {
-    public class Outpost : ModifierDurationCardBase, IModifier
+    public class Outpost : ModifierDurationCardBase
     {
         public override Cost Cost => 5;
 
@@ -18,9 +18,12 @@ namespace Cardgame.Cards.Seaside
             {
                 host.CompleteDuration();
             }
+            else
+            {
+                host.InsertExtraTurn(host.Player);
+            }
         }
 
-        public override bool TakeAnotherTurn => true;        
         public override int? NextHandSize => 3;
     }
 }

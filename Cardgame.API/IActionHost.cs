@@ -24,7 +24,7 @@ namespace Cardgame.API
         // move cards around
         void Discard(string[] cards, Zone from);
         void Trash(string[] cards, Zone from);
-        void Gain(string[] cards, Zone to);        
+        void Gain(string[] cards, Zone to);
         void GainFrom(string[] cards, Zone from);
         void PutOnDeck(string[] cards, Zone from);
         void PutIntoHand(string[] cards, Zone from);
@@ -65,6 +65,7 @@ namespace Cardgame.API
         void DiscardEntireDeck();
         void PassCard(string player, string card);
         void InsertIntoDeck(string card, int position);
+        void InsertExtraTurn(string player);
     }
 
     public static class ActionHostExtensions

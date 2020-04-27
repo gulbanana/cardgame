@@ -17,6 +17,8 @@ namespace Cardgame.Engine
         private readonly List<Record> logs;
         private readonly Dictionary<string, TurnRecord> turns;
         private readonly Dictionary<string, int> turnNumbers;  
+        internal readonly Queue<string> ExtraTurns;
+
         private TaskCompletionSource<string> inputTCS;
 
         // temporary zones, can only exist during an action
@@ -37,6 +39,7 @@ namespace Cardgame.Engine
             logs = new List<Record>();
             turns = new Dictionary<string, TurnRecord>();
             turnNumbers = new Dictionary<string, int>();
+            ExtraTurns = new Queue<string>();
 
             stashes = new Dictionary<int, Instance>();
             revealed = new List<Instance>(); // could move to the model, or have a copy "RecentlyRevealed"
@@ -689,19 +692,26 @@ namespace Cardgame.Engine
             else
             {
                 Model.PreviousPlayer = Model.ActivePlayer;
-                
-                var nextPlayer = Model.GetModifiers().Any(m => m.TakeAnotherTurn) ? Model.ActivePlayer : null;
-                if (nextPlayer == null)
+
+                if (Model.NextPlayer == null)
                 {
                     var nextPlayerIndex = Array.FindIndex(Model.Players, e => e.Equals(Model.ActivePlayer)) + 1;
                     if (nextPlayerIndex >= Model.Players.Length)
                     {
                         nextPlayerIndex = 0;
                     }
-                    nextPlayer = Model.Players[nextPlayerIndex];
+                    Model.NextPlayer = Model.Players[nextPlayerIndex];
                 }
-                
-                Model.ActivePlayer = nextPlayer;
+
+                if (ExtraTurns.Any())
+                {
+                    Model.ActivePlayer = ExtraTurns.Dequeue();
+                }
+                else
+                {
+                    Model.ActivePlayer = Model.NextPlayer;
+                    Model.NextPlayer = null;
+                }
             }
         }
 

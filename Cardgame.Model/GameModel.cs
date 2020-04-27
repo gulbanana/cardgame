@@ -31,6 +31,7 @@ namespace Cardgame.Model
 
         // game state
         public string PreviousPlayer { get; set; }
+        public string NextPlayer { get; set; }
         public string ActivePlayer { get; set; }
         public Dictionary<string, int> Supply { get; set; }
         public Dictionary<string, string[]> SupplyTokens { get; set; }

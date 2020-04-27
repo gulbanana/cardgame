@@ -582,5 +582,11 @@ namespace Cardgame.Engine
                 ");
             }
         }
+
+        // used by Outpost and Possession
+        public void InsertExtraTurn(string player)
+        {
+            engine.ExtraTurns.Enqueue(player);
+        }
     }
 }

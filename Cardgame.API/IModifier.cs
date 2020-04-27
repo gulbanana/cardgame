@@ -5,6 +5,5 @@ namespace Cardgame.API
         int ReduceCardCost { get; }
         int IncreaseTreasureValue(string id);
         int? NextHandSize { get; }
-        bool TakeAnotherTurn { get; }
     }
 }
