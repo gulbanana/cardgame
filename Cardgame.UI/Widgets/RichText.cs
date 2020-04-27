@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Cardgame.API;
 using Cardgame.Model;
 using Cardgame.Model.ClientServer;
+using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Cardgame.UI.Widgets
 {
@@ -21,20 +22,19 @@ namespace Cardgame.UI.Widgets
             }
         }
 
-        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            switch (Parsed)
+            RenderTextNode(builder, Parsed, 0);
+        }
+
+        private int RenderTextNode(RenderTreeBuilder builder, TextModel node, int seq)
+        {
+            switch (node)
             {
                 case TextModel.Spans spans:
                     foreach (var span in spans.Children)
                     {
-                        __builder.AddContent(0, "            ");
-                        __builder.OpenComponent<RichText>(1);
-                        __builder.AddAttribute(2, "Parsed", (
-                               span
-                        ));
-                        __builder.CloseComponent();
-                        __builder.AddMarkupContent(3, "\r\n");
+                        seq = RenderTextNode(builder, span, seq);
                     }
 
                     break;
@@ -42,134 +42,134 @@ namespace Cardgame.UI.Widgets
                 case TextModel.Lines lines:
                     foreach (var line in lines.Children)
                     {
-                        __builder.AddContent(4, "            ");
-                        __builder.OpenComponent<RichText>(5);
-                        __builder.AddAttribute(6, "Parsed", (
+                        builder.AddContent(seq++, "            ");
+                        builder.OpenComponent<RichText>(seq++);
+                        builder.AddAttribute(seq++, "Parsed", (
                             line
                         ));
-                        __builder.CloseComponent();
-                        __builder.AddMarkupContent(7, "<br>\r\n");
+                        builder.CloseComponent();
+                        builder.AddMarkupContent(seq++, "<br>\r\n");
                     }
 
                     break;
 
                 case TextModel.Paras paras:
-                    __builder.AddContent(8, "        ");
-                    __builder.OpenElement(9, "div");
-                    __builder.AddAttribute(10, "class", "rich-text__paras");
-                    __builder.AddMarkupContent(11, "\r\n");
+                    builder.AddContent(seq++, "        ");
+                    builder.OpenElement(seq++, "div");
+                    builder.AddAttribute(seq++, "class", "rich-text__paras");
+                    builder.AddMarkupContent(seq++, "\r\n");
                     foreach (var para in paras.Children)
                     {
-                        __builder.AddContent(12, "                ");
-                        __builder.OpenElement(13, "p");
-                        __builder.AddMarkupContent(14, "\r\n                    ");
-                        __builder.OpenComponent<RichText>(15);
-                        __builder.AddAttribute(16, "Parsed", (
+                        builder.AddContent(seq++, "                ");
+                        builder.OpenElement(seq++, "p");
+                        builder.AddMarkupContent(seq++, "\r\n                    ");
+                        builder.OpenComponent<RichText>(seq++);
+                        builder.AddAttribute(seq++, "Parsed", (
                             para
                         ));
-                        __builder.CloseComponent();
-                        __builder.AddMarkupContent(17, "\r\n                ");
-                        __builder.CloseElement();
-                        __builder.AddMarkupContent(18, "\r\n");
+                        builder.CloseComponent();
+                        builder.AddMarkupContent(seq++, "\r\n                ");
+                        builder.CloseElement();
+                        builder.AddMarkupContent(seq++, "\r\n");
                     }
-                    __builder.AddContent(19, "        ");
-                    __builder.CloseElement();
-                    __builder.AddMarkupContent(20, "\r\n");
+                    builder.AddContent(seq++, "        ");
+                    builder.CloseElement();
+                    builder.AddMarkupContent(seq++, "\r\n");
                     break;
 
                 case TextModel.Split split:
                     for (var i = 0; i < split.Children.Length; i++)
                     {
-                        __builder.AddContent(21, "            ");
-                        __builder.OpenComponent<RichText>(22);
-                        __builder.AddAttribute(23, "Parsed", (
+                        builder.AddContent(seq++, "            ");
+                        builder.OpenComponent<RichText>(seq++);
+                        builder.AddAttribute(seq++, "Parsed", (
                             split.Children[i]
                         ));
-                        __builder.CloseComponent();
-                        __builder.AddMarkupContent(24, "\r\n");
+                        builder.CloseComponent();
+                        builder.AddMarkupContent(seq++, "\r\n");
                         if (i < split.Children.Length - 1)
                         {
-                            __builder.AddContent(25, "                ");
-                            __builder.OpenElement(26, "div");
-                            __builder.AddAttribute(27, "class", "rich-text__bar" + (
+                            builder.AddContent(seq++, "                ");
+                            builder.OpenElement(seq++, "div");
+                            builder.AddAttribute(seq++, "class", "rich-text__bar" + (
                                 split.IsCompact ? " rich-text__bar--compact" : ""
                             ));
-                            __builder.CloseElement();
-                            __builder.AddMarkupContent(28, "\r\n");
+                            builder.CloseElement();
+                            builder.AddMarkupContent(seq++, "\r\n");
                         }
                     }
 
                     break;
 
                 case TextModel.Bold bold:
-                    __builder.AddContent(29, "        ");
-                    __builder.OpenElement(30, "span");
-                    __builder.AddAttribute(31, "class", "rich-text__bold");
-                    __builder.AddMarkupContent(32, "\r\n            ");
-                    __builder.OpenComponent<RichText>(33);
-                    __builder.AddAttribute(34, "Parsed", (
+                    builder.AddContent(seq++, "        ");
+                    builder.OpenElement(seq++, "span");
+                    builder.AddAttribute(seq++, "class", "rich-text__bold");
+                    builder.AddMarkupContent(seq++, "\r\n            ");
+                    builder.OpenComponent<RichText>(seq++);
+                    builder.AddAttribute(seq++, "Parsed", (
                         bold.Child
                     ));
-                    __builder.CloseComponent();
-                    __builder.AddMarkupContent(35, "\r\n        ");
-                    __builder.CloseElement();
-                    __builder.AddMarkupContent(36, "\r\n");
+                    builder.CloseComponent();
+                    builder.AddMarkupContent(seq++, "\r\n        ");
+                    builder.CloseElement();
+                    builder.AddMarkupContent(seq++, "\r\n");
 
                     break;
 
                 case TextModel.Small small:
-                    __builder.AddContent(37, "        ");
-                    __builder.OpenElement(38, "span");
-                    __builder.AddAttribute(39, "class", "rich-text__small");
-                    __builder.AddMarkupContent(40, "\r\n            ");
-                    __builder.OpenComponent<RichText>(41);
-                    __builder.AddAttribute(42, "Parsed", (
+                    builder.AddContent(seq++, "        ");
+                    builder.OpenElement(seq++, "span");
+                    builder.AddAttribute(seq++, "class", "rich-text__small");
+                    builder.AddMarkupContent(seq++, "\r\n            ");
+                    builder.OpenComponent<RichText>(seq++);
+                    builder.AddAttribute(seq++, "Parsed", (
                         small.Child
                     ));
-                    __builder.CloseComponent();
-                    __builder.AddMarkupContent(43, "\r\n        ");
-                    __builder.CloseElement();
-                    __builder.AddMarkupContent(44, "\r\n");
+                    builder.CloseComponent();
+                    builder.AddMarkupContent(seq++, "\r\n        ");
+                    builder.CloseElement();
+                    builder.AddMarkupContent(seq++, "\r\n");
 
                     break;
 
                 case TextModel.Run run:
-                    __builder.AddContent(45,
+                    builder.AddContent(seq++,
                        run.Text
                     );
 
                     break;
 
                 case TextModel.Error error:
-                    __builder.AddContent(46, "        ");
-                    __builder.OpenElement(47, "span");
-                    __builder.AddAttribute(48, "class", "rich-text__error");
-                    __builder.AddMarkupContent(49, "\r\n            ");
-                    __builder.OpenComponent<RichText>(50);
-                    __builder.AddAttribute(51, "Parsed", (
+                    builder.AddContent(seq++, "        ");
+                    builder.OpenElement(seq++, "span");
+                    builder.AddAttribute(seq++, "class", "rich-text__error");
+                    builder.AddMarkupContent(seq++, "\r\n            ");
+                    builder.OpenComponent<RichText>(seq++);
+                    builder.AddAttribute(seq++, "Parsed", (
                         error.Child
                     ));
-                    __builder.CloseComponent();
-                    __builder.AddMarkupContent(52, "\r\n        ");
-                    __builder.CloseElement();
-                    __builder.AddMarkupContent(53, "\r\n");
+                    builder.CloseComponent();
+                    builder.AddMarkupContent(seq++, "\r\n        ");
+                    builder.CloseElement();
+                    builder.AddMarkupContent(seq++, "\r\n");
 
                     break;
 
                 case TextModel.Private p:
                     if (Session.Username == p.Owner)
                     {
-                        __builder.AddContent(54, "            ");
-                        __builder.OpenComponent<RichText>(55);
-                        __builder.AddAttribute(56, "Parsed", (
+                        builder.AddContent(seq++, "            ");
+                        builder.OpenComponent<RichText>(seq++);
+                        builder.AddAttribute(seq++, "Parsed", (
                             p.Child
                         ));
-                        __builder.CloseComponent();
-                        __builder.AddMarkupContent(57, "\r\n");
+                        builder.CloseComponent();
+                        builder.AddMarkupContent(seq++, "\r\n");
                     }
                     else
                     {
-                        __builder.AddContent(58,
+                        builder.AddContent(seq++,
                             p.AltText
                         );
                     }
@@ -179,31 +179,31 @@ namespace Cardgame.UI.Widgets
                 case TextModel.Indent indent:
                     for (var i = 0; i < indent.Level; i++)
                     {
-                        __builder.AddContent(59, "...");
+                        builder.AddContent(seq++, "...");
                     }
 
                     break;
 
                 case TextModel.Symbol symbol:
-                    __builder.AddContent(60, "        ");
-                    __builder.OpenElement(61, "span");
-                    __builder.AddAttribute(62, "class", "rich-text__no-break" + (
+                    builder.AddContent(seq++, "        ");
+                    builder.OpenElement(seq++, "span");
+                    builder.AddAttribute(seq++, "class", "rich-text__no-break" + (
                         symbol.IsLarge ? " rich-text__no-break--large" : ""
                     ));
-                    __builder.AddContent(63,
+                    builder.AddContent(seq++,
                         symbol.Prefix
                     );
-                    __builder.OpenElement(64, "img");
-                    __builder.AddAttribute(65, "class", "rich-text__symbol" + (
+                    builder.OpenElement(seq++, "img");
+                    builder.AddAttribute(seq++, "class", "rich-text__symbol" + (
                         symbol.IsLarge ? " rich-text__symbol--large" : ""
                     ));
-                    __builder.AddAttribute(66, "src", "/_content/Cardgame.UI/symbols/" + (symbol.Name) + ".png");
-                    __builder.CloseElement();
-                    __builder.AddContent(67,
+                    builder.AddAttribute(seq++, "src", "/_content/Cardgame.UI/symbols/" + (symbol.Name) + ".png");
+                    builder.CloseElement();
+                    builder.AddContent(seq++,
                         symbol.Suffix
                     );
-                    __builder.CloseElement();
-                    __builder.AddMarkupContent(68, "\r\n");
+                    builder.CloseElement();
+                    builder.AddMarkupContent(seq++, "\r\n");
 
                     break;
 
@@ -215,166 +215,168 @@ namespace Cardgame.UI.Widgets
                         var cost = model.GetCost(Array.Empty<IModifier>());
                         var set = All.Cards.GetSet(card.Name);
                         var value = (model as ITreasureCard)?.StaticValue;
-                        __builder.AddContent(69, "            ");
-                        __builder.OpenComponent<WithTooltip>(70);
-                        __builder.AddAttribute(71, "Content", (RenderFragment)((__builder2) => {
-                            __builder2.AddMarkupContent(72, "\r\n                    ");
-                            __builder2.AddContent(73,
+                        builder.AddContent(seq++, "            ");
+                        builder.OpenComponent<WithTooltip>(seq++);
+                        builder.AddAttribute(seq++, "Content", (RenderFragment)((contentBuilder) => {
+                            contentBuilder.AddMarkupContent(seq++, "\r\n                    ");
+                            contentBuilder.AddContent(seq++,
                                 card.Prefix
                             );
-                            __builder2.OpenElement(74, "span");
-                            __builder2.AddAttribute(75, "style", "background:" + " " + (
+                            contentBuilder.OpenElement(seq++, "span");
+                            contentBuilder.AddAttribute(seq++, "style", "background:" + " " + (
                                 background
                             ));
-                            __builder2.AddContent(76,
+                            contentBuilder.AddContent(seq++,
                                 Strings.TitleCase(card.Name)
                             );
-                            __builder2.CloseElement();
-                            __builder2.AddContent(77,
+                            contentBuilder.CloseElement();
+                            contentBuilder.AddContent(seq++,
                                 card.Suffix
                             );
-                            __builder2.AddMarkupContent(78, "\r\n                ");
+                            contentBuilder.AddMarkupContent(seq++, "\r\n                ");
                         }
                         ));
-                        __builder.AddAttribute(79, "Tooltip", (RenderFragment)((__builder2) => {
-                            __builder2.AddMarkupContent(80, "\r\n                    ");
-                            __builder2.OpenComponent<Magnify>(81);
-                            __builder2.AddAttribute(82, "ChildContent", (RenderFragment)((__builder3) => {
-                                __builder3.AddMarkupContent(83, "\r\n                        ");
-                                __builder3.OpenComponent<KingdomCard>(84);
-                                __builder3.AddAttribute(85, "Name", (
+                        builder.AddAttribute(seq++, "Tooltip", (RenderFragment)((tooltipBuilder) => {
+                            tooltipBuilder.AddMarkupContent(seq++, "\r\n                    ");
+                            tooltipBuilder.OpenComponent<Magnify>(seq++);
+                            tooltipBuilder.AddAttribute(seq++, "ChildContent", (RenderFragment)((cardBuilder) => {
+                                cardBuilder.AddMarkupContent(seq++, "\r\n                        ");
+                                cardBuilder.OpenComponent<KingdomCard>(seq++);
+                                cardBuilder.AddAttribute(seq++, "Name", (
                                     card.Name
                                 ));
-                                __builder3.AddAttribute(86, "Types", (
+                                cardBuilder.AddAttribute(seq++, "Types", (
                                     model.Types
                                 ));
-                                __builder3.AddAttribute(87, "Art", (
+                                cardBuilder.AddAttribute(seq++, "Art", (
                                     model.Art
                                 ));
-                                __builder3.AddAttribute(88, "Cost", (
+                                cardBuilder.AddAttribute(seq++, "Cost", (
                                     cost
                                 ));
-                                __builder3.AddAttribute(89, "Text", (
+                                cardBuilder.AddAttribute(seq++, "Text", (
                                     model.Text
                                 ));
-                                __builder3.AddAttribute(90, "Set", (
+                                cardBuilder.AddAttribute(seq++, "Set", (
                                     set
                                 ));
-                                __builder3.CloseComponent();
-                                __builder3.AddMarkupContent(91, "\r\n                    ");
+                                cardBuilder.CloseComponent();
+                                cardBuilder.AddMarkupContent(seq++, "\r\n                    ");
                             }
                             ));
-                            __builder2.CloseComponent();
-                            __builder2.AddMarkupContent(92, "\r\n                ");
+                            tooltipBuilder.CloseComponent();
+                            tooltipBuilder.AddMarkupContent(seq++, "\r\n                ");
                         }
                         ));
-                        __builder.CloseComponent();
-                        __builder.AddMarkupContent(93, "   \r\n");
+                        builder.CloseComponent();
+                        builder.AddMarkupContent(seq++, "   \r\n");
                     }
                     else
                     {
-                        __builder.AddContent(94, "            ");
-                        __builder.OpenComponent<WithTooltip>(95);
-                        __builder.AddAttribute(96, "Content", (RenderFragment)((__builder2) => {
-                            __builder2.AddMarkupContent(97, "\r\n                    ");
-                            __builder2.AddContent(98,
+                        builder.AddContent(seq++, "            ");
+                        builder.OpenComponent<WithTooltip>(seq++);
+                        builder.AddAttribute(seq++, "Content", (RenderFragment)((contentBuilder) => {
+                            contentBuilder.AddMarkupContent(seq++, "\r\n                    ");
+                            contentBuilder.AddContent(seq++,
                                 card.Prefix
                             );
-                            __builder2.AddContent(99, "a ");
-                            __builder2.AddContent(100,
+                            contentBuilder.AddContent(seq++, "a ");
+                            contentBuilder.AddContent(seq++,
                                 Strings.TitleCase(card.Name)
                             );
-                            __builder2.AddContent(101, " token");
-                            __builder2.AddContent(102,
+                            contentBuilder.AddContent(seq++, " token");
+                            contentBuilder.AddContent(seq++,
                                 card.Suffix
                             );
-                            __builder2.AddMarkupContent(103, "\r\n                ");
+                            contentBuilder.AddMarkupContent(seq++, "\r\n                ");
                         }
                         ));
-                        __builder.AddAttribute(104, "Tooltip", (RenderFragment)((__builder2) => {
-                            __builder2.AddMarkupContent(105, "\r\n                    ");
-                            __builder2.OpenComponent<Magnify>(106);
-                            __builder2.AddAttribute(107, "ChildContent", (RenderFragment)((__builder3) => {
-                                __builder3.AddMarkupContent(108, "\r\n                        ");
-                                __builder3.OpenComponent<RichText>(109);
-                                __builder3.AddAttribute(110, "Model", (
+                        builder.AddAttribute(seq++, "Tooltip", (RenderFragment)((tooltipBuilder) => {
+                            tooltipBuilder.AddMarkupContent(seq++, "\r\n                    ");
+                            tooltipBuilder.OpenComponent<Magnify>(seq++);
+                            tooltipBuilder.AddAttribute(seq++, "ChildContent", (RenderFragment)((cardBuilder) => {
+                                cardBuilder.AddMarkupContent(seq++, "\r\n                        ");
+                                cardBuilder.OpenComponent<RichText>(seq++);
+                                cardBuilder.AddAttribute(seq++, "Model", (
                                     model.Text
                                 ));
-                                __builder3.CloseComponent();
-                                __builder3.AddMarkupContent(111, "\r\n                    ");
+                                cardBuilder.CloseComponent();
+                                cardBuilder.AddMarkupContent(seq++, "\r\n                    ");
                             }
                             ));
-                            __builder2.CloseComponent();
-                            __builder2.AddMarkupContent(112, "\r\n                ");
+                            tooltipBuilder.CloseComponent();
+                            tooltipBuilder.AddMarkupContent(seq++, "\r\n                ");
                         }
                         ));
-                        __builder.CloseComponent();
-                        __builder.AddMarkupContent(113, "   \r\n");
+                        builder.CloseComponent();
+                        builder.AddMarkupContent(seq++, "   \r\n");
                     }
                     break;
 
                 case TextModel.Player player:
                     if (Session.Username.Equals(player.Name))
                     {
-                        __builder.AddContent(114,
+                        builder.AddContent(seq++,
                             player.Prefix
                         );
-                        __builder.AddContent(115, "You");
-                        __builder.AddContent(116,
+                        builder.AddContent(seq++, "You");
+                        builder.AddContent(seq++,
                             player.Suffix
                         );
                     }
                     else
                     {
-                        __builder.AddContent(117, "            ");
-                        __builder.OpenComponent<PlayerLink>(118);
-                        __builder.AddAttribute(119, "Name", (
+                        builder.AddContent(seq++, "            ");
+                        builder.OpenComponent<PlayerLink>(seq++);
+                        builder.AddAttribute(seq++, "Name", (
                             player.Name
                         ));
-                        __builder.AddAttribute(120, "Prefix", (
+                        builder.AddAttribute(seq++, "Prefix", (
                             player.Prefix
                         ));
-                        __builder.AddAttribute(121, "Suffix", (
+                        builder.AddAttribute(seq++, "Suffix", (
                             player.Suffix
                         ));
-                        __builder.CloseComponent();
-                        __builder.AddMarkupContent(122, "\r\n");
+                        builder.CloseComponent();
+                        builder.AddMarkupContent(seq++, "\r\n");
                     }
                     break;
 
                 case TextModel.Pronominal pro:
                     if (Session.Username.Equals(pro.Name))
                     {
-                        __builder.AddContent(123,
+                        builder.AddContent(seq++,
                             pro.Prefix
                         );
-                        __builder.AddContent(124,
+                        builder.AddContent(seq++,
                             pro.IfYou
                         );
-                        __builder.AddContent(125,
+                        builder.AddContent(seq++,
                             pro.Suffix
                         );
                     }
                     else
                     {
-                        __builder.AddContent(126,
+                        builder.AddContent(seq++,
                             pro.Prefix
                         );
-                        __builder.AddContent(127,
+                        builder.AddContent(seq++,
                             pro.IfThem
                         );
-                        __builder.AddContent(128,
+                        builder.AddContent(seq++,
                         pro.Suffix
                         );
                     }
                     break;
 
                 default:
-                    __builder.AddContent(129,
+                    builder.AddContent(seq++,
                         Parsed
                     );
                     break;
             }
+
+            return seq;
         }
     }
 }
