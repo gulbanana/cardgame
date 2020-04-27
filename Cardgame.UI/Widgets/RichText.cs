@@ -75,76 +75,38 @@ namespace Cardgame.UI.Widgets
                     break;
 
                 case TextModel.Bold bold:
-                    builder.AddContent(seq++, "        ");
                     builder.OpenElement(seq++, "span");
-                    builder.AddAttribute(seq++, "class", "rich-text__bold");
-                    builder.AddMarkupContent(seq++, "\r\n            ");
-                    builder.OpenComponent<RichText>(seq++);
-                    builder.AddAttribute(seq++, "Parsed", (
-                        bold.Child
-                    ));
-                    builder.CloseComponent();
-                    builder.AddMarkupContent(seq++, "\r\n        ");
+                        builder.AddAttribute(seq++, "class", "rich-text__bold");
+                        seq = RenderTextNode(builder, bold.Child, seq);
                     builder.CloseElement();
-                    builder.AddMarkupContent(seq++, "\r\n");
-
                     break;
 
                 case TextModel.Small small:
-                    builder.AddContent(seq++, "        ");
                     builder.OpenElement(seq++, "span");
-                    builder.AddAttribute(seq++, "class", "rich-text__small");
-                    builder.AddMarkupContent(seq++, "\r\n            ");
-                    builder.OpenComponent<RichText>(seq++);
-                    builder.AddAttribute(seq++, "Parsed", (
-                        small.Child
-                    ));
-                    builder.CloseComponent();
-                    builder.AddMarkupContent(seq++, "\r\n        ");
+                        builder.AddAttribute(seq++, "class", "rich-text__small");
+                        seq = RenderTextNode(builder, small.Child, seq);
                     builder.CloseElement();
-                    builder.AddMarkupContent(seq++, "\r\n");
-
                     break;
 
                 case TextModel.Run run:
-                    builder.AddContent(seq++,
-                       run.Text
-                    );
-
+                    builder.AddContent(seq++, run.Text);
                     break;
 
                 case TextModel.Error error:
-                    builder.AddContent(seq++, "        ");
                     builder.OpenElement(seq++, "span");
-                    builder.AddAttribute(seq++, "class", "rich-text__error");
-                    builder.AddMarkupContent(seq++, "\r\n            ");
-                    builder.OpenComponent<RichText>(seq++);
-                    builder.AddAttribute(seq++, "Parsed", (
-                        error.Child
-                    ));
-                    builder.CloseComponent();
-                    builder.AddMarkupContent(seq++, "\r\n        ");
+                        builder.AddAttribute(seq++, "class", "rich-text__error");
+                        seq = RenderTextNode(builder, error.Child, seq);
                     builder.CloseElement();
-                    builder.AddMarkupContent(seq++, "\r\n");
-
                     break;
 
                 case TextModel.Private p:
                     if (Session.Username == p.Owner)
                     {
-                        builder.AddContent(seq++, "            ");
-                        builder.OpenComponent<RichText>(seq++);
-                        builder.AddAttribute(seq++, "Parsed", (
-                            p.Child
-                        ));
-                        builder.CloseComponent();
-                        builder.AddMarkupContent(seq++, "\r\n");
+                        seq = RenderTextNode(builder, p.Child, seq);
                     }
                     else
                     {
-                        builder.AddContent(seq++,
-                            p.AltText
-                        );
+                        builder.AddContent(seq++, p.AltText);
                     }
 
                     break;
