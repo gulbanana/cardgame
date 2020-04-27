@@ -81,64 +81,40 @@ namespace Cardgame.Engine.Logging
             }
 
             // ordered list of card movements, which will precede all vanilla in a chunk
-            foreach (var movement in chunk.Movements)
+            var builder = new StringBuilder();
+            for (var i = 0; i < chunk.Movements.Count; i++)
             {
-                var builder = new StringBuilder();
-                switch (movement.Type)
-                {
-                    case Motion.Discard:
-                        builder.Append(FormatInitialVerb(chunk.Actor, "discard", "discards", "discarding"));
-                        builder.Append(FormatCardList(movement.Cards));
-                        if (movement.From != Zone.Hand)
-                        {
-                            builder.Append("<run>from</run>");
-                            builder.Append(FormatZone(chunk.Actor, movement.From));
-                        }
-                        break;
-
-                    default:
-                        throw new NotSupportedException($"Unknown log motion {movement.Type}");
-                }
-                yield return Terminate(builder.ToString());
+                builder.Append(FormatMovement(chunk.Actor, chunk.Movements[i], i == 0 ? null : chunk.Movements[i-1]));
             }
 
             // vanilla bonuses, potentially consequences of the movements
-            var vanilla = new StringBuilder();
             if (chunk.AddedCards > 0)
             {
-                vanilla.Append(FormatInitialVerb(chunk.Actor, "draw", "draws", "drawing"));
+                builder.Append(FormatVerb(chunk.Actor, "draw", "draws", "drawing", !chunk.Movements.Any()));
                 if (chunk.AddedCards > 1)
                 {
-                    vanilla.AppendFormat("<run>{0} cards</run>", chunk.AddedCards);
+                    builder.AppendFormat("<run>{0} cards</run>", chunk.AddedCards);
                 }
                 else
                 {
-                    vanilla.Append("<run>a card</run>");
+                    builder.Append("<run>a card</run>");
                 }
             }
 
             if (chunk.AddedActions > 0 || chunk.AddedBuys > 0 || chunk.AddedCoins > 0 || chunk.AddedPotions > 0)
             {
-                if (chunk.AddedCards > 0)
-                {
-                    vanilla.Append("<run>and</run>");
-                    vanilla.Append(FormatVerb(chunk.Actor, "get", "gets", "getting"));
-                }
-                else
-                {
-                    vanilla.Append(FormatInitialVerb(chunk.Actor, "get", "gets", "getting"));
-                }
+                builder.Append(FormatVerb(chunk.Actor, "get", "gets", "getting", chunk.AddedCards == 0));
 
                 var got = new List<string>();
                 if (chunk.AddedActions > 0) got.Add($"+{chunk.AddedActions} {(chunk.AddedActions > 1 ? "actions" : "action")}");
                 if (chunk.AddedBuys > 0) got.Add($"+{chunk.AddedBuys} {(chunk.AddedActions > 1 ? "buys" : "buy")}");
                 if (chunk.AddedCoins > 0 || chunk.AddedPotions > 0) got.Add($"+{Cost.Format(chunk.AddedCoins, chunk.AddedPotions)}");
-                vanilla.Append(FormatList(got));
+                builder.Append(FormatList(got));
             }
 
-            if (vanilla.Length > 0)
+            if (builder.Length > 0)
             {
-                yield return Terminate(vanilla.ToString());
+                yield return Terminate(builder.ToString());
             }
         }
         
@@ -209,39 +185,44 @@ namespace Cardgame.Engine.Logging
             }
         }
 
-        private string FormatVerb(string player, string secondPerson, string thirdPerson, string continuous)
+        private string FormatSubsequentVerb(string player, string secondPerson, string thirdPerson, string continuous)
         {
             if (player == getActivePlayer())
             {
-                return $"<if you='{secondPerson}' them='{continuous}'>{player}</if>";
+                return $"<run>and</run><if you='{secondPerson}' them='{continuous}'>{player}</if>";
             }
             else
             {
-                return $"<if you='{secondPerson}' them='{thirdPerson}'>{player}</if>";
+                return $"<run>and</run><if you='{secondPerson}' them='{thirdPerson}'>{player}</if>";
             }
         }
 
-        private string FormatZone(string player, Zone zone)
+        private string FormatVerb(string player, string secondPerson, string thirdPerson, string continuous, bool initial)
+        {
+            return initial ? FormatInitialVerb(player, secondPerson, thirdPerson, continuous) : FormatSubsequentVerb(player, secondPerson, thirdPerson, continuous);
+        }
+
+        private string FormatZone(string actor, Zone zone)
         {
             switch (zone.Name)
             {
                 case ZoneName.DeckBottom:
                     return $@"<run>the bottom of</run>
-                    <if you='your' them='their'>{player}</if>
+                    <if you='your' them='their'>{actor}</if>
                     <run>deck</run>";
 
                 case ZoneName.Deck:
                 case ZoneName.DeckTop:
                     return $@"<run>the top of</run>
-                    <if you='your' them='their'>{player}</if>
+                    <if you='your' them='their'>{actor}</if>
                     <run>deck</run>";
 
                 case ZoneName.Discard:
-                    return $@"<if you='your' them='their'>{player}</if>
+                    return $@"<if you='your' them='their'>{actor}</if>
                     <run>discard pile</run>";
 
                 case ZoneName.Hand:
-                    return $@"<if you='your' them='their'>{player}</if>
+                    return $@"<if you='your' them='their'>{actor}</if>
                     <run>hand</run>";
 
                 case ZoneName.InPlay:
@@ -250,12 +231,90 @@ namespace Cardgame.Engine.Logging
                 case ZoneName.Revealed:
                     return "<run>the revealed cards</run>";
 
+                case ZoneName.Supply:
+                    return "<run>the supply</run>";
+
                 case ZoneName.Trash:
                     return $@"<run>the trash</run>";
 
                 default:
                     throw new NotSupportedException($"Unknown log zone {zone}");
             }
+        }
+
+        private string FormatMovement(string actor, Movement movement, Movement previous)
+        {
+            var builder = new StringBuilder();
+            
+            var first = previous == null;
+            
+            if (previous != null && previous.Type == movement.Type)
+            {
+                builder.Append("<run>and</run>");
+            }
+            else
+            {
+                switch (movement.Type)
+                {
+                    case Motion.Discard:
+                        builder.Append(FormatVerb(actor, "discard", "discards", "discarding", first));
+                        break;
+
+                    case Motion.Gain:
+                        builder.Append(FormatVerb(actor, "gain", "gains", "gaining", first));
+                        break;
+
+                    case Motion.Trash:
+                        builder.Append(FormatVerb(actor, "trash", "trashes", "trashing", first));
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Unknown log motion {movement.Type}");
+                }
+            }
+
+            builder.Append(FormatCardList(movement.Cards));
+
+            switch (movement.Type)
+            {
+                case Motion.Discard:
+                    if (movement.From != Zone.Hand)
+                    {
+                        builder.Append("<run>from</run>");
+                        builder.Append(FormatZone(actor, movement.From));
+                    }
+                    break;
+
+                case Motion.Gain:
+                    if (movement.From.Name != ZoneName.Supply)
+                    {
+                        builder.Append("<run>from</run>");
+                        builder.Append(FormatZone(actor, movement.From));
+                    }
+
+                    if (movement.To != Zone.Discard)
+                    {
+                        builder.Append("<run>to</run>");
+                        builder.Append(FormatZone(actor, movement.To));
+                    }
+                    break;
+
+                case Motion.Trash:
+                    // only note trashes from odd places
+                    switch (movement.From.Name)
+                    {
+                        case ZoneName.Supply:
+                            builder.Append("<run>from</run>");
+                            builder.Append(FormatZone(actor, movement.From));
+                            break;
+                    }
+                    break;
+
+                default:
+                    throw new NotSupportedException($"Unknown log motion {movement.Type}");
+            }
+
+            return builder.ToString();
         }
     }
 }

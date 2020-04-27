@@ -289,22 +289,21 @@ namespace Cardgame.Engine
                 engine.MoveCard(Player, card, from, Zone.Trash);
             }
 
-            LogLine($@"
-                {LogVerbInitial("trash", "trashes", "trashing")}
-                {LogCardList(cards)}
-            ");        
+            LogMovement(Motion.Trash, cards, from, Zone.Trash);
         }
 
         void IActionHost.Gain(string[] cards, Zone to)
         {
-            var gainedAny = false;
+            if (!cards.Any()) return;
+
+            var actuallyGained = new List<string>();
             foreach (var card in cards)
             {
                 if (engine.Model.Supply[card] > 0)
                 {
-                    var instance = engine.MoveCard(Player, card, Zone.SupplyAvailable, to);
+                    var instance = engine.MoveCard(Player, card, Zone.SupplyAvailable, to);                    
                     engine.NoteGain(Player, instance);
-                    gainedAny = true;
+                    actuallyGained.Add(card);
                 }
                 else
                 {
@@ -316,23 +315,9 @@ namespace Cardgame.Engine
                 }
             }
 
-            if (!gainedAny) return;
-
-            if (to == Zone.Discard)
+            if (actuallyGained.Any())
             {
-                LogLine($@"
-                    {LogVerbInitial("gain", "gains", "gaining")}
-                    {LogCardList(cards)}
-                ");
-            }
-            else
-            {
-                LogLine($@"
-                    {LogVerbInitial("gain", "gains", "gaining")}
-                    {LogCardList(cards, terminal: false)}
-                    <run>and</run>
-                    {LogDestination(to)}
-                ");
+                LogMovement(Motion.Gain, actuallyGained.ToArray(), Zone.SupplyAvailable, to);
             }
         }
 
@@ -345,13 +330,8 @@ namespace Cardgame.Engine
                 var instance = engine.MoveCard(Player, id, from, Zone.Discard);
                 engine.NoteGain(Player, instance);
             }
-            
-            LogLine($@"
-                {LogVerbInitial("gain", "gains", "gaining")}
-                {LogCardList(cards, terminal: false)}
-                <run>from</run>
-                {LogSource(from)}
-            ");
+
+            LogMovement(Motion.Gain, cards, from, Zone.Discard);
         }
 
         void IActionHost.PutOnDeck(string[] cards, Zone from)

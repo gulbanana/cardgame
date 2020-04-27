@@ -16,10 +16,7 @@ namespace Cardgame.Cards.Seaside
             if (hand.Any(card => card.Name == "TreasureMap"))
             {
                 host.Trash("TreasureMap", Zone.Hand);
-                host.Gain("Gold", Zone.Deck);
-                host.Gain("Gold", Zone.Deck);
-                host.Gain("Gold", Zone.Deck);
-                host.Gain("Gold", Zone.Deck);
+                host.Gain(new[]{"Gold", "Gold", "Gold", "Gold"}, Zone.Deck);
             }
         }
     }
