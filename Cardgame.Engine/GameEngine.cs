@@ -455,19 +455,19 @@ namespace Cardgame.Engine
             // check postconditions            
             if (Model.PreventedAttacks.Any())
             {
-                playCardsRecord.LatestChunk.TextLines.Add("<error>Warning: PreventedAttacks not cleared</error>");
+                playCardsRecord.LatestChunk.Lines.Add("<error>Warning: PreventedAttacks not cleared</error>");
                 Model.PreventedAttacks.Clear();
             }
 
             if (Model.ChoosingPlayers.Any())
             {
-                playCardsRecord.LatestChunk.TextLines.Add($"<error>Warning: choice is stuck on '{Model.ChoicePrompt}'</error>");
+                playCardsRecord.LatestChunk.Lines.Add($"<error>Warning: choice is stuck on '{Model.ChoicePrompt}'</error>");
                 Model.ChoosingPlayers.Clear();
             }
 
             if (stashes.Any() || revealed.Any())
             {
-                playCardsRecord.LatestChunk.TextLines.Add($@"<lines>
+                playCardsRecord.LatestChunk.Lines.Add($@"<lines>
                     <error>Warning: temp zones not drained.</error>
                     <error>Stashes: {string.Join(", ", stashes.Values.Names())}</error>
                     <error>Revealed: {string.Join(", ", revealed.Names())}</error>
@@ -688,7 +688,7 @@ namespace Cardgame.Engine
             }
             if (reshuffled)
             {
-                endTurnRecord.LatestChunk.TextLines.Add($@"
+                endTurnRecord.LatestChunk.Lines.Add($@"
                     <player prefix='('>{player}</player>
                     <if you='reshuffle.)' them='reshuffles.)'>{player}</if>
                 ");

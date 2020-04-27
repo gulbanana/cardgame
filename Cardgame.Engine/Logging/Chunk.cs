@@ -6,17 +6,22 @@ namespace Cardgame.Engine.Logging
     internal class Chunk
     {
         public readonly string Actor;
-        public readonly List<string> TextLines;
+
         public int AddedCards;
         public int AddedActions;
         public int AddedBuys;
         public int AddedCoins;
         public int AddedPotions;
 
+        public readonly List<Movement> Movements;
+
+        public readonly List<string> Lines;
+
         public Chunk(string actor)
         {
             Actor = actor;
-            TextLines = new List<string>();
+            Movements = new List<Movement>();
+            Lines = new List<string>();
         }
 
         public bool HasVanillaContent()
@@ -26,7 +31,7 @@ namespace Cardgame.Engine.Logging
 
         public bool HasContent()
         {
-            return HasVanillaContent() || TextLines.Any();
+            return HasVanillaContent() || Movements.Any() || Lines.Any();
         }
     }
 }

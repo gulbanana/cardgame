@@ -75,12 +75,34 @@ namespace Cardgame.Engine.Logging
         private IEnumerable<string> GetChunkLines(Chunk chunk)
         {            
             // custom text
-            foreach (var line in chunk.TextLines)
+            foreach (var line in chunk.Lines)
             {
                 yield return line;
             }
 
-            // vanilla bonuses, potentially consequences of the custom text or card movements
+            // ordered list of card movements, which will precede all vanilla in a chunk
+            foreach (var movement in chunk.Movements)
+            {
+                var builder = new StringBuilder();
+                switch (movement.Type)
+                {
+                    case Motion.Discard:
+                        builder.Append(FormatInitialVerb(chunk.Actor, "discard", "discards", "discarding"));
+                        builder.Append(FormatCardList(movement.Cards));
+                        if (movement.From != Zone.Hand)
+                        {
+                            builder.Append("<run>from</run>");
+                            builder.Append(FormatZone(chunk.Actor, movement.From));
+                        }
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Unknown log motion {movement.Type}");
+                }
+                yield return Terminate(builder.ToString());
+            }
+
+            // vanilla bonuses, potentially consequences of the movements
             var vanilla = new StringBuilder();
             if (chunk.AddedCards > 0)
             {
@@ -120,7 +142,62 @@ namespace Cardgame.Engine.Logging
             }
         }
         
-        internal string FormatInitialVerb(string player, string secondPerson, string thirdPerson, string continuous)
+        private string Terminate(string spans)
+        {
+            var temp = $"<root>{spans}</root>";
+            var xml = XDocument.Parse(temp).Root;
+            var lastRun = xml.Elements().Last();
+
+            if (lastRun.Name == "run")
+            {
+                lastRun.Value += ".";
+            }
+            else
+            {
+                var existingSuffix = xml.Elements().Last().Attribute("suffix")?.Value ?? string.Empty;
+                lastRun.SetAttributeValue("suffix", existingSuffix + ".");
+            }
+
+            return string.Join(string.Empty, xml.Elements().Select(e => e.ToString()));
+        }
+        
+        private string FormatList(IReadOnlyList<string> elements)
+        {
+            var builder = new StringBuilder();
+            builder.Append("<run>");
+            for (var i = 0; i < elements.Count; i++)
+            {
+                builder.Append(elements[i]);
+                if (i < elements.Count - 2)
+                {
+                    builder.Append(", ");
+                }
+                else if (i < elements.Count - 1)
+                {
+                    builder.Append(" and ");
+                }
+            }
+            builder.Append("</run>");
+            return builder.ToString();
+        }
+
+        private string FormatCardList(string[] ids)
+        {
+            if (ids == null || !ids.Any())
+            {
+                return "<run>nothing</run>";
+            }
+
+            return string.Join(Environment.NewLine, ids.Select((id, ix) => 
+            {
+                var suffix = ix == ids.Length -1 ? string.Empty
+                    : ix < ids.Length - 2 ? ","
+                    : " and";
+                return $"<card suffix='{suffix}'>{id}</card>";
+            }));
+        }
+
+        private string FormatInitialVerb(string player, string secondPerson, string thirdPerson, string continuous)
         {
             if (player == getActivePlayer())
             {
@@ -144,43 +221,41 @@ namespace Cardgame.Engine.Logging
             }
         }
 
-        private string FormatList(IReadOnlyList<string> elements)
+        private string FormatZone(string player, Zone zone)
         {
-            var builder = new StringBuilder();
-            builder.Append("<run>");
-            for (var i = 0; i < elements.Count; i++)
+            switch (zone.Name)
             {
-                builder.Append(elements[i]);
-                if (i < elements.Count - 2)
-                {
-                    builder.Append(", ");
-                }
-                else if (i < elements.Count - 1)
-                {
-                    builder.Append(" and ");
-                }
-            }
-            builder.Append("</run>");
-            return builder.ToString();
-        }
+                case ZoneName.DeckBottom:
+                    return $@"<run>the bottom of</run>
+                    <if you='your' them='their'>{player}</if>
+                    <run>deck</run>";
 
-        private string Terminate(string spans)
-        {
-            var temp = $"<root>{spans}</root>";
-            var xml = XDocument.Parse(temp).Root;
-            var lastRun = xml.Elements().Last();
+                case ZoneName.Deck:
+                case ZoneName.DeckTop:
+                    return $@"<run>the top of</run>
+                    <if you='your' them='their'>{player}</if>
+                    <run>deck</run>";
 
-            if (lastRun.Name == "run")
-            {
-                lastRun.Value += ".";
-            }
-            else
-            {
-                var existingSuffix = xml.Elements().Last().Attribute("suffix")?.Value ?? string.Empty;
-                lastRun.SetAttributeValue("suffix", existingSuffix + ".");
-            }
+                case ZoneName.Discard:
+                    return $@"<if you='your' them='their'>{player}</if>
+                    <run>discard pile</run>";
 
-            return string.Join(string.Empty, xml.Elements().Select(e => e.ToString()));
+                case ZoneName.Hand:
+                    return $@"<if you='your' them='their'>{player}</if>
+                    <run>hand</run>";
+
+                case ZoneName.InPlay:
+                    return "<run>in play</run>";
+
+                case ZoneName.Revealed:
+                    return "<run>the revealed cards</run>";
+
+                case ZoneName.Trash:
+                    return $@"<run>the trash</run>";
+
+                default:
+                    throw new NotSupportedException($"Unknown log zone {zone}");
+            }
         }
     }
 }

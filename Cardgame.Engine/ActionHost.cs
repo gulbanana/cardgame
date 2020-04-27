@@ -28,6 +28,24 @@ namespace Cardgame.Engine
 
         protected abstract IActionHost CloneHost(IRecord logRecord, string owningPlayer);
 
+        protected void LogVanilla(Action<Chunk> f)
+        {
+            f(logRecord.LatestChunk);
+            logRecord.Update();
+        }
+
+        protected void LogMovement(Motion type, string[] cards, Zone from, Zone to)
+        {            
+            if (logRecord.LatestChunk.HasVanillaContent())
+            {
+                logRecord.CloseChunk();
+            }
+
+            logRecord.LatestChunk.Movements.Add(new Movement(type, cards, from, to));
+
+            logRecord.Update();
+        }
+
         protected void LogLine(string eventText)
         {
             if (logRecord.LatestChunk.HasVanillaContent())
@@ -35,13 +53,8 @@ namespace Cardgame.Engine
                 logRecord.CloseChunk();
             }
 
-            logRecord.LatestChunk.TextLines.Add(eventText);
-            logRecord.Update();
-        }
+            logRecord.LatestChunk.Lines.Add(eventText);
 
-        protected void LogVanilla(Action<Chunk> f)
-        {
-            f(logRecord.LatestChunk);
             logRecord.Update();
         }
 
@@ -264,22 +277,7 @@ namespace Cardgame.Engine
                 engine.MoveCard(Player, card, from, Zone.Discard);
             }
 
-            if (from == Zone.Hand)
-            {
-                LogLine($@"
-                    {LogVerbInitial("discard", "discards", "discarding")}
-                    {LogCardList(cards)}
-                ");
-            }
-            else
-            {
-                LogLine($@"
-                    {LogVerbInitial("discard", "discards", "discarding")}
-                    {LogCardList(cards, terminal: false)}
-                    <run>from</run>
-                    {LogSource(from)}
-                ");            
-            }
+            LogMovement(Motion.Discard, cards, from, Zone.Discard);
         }
 
         void IActionHost.Trash(string[] cards, Zone from)
