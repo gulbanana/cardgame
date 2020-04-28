@@ -7,49 +7,60 @@ namespace Cardgame.Model
     // never actually serialised at the moment - we send xml representations and build the tree on the client side
     public abstract class TextModel
     {        
+        public abstract bool IsStatic { get; }
+
         public class Spans : TextModel
         {
+            public override bool IsStatic => Children.All(c => c.IsStatic);
             public TextModel[] Children { get; set; }
         }
 
         public class Lines : TextModel
         {
+            public override bool IsStatic => Children.All(c => c.IsStatic);
             public TextModel[] Children { get; set; }
         }
 
         public class Paras : TextModel
         {
+            public override bool IsStatic => Children.All(c => c.IsStatic);
             public TextModel[] Children { get; set; }
         }
 
         public class Split : TextModel
         {
+            public override bool IsStatic => Children.All(c => c.IsStatic);
             public TextModel[] Children { get; set; }
             public bool IsCompact { get; set; }
         }
         
         public class Bold : TextModel
         {
+            public override bool IsStatic => Child.IsStatic;
             public TextModel Child { get; set; }
         }
 
         public class Small : TextModel
         {
+            public override bool IsStatic => Child.IsStatic;
             public TextModel Child { get; set; }
         }
 
         public class Run : TextModel
         {
+            public override bool IsStatic => true;
             public string Text { get; set; }
         }
 
         public class Error : TextModel
         {
+            public override bool IsStatic => true;
             public TextModel Child { get; set; }
         }
 
         public class Private : TextModel
         {
+            public override bool IsStatic => Child.IsStatic;
             public TextModel Child { get; set; }
             public string Owner { get; set; }
             public string AltText { get; set; }
@@ -57,11 +68,13 @@ namespace Cardgame.Model
 
         public class Indent : TextModel
         {
+            public override bool IsStatic => true;
             public int Level { get; set; }
         }
 
         public class Symbol : TextModel
         {
+            public override bool IsStatic => true;
             public string Name { get; set; }
             public string Prefix { get; set; }
             public string Suffix { get; set; }
@@ -70,6 +83,7 @@ namespace Cardgame.Model
 
         public class Card : TextModel
         {
+            public override bool IsStatic => false;
             public string Name { get; set; }
             public string Prefix { get; set; }
             public string Suffix { get; set; }
@@ -77,6 +91,7 @@ namespace Cardgame.Model
 
         public class Player : TextModel
         {
+            public override bool IsStatic => false;
             public string Name { get; set; }
             public string Prefix { get; set; }
             public string Suffix { get; set; }
@@ -84,6 +99,7 @@ namespace Cardgame.Model
 
         public class Pronominal : TextModel
         {
+            public override bool IsStatic => true;
             public string Name { get; set; }
             public string IfYou { get; set; }
             public string IfThem { get; set; }
