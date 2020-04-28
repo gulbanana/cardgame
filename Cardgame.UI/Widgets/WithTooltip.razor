@@ -14,9 +14,11 @@
     }
 }
 
-<span class="with-tooltip" @ref="content">
-    @Content
-    <span class="with-tooltip__tooltip" @ref="tooltip">
+<span class="with-tooltip">
+    <span @ref="content">
+        @Content
+    </span>
+    <span @ref="tooltip" class="with-tooltip__tooltip">
         @Tooltip
     </span>
 </span>
