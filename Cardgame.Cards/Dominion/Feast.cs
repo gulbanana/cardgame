@@ -13,7 +13,7 @@ namespace Cardgame.Cards.Dominion
             <run>Trash this card.</run>
             <spans>
                 <run>Gain a card costing up to</run>
-                <sym suffix='.'>coin5</sym>
+                <sym>coin5.</sym>
             </spans>
         </lines>";
 

@@ -12,7 +12,7 @@ namespace Cardgame.Cards.Alchemy
             <bold>+2 Actions</bold>
             <spans>
                 <run>You may gain an Action card costing up to</run>
-                <sym suffix='.'>coin5</sym>
+                <sym>coin5.</sym>
             </spans>
         </paras>";
 

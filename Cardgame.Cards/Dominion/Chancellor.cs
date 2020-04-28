@@ -8,7 +8,7 @@ namespace Cardgame.Cards.Dominion
         public override Cost Cost => 3;
         
         public override string Text => @"<paras>
-            <bold><sym prefix='+'>coin2</sym></bold>
+            <bold><sym>+coin2</sym></bold>
             <run>You may immediately put your deck into your discard pile.</run>
         </paras>";
 

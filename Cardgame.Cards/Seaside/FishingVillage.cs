@@ -9,13 +9,13 @@ namespace Cardgame.Cards.Seaside
         public override string Text => @"<paras>
             <lines>
                 <bold>+2 Actions</bold>
-                <bold><sym prefix='+'>coin1</sym></bold>
+                <bold><sym>+coin1</sym></bold>
             </lines>
             <spans>
                 <run>At the start of your next turn:</run>
                 <bold>+1 Action</bold>
                 <run>and</run>
-                <bold><sym prefix='+' suffix='.'>coin1</sym></bold>
+                <bold><sym>+coin1.</sym></bold>
             </spans>
         </paras>";
 

@@ -8,7 +8,7 @@ namespace Cardgame.Cards.Seaside
         public override Cost Cost => 2;
 
         public override string Text => @"<paras>
-            <sym prefix='+'>coin2</sym>
+            <sym>+coin2</sym>
             <run>Trash this. Add an Embargo token to a Supply pile. (For the rest of the game, when a player buys a card from that pile, they gain a Curse.)</run>
         </paras>";
 

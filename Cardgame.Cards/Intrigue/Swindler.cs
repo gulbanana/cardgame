@@ -10,7 +10,7 @@ namespace Cardgame.Cards.Intrigue
         public override Cost Cost => 3;
 
         public override string Text => @"<paras>
-            <bold><sym prefix='+'>coin2</sym></bold>
+            <bold><sym>+coin2</sym></bold>
             <run>Each other player trashes the top card of their deck and gains a card with the same cost that you choose.</run>
         </paras>";
 

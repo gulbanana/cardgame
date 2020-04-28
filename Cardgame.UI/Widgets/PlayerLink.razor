@@ -21,7 +21,7 @@
     var score = All.Rules.CalculateScore(Game, Name).Total;
     var hand = !Game.IsStarted ? 5 : Game.Hands[Name].Count;
     var text = $@"<lines>
-        <sym prefix='Current score: {score}'>vp</sym>
+        <spans><run>Current score:</run><sym>{score}vp</sym></spans>
         <run>Hand size: {hand} cards</run>
     </lines>";
     <Subscribed Endpoint="@UserEndpoint">

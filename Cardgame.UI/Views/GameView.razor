@@ -20,8 +20,7 @@
                 {       
                     var score = All.Rules.CalculateScore(Model, player).Total;
                     var suffix = player == Model.Players.Last() ? "." : ", ";
-                    var text = $"<sym prefix='({score}' suffix='){suffix}'>vp</sym>";
-                    <PlayerLink @key="@player" Name="@player" />
+                    var text = $"<player>{player}</player><sym prefix='({score}' suffix='){suffix}'>vp</sym>";
                     <RichText @key="player+score" Text="@text" /> 
                 }
             </span>

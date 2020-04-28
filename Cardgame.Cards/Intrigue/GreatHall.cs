@@ -13,7 +13,7 @@ namespace Cardgame.Cards.Intrigue
                     <run>+1 Card</run>
                     <run>+1 Action</run>
                 </lines>
-                <sym large='true' prefix='1'>vp</sym>
+                <sym large='true'>1vp</sym>
             </split>
         </bold>";
 

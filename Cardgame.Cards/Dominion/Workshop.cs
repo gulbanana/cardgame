@@ -11,7 +11,7 @@ namespace Cardgame.Cards.Dominion
         
         public override string Text => @"
             <run>Gain a card costing up to</run>
-            <sym suffix='.'>coin4</sym>
+            <sym>coin4.</sym>
         ";
 
         protected override async Task ActAsync(IActionHost host)

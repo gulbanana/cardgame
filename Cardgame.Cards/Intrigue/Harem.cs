@@ -11,7 +11,7 @@ namespace Cardgame.Cards.Intrigue
         public override string Text => @"<bold>
             <split>
                 <sym large='true'>coin2</sym>
-                <sym large='true' prefix='2'>vp</sym>
+                <sym large='true'>2vp</sym>
             </split>
         </bold>";
 

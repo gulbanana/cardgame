@@ -13,7 +13,7 @@ namespace Cardgame.Cards.Intrigue
             <bold>+1 Buy</bold>
             <spans>
                 <run>You may discard an Estate for</run>
-                <sym prefix='+' suffix='.'>coin4</sym>
+                <sym>+coin4.</sym>
                 <run>If you don't, gain an Estate.</run>
             </spans>
         </paras>";
@@ -28,7 +28,7 @@ namespace Cardgame.Cards.Intrigue
                 if (await host.YesNo("Baron", @"<run>Discard an</run>
                                                 <card>Estate</card>
                                                 <run>for</run>
-                                                <sym prefix='+' suffix='?'>coin4</sym>"))
+                                                <sym>+coin4?</sym>"))
                 {
                     host.Discard("Estate");
                     host.AddCoins(4);

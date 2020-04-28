@@ -21,7 +21,7 @@ namespace Cardgame.Cards.Intrigue
                     </spans>
                     <spans>
                         <run>Treasure card,</run>
-                        <bold><sym prefix='+'>coin2</sym></bold>
+                        <bold><sym>+coin2</sym></bold>
                     </spans>
                     <spans>
                         <run>Victory card,</run>

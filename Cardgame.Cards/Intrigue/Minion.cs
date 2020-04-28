@@ -12,7 +12,7 @@ namespace Cardgame.Cards.Intrigue
             <bold>+1 Action</bold>
             <spans>
                 <run>Choose one:</run>
-                <sym prefix='+' suffix=';'>coin2</sym>
+                <bold><sym>+coin2;</sym></bold>
                 <run>or discard your hand,</run>
                 <bold>+4 Cards,</bold>
                 <run>and each other player with at least 5 cards in hand discards their hand and draws 4 cards.</run>
@@ -24,7 +24,7 @@ namespace Cardgame.Cards.Intrigue
             host.AddActions(1);
 
             await host.ChooseOne("Minion",
-                new NamedOption("<sym prefix='+'>coin2</sym>", () => host.AddCoins(2)),
+                new NamedOption("<sym>+coin2</sym>", () => host.AddCoins(2)),
                 new NamedOption("<run>More</run><card suffix='s!'>Minion</card>", async () => 
                 {
                     host.Discard(Zone.Hand);

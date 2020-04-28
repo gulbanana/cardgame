@@ -8,7 +8,7 @@ namespace Cardgame.Cards.Seaside
 
         public override string Text => @"<spans>
             <run>Now and at the start of your next turn:</run>
-            <sym prefix='+' suffix='.'>coin2</sym>
+            <sym>+coin2.</sym>
         </spans>";
 
         protected override void Act(IActionHost host)

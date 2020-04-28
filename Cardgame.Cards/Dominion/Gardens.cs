@@ -9,7 +9,7 @@ namespace Cardgame.Cards.Dominion
 
         public override string Text => @"
             <run>Worth</run>
-            <sym prefix='1'>vp</sym>
+            <sym>1vp</sym>
             <run>per 10 cards you have (round down).</run>
         ";
 

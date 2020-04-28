@@ -14,7 +14,7 @@ namespace Cardgame.Cards.Dominion
                 <lines>
                     <run>+1 Card</run>
                     <run>+1 Action</run>
-                    <sym prefix='+'>coin1</sym>
+                    <sym>+coin1</sym>
                 </lines>
             </bold>
             <run>Discard a card per empty Supply pile.</run>
@@ -33,7 +33,7 @@ namespace Cardgame.Cards.Dominion
             if (toDiscard > 0)
             {
                 var discarded = await host.SelectCards(
-                    toDiscard == 1 ? "Choose a card to discard" : $"Choose {toDiscard} cards to discard.", 
+                    toDiscard == 1 ? "Choose a card to discard." : $"Choose {toDiscard} cards to discard.", 
                     toDiscard, 
                     toDiscard
                 );

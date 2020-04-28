@@ -15,10 +15,10 @@ namespace Cardgame.Cards.Intrigue
                 <bold>+1 Action</bold>
                 <spans>
                     <run>You may discard 2 cards, for</run>
-                    <sym prefix='+' suffix='.'>coin2</sym>
+                    <sym>+coin2.</sym>
                 </spans>
             </lines>
-            <bold><sym large='true' prefix='1'>vp</sym></bold>
+            <bold><sym large='true'>1vp</sym></bold>
         </split>";
 
         protected override async Task ActAsync(IActionHost host)
@@ -27,11 +27,11 @@ namespace Cardgame.Cards.Intrigue
             host.AddActions(1);
 
             var handSize = host.Count(Zone.Hand);
-            if (handSize >= 2 && await host.YesNo("Mill", "<run>Discard 2 cards for</run><sym prefix='+' suffix='?'>coin2</sym>"))
+            if (handSize >= 2 && await host.YesNo("Mill", "<run>Discard 2 cards for</run><sym>+coin2?</sym>"))
             {
                 if (handSize > 2)
                 {
-                    var discarded = await host.SelectCards("Choose cards to discard", 2, 2);
+                    var discarded = await host.SelectCards("Choose cards to discard.", 2, 2);
                     host.Discard(discarded);
                 }
                 else

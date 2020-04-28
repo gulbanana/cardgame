@@ -11,7 +11,7 @@ namespace Cardgame.Cards.Intrigue
             <split compact='true'>
                 <lines>
                     <run>Discard any number of cards.</run>
-                    <spans><sym prefix='+'>coin1</sym><run>per card discarded.</run></spans>
+                    <spans><sym>+coin1</sym><run>per card discarded.</run></spans>
                 </lines>
                 <run>When another player plays an Attack card, you may reveal this from your hand. If you do, +2 Cards, then put 2 cards from your hand on top of your deck.</run>
             </split>

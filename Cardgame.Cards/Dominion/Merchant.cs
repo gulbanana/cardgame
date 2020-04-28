@@ -14,7 +14,7 @@ namespace Cardgame.Cards.Dominion
             </lines>
             <spans>
                 <run>The first time you play a Silver this turn,</run>
-                <sym prefix='+' suffix='.'>coin1</sym>
+                <sym>+coin1.</sym>
             </spans>
         </paras>";
 

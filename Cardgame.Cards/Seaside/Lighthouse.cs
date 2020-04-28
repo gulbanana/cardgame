@@ -12,7 +12,7 @@ namespace Cardgame.Cards.Seaside
                 <bold>+1 Action</bold>
                 <spans>
                     <run>Now and at the start of your next turn:</run>
-                    <sym prefix='+' suffix='.'>coin1</sym>
+                    <sym>+coin1.</sym>
                 </spans>
             </lines>
             <run>

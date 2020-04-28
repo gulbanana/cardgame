@@ -11,7 +11,7 @@ namespace Cardgame.Cards.Dominion
         
         public override string Text => @"<paras>
             <bold>
-                <sym prefix='+'>coin2</sym>
+                <sym>+coin2</sym>
             </bold>
             <run>Discard the top card of your deck. If it's an Action card, you may play it.</run>
         </paras>";

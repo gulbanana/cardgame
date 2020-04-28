@@ -9,7 +9,7 @@ namespace Cardgame.Cards.Seaside
         public override Cost Cost => 4;
 
         public override string Text => @"<paras>
-            <bold><sym prefix='+'>coin2</sym></bold>
+            <bold><sym>+coin2</sym></bold>
             <run>Each other player discards a Copper (or reveals a hand with no Copper).</run>
         </paras>";
 

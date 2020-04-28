@@ -9,10 +9,10 @@ namespace Cardgame.Cards.Dominion
         public override string Art => "dom-moneylender";
         public override Cost Cost => 4;
         
-        public override string Text => @"<spans>
+        public override string Text => @"
             <run>You may trash a Coppper from your hand for</run>
-            <sym prefix='+' suffix='.'>coin3</sym>
-        </spans>";
+            <sym>+coin3.</sym>
+        ";
 
         protected override async Task ActAsync(IActionHost host)
         {

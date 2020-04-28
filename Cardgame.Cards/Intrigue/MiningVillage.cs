@@ -15,7 +15,7 @@ namespace Cardgame.Cards.Intrigue
             </lines>
             <spans>
                 <run>You may trash this for</run>
-                <sym prefix='+' suffix='.'>coin2</sym>
+                <sym>+coin2.</sym>
             </spans>
         </paras>";
 
@@ -24,7 +24,7 @@ namespace Cardgame.Cards.Intrigue
             host.DrawCards(1);
             host.AddActions(2);
 
-            if (await host.YesNo("Mining Village", "<run>Trash</run><card>MiningVillage</card><run>for</run><sym prefix='+' suffix='?'>coin2</sym>"))
+            if (await host.YesNo("Mining Village", "<run>Trash</run><card>MiningVillage</card><run>for</run><sym>+coin2?</sym>"))
             {
                 host.Trash("MiningVillage", Zone.InPlay);
                 host.AddCoins(2);

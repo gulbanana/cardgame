@@ -11,7 +11,7 @@ namespace Cardgame.Cards.Seaside
 
         public override string Text => @"<small>
             <run>Choose one:</run>
-            <sym prefix='+'>coin1</sym>
+            <sym>+coin1</sym>
             <run>per Coin token on your Pirate Ship mat; or each other player reveals the top 2 cards of their deck, trashes one of those Treasures that you choose, and discards the rest, and then if anyone trashed a Treasure you add a Coin token to your Pirate Ship mat.</run>
         </small>";
 
@@ -20,7 +20,7 @@ namespace Cardgame.Cards.Seaside
             var tokens = host.Count(Zone.PlayerMat("PirateShipMat"));
 
             await host.ChooseOne("Pirate Ship",
-                new NamedOption($"<sym prefix='+'>coin1</sym><run>per Coin token (+${tokens}).</run>", () =>
+                new NamedOption($"<sym>+coin1</sym><run>per Coin token (+${tokens}).</run>", () =>
                 {                    
                     host.AddCoins(tokens);
                 }),

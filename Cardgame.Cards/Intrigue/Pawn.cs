@@ -9,12 +9,12 @@ namespace Cardgame.Cards.Intrigue
         public override Cost Cost => 2;
 
         public override string Text => @"<lines>
-            <spans>        
+            <spans>
                 <run>Choose two:</run>
-                <bold><run>+1 Card;</run></bold>
-                <bold><run>+1 Action;</run></bold>
-                <bold><run>+1 Buy;</run></bold>
-                <sym prefix='+' suffix='.'>coin1</sym>
+                <bold>     
+                    <run>+1 Card; +1 Action; +1 Buy;</run>
+                    <sym>+coin1.</sym>
+                </bold>
             </spans>
             <run>The choices must be different.</run>
         </lines>";
@@ -25,7 +25,7 @@ namespace Cardgame.Cards.Intrigue
                 new NamedOption("<bold>+1 Card</bold>", () => host.DrawCards(1)),
                 new NamedOption("<bold>+1 Action</bold>", () => host.AddActions(1)),
                 new NamedOption("<bold>+1 Buy</bold>", () => host.AddBuys(1)),
-                new NamedOption("<bold><sym prefix='+'>coin1</sym></bold>", () => host.AddCoins(1))
+                new NamedOption("<bold><sym>+coin1</sym></bold>", () => host.AddCoins(1))
             );
         }
     }

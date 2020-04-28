@@ -11,7 +11,7 @@ namespace Cardgame.Cards.Seaside
             <bold>+1 Buy</bold>
             <spans>
                 <run>Trash a card from your hand.</run>
-                <sym prefix='+'>coin1</sym>
+                <sym>+coin1</sym>
                 <run>per</run>
                 <sym>coin1</sym>
                 <run>it costs.</run>

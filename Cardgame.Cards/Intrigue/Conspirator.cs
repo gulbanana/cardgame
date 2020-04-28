@@ -8,7 +8,7 @@ namespace Cardgame.Cards.Intrigue
         public override Cost Cost => 4;
         
         public override string Text => @"<paras>
-            <bold><sym prefix='+'>coin2</sym></bold>
+            <bold><sym>+coin2</sym></bold>
             <spans>
                 <run>If you've played 3 or more Actions this turn (counting this),</run>
                 <bold>+1 Card</bold>

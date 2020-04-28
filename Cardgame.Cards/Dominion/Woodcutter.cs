@@ -9,7 +9,7 @@ namespace Cardgame.Cards.Dominion
         public override string Text => @"<bold>
             <lines>
                 <run>+1 Buy</run>
-                <sym prefix='+'>coin2</sym>
+                <sym>+coin2</sym>
             </lines>
         </bold>";
 

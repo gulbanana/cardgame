@@ -11,7 +11,7 @@ namespace Cardgame.Cards.Alchemy
         public override string Text => @"<paras>
             <lines>
                 <bold>+1 Buy</bold>
-                <bold><sym prefix='+'>coin1</sym></bold>
+                <bold><sym>+coin1</sym></bold>
             </lines>
             <run>When you discard this from play, you may put one of your Treasures from play onto your deck.</run>
         </paras>";

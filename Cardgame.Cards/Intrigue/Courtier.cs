@@ -14,7 +14,7 @@ namespace Cardgame.Cards.Intrigue
             <run>or</run>
             <bold>+1 Buy;</bold>
             <run>or</run>
-            <sym prefix='+' suffix=';'>coin3</sym>
+            <bold><sym>+coin3;</sym></bold>
             <run>or gain a Gold. The choices must be different.</run>
         </spans>";
 
@@ -27,7 +27,7 @@ namespace Cardgame.Cards.Intrigue
                 await host.ChooseMultiple("Courtier", revealed.Types.Length,
                     new NamedOption("<bold>+1 Action</bold>", () => host.AddActions(1)),
                     new NamedOption("<bold>+1 Buy</bold>", () => host.AddBuys(1)),                    
-                    new NamedOption("<bold><sym prefix='+'>coin3</sym></bold>", () => host.AddCoins(3)),
+                    new NamedOption("<bold><sym>+coin3</sym></bold>", () => host.AddCoins(3)),
                     new NamedOption("<run>Gain a</run><card>Gold</card>", () => host.Gain("Gold"))
                 );
             }

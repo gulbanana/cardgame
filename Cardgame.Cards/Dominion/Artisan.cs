@@ -12,7 +12,7 @@ namespace Cardgame.Cards.Dominion
         public override string Text => @"<paras>
             <spans>
                 <run>Gain a card to your hand costing up to</run>
-                <sym suffix='.'>coin5</sym>
+                <sym>coin5.</sym>
             </spans>
             <run>Put a card from your hand onto your deck.</run>
         </paras>";

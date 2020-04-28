@@ -9,7 +9,7 @@ namespace Cardgame.Cards.Dominion
         
         public override string Text => @"
             <run>The first time you play a Silver this turn,</run>
-            <sym prefix='+' suffix='.'>coin1</sym>
+            <sym>+coin1.</sym>
         ";
 
         protected override void React(IActionHost host, string trigger)

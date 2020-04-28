@@ -167,13 +167,32 @@ namespace Cardgame.Model
                     return new Indent { Level = int.Parse(element.Attribute("level").Value) } ;
 
                 case "sym":
-                    return new Symbol 
-                    { 
-                        Name = element.Value,
-                        Prefix = element.Attribute("prefix")?.Value,
-                        Suffix = element.Attribute("suffix")?.Value,
-                        IsLarge = element.Attribute("large")?.Value == "true"
-                    };
+                    var first = element.Value[0];
+                    var last = element.Value.Last();
+                    if (char.IsLetter(first) && char.IsLetterOrDigit(last))
+                    {
+                        return new Symbol
+                        {
+                            Name = element.Value,
+                            Prefix = element.Attribute("prefix")?.Value,
+                            Suffix = element.Attribute("suffix")?.Value,
+                            IsLarge = element.Attribute("large")?.Value == "true"
+                        };
+                    }
+                    else
+                    {
+                        var prefix = char.IsLetter(first) ? null : first.ToString();
+                        var suffix = char.IsLetterOrDigit(last) ? null : last.ToString();
+                        var skip = prefix != null ? 1 : 0;
+                        var drop = suffix != null ? 1 : 0;
+                        return new Symbol
+                        {
+                            Name = element.Value.Substring(skip, element.Value.Length - (skip + drop)),
+                            Prefix = prefix,
+                            Suffix = suffix,
+                            IsLarge = element.Attribute("large")?.Value == "true"
+                        };
+                    }
 
                 case "card":
                     return new Card 

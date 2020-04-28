@@ -11,7 +11,7 @@ namespace Cardgame.Cards.Dominion
             <lines>
                 <run>+2 Actions</run>
                 <run>+1 Buy</run>
-                <sym prefix='+'>coin2</sym>
+                <sym>+coin2</sym>
             </lines>
         </bold>";
 

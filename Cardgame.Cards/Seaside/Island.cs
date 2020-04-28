@@ -11,7 +11,7 @@ namespace Cardgame.Cards.Seaside
 
         public override string Text => @"<split>
             <run>Put this and a card from your hand onto your Island mat.</run>
-            <bold><sym large='true' prefix='2'>vp</sym></bold>
+            <bold><sym large='true'>2vp</sym></bold>
         </split>";
 
         protected override async Task ActAsync(IActionHost host)

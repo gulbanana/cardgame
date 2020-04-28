@@ -16,7 +16,7 @@ namespace Cardgame.Cards.Intrigue
                 <run>or</run>
                 <bold>+2 Actions.</bold>
             </spans>
-            <bold><sym large='true' prefix='2'>vp</sym></bold>
+            <bold><sym large='true'>2vp</sym></bold>
         </split>";
 
         protected override async Task ActAsync(IActionHost host)

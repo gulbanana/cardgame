@@ -13,7 +13,7 @@ namespace Cardgame.Cards.Intrigue
             <lines>
                 <spans>
                     <run>Gain a card costing up to</run>
-                    <sym suffix='.'>coin4</sym>
+                    <sym>coin4.</sym>
                 </spans>
                 <run>If the gained card is an...</run>
             </lines>
@@ -24,7 +24,7 @@ namespace Cardgame.Cards.Intrigue
                 </spans>
                 <spans>
                     <run>Treasure card,</run>
-                    <bold><sym prefix='+'>coin1</sym></bold>
+                    <bold><sym>+coin1</sym></bold>
                 </spans>
                 <spans>
                     <run>Victory card,</run>

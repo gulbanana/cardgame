@@ -11,7 +11,7 @@ namespace Cardgame.Cards.Intrigue
 
         public override string Text => @"
             <run>Worth</run>
-            <sym prefix='1'>vp</sym>
+            <sym>1vp</sym>
             <run>per Duchy you have.</run>
         ";
     }

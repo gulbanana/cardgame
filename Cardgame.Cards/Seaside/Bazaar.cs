@@ -10,7 +10,7 @@ namespace Cardgame.Cards.Seaside
             <lines>
                 <run>+1 Card</run>
                 <run>+2 Actions</run>
-                <sym prefix='+'>coin1</sym>
+                <sym>+coin1</sym>
             </lines>
         </bold>";
 

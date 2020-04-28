@@ -12,7 +12,7 @@ namespace Cardgame.Cards.Intrigue
             <run>Choose one:</run>
             <bold>+2 Cards;</bold>
             <run>or</run>
-            <bold><sym prefix='+' suffix=';'>coin2</sym></bold>
+            <bold><sym>+coin2;</sym></bold>
             <run>or trash 2 cards from your hand.</run>
         </spans>";
 
@@ -20,7 +20,7 @@ namespace Cardgame.Cards.Intrigue
         {
             await host.ChooseOne("Steward", 
                 new NamedOption("+2 Cards", () => host.DrawCards(2)),
-                new NamedOption("<sym prefix='+'>coin2</sym>", () => host.AddCoins(2)),
+                new NamedOption("<sym>+coin2</sym>", () => host.AddCoins(2)),
                 new NamedOption("Trash 2 cards", async () => 
                 {
                     var handSize = host.Count(Zone.Hand);
