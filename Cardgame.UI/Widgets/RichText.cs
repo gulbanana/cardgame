@@ -29,7 +29,7 @@ namespace Cardgame.UI.Widgets
         {
             if (node.IsStatic)
             {
-                builder.AddMarkupContent(seq++, RenderStatic(Model));
+                builder.AddMarkupContent(seq++, RenderStatic(node));
                 return seq;
             }
 

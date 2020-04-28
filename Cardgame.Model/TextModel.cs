@@ -46,15 +46,9 @@ namespace Cardgame.Model
             public TextModel Child { get; set; }
         }
 
-        public class Run : TextModel
-        {
-            public override bool IsStatic => true;
-            public string Text { get; set; }
-        }
-
         public class Error : TextModel
         {
-            public override bool IsStatic => true;
+            public override bool IsStatic => Child.IsStatic;
             public TextModel Child { get; set; }
         }
 
@@ -64,6 +58,12 @@ namespace Cardgame.Model
             public TextModel Child { get; set; }
             public string Owner { get; set; }
             public string AltText { get; set; }
+        }
+
+        public class Run : TextModel
+        {
+            public override bool IsStatic => true;
+            public string Text { get; set; }
         }
 
         public class Indent : TextModel
@@ -81,6 +81,17 @@ namespace Cardgame.Model
             public bool IsLarge { get; set; }
         }
 
+
+        public class Pronominal : TextModel
+        {
+            public override bool IsStatic => true;
+            public string Name { get; set; }
+            public string IfYou { get; set; }
+            public string IfThem { get; set; }
+            public string Prefix { get; set; }
+            public string Suffix { get; set; }
+        }
+
         public class Card : TextModel
         {
             public override bool IsStatic => false;
@@ -93,16 +104,6 @@ namespace Cardgame.Model
         {
             public override bool IsStatic => false;
             public string Name { get; set; }
-            public string Prefix { get; set; }
-            public string Suffix { get; set; }
-        }
-
-        public class Pronominal : TextModel
-        {
-            public override bool IsStatic => true;
-            public string Name { get; set; }
-            public string IfYou { get; set; }
-            public string IfThem { get; set; }
             public string Prefix { get; set; }
             public string Suffix { get; set; }
         }
