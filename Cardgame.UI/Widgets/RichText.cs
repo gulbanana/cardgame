@@ -138,9 +138,10 @@ namespace Cardgame.UI.Widgets
                         var set = All.Cards.GetSet(card.Name);
                         var value = (model as ITreasureCard)?.StaticValue;
 
+                        builder.AddContent(seq++, " " + card.Prefix);
                         builder.OpenComponent<WithTooltip>(seq++);
                             builder.AddAttribute(seq++, nameof(WithTooltip.Content), (RenderFragment)((contentBuilder) => {
-                                contentBuilder.AddMarkupContent(seq++, $"{card.Prefix}<span style=\"background: {background}\">{Strings.TitleCase(card.Name)}</span>{card.Suffix}");
+                                contentBuilder.AddMarkupContent(seq++, $"<span style=\"background: {background}\">{Strings.TitleCase(card.Name)}</span>");
                             }));
                             builder.AddAttribute(seq++, nameof(WithTooltip.Tooltip), (RenderFragment)((tooltipBuilder) => {
                                 tooltipBuilder.OpenComponent<Magnify>(seq++);
@@ -157,12 +158,14 @@ namespace Cardgame.UI.Widgets
                                 tooltipBuilder.CloseComponent();
                             }));
                         builder.CloseComponent();
+                        builder.AddContent(seq++, card.Suffix + " ");
                     }
                     else
                     {
+                        builder.AddContent(seq++, " " + card.Prefix);
                         builder.OpenComponent<WithTooltip>(seq++);
                             builder.AddAttribute(seq++, nameof(WithTooltip.Content), (RenderFragment)((contentBuilder) => {
-                                contentBuilder.AddContent(seq++, $"{card.Prefix}a {Strings.TitleCase(card.Name)} token{card.Suffix}");
+                                contentBuilder.AddContent(seq++, $"a {Strings.TitleCase(card.Name)} token");
                             }));
                             builder.AddAttribute(seq++, nameof(WithTooltip.Tooltip), (RenderFragment)((tooltipBuilder) => {
                                 tooltipBuilder.OpenComponent<Magnify>(seq++);
@@ -174,6 +177,7 @@ namespace Cardgame.UI.Widgets
                                 tooltipBuilder.CloseComponent();
                             }));
                         builder.CloseComponent();
+                        builder.AddContent(seq++, card.Suffix + " ");
                     }
                     break;
 
