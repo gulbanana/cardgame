@@ -1060,11 +1060,13 @@ namespace Cardgame.Engine
 
         internal async Task<TOutput> Choose<TInput, TOutput>(string player, ChoiceType type, string prompt, TInput input)
         {            
+            var choosingPlayer = player == Model.ActivePlayer ? Model.ControllingPlayer : player;
+
             Model.ChoiceType = type;
             Model.ChoicePrompt = prompt;
             Model.ChoiceInput = JsonSerializer.Serialize(input);
 
-            if (bots.Contains(player))
+            if (bots.Contains(choosingPlayer))
             {
                 var botOutput = AI.PlayChoice(Model);
                 if (botOutput != null)
@@ -1074,7 +1076,7 @@ namespace Cardgame.Engine
             }
 
             if (Model.ChoosingPlayers.Any()) throw new Exception("choice stack can occur somehow");
-            Model.ChoosingPlayers.Push(player);           
+            Model.ChoosingPlayers.Push(choosingPlayer);           
              
             inputTCS = new TaskCompletionSource<string>();
             Notify();
