@@ -585,9 +585,9 @@ namespace Cardgame.Engine
         }
 
         // used by Outpost and Possession
-        public void InsertExtraTurn(string player)
+        public void InsertExtraTurn(string player, string controller)
         {
-            engine.ExtraTurns.Enqueue(player);
+            engine.ExtraTurns.Enqueue((player, controller));
         }
     }
 }

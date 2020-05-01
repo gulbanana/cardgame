@@ -30,9 +30,6 @@ namespace Cardgame.Model
         public Dictionary<string, bool> SettingKeepHandSorted { get; set; }
 
         // game state
-        public string PreviousPlayer { get; set; }
-        public string NextPlayer { get; set; }
-        public string ActivePlayer { get; set; }
         public Dictionary<string, int> Supply { get; set; }
         public Dictionary<string, string[]> SupplyTokens { get; set; }
         public Dictionary<string, List<Instance>> Hands { get; set; }
@@ -42,6 +39,12 @@ namespace Cardgame.Model
         public Dictionary<string, List<Instance>> MatCards { get; set; }
         public Dictionary<string, Dictionary<string, List<Instance>>> PlayerMatCards { get; set; }
         public Dictionary<Instance, Instance> Attachments { get; set; }
+
+        // turn tracking
+        public string PreviousPlayer { get; set; }
+        public string NextPlayer { get; set; }
+        public string ActivePlayer { get; set; }
+        public string ControllingPlayer { get; set; }
 
         // turn state    
         public HashSet<Instance> PlayedWithDuration { get; set; }

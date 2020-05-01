@@ -19,7 +19,7 @@ namespace Cardgame.Engine
         private readonly List<Record> logs;
         private readonly Dictionary<string, TurnRecord> turns;
         private readonly Dictionary<string, int> turnNumbers;  
-        internal readonly Queue<string> ExtraTurns;
+        internal readonly Queue<(string player, string controller)> ExtraTurns;
 
         private TaskCompletionSource<string> inputTCS;
         private TaskCompletionSource<bool> backgroundTCS;
@@ -43,7 +43,7 @@ namespace Cardgame.Engine
             logs = new List<Record>();
             turns = new Dictionary<string, TurnRecord>();
             turnNumbers = new Dictionary<string, int>();
-            ExtraTurns = new Queue<string>();
+            ExtraTurns = new Queue<(string, string)>();
 
             stashes = new Dictionary<int, Instance>();
             revealed = new List<Instance>(); // could move to the model, or have a copy "RecentlyRevealed"
@@ -150,10 +150,10 @@ namespace Cardgame.Engine
                 case PlayCardCommand playCard:
                     if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
-                    if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
+                    if (Model.ControllingPlayer != username) throw new CommandException("You are not the current player.");
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("Another card is already being played.");
 
-                    if (!Model.Hands[username].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");        
+                    if (!Model.Hands[Model.ActivePlayer].Contains(playCard.Id)) throw new CommandException($"You don't have a {playCard.Id} card in your hand.");        
                     if (!All.Cards.Exists(playCard.Id)) throw new CommandException($"Card {playCard.Id} is not implemented.");
 
                     var card = All.Cards.ByName(playCard.Id);
@@ -167,28 +167,28 @@ namespace Cardgame.Engine
                         if (Model.CurrentPhase > Phase.Treasure) throw new CommandException("The first part of the Buy phase is over.");
                     }
 
-                    BeginBackgroundTask(playCard.Id, _ => PlayCardsPhasedAsync(username, card));
+                    BeginBackgroundTask(playCard.Id, _ => PlayCardsPhasedAsync(Model.ActivePlayer, card));
 
                     break;
 
                 case PlayAllTreasuresCommand _:
                     if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
-                    if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
+                    if (Model.ControllingPlayer != username) throw new CommandException("You are not the current player.");
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("Another card is already being played.");
 
                     if (Model.CurrentPhase > Phase.Treasure) throw new CommandException("The first part of the Buy phase is over.");
 
-                    var cards = Model.Hands[username].Select(All.Cards.ByName).OfType<ITreasureCard>().ToArray();
+                    var cards = Model.Hands[Model.ActivePlayer].Select(All.Cards.ByName).OfType<ITreasureCard>().ToArray();
 
-                    BeginBackgroundTask(username, _ => PlayCardsPhasedAsync(username, cards));
+                    BeginBackgroundTask(Model.ActivePlayer, _ => PlayCardsPhasedAsync(Model.ActivePlayer, cards));
 
                     break;
 
                 case BuyCardCommand buyCard:
                     if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
-                    if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
+                    if (Model.ControllingPlayer != username) throw new CommandException("You are not the current player.");
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("A card is currently being played.");
 
                     if (Model.BuysRemaining < 1) throw new CommandException("You have no remaining buys.");
@@ -199,7 +199,7 @@ namespace Cardgame.Engine
                     var boughtCard = All.Cards.ByName(buyCard.Id);
                     if (boughtCard.GetCost(Model).GreaterThan(Rules.MaxAffordableCost(Model))) throw new CommandException($"You don't have enough money to buy card {buyCard.Id}.");
 
-                    BeginBackgroundTask(buyCard.Id, _ => BuyCardPhasedAsync(username, boughtCard));
+                    BeginBackgroundTask(buyCard.Id, _ => BuyCardPhasedAsync(Model.ActivePlayer, boughtCard));
 
                     break;
 
@@ -215,7 +215,7 @@ namespace Cardgame.Engine
                 case EndTurnCommand _:
                     if (!Model.IsStarted) throw new CommandException("The game has not begun.");
                     if (Model.IsFinished) throw new CommandException("The game is over.");
-                    if (Model.ActivePlayer != username) throw new CommandException("You are not the active player.");
+                    if (Model.ControllingPlayer != username) throw new CommandException("You are not the current player.");
                     if (Model.ExecutingBackgroundTasks) throw new CommandException("A card is currently being played.");
 
                     BeginBackgroundTask(Model.ActivePlayer, async _ =>
@@ -597,6 +597,7 @@ namespace Cardgame.Engine
             }
             
             Model.ActivePlayer = Model.Players[rng.Next(Model.Players.Length)];
+            Model.ControllingPlayer = Model.ActivePlayer;
         }
 
         internal async Task BeginTurnAsync(string player)
@@ -635,7 +636,7 @@ namespace Cardgame.Engine
                 {
                     while (Model.ExecutingBackgroundTasks) {;}
                     var executed = true;
-                    while (botPlayer == Model.ActivePlayer && !Model.IsFinished && executed)
+                    while (botPlayer == Model.ControllingPlayer && !Model.IsFinished && executed)
                     {       
                         var command = AI.PlayTurn(Model);
                         executed = Execute(botPlayer, command);
@@ -722,11 +723,14 @@ namespace Cardgame.Engine
 
                 if (ExtraTurns.Any())
                 {
-                    Model.ActivePlayer = ExtraTurns.Dequeue();
+                    var (active, controlling) = ExtraTurns.Dequeue();
+                    Model.ActivePlayer = active;
+                    Model.ControllingPlayer = controlling;
                 }
                 else
                 {
                     Model.ActivePlayer = Model.NextPlayer;
+                    Model.ControllingPlayer = Model.NextPlayer;
                     Model.NextPlayer = null;
                 }
             }

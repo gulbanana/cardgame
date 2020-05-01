@@ -20,7 +20,7 @@ namespace Cardgame.Cards.Seaside
             }
             else
             {
-                host.InsertExtraTurn(host.Player);
+                host.InsertExtraTurn(host.Player, host.Player);
             }
         }
 

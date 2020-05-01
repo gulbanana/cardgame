@@ -64,7 +64,7 @@ namespace Cardgame.API
         void DiscardEntireDeck();
         void PassCard(string player, string card);
         void InsertIntoDeck(string card, int position);
-        void InsertExtraTurn(string player);
+        void InsertExtraTurn(string player, string controller);
     }
 
     public static class ActionHostExtensions
