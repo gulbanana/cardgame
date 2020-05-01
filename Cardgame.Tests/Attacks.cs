@@ -47,9 +47,9 @@ namespace Cardgame.Tests
             engine.ExecuteChecked(us, new EndTurnCommand { });
 
             AddCard("Militia");
-            engine.ExecuteChecked(us, new PlayCardCommand { Id = "Militia" });
+            engine.ExecuteChecked(them, new PlayCardCommand { Id = "Militia" });
 
-            Assert.Equal(5, model.Hands[them].Count);
+            Assert.Equal(5, model.Hands[us].Count);
         }
 
         [Fact]

@@ -10,8 +10,8 @@ namespace Cardgame.Tests
         protected readonly GameEngine engine;
         protected readonly GameModel model;
 
-        protected string us => engine.Model.ActivePlayer;
-        protected string them => engine.Model.ActivePlayer == "player1" ? "player2" : "player1";
+        protected string us { get; private set; }
+        protected string them { get; private set; }
 
         static TestBase()
         {
@@ -28,12 +28,15 @@ namespace Cardgame.Tests
             engine.ExecuteInternal("player1", new JoinGameCommand());
             engine.ExecuteInternal("player2", new JoinGameCommand());
             engine.ExecuteInternal("player1", new StartGameCommand());
+
+            us = engine.Model.ControllingPlayer;
+            them = engine.Model.ControllingPlayer == "player1" ? "player2" : "player1";
         }
 
         protected void AddCard(string id, string player = null)
         {
-            if (player == null) player = us;
-            if (player == us)
+            if (player == null) player = model.ActivePlayer;
+            if (player == model.ActivePlayer)
             {
                 if (model.CurrentPhase > Phase.Action) model.CurrentPhase = Phase.Action;
                 if (model.ActionsRemaining < 1) model.ActionsRemaining = 1;
