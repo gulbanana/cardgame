@@ -20,7 +20,7 @@
             else
             {
                 var cards = Model.PlayerMatCards[Owner][Id];
-                contents = mat.GetContents(cards.Names(), Session.Username == Owner || !Model.Players.Contains(Session.Username));
+                contents = mat.GetContents(cards.Names(), Session.Username == Owner || (Model.ActivePlayer == Owner && Model.ControllingPlayer == Session.Username) || !Model.Players.Contains(Session.Username));
             }
         }
     }

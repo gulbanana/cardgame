@@ -13,16 +13,17 @@ namespace Cardgame.UI.Widgets
     {
         [Inject] private IUserSession Session { get; set; }
         [Parameter] public string Text { get; set; }
-        private TextModel Model;
+        [CascadingParameter(Name = "Current")] public GameModel Game { get; set; }
+        private TextModel model;
 
         protected override void OnParametersSet()
         {
-            Model = TextModel.Parse(Text);
+            model = TextModel.Parse(Text);
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            RenderNode(builder, Model, 0);
+            RenderNode(builder, model, 0);
         }
 
         private int RenderNode(RenderTreeBuilder builder, TextModel node, int seq)
@@ -100,7 +101,10 @@ namespace Cardgame.UI.Widgets
                     break;
 
                 case TextModel.Private @private:
-                    if (Session.Username == @private.Owner)
+                    var isOwner = Session.Username == @private.Owner || 
+                                  (Game != null && Game.ActivePlayer == @private.Owner && Game.ControllingPlayer == Session.Username) || 
+                                  (Game != null && !Game.Players.Contains(Session.Username));
+                    if (isOwner)
                     {
                         seq = RenderNode(builder, @private.Child, seq);
                     }
@@ -283,7 +287,10 @@ namespace Cardgame.UI.Widgets
                     break;
 
                 case TextModel.Private @private:
-                    if (Session.Username == @private.Owner)
+                    var isOwner = Session.Username == @private.Owner || 
+                                  (Game != null && Game.ActivePlayer == @private.Owner && Game.ControllingPlayer == Session.Username) || 
+                                  (Game != null && !Game.Players.Contains(Session.Username));
+                    if (isOwner)
                     {
                         builder.Append(RenderStatic(@private.Child));
                     }
