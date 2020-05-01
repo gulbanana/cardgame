@@ -375,13 +375,12 @@ namespace Cardgame.Engine
         {            
             var buyRecord = logManager.LogComplexEvent(player, new BuyCard { Card = id });
 
-            var instance = MoveCard(player, id, Zone.SupplyAvailable, Zone.Discard);
-            NoteBuy(player, instance);
-
             var pileReactors = Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>();
             await TriggerReactions(buyRecord, player, Trigger.BuyCard, id, pileReactors);
 
-            await GainCardAsync(buyRecord, player, id, Zone.SupplyAvailable, Zone.Discard);
+            var instance = await GainCardAsync(buyRecord, player, id, Zone.SupplyAvailable, Zone.Discard);
+
+            NoteBuy(player, instance);
 
             logManager.Save(buyRecord);
         }
@@ -394,6 +393,8 @@ namespace Cardgame.Engine
             var card = All.Cards.ByName(id);
             var instanceReactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
             await TriggerReactions(logRecord, player, Trigger.GainCard, id, instanceReactors);
+
+            return instance;
         }
 
         private async Task PlayCardsPhasedAsync(string player, params ICard[] cards)
