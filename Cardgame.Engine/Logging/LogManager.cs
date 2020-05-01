@@ -82,6 +82,14 @@ namespace Cardgame.Engine.Logging
                     <run>turn {turnNumber} ---</run>
                 </bold>",
 
+                BuyCard { Card: var card, Controller: var controller } when controller != record.Actor => $@"<spans>
+                    <player>{record.Actor}</player>
+                    <if you='buy' them='buys'>{record.Actor}</if>
+                    <card>{card}</card>
+                    <run>for</run>
+                    <player nonterminal='true' suffix='.'>{controller}</player>
+                </spans>",
+
                 BuyCard { Card: var card } => $@"<spans>
                     <player>{record.Actor}</player>
                     <if you='buy' them='buys'>{record.Actor}</if>
@@ -138,9 +146,20 @@ namespace Cardgame.Engine.Logging
 
             // ordered list of card movements, which will precede all vanilla in a chunk
             var builder = new StringBuilder();
+            var lastActor = chunk.Actor;
             for (var i = 0; i < chunk.Movements.Count; i++)
             {
-                builder.Append(FormatMovement(chunk.Actor, chunk.Movements[i], i == 0 ? null : chunk.Movements[i-1]));
+                // actors can switch back and forth due to possession. if that happens, flush the line and stop "and"ing
+                var hasPrevious = i > 0;
+                var actor = chunk.Movements[i].Type == Motion.Gain ? chunk.GainActor : chunk.Actor;
+                if (i > 0 && actor != lastActor)
+                {
+                    yield return Terminate(builder.ToString());
+                    builder.Clear();
+                    hasPrevious = false;
+                }                
+
+                builder.Append(FormatMovement(actor, chunk.Movements[i], hasPrevious ? chunk.Movements[i-1] : null));
             }
 
             // vanilla bonuses, potentially consequences of the movements
@@ -295,6 +314,9 @@ namespace Cardgame.Engine.Logging
 
                 case ZoneName.Revealed:
                     return "<run>the revealed cards</run>";
+
+                case ZoneName.Stash:
+                    return "<run>somewhere</run>";
 
                 case ZoneName.Supply:
                     return "<run>the supply</run>";

@@ -373,7 +373,7 @@ namespace Cardgame.Engine
 
         internal async Task BuyCardAsync(string player, string id)
         {            
-            var buyRecord = logManager.LogComplexEvent(player, new BuyCard { Card = id });
+            var buyRecord = logManager.LogComplexEvent(player, new BuyCard { Card = id, Controller = Model.ControllingPlayer });
 
             var pileReactors = Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>();
             await TriggerReactions(buyRecord, player, Trigger.BuyCard, id, pileReactors);
@@ -385,14 +385,25 @@ namespace Cardgame.Engine
             logManager.Save(buyRecord);
         }
 
-        internal async Task GainCardAsync(IRecord logRecord, string player, string id, Zone from, Zone to)
+        internal async Task<Instance> GainCardAsync(IRecord logRecord, string actingPlayer, string id, Zone from, Zone to)
         {            
-            var instance = MoveCard(player, id, from, to);                    
-            NoteGain(player, instance);
+            var gainingPlayer = actingPlayer == Model.ActivePlayer ? Model.ControllingPlayer : actingPlayer;
+
+            if (gainingPlayer != actingPlayer)
+            {
+                var stash = Zone.Stash();
+                MoveCard(actingPlayer, id, from, stash);
+                from = stash;
+                logRecord.LatestChunk.GainActor = gainingPlayer;
+            }
+            
+            var instance = MoveCard(gainingPlayer, id, from, to);
+
+            NoteGain(gainingPlayer, instance);
 
             var card = All.Cards.ByName(id);
             var instanceReactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
-            await TriggerReactions(logRecord, player, Trigger.GainCard, id, instanceReactors);
+            await TriggerReactions(logRecord, gainingPlayer, Trigger.GainCard, id, instanceReactors);
 
             return instance;
         }
@@ -509,7 +520,7 @@ namespace Cardgame.Engine
             var played = MoveCard(player, id, from, Zone.InPlay);
             var card = All.Cards.ByName(id);
 
-            var pileReactors = Model.SupplyTokens[id].Select(All.Effects.ByName).OfType<IReactor>();
+            var pileReactors = Model.SupplyTokens.TryGetValue(id, out var ts) ? ts.Select(All.Effects.ByName).OfType<IReactor>() : Array.Empty<IReactor>();
             var instanceReactors = card is IReactor r ? new[]{r} : Array.Empty<IReactor>();
             var extraReactors = pileReactors.Concat(instanceReactors).ToArray();        
 

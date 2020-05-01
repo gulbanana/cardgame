@@ -188,7 +188,7 @@ namespace Cardgame.UI.Widgets
                 case TextModel.Player player:
                     if (Session.Username.Equals(player.Name))
                     {
-                        builder.AddContent(seq++, $" {player.Prefix}You{player.Suffix} ");
+                        builder.AddContent(seq++, $" {player.Prefix}{(player.IsNonterminal ? "you" : "You")}{player.Suffix} ");
                     }
                     else
                     {

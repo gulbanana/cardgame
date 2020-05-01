@@ -106,6 +106,7 @@ namespace Cardgame.Model
             public string Name { get; set; }
             public string Prefix { get; set; }
             public string Suffix { get; set; }
+            public bool IsNonterminal { get; set; }
         }
 
         public static TextModel Parse(string xml)
@@ -207,7 +208,8 @@ namespace Cardgame.Model
                     { 
                         Name = element.Value,
                         Prefix = element.Attribute("prefix")?.Value,
-                        Suffix = element.Attribute("suffix")?.Value
+                        Suffix = element.Attribute("suffix")?.Value,
+                        IsNonterminal = element.Attribute("nonterminal")?.Value == "true"
                     };
 
                 case "if":

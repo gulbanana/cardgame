@@ -11,6 +11,7 @@ namespace Cardgame.Engine.Logging
     internal class BuyCard : Event 
     { 
         public string Card { get; set; } 
+        public string Controller { get; set; }
     }
 
     internal class PlayCards : Event 

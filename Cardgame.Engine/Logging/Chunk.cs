@@ -6,6 +6,7 @@ namespace Cardgame.Engine.Logging
     internal class Chunk
     {
         public readonly string Actor;
+        public string GainActor { get; set; }
 
         public bool Reshuffled { get; set; }
         public List<string> AddedCards { get; set; }
@@ -21,6 +22,7 @@ namespace Cardgame.Engine.Logging
         public Chunk(string actor)
         {
             Actor = actor;
+            GainActor = actor;
             AddedCards = new List<string>();
             Movements = new List<Movement>();
             Lines = new List<string>();

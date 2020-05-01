@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Cardgame.Model;
 using Xunit;
@@ -28,6 +29,20 @@ namespace Cardgame.Tests
             Assert.Equal(them, model.ActivePlayer);
             Assert.Equal(them, model.ControllingPlayer);
             await engine.ExecuteChecked(them, new PlayCardCommand { Id = "Copper" });
+        }
+
+        [Fact]
+        public async Task BuyGainToController()
+        {
+            AddCard("Possession");
+            await engine.ExecuteChecked(us, new PlayCardCommand { Id = "Possession" });
+            await engine.ExecuteChecked(us, new EndTurnCommand());
+
+            model.CoinsRemaining = 3;
+            await engine.ExecuteChecked(us, new BuyCardCommand { Id = "Silver" });
+            
+            Assert.False(model.Discards[them].Contains("Silver"));
+            Assert.True(model.Discards[us].Contains("Silver"));
         }
     }
 }
