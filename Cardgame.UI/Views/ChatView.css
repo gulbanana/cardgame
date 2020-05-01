@@ -19,6 +19,10 @@
     font-weight: bold;
 }
 
+.chat-view__message {
+    word-break: break-word;
+}
+
 .chat-view__entry {
     display: grid;
     grid-template-columns: 1fr auto;

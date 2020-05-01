@@ -20,7 +20,7 @@
             @foreach (var entry in Model.ChatLog)
             {
                 <span class="chat-view__username">&lt;@entry.Username&gt;</span>
-                <span>@entry.Message</span>
+                <span class="chat-view__message">@entry.Message</span>
             }
         </div>
     </VerticalLog>
