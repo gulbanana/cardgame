@@ -15,14 +15,7 @@ namespace Cardgame.Cards.Alchemy
 
         protected override void Act(IActionHost host)
         {
-            if (host.Examine(Zone.RecentPlays).Any(card => card.Name == "Outpost") || host.PreviousPlayer == host.Player)
-            {
-                host.CompleteDuration();
-            }
-            else
-            {
-                host.InsertExtraTurn(host.GetPlayerToLeft(), host.Player);
-            }
+            host.InsertExtraTurn(host.GetPlayerToLeft(), host.Player);
         }
     }
 }
