@@ -403,7 +403,7 @@ namespace Cardgame.Engine.Logging
                     builder.Append(cardList);
                 }
 
-                switch (movement.Type)
+                if (movement.From != Zone.Create) switch (movement.Type)
                 {
                     // discards from hand are normal
                     case Motion.Discard:

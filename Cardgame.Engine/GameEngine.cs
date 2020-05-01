@@ -28,6 +28,7 @@ namespace Cardgame.Engine
         // temporary zones, can only exist during an action
         private readonly Dictionary<int, Instance> stashes;
         private readonly List<Instance> revealed;
+        private readonly List<Instance> setAsideTrash;
 
         // XXX replace with something in TurnRecord
         internal int ActionsThisTurn { get; private set; }
@@ -47,6 +48,7 @@ namespace Cardgame.Engine
 
             stashes = new Dictionary<int, Instance>();
             revealed = new List<Instance>(); // could move to the model, or have a copy "RecentlyRevealed"
+            setAsideTrash = new List<Instance>(); // or maybe these could both be (named?) multi-card stashes?
 
             Model = new GameModel();
             Model.EventLog = new List<string>();
@@ -704,6 +706,13 @@ namespace Cardgame.Engine
                 endTurnRecord.LatestChunk.Reshuffled = true;
                 endTurnRecord.Update();
             }
+
+            if (player == Model.ActivePlayer && player != Model.ControllingPlayer && setAsideTrash.Any())
+            {
+                endTurnRecord.LatestChunk.Movements.Add(new Movement(Motion.Put, setAsideTrash.Names(), Zone.Create, Zone.Discard));
+                Model.Discards[player].InsertRange(0, setAsideTrash);
+                setAsideTrash.Clear();
+            }
             
             // display the EOT record only if it's got content
             if (endTurnRecord.HasContent())
@@ -928,7 +937,14 @@ namespace Cardgame.Engine
                     break;
 
                 case ZoneName.Trash:
-                    Model.MatCards["TrashMat"].Add(instance);
+                    if (player == Model.ActivePlayer && player != Model.ControllingPlayer)
+                    {
+                        setAsideTrash.Add(instance); // possession temp area
+                    }
+                    else
+                    {
+                        Model.MatCards["TrashMat"].Add(instance);
+                    }
                     break;
 
                 default:

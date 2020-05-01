@@ -44,5 +44,53 @@ namespace Cardgame.Tests
             Assert.False(model.Discards[them].Contains("Silver"));
             Assert.True(model.Discards[us].Contains("Silver"));
         }
+
+        [Fact]
+        public async Task AlternateGainsToController()
+        {
+            AddCard("Possession");
+            await engine.ExecuteChecked(us, new PlayCardCommand { Id = "Possession" });
+            await engine.ExecuteChecked(us, new EndTurnCommand());
+
+            AddCard("Workshop");
+            var playWorkshop = engine.ExecuteChecked(us, new PlayCardCommand { Id = "Workshop" });
+            await engine.ExecuteChecked(us, new EnterChoiceCommand { Output = "[\"Silver\"]" });
+            await playWorkshop;
+            
+            Assert.False(model.Discards[them].Contains("Silver"));
+            Assert.True(model.Discards[us].Contains("Silver"));
+        }
+
+        [Fact]
+        public async Task SetAsideTrash()
+        {
+            // control group
+            AddCard("Silver");
+            AddCard("Chapel");
+            var playChapel = engine.ExecuteChecked(us, new PlayCardCommand { Id = "Chapel" });
+            await engine.ExecuteChecked(us, new EnterChoiceCommand { Output = "[\"Silver\"]" });
+            await playChapel;
+
+            Assert.True(model.MatCards["TrashMat"].Contains("Silver"));
+            model.MatCards["TrashMat"].Clear();
+
+            // actual test
+            AddCard("Possession");
+            await engine.ExecuteChecked(us, new PlayCardCommand { Id = "Possession" });
+            await engine.ExecuteChecked(us, new EndTurnCommand());
+
+            AddCard("Chapel");
+            AddCard("Silver");
+            playChapel = engine.ExecuteChecked(us, new PlayCardCommand { Id = "Chapel" });
+            await engine.ExecuteChecked(us, new EnterChoiceCommand { Output = "[\"Silver\"]" });
+            await playChapel;
+
+            Assert.False(model.MatCards["TrashMat"].Contains("Silver"));
+            Assert.False(model.Discards[them].Contains("Silver"));
+
+            await engine.ExecuteChecked(us, new EndTurnCommand());
+
+            Assert.True(model.Discards[them].Contains("Silver"));
+        }
     }
 }
