@@ -615,7 +615,7 @@ namespace Cardgame.Engine
             Model.CurrentPhase = Phase.Action;
             Model.PlayedLastTurn = new HashSet<Instance>(Model.PlayedCards[player]);
 
-            var beginTurnRecord = logManager.LogComplexEvent(player, new BeginTurn { TurnNumber = turnNumber });
+            var beginTurnRecord = logManager.LogComplexEvent(player, new BeginTurn { TurnNumber = turnNumber, Controller = Model.ControllingPlayer });
             await TriggerReactions(beginTurnRecord, player, Trigger.BeginTurn, player);
             logManager.Save(beginTurnRecord);
 

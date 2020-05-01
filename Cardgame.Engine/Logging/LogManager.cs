@@ -68,7 +68,15 @@ namespace Cardgame.Engine.Logging
         private string GetRecordHeader(Record record)
         {
             return record.Event switch {
-                BeginTurn { TurnNumber: int turnNumber } => $@"<bold>
+                BeginTurn { TurnNumber: var turnNumber, Controller: var controller } when controller != record.Actor => $@"<bold>
+                    <run>---</run>
+                    <if you='Your' them='{record.Actor}&apos;s'>{record.Actor}</if>
+                    <run>turn {turnNumber} (controlled by</run>
+                    <if you='you' them='{controller}' suffix=')'>{controller}</if>
+                    <run>---</run>
+                </bold>",
+
+                BeginTurn { TurnNumber: var turnNumber } => $@"<bold>
                     <run>---</run>
                     <if you='Your' them='{record.Actor}&apos;s'>{record.Actor}</if>
                     <run>turn {turnNumber} ---</run>
