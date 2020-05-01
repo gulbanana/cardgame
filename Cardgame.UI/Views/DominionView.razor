@@ -3,8 +3,11 @@
     [CascadingParameter(Name = "Current")] public GameModel CurrentModel { get; set; }
     [CascadingParameter(Name = "Previous")] public GameModel PreviousModel { get; set; }
     [CascadingParameter] public ClientDispatcher Dispatch { get; set; } 
-    bool IsActivePlayer => Session.Username.Equals(CurrentModel.ActivePlayer);
-    string PlayerOrSpectatee => CurrentModel.Players.Contains(Session.Username) ? Session.Username : CurrentModel.ActivePlayer;
+    // you can see your own cards, or cards you temporarily control, or everyone's cards if spectating
+    string PlayerOrSpectatee => (
+        Session.Username == CurrentModel.ActivePlayer || 
+        Session.Username == CurrentModel.ControllingPlayer || 
+        !CurrentModel.Players.Contains(Session.Username)) ? CurrentModel.ActivePlayer : Session.Username;
 }
 
 <div class="dominion-view">
@@ -57,7 +60,7 @@
                     var isNew = !PreviousModel.IsStarted || !PreviousModel.Hands[PlayerOrSpectatee].Contains(instance);                    
 
                     var card = All.Cards.ByName(instance);
-                    var isEnabled = IsActivePlayer &&
+                    var isEnabled = Session.Username.Equals(CurrentModel.ControllingPlayer) &&
                         !CurrentModel.IsFinished &&
                         !CurrentModel.ExecutingBackgroundTasks &&
                         ((card.Types.Contains(CardType.Action) && CurrentModel.CurrentPhase <= Phase.Action) ||

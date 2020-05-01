@@ -9,7 +9,7 @@
 <span class="supply-pile">
     @if (Model.Supply[Id] > 0)
     {
-        var isEnabled = Session.Username.Equals(Model.ActivePlayer) &&
+        var isEnabled = Session.Username.Equals(Model.ControllingPlayer) &&
             !Model.IsFinished &&
             !Model.ExecutingBackgroundTasks &&
             Model.BuysRemaining > 0 &&

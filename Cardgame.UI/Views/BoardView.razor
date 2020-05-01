@@ -2,8 +2,7 @@
 @code {
     [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
     [CascadingParameter] public ClientDispatcher Dispatch { get; set; } 
-    bool IsActivePlayer => Session.Username.Equals(Model.ActivePlayer); 
-    bool IsEnabled => IsActivePlayer &&
+    bool IsEnabled => Session.Username.Equals(Model.ControllingPlayer) &&
         !Model.IsFinished &&
         !Model.ExecutingBackgroundTasks;
     int PotentialCoins => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
