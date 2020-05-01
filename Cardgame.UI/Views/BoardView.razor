@@ -2,18 +2,24 @@
 @code {
     [CascadingParameter(Name = "Current")] public GameModel Model { get; set; }
     [CascadingParameter] public ClientDispatcher Dispatch { get; set; } 
+
+    string PlayerOrSpectatee => (
+        Session.Username == Model.ActivePlayer || 
+        Session.Username == Model.ControllingPlayer || 
+        !Model.Players.Contains(Session.Username)) ? Model.ActivePlayer : Session.Username;
+
     bool IsEnabled => Session.Username.Equals(Model.ControllingPlayer) &&
         !Model.IsFinished &&
         !Model.ExecutingBackgroundTasks;
-    int PotentialCoins => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
+    int PotentialCoins => Model.Hands[PlayerOrSpectatee]
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()
         .Sum(card => card.GetModifiedValue(Model)?.Coins??0);
-    int PotentialPotions => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
+    int PotentialPotions => Model.Hands[PlayerOrSpectatee]
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()
         .Count(card => card.GetModifiedValue(Model)?.Potion??false);
-    int Unknowns => (Model.Players.Contains(Session.Username) ? Model.Hands[Session.Username] : Model.Hands[Model.ActivePlayer])
+    int Unknowns => Model.Hands[PlayerOrSpectatee]
         .Select(All.Cards.ByName)
         .OfType<ITreasureCard>()
         .Count(card => !card.GetModifiedValue(Model).HasValue);
